@@ -1,6 +1,6 @@
 {
   "name": "hymnbook2",
-  "version": "0.0.1",
+  "version": "0.1.0-SNAPSHOT",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -19,6 +19,7 @@
     "react-native-device-info": "^8.3.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-get-random-values": "^1.7.0",
+    "react-native-keep-awake": "^4.0.0",
     "react-native-reanimated": "^1.13.3",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^3.6.0",
@@ -31,6 +32,7 @@
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.19",
     "@types/react-native": "^0.64.13",
+    "@types/react-native-keep-awake": "^2.0.3",
     "@types/react-native-vector-icons": "^6.4.8",
     "@types/react-test-renderer": "^17.0.1",
     "babel-jest": "^27.1.0",
