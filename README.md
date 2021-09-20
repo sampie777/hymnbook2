@@ -4,6 +4,8 @@ _App name may vary on project name_
 
 ## Develop
 
+### Environment
+
 Start development server:
 
 ```bash
@@ -20,7 +22,7 @@ yarn android
 npx react-native run-android
 ```
 
-### Rebuild
+#### Rebuild
 
 If things aren't going as planned, rebuild the whole project:
 
@@ -32,6 +34,14 @@ cd ..
 
 yarn start --reset-cache 
 ```
+
+### Configuration
+
+To change app name: https://stackoverflow.com/a/68641035/2806723
+- /app.json -> displayName
+- /android/app/src/main/res/values/strings.xml -> app_name
+- /ios/hymnbook2/Info.plist -> CFBundleDisplayName
+
 
 ## Build
 
@@ -64,3 +74,4 @@ Make sure keystore is correctly defined in:
 
 - Match Android font families with IOS families.
 - Fix default sorting mechanism for song titles (102 is displayed before 2 but should be the other way around)
+- Add Hermes (https://reactnative.dev/docs/hermes) for decreased binary size and increased performance
