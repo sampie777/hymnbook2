@@ -13,7 +13,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale }) =>
       fontSize: 14 * scale
     },
     text: {
-      fontSize: 18 * scale,
+      fontSize: 20 * scale,
       lineHeight: 30 * scale
     }
   });
