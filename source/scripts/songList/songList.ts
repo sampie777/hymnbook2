@@ -46,6 +46,8 @@ export default class SongList {
     Db.songs.realm().write(() => {
       songList.songs.push(new SongListSongModel(index, song));
     });
+
+    this.cleanUpSongListFromNullsAndCorrectIndices(songList);
   }
 
   static deleteSongAtIndex(index: number) {
@@ -55,6 +57,14 @@ export default class SongList {
     Db.songs.realm().write(() => {
       songList.songs.splice(
         songList.songs.findIndex(it => it.index === index), 1);
+    });
+
+    this.cleanUpSongListFromNullsAndCorrectIndices(songList);
+  }
+
+  static cleanUpSongListFromNullsAndCorrectIndices(songList: SongListModel) {
+    Db.songs.realm().write(() => {
+      songList.songs = songList.songs.filter(it => it.song != null);
     });
 
     this.unifyIndices(songList);
