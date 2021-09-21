@@ -12,7 +12,8 @@ export default class SongList {
     }
 
     return (songList.songs as unknown as Realm.Results<SongListSongModel>)
-      .sorted("index") as unknown as Array<SongListSongModel>;
+      .sorted("index")
+      .filter(it => it != null && it.song != null) as unknown as Array<SongListSongModel>;
   }
 
   static getAllSongLists(): Realm.Results<SongListModel> {
@@ -84,7 +85,7 @@ export default class SongList {
     if (songList === undefined) return undefined;
 
     if (currentIndex === 0) {
-      return undefined
+      return undefined;
     }
 
     return songList.songs.find(it => it.index === currentIndex - 1);
@@ -95,7 +96,7 @@ export default class SongList {
     if (songList === undefined) return undefined;
 
     if (currentIndex === songList.songs.length - 1) {
-      return undefined
+      return undefined;
     }
 
     return songList.songs.find(it => it.index === currentIndex + 1);
