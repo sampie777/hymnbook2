@@ -63,14 +63,19 @@ class SettingsProvider {
 }
 
 class SettingsClass {
+  // System
+  keepScreenAwake = true;
+
+  // Search
   maxSearchInputLength = 3;
   maxSearchResultsLength = 40;
-
-  songBundlesApiUrl = "http://192.168.0.148:8080";
 
   // Songs
   songScale = 1.0;
   scrollToTopAnimated = true;
+
+  // Backend
+  songBundlesApiUrl = "http://192.168.0.148:8080";
 
   // Server authentication
   useAuthentication = true;

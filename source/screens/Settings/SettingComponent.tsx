@@ -56,6 +56,10 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
       value = Settings.get(sKey);
     }
 
+    if (onPress === undefined) {
+      onPress = (setValue, key, newValue) => setValue(newValue);
+    }
+
     const [_value, _setValue] = useState(value);
     const setValue = (newValue: any) => {
       if (sKey !== undefined) {
@@ -76,8 +80,7 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
       <View style={[styles.container, styles.switchContainer]}>
         <Text style={styles.keyText}>{name}</Text>
         {value === undefined ? undefined :
-          <Switch onValueChange={onPress === undefined ? undefined :
-            (newValue) => onPress(setValue, sKey, newValue)}
+          <Switch onValueChange={(newValue) => onPress?.(setValue, sKey, newValue)}
                   thumbColor={"dodgerblue"}
                   value={_value} />}
       </View>
