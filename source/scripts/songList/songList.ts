@@ -11,9 +11,12 @@ export default class SongList {
       return [];
     }
 
+    if (songList.songs.find(it => it == null || it.song == null)) {
+      this.cleanUpSongListFromNullsAndCorrectIndices(songList);
+    }
+
     return (songList.songs as unknown as Realm.Results<SongListSongModel>)
-      .sorted("index")
-      .filter(it => it != null && it.song != null) as unknown as Array<SongListSongModel>;
+      .sorted("index") as unknown as Array<SongListSongModel>;
   }
 
   static getAllSongLists(): Realm.Results<SongListModel> {
