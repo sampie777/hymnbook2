@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, Text, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, View } from "react-native";
 import { Song, Verse } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
@@ -12,6 +12,7 @@ import { SongListSongModel } from "../../models/SongListModel";
 import SongListControls from "./SongListControls";
 import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
+import { keepScreenAwake } from "../../scripts/utils";
 
 const Footer: React.FC = () => (
   <View style={styles.footer} />
@@ -36,12 +37,14 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
   const onFocus = () => {
     BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    keepScreenAwake(Settings.keepScreenAwake);
     setScale(Settings.songScale);
     loadSong();
   };
 
   const onBlur = () => {
     BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    keepScreenAwake(false);
     Settings.songScale = scale;
     setSong(undefined);
     navigation.setOptions({ title: "" });

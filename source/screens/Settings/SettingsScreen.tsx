@@ -1,10 +1,9 @@
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { MutableRefObject, useRef, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet, Text } from "react-native";
 import Settings from "../../scripts/settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { useFocusEffect } from "@react-navigation/native";
-import { getFontScale } from "react-native-device-info";
 import { SettingComponent, SettingSwitchComponent } from "./SettingComponent" ;
 import { AccessRequestStatus } from "../../scripts/server/models";
 
@@ -84,13 +83,13 @@ const SettingsScreen: React.FC = () => {
                           onPress={(setValue) => setValue(1)}
                           valueRender={(it) => Math.round(it * 100) + " %"} />
         <SettingSwitchComponent name={"Animate scroll to top"}
-                                sKey={"scrollToTopAnimated"}
-                                onPress={(setValue, key, newValue) => setValue(newValue)} />
+                                sKey={"scrollToTopAnimated"} />
+        <SettingSwitchComponent name={"Keep screen on"}
+                                sKey={"keepScreenAwake"} />
 
         <Header title={"Backend"} />
         <SettingSwitchComponent name={"Use authentication with backend"}
-                                sKey={"useAuthentication"}
-                                onPress={(setValue, key, newValue) => setValue(newValue)} />
+                                sKey={"useAuthentication"} />
         <SettingComponent name={"Authentication status with backend"}
                           value={authenticationStatus}
                           onPress={(setValue) =>

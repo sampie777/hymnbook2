@@ -1,4 +1,5 @@
 import { Alert } from "react-native";
+import KeepAwake from "react-native-keep-awake";
 
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
@@ -51,4 +52,12 @@ export function capitalize(word: string) {
   }
 
   return word.charAt(0).toUpperCase() + word.substring(1);
+}
+
+export function keepScreenAwake(value: boolean) {
+  if (value) {
+    KeepAwake.activate();
+  } else {
+    KeepAwake.deactivate();
+  }
 }
