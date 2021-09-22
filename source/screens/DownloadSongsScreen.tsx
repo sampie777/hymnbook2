@@ -114,8 +114,10 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const isPopupOpen = () => requestDeleteAll || requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
+
   const onSongBundlePress = (bundle: SongBundle) => {
-    if (isLoading) {
+    if (isLoading || isPopupOpen()) {
       return;
     }
 
@@ -123,7 +125,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   };
 
   const onLocalSongBundlePress = (bundle: LocalSongBundle) => {
-    if (isLoading) {
+    if (isLoading || isPopupOpen()) {
       return;
     }
 
@@ -131,7 +133,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   };
 
   const onDeleteAllPress = () => {
-    if (isLoading) {
+    if (isLoading || isPopupOpen()) {
       return;
     }
 
