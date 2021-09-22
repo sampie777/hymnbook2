@@ -84,22 +84,16 @@ export namespace SongProcessor {
     return new Result({ success: true, message: `${songs.length} songs added!` });
   };
 
-  export const deleteSongDatabase = (): Result => {
-    if (!Db.songs.isConnected()) {
-      console.log("Database is not connected");
-      return new Result({ success: false, message: "Database is not connected" });
-    }
-
+  export const deleteSongDatabase = (): Promise<Result> => {
     console.log("Deleting database");
     Db.songs.deleteDb();
 
-    Db.songs.connect()
+    return Db.songs.connect()
+      .then(_ => new Result({ success: true, message: "Deleted all songs" }))
       .catch(e => {
         console.error("Could not connect to local database after deletions", e);
         return new Result({ success: false, message: "Could not reconnect to local database after deletions: " + e });
       });
-
-    return new Result({ success: true, message: "Deleted all songs" });
   };
 
   export const deleteSongBundle = (bundle: SongBundle): Result => {

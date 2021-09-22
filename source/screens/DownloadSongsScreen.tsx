@@ -203,12 +203,15 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     setIsLoading(true);
     setLocalBundles([]);
 
-    const result = SongProcessor.deleteSongDatabase();
-    result.alert();
-    result.throwIfException();
-
-    setIsLoading(false);
-    loadLocalSongBundles();
+    SongProcessor.deleteSongDatabase()
+      .then(result => {
+        result.alert();
+        result.throwIfException();
+      })
+      .finally(() => {
+        setIsLoading(false);
+        loadLocalSongBundles();
+      });
   };
 
   return (
