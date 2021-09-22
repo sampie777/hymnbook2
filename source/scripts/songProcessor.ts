@@ -3,6 +3,7 @@ import Db from "./db/db";
 import { Song, SongBundle, Verse } from "../models/Songs";
 import { dateFrom, Result } from "./utils";
 import { SongBundleSchema, SongSchema, VerseSchema } from "../models/SongsSchema";
+import SongList from "./songList/songList";
 
 export namespace SongProcessor {
 
@@ -112,6 +113,8 @@ export namespace SongProcessor {
       console.log("Deleting song bundle: " + bundle.name);
       Db.songs.realm().delete(bundle);
     });
+
+    SongList.cleanUpAllSongLists();
 
     return new Result({ success: true, message: `Deleted all ${songCount} songs for ${bundleName}` });
   };

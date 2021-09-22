@@ -60,10 +60,6 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
       }, [isDeleteMode])
     );
 
-    const reloadSongList = () => {
-      setList(SongList.list());
-    };
-
     const onFocus = () => {
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
       reloadSongList();
@@ -71,6 +67,10 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
 
     const onBlur = () => {
       BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    };
+
+    const reloadSongList = () => {
+      setList(SongList.list());
     };
 
     const onBackPress = (): boolean => {
@@ -90,7 +90,7 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
       Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
     };
 
-    const onExit = () => undefined;
+    const onExit = () => Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
 
     const onCollectionChange: CollectionChangeCallback<Object> = (songLists, changes) => {
       reloadSongList();
@@ -121,6 +121,7 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
         <FlatList
           data={list}
           renderItem={renderSongListItem}
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.songList} />
       </View>
     );

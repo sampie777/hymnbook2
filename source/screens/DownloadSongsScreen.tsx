@@ -190,7 +190,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     result.alert();
     result.throwIfException();
 
-    setIsLoading(false);
     loadLocalSongBundles();
   };
 
