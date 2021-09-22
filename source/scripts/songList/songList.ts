@@ -11,7 +11,7 @@ export default class SongList {
       return [];
     }
 
-    if (songList.songs.find(it => it == null || it.song == null)) {
+    if (!Db.songs.realm().isInTransaction && songList.songs.some(it => it == null || it.song == null)) {
       this.cleanUpSongListFromNullsAndCorrectIndices(songList);
     }
 
@@ -81,6 +81,10 @@ export default class SongList {
         .sorted("index")
         .forEach(it => it.index = lastIndex++);
     });
+  }
+
+  static cleanUpAllSongLists() {
+    this.getAllSongLists().forEach(it => this.cleanUpSongListFromNullsAndCorrectIndices(it));
   }
 
   static previousSong(currentIndex: number): SongListSongModel | undefined {
