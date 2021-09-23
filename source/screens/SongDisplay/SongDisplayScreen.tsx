@@ -13,6 +13,7 @@ import SongListControls from "./SongListControls";
 import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
+import { SongVerse } from "../../models/ServerSongsModel";
 
 const Footer: React.FC = () => (
   <View style={styles.footer} />
@@ -24,7 +25,7 @@ interface SongDisplayScreenProps {
 }
 
 const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {
-  const [song, setSong] = useState<Song | undefined>(undefined);
+  const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [scale, setScale] = useState(Settings.songScale);
   const flatListComponentRef = useRef<FlatList>();
 
@@ -82,7 +83,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     }
 
     const newSong = Db.songs.realm()
-      .objectForPrimaryKey(SongSchema.name, route.params.id) as (Song | undefined);
+      .objectForPrimaryKey(SongSchema.name, route.params.id) as (Song & Realm.Object | undefined);
 
     if (newSong === undefined) {
       // Song not found
@@ -134,7 +135,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
         <FlatList
           // @ts-ignore
           ref={flatListComponentRef}
-          data={song?.verses}
+          data={(song?.verses as (Realm.Results<SongVerse> | undefined))?.sorted("index")}
           renderItem={renderContentItem}
           contentContainerStyle={styles.contentSectionList}
           keyExtractor={item => item.id.toString()}

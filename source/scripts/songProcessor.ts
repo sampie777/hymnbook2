@@ -51,6 +51,7 @@ export namespace SongProcessor {
           dateFrom(song.createdAt),
           dateFrom(song.modifiedAt),
           song.verses
+            ?.sort((a, b) => a.index - b.index)
             ?.map(verse => new Verse(
               verse.index,
               verse.name,
