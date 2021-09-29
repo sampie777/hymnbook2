@@ -2,6 +2,7 @@ import { Setting } from "../models/Settings";
 import Db from "./db/db";
 import { AccessRequestStatus } from "./server/models";
 import { SettingSchema } from "../models/SettingsSchema";
+import { rollbar } from "./rollbar";
 
 class SettingsProvider {
   static set(key: string, value: string) {
@@ -65,6 +66,7 @@ class SettingsProvider {
 class SettingsClass {
   // System
   keepScreenAwake = true;
+  enableErrorReporting = true;
 
   // Search
   maxSearchInputLength = 3;
@@ -106,7 +108,7 @@ class SettingsClass {
       case "boolean":
         return SettingsProvider.getBoolean(key);
       default:
-        console.error("No matching get function found for loading type of key: " + key + " of type: " + typeof value);
+        rollbar.error("No matching get function found for loading type of key: " + key + " of type: " + typeof value);
     }
   }
 
@@ -121,7 +123,7 @@ class SettingsClass {
         case "boolean":
           return SettingsProvider.setBoolean(key, value);
         default:
-          console.error("No matching set function found for storing type of key: " + key + " of type: " + typeof value);
+          rollbar.error("No matching set function found for storing type of key: " + key + " of type: " + typeof value);
       }
     });
   }

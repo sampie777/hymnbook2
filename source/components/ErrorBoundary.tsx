@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { rollbar } from "../scripts/rollbar";
 
 interface ComponentProps {
 }
@@ -23,7 +24,7 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Caught ErrorBoundary error", error, errorInfo);
+    rollbar.critical(error, errorInfo);
     this.setState({
       error: error,
       errorInfo: errorInfo

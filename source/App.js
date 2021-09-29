@@ -21,6 +21,7 @@ import Settings from "./scripts/settings";
 import SettingsScreen from "./screens/Settings/SettingsScreen";
 import SongListScreen from "./screens/SongListScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { rollbar } from "./scripts/rollbar";
 
 const Drawer = createDrawerNavigator();
 
@@ -33,18 +34,18 @@ export default function App() {
   const onLaunch = () => {
     Db.settings.connect()
       .catch(e => {
-        console.error("Could not connect to local settings database", e);
+        rollbar.error("Could not connect to local settings database: " + e.toString(), e);
         alert("Could not connect to local settings database: " + e);
       })
       .then(() => Settings.load())
       .catch(e => {
-        console.error("Could not load settings from database", e);
+        rollbar.error("Could not load settings from database: " + e.toString(), e);
         alert("Could not load settings from database: " + e);
       });
 
     Db.songs.connect()
       .catch(e => {
-        console.error("Could not connect to local song database", e);
+        rollbar.error("Could not connect to local song database: " + e.toString(), e);
         alert("Could not connect to local song database: " + e);
       });
   };

@@ -2,6 +2,7 @@ import Settings from "../settings";
 import { api, throwErrorsIfNotOk } from "./api";
 import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus } from "./models";
+import { rollbar } from "../rollbar";
 
 class AccessRequestResponse {
   status: AccessRequestStatus;
@@ -84,12 +85,12 @@ export class ServerAuth {
         }
 
         if (accessRequestResponse.requestID == null || accessRequestResponse.requestID == "") {
-          console.error(`Access request requested but received no (valid) requestID but: '${accessRequestResponse.requestID}'`);
+          rollbar.error(`Access request for '${this._getDeviceId()}' requested but received no (valid) requestID but: '${accessRequestResponse.requestID}'`);
           return "";
         }
 
         Settings.authStatus = AccessRequestStatus.REQUESTED;
-        Settings.authRequestId = accessRequestResponse.requestID;
+        Settings.authRequestId = accessRequestResponse.requestID || "";
         Settings.store();
 
         if (accessRequestResponse.status === AccessRequestStatus.APPROVED) {
@@ -104,8 +105,8 @@ export class ServerAuth {
   }
 
   static _retrieveAccessJWT(): Promise<string> {
-    if (Settings.authRequestId == null) {
-      console.error("Cannot retrieve JWT if requestId is null");
+    if (Settings.authRequestId == null || Settings.authRequestId === "") {
+      rollbar.error("Cannot retrieve JWT if requestId is null or empty");
       return new Promise<string>(() => "");
     }
 
@@ -132,7 +133,7 @@ export class ServerAuth {
         }
 
         if (accessRequestResponse.jwt == null) {
-          console.error(`Access request approved but received no (valid) jwt but: '${accessRequestResponse.jwt}'`);
+          rollbar.error(`Access request '${Settings.authRequestId}' approved but received no (valid) jwt but: '${accessRequestResponse.jwt}'`);
           return "";
         }
 

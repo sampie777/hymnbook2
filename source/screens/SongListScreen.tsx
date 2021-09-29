@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Db from "../scripts/db/db";
 import { Song } from "../models/Songs";
 import { routes } from "../navigation";
@@ -7,7 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { useFocusEffect } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import SongList from "../scripts/songList/songList";
-import { SongListModel, SongListSongModel } from "../models/SongListModel";
+import { SongListSongModel } from "../models/SongListModel";
 import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../models/SongListModelSchema";
 

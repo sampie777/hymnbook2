@@ -4,6 +4,7 @@ import { Song, SongBundle, Verse } from "../models/Songs";
 import { dateFrom, Result } from "./utils";
 import { SongBundleSchema, SongSchema, VerseSchema } from "../models/SongsSchema";
 import SongList from "./songList/songList";
+import { rollbar } from "./rollbar";
 
 export namespace SongProcessor {
 
@@ -27,7 +28,7 @@ export namespace SongProcessor {
     }
 
     if (bundle.songs == null) {
-      console.warn("Song bundle contains no songs");
+      rollbar.warning("Song bundle contains no songs: " + bundle.name, bundle);
       return new Result({ success: false, message: "Song bundle contains no songs" });
     }
 
@@ -77,8 +78,8 @@ export namespace SongProcessor {
       Db.songs.realm().write(() => {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
       });
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      rollbar.error(e);
       return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
     }
 
@@ -93,7 +94,7 @@ export namespace SongProcessor {
     return Db.songs.connect()
       .then(_ => new Result({ success: true, message: "Deleted all songs" }))
       .catch(e => {
-        console.error("Could not connect to local database after deletions", e);
+        rollbar.error("Could not connect to local database after deletions: " + e?.toString(), e);
         return new Result({ success: false, message: "Could not reconnect to local database after deletions: " + e });
       });
   };

@@ -65,3 +65,7 @@ debug.keystore
 gradle/
 build (copy)/
 *.hprof
+
+sourcemap.android.js
+upload_source_map.sh
+index.android.bundle
