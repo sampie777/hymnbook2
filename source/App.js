@@ -20,6 +20,7 @@ import DownloadSongsScreen from "./screens/DownloadSongsScreen";
 import Settings from "./scripts/settings";
 import SettingsScreen from "./screens/Settings/SettingsScreen";
 import SongListScreen from "./screens/SongListScreen";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const Drawer = createDrawerNavigator();
 
@@ -56,43 +57,45 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <NavigationContainer>
-        <Drawer.Navigator initialRouteName={routes.Search}
-                          drawerContent={CustomDrawerContent}>
-          <Drawer.Screen name={routes.Search} component={SearchScreen}
-                         options={{
-                           drawerIcon: ({ focused, color, size }) =>
-                             <Icon name="search" size={size} color={color} />,
-                         }} />
-          <Drawer.Screen name={routes.SongList} component={SongListScreen}
-                         options={{
-                           title: "Song list",
-                           drawerIcon: ({ focused, color, size }) =>
-                             <Icon name="list-ul" size={size} color={color} />,
-                         }} />
-          <Drawer.Screen name={routes.Import} component={DownloadSongsScreen}
-                         options={{
-                           drawerIcon: ({ focused, color, size }) =>
-                             <Icon name="database" size={size} color={color} />,
-                         }} />
-          <Drawer.Screen name={routes.Settings} component={SettingsScreen}
-                         options={{
-                           drawerIcon: ({ focused, color, size }) =>
-                             <Icon name="cogs" size={size} color={color} />,
-                         }} />
+      <ErrorBoundary>
+        <NavigationContainer>
+          <Drawer.Navigator initialRouteName={routes.Search}
+                            drawerContent={CustomDrawerContent}>
+            <Drawer.Screen name={routes.Search} component={SearchScreen}
+                           options={{
+                             drawerIcon: ({ focused, color, size }) =>
+                               <Icon name="search" size={size} color={color} />,
+                           }} />
+            <Drawer.Screen name={routes.SongList} component={SongListScreen}
+                           options={{
+                             title: "Song list",
+                             drawerIcon: ({ focused, color, size }) =>
+                               <Icon name="list-ul" size={size} color={color} />,
+                           }} />
+            <Drawer.Screen name={routes.Import} component={DownloadSongsScreen}
+                           options={{
+                             drawerIcon: ({ focused, color, size }) =>
+                               <Icon name="database" size={size} color={color} />,
+                           }} />
+            <Drawer.Screen name={routes.Settings} component={SettingsScreen}
+                           options={{
+                             drawerIcon: ({ focused, color, size }) =>
+                               <Icon name="cogs" size={size} color={color} />,
+                           }} />
 
-          {/* Hidden screens */}
-          <Drawer.Screen name={routes.Song} component={SongDisplayScreen}
-                         initialParams={{
-                           id: undefined,
-                           previousScreen: undefined,
-                           songListIndex: undefined,
-                         }}
-                         options={{
-                           hideInMenu: true,
-                         }} />
-        </Drawer.Navigator>
-      </NavigationContainer>
+            {/* Hidden screens */}
+            <Drawer.Screen name={routes.Song} component={SongDisplayScreen}
+                           initialParams={{
+                             id: undefined,
+                             previousScreen: undefined,
+                             songListIndex: undefined,
+                           }}
+                           options={{
+                             hideInMenu: true,
+                           }} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      </ErrorBoundary>
 
       <StatusBar style={"auto"} hidden={false} />
     </SafeAreaView>
