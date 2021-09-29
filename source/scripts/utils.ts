@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, ScaledSize } from "react-native";
 import KeepAwake from "react-native-keep-awake";
 
 export function dateFrom(date: Date | string): Date {
@@ -60,4 +60,8 @@ export function keepScreenAwake(value: boolean) {
   } else {
     KeepAwake.deactivate();
   }
+}
+
+export function isPortraitMode(window: ScaledSize) {
+  return window.height > window.width;
 }

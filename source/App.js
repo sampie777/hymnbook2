@@ -11,7 +11,7 @@ import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { routes } from "./navigation";
-import SearchScreen from "./screens/SearchScreen";
+import SearchScreen from "./screens/Search/SearchScreen";
 import SongDisplayScreen from "./screens/SongDisplay/SongDisplayScreen";
 import Db from "./scripts/db/db";
 import CustomDrawerContent from "./components/CustomDrawerContent";
