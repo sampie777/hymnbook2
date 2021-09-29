@@ -101,6 +101,10 @@ const SettingsScreen: React.FC = () => {
                                 }
                                 setValue(getAuthenticationStateAsMessage);
                               })} />
+
+        <Header title={"Other"} />
+        <SettingSwitchComponent name={"Report errors"}
+                                sKey={"enableErrorReporting"} />
       </>}
     </ScrollView>
   );

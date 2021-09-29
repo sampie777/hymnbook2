@@ -1,0 +1,13 @@
+SERVERKEY=""
+VERSION="0.2.0-SNAPSHOT"
+
+# Create source map
+react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/index.android.bundle --assets-dest android/app/src/main/res/ --sourcemap-output sourcemap.android.js --sourcemap-sources-root ./
+
+# Upload source map
+curl https://api.rollbar.com/api/1/sourcemap \
+-F access_token=${SERVERKEY} \
+-F version=${VERSION} \
+-F minified_url=http://reactnativehost/index.android.bundle \
+-F source_map=@sourcemap.android.js \
+-F index.js=@index.js
