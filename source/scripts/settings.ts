@@ -77,7 +77,7 @@ class SettingsClass {
   scrollToTopAnimated = true;
 
   // Backend
-  songBundlesApiUrl = "http://192.168.0.148:8080";
+  songBundlesApiUrl = "http://jschedule.sajansen.nl";
 
   // Server authentication
   useAuthentication = true;
