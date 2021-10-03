@@ -93,7 +93,7 @@ function Header() {
 function Footer() {
   return (
     <View style={styles.footerContainer}>
-      <Text style={styles.footerContent}>version: {getVersion()}</Text>
+      <Text style={styles.footerContent}>version: {getVersion()} {process.env.NODE_ENV === "production" ? undefined : `(${process.env.NODE_ENV})`}</Text>
     </View>
   );
 }

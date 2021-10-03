@@ -17,7 +17,7 @@ const configuration = new Configuration(
       }
     },
     verbose: true,
-    enabled: true //todo: set this to true for production
+    enabled: process.env.NODE_ENV === "production"
   });
 
 export const rollbar = new Client(configuration);
