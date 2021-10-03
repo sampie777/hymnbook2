@@ -66,7 +66,6 @@ class SettingsProvider {
 class SettingsClass {
   // System
   keepScreenAwake = true;
-  enableErrorReporting = true;
 
   // Search
   maxSearchInputLength = 3;
