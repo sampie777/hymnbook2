@@ -1,28 +1,30 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import Animated  from "react-native-reanimated";
 
 interface ContentVerseProps {
   title: string;
   content: string;
-  scale: number;
+  scale: Animated.Value<number>;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale }) => {
-  const scalableStyles = StyleSheet.create({
+
+  const scalableStyles = {
     title: {
-      fontSize: 14 * scale
+      fontSize: Animated.multiply(scale, 14)
     },
     text: {
-      fontSize: 20 * scale,
-      lineHeight: 30 * scale
+      fontSize: Animated.multiply(scale, 20),
+      lineHeight: Animated.multiply(scale, 30)
     }
-  });
+  };
 
   return (
     <View style={styles.container}>
       {title === "" ? null :
-        <Text style={[styles.title, scalableStyles.title]}>{title}</Text>}
-      <Text style={[styles.text, scalableStyles.text]}>{content}</Text>
+        <Animated.Text style={[styles.title, scalableStyles.title]}>{title}</Animated.Text>}
+      <Animated.Text style={[styles.text, scalableStyles.text]}>{content}</Animated.Text>
     </View>
   );
 };
@@ -37,7 +39,7 @@ const styles = StyleSheet.create({
     color: "#777",
     textTransform: "lowercase",
     left: -10,
-    marginBottom: 7,
+    marginBottom: 7
   },
-  text: {},
+  text: {}
 });
