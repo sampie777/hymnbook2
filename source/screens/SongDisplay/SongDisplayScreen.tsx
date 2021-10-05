@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, View } from "react-native";
+import React, { useRef, useState } from "react";
+import { BackHandler, FlatList, StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import { Song, Verse } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { routes } from "../../navigation";
 import Settings from "../../scripts/settings";
-import { PinchGestureHandler } from "react-native-gesture-handler";
+import { GestureEvent, PinchGestureHandler, State } from "react-native-gesture-handler";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { SongListSongModel } from "../../models/SongListModel";
 import SongListControls from "./SongListControls";
@@ -14,6 +14,8 @@ import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
 import { SongVerse } from "../../models/ServerSongsModel";
+import Animated  from "react-native-reanimated";
+import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 
 const Footer: React.FC = () => (
   <View style={styles.footer} />
@@ -26,7 +28,7 @@ interface SongDisplayScreenProps {
 
 const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
-  const [scale, setScale] = useState(Settings.songScale);
+  const animatedScale = new Animated.Value(Settings.songScale);
   const flatListComponentRef = useRef<FlatList>();
 
   useFocusEffect(
@@ -39,14 +41,12 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   const onFocus = () => {
     BackHandler.addEventListener("hardwareBackPress", onBackPress);
     keepScreenAwake(Settings.keepScreenAwake);
-    setScale(Settings.songScale);
     loadSong();
   };
 
   const onBlur = () => {
     BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     keepScreenAwake(false);
-    Settings.songScale = scale;
     setSong(undefined);
     navigation.setOptions({ title: "" });
   };
@@ -59,11 +59,6 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     navigation.navigate(route.params.previousScreen);
     return true;
   };
-
-  useEffect(React.useCallback(() => {
-      Settings.songScale = scale;
-    }, [scale])
-  );
 
   const scrollToTop = () => {
     flatListComponentRef.current?.scrollToOffset({
@@ -98,7 +93,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     return (
       <ContentVerse title={item.name}
                     content={item.content}
-                    scale={scale} />
+                    scale={animatedScale} />
     );
   };
 
@@ -110,17 +105,14 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     });
   };
 
-  const _onPanGestureEvent = () => {
+  const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    animatedScale.setValue(Settings.songScale * event.nativeEvent.scale)
+  }
 
-  };
-
-  const _onPinchHandlerStateChange = (event: any) => {
-    setScale(it => {
-      if (event != null && event.nativeEvent != null && event.nativeEvent.scale != null) {
-        return it * event.nativeEvent.scale;
-      }
-      return it;
-    });
+  const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    if (event.nativeEvent.state === State.END){
+      Settings.songScale *= event.nativeEvent.scale;
+    }
   };
 
   return (
