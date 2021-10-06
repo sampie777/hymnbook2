@@ -217,7 +217,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     <View style={styles.container}>
       <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
                          onClose={() => setRequestDownloadForBundle(undefined)}
-                         onConfirm={onConfirmDownloadSongBundle}>
+                         onConfirm={onConfirmDownloadSongBundle}
+                         invertConfirmColor={true}>
         <Text>Download songs for {requestDownloadForBundle?.name}?</Text>
       </ConfirmationModal>
 
