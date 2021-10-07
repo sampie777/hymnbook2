@@ -11,8 +11,12 @@ interface ContentVerseProps {
 const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale }) => {
 
   const scalableStyles = {
+    container: {
+      marginBottom: Animated.multiply(scale, 50)
+    },
     title: {
-      fontSize: Animated.multiply(scale, 14)
+      fontSize: Animated.multiply(scale, 14),
+      marginBottom: Animated.multiply(scale, 7),
     },
     text: {
       fontSize: Animated.multiply(scale, 20),
@@ -21,11 +25,11 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale }) =>
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, scalableStyles.container]}>
       {title === "" ? null :
         <Animated.Text style={[styles.title, scalableStyles.title]}>{title}</Animated.Text>}
       <Animated.Text style={[styles.text, scalableStyles.text]}>{content}</Animated.Text>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -33,13 +37,11 @@ export default ContentVerse;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 50
   },
   title: {
     color: "#777",
     textTransform: "lowercase",
     left: -10,
-    marginBottom: 7
   },
   text: {}
 });
