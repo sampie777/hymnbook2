@@ -22,6 +22,7 @@ import SettingsScreen from "./screens/Settings/SettingsScreen";
 import SongListScreen from "./screens/SongListScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { rollbar } from "./scripts/rollbar";
+import AboutScreen from "./screens/about/AboutScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -82,6 +83,11 @@ export default function App() {
                            options={{
                              drawerIcon: ({ focused, color, size }) =>
                                <Icon name="cogs" size={size} color={color} style={styles.drawerIcon} />,
+                           }} />
+            <Drawer.Screen name={routes.About} component={AboutScreen}
+                           options={{
+                             drawerIcon: ({ focused, color, size }) =>
+                               <Icon name="info" size={size} color={color} style={styles.drawerIcon} />,
                            }} />
 
             {/* Hidden screens */}

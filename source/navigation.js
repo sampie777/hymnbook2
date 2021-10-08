@@ -3,5 +3,6 @@ export const routes = {
     SongList: "SongList",
     Import: "Databases",
     Settings: "Settings",
+    About: "About",
     Song: "Song",
 };
