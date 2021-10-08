@@ -65,23 +65,23 @@ export default function App() {
             <Drawer.Screen name={routes.Search} component={SearchScreen}
                            options={{
                              drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="search" size={size} color={color} />,
+                               <Icon name="search" size={size} color={color} style={styles.drawerIcon} />,
                            }} />
             <Drawer.Screen name={routes.SongList} component={SongListScreen}
                            options={{
                              title: "Song list",
                              drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="list-ul" size={size} color={color} />,
+                               <Icon name="list-ul" size={size} color={color} style={styles.drawerIcon} />,
                            }} />
             <Drawer.Screen name={routes.Import} component={DownloadSongsScreen}
                            options={{
                              drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="database" size={size} color={color} />,
+                               <Icon name="database" size={size} color={color} style={styles.drawerIcon} />,
                            }} />
             <Drawer.Screen name={routes.Settings} component={SettingsScreen}
                            options={{
                              drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="cogs" size={size} color={color} />,
+                               <Icon name="cogs" size={size} color={color} style={styles.drawerIcon} />,
                            }} />
 
             {/* Hidden screens */}
@@ -106,5 +106,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  drawerIcon: {
+    width: 30,
+    marginRight: -10,
+    textAlign: 'center',
   },
 });
