@@ -27,12 +27,14 @@ const SurveyComponent: React.FC<{
                          invertConfirmColor={true}
                          onClose={onDenied}
                          onConfirm={openSurvey}>
-        <Text>
-          To improve your experience with this app, we would like to get some feedback from our users.
-        </Text>
-        <Text style={styles.contentText}>
-          Are you willing to answer two simple questions?
-        </Text>
+        <View style={styles.popupContent}>
+          <Text>
+            To improve your experience with this app, we would like to get some feedback from our users.
+          </Text>
+          <Text style={styles.contentText}>
+            Are you willing to answer two simple questions?
+          </Text>
+        </View>
       </ConfirmationModal>
     </View>
   );
@@ -47,12 +49,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  popup: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 30
-  },
+  popupContent: {},
   contentText: {
-    paddingTop: 10,
+    paddingTop: 10
   }
 });
