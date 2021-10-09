@@ -64,6 +64,7 @@ export class SongBundle {
   name: string;
   language: string;
   songs: Array<Song> | null;
+  size?: number;
   createdAt: string;
   modifiedAt: string;
 
@@ -74,12 +75,14 @@ export class SongBundle {
               songs: Array<Song> | null,
               createdAt: string,
               modifiedAt: string,
+              size?: number,
   ) {
     this.id = id;
     this.abbreviation = abbreviation;
     this.name = name;
     this.language = language;
     this.songs = songs;
+    this.size = size;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
   }

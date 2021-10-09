@@ -16,7 +16,7 @@ import SongDisplayScreen from "./screens/SongDisplay/SongDisplayScreen";
 import Db from "./scripts/db/db";
 import CustomDrawerContent from "./components/CustomDrawerContent";
 import Icon from "react-native-vector-icons/FontAwesome";
-import DownloadSongsScreen from "./screens/DownloadSongsScreen";
+import DownloadSongsScreen from "./screens/DownloadSongs/DownloadSongsScreen";
 import Settings from "./scripts/settings";
 import SettingsScreen from "./screens/Settings/SettingsScreen";
 import SongListScreen from "./screens/SongListScreen";
