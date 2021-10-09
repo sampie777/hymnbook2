@@ -1,29 +1,34 @@
 import React from "react";
-import { Linking, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { rollbar } from "../scripts/rollbar";
+import { openLink } from "../scripts/utils";
 
-const UrlLink: React.FC<{ url: string, style?: Array<Object> | Object }> = ({ children, url, style = [] }) => {
-  const open = () => {
-    Linking.canOpenURL(url)
-      .then(isSupported => {
-        if (isSupported) {
-          Linking.openURL(url);
-        } else {
-          rollbar.warning("Can't open URL '" + url + "': not supported");
-        }
-      });
+const UrlLink: React.FC<{
+  url: string,
+  style?: Array<Object> | Object,
+  onOpened?: () => void
+}> =
+  ({
+     children,
+     url,
+     style = [],
+     onOpened
+   }) => {
+    const open = () => {
+      openLink(url)
+        .then(onOpened)
+        .catch(e => Alert.alert("Error opening link", e.message))
+    };
+
+    return (
+      <View style={style}>
+        <TouchableOpacity onPress={open}>
+          <View>
+            {children}
+          </View>
+        </TouchableOpacity>
+      </View>);
   };
-
-  return (
-    <View style={style}>
-      <TouchableOpacity onPress={open}>
-        <View>
-          {children}
-        </View>
-      </TouchableOpacity>
-    </View>);
-};
 
 export default UrlLink;
 

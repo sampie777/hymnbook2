@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, Platform, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
 import { routes } from "../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import Settings from "../../scripts/settings";
 import { SongSchema } from "../../models/SongsSchema";
-import { BackspaceKey, ClearKey, Key, NumberKey } from "./InputKey";
+import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 import { isPortraitMode } from "../../scripts/utils";
 
@@ -45,7 +45,7 @@ const SearchScreen: React.FC<{ navigation: any }> =
       Dimensions.addEventListener("change", (e) => {
         setIsPortrait(isPortraitMode(e.window));
       });
-    }
+    };
 
     const onNumberKeyPress = (number: number) => {
       if (inputValue.length >= maxInputLength) {
@@ -145,11 +145,11 @@ const styles = StyleSheet.create({
   },
 
   inputAndResults: {
-    flex: 1,
+    flex: 1
   },
 
   inputContainer: {
-    alignItems: "center",
+    alignItems: "center"
   },
   infoText: {
     fontSize: 18,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   keyPad: {
     height: 300,
     minHeight: "40%",
-    maxHeight: "50%",
+    maxHeight: "50%"
   },
   keyPadRow: {
     flex: 1,
@@ -192,16 +192,16 @@ const styles = StyleSheet.create({
 const stylesLandscape = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "stretch",
+    alignItems: "stretch"
   },
 
   inputAndResults: {
-    flex: 1,
+    flex: 1
   },
 
   keyPad: {
     flex: 1,
     height: "100%",
-    maxHeight: "100%",
+    maxHeight: "100%"
   }
 });

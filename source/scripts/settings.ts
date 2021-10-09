@@ -86,6 +86,9 @@ class SettingsClass {
   authStatus = AccessRequestStatus.UNKNOWN;
   authDeniedReason = "";
 
+  // Survey
+  surveyCompleted = false;
+
   load() {
     console.log("Loading settings");
 

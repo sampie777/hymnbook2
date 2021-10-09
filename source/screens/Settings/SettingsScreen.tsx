@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import Settings from "../../scripts/settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -65,6 +65,12 @@ const SettingsScreen: React.FC = () => {
 
   const authenticationStatus = getAuthenticationStateAsMessage();
 
+  const developerSettings = <>
+    <Header title={"Developer"} />
+    <SettingSwitchComponent name={"Survey completed"}
+                            sKey={"surveyCompleted"} />
+  </>;
+
   return (
     <ScrollView
       style={styles.container}
@@ -101,6 +107,9 @@ const SettingsScreen: React.FC = () => {
                                 }
                                 setValue(getAuthenticationStateAsMessage);
                               })} />
+
+        {process.env.NODE_ENV !== "development" ? undefined : developerSettings}
+
       </>}
     </ScrollView>
   );

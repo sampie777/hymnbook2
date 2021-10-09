@@ -1,5 +1,6 @@
-import { Alert, ScaledSize } from "react-native";
+import { Alert, Linking, ScaledSize } from "react-native";
 import KeepAwake from "react-native-keep-awake";
+import { rollbar } from "./rollbar";
 
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
@@ -64,4 +65,16 @@ export function keepScreenAwake(value: boolean) {
 
 export function isPortraitMode(window: ScaledSize) {
   return window.height > window.width;
+}
+
+export function openLink(url: string): Promise<any> {
+  return Linking.canOpenURL(url)
+    .then(isSupported => {
+      if (isSupported) {
+        return Linking.openURL(url);
+      } else {
+        rollbar.warning("Can't open URL '" + url + "': not supported");
+        throw new Error("Can't open URL '" + url + "': not supported");
+      }
+    });
 }
