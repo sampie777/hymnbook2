@@ -6,6 +6,9 @@ interface ComponentProps {
   onClose?: () => void;
   onConfirm?: () => void;
   invertConfirmColor?: boolean;
+  closeText?: string;
+  confirmText?: string;
+  title?: string;
 }
 
 const ConfirmationModal: React.FC<ComponentProps> = ({
@@ -13,7 +16,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        isOpen,
                                                        onClose,
                                                        onConfirm,
-                                                       invertConfirmColor = false
+                                                       invertConfirmColor = false,
+                                                       closeText = "Close",
+                                                       confirmText = "Confirm",
+                                                       title
                                                      }) => {
   return (
     <Modal
@@ -24,16 +30,18 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
+          <Text style={styles.modalTitle}>{title}</Text>
           <View style={styles.modalText}>{children}</View>
 
           <View style={styles.buttons}>
             <Pressable style={styles.button}
                        onPress={onClose}>
-              <Text style={[styles.buttonText, styles.buttonDenyText]}>Close</Text>
+              <Text style={[styles.buttonText, styles.buttonDenyText]}>{closeText}</Text>
             </Pressable>
             <Pressable style={styles.button}
                        onPress={onConfirm}>
-              <Text style={[styles.buttonText, styles.buttonConfirmText, (invertConfirmColor ? styles.buttonConfirmTextInvert : {})]}>Confirm</Text>
+              <Text
+                style={[styles.buttonText, styles.buttonConfirmText, (invertConfirmColor ? styles.buttonConfirmTextInvert : {})]}>{confirmText}</Text>
             </Pressable>
           </View>
         </View>
@@ -68,12 +76,19 @@ const styles = StyleSheet.create({
     elevation: 5
   },
 
+  modalTitle: {
+    paddingHorizontal: 30,
+    paddingTop: 25,
+    fontWeight: "bold",
+    textAlign: "center"
+  },
   modalText: {
     paddingHorizontal: 30,
-    paddingVertical: 50,
+    paddingTop: 15,
+    paddingBottom: 50,
     textAlign: "center",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
 
   buttons: {
@@ -89,14 +104,14 @@ const styles = StyleSheet.create({
   buttonText: {
     paddingVertical: 15,
     paddingHorizontal: 10,
-    textAlign: "center",
+    textAlign: "center"
     // fontSize: 16,
   },
 
   buttonDenyText: {
     borderBottomLeftRadius: 8,
     backgroundColor: "#fff",
-    color: "#8f979a",
+    color: "#8f979a"
   },
   buttonConfirmText: {
     backgroundColor: "#fff",
@@ -109,6 +124,6 @@ const styles = StyleSheet.create({
   },
   buttonConfirmTextInvert: {
     backgroundColor: "#2196F3",
-    color: "#fff",
-  },
+    color: "#fff"
+  }
 });

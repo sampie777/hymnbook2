@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 
-import React, { useEffect } from "react";
-import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { routes } from "./navigation";
@@ -23,10 +23,14 @@ import SongListScreen from "./screens/SongListScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { rollbar } from "./scripts/rollbar";
 import AboutScreen from "./screens/about/AboutScreen";
+import SurveyComponent from "./components/Survey/SurveyComponent";
+import { Survey } from "./scripts/survey";
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
+  const [showSurvey, setShowSurvey] = useState(Survey.needToShow);
+
   useEffect(() => {
     onLaunch();
     return onExit;
@@ -60,48 +64,55 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <ErrorBoundary>
-        <NavigationContainer>
-          <Drawer.Navigator initialRouteName={routes.Search}
-                            drawerContent={CustomDrawerContent}>
-            <Drawer.Screen name={routes.Search} component={SearchScreen}
-                           options={{
-                             drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="search" size={size} color={color} style={styles.drawerIcon} />,
-                           }} />
-            <Drawer.Screen name={routes.SongList} component={SongListScreen}
-                           options={{
-                             title: "Song list",
-                             drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="list-ul" size={size} color={color} style={styles.drawerIcon} />,
-                           }} />
-            <Drawer.Screen name={routes.Import} component={DownloadSongsScreen}
-                           options={{
-                             drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="database" size={size} color={color} style={styles.drawerIcon} />,
-                           }} />
-            <Drawer.Screen name={routes.Settings} component={SettingsScreen}
-                           options={{
-                             drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="cogs" size={size} color={color} style={styles.drawerIcon} />,
-                           }} />
-            <Drawer.Screen name={routes.About} component={AboutScreen}
-                           options={{
-                             drawerIcon: ({ focused, color, size }) =>
-                               <Icon name="info" size={size} color={color} style={styles.drawerIcon} />,
-                           }} />
+        {!showSurvey ? undefined :
+          <SurveyComponent onCompleted={() => setShowSurvey(false)}
+                           onDenied={() => setShowSurvey(false)} />
+        }
 
-            {/* Hidden screens */}
-            <Drawer.Screen name={routes.Song} component={SongDisplayScreen}
-                           initialParams={{
-                             id: undefined,
-                             previousScreen: undefined,
-                             songListIndex: undefined,
-                           }}
-                           options={{
-                             hideInMenu: true,
-                           }} />
-          </Drawer.Navigator>
-        </NavigationContainer>
+        {showSurvey ? undefined :
+          <NavigationContainer>
+            <Drawer.Navigator initialRouteName={routes.Search}
+                              drawerContent={CustomDrawerContent}>
+              <Drawer.Screen name={routes.Search} component={SearchScreen}
+                             options={{
+                               drawerIcon: ({ focused, color, size }) =>
+                                 <Icon name="search" size={size} color={color} style={styles.drawerIcon} />,
+                             }} />
+              <Drawer.Screen name={routes.SongList} component={SongListScreen}
+                             options={{
+                               title: "Song list",
+                               drawerIcon: ({ focused, color, size }) =>
+                                 <Icon name="list-ul" size={size} color={color} style={styles.drawerIcon} />,
+                             }} />
+              <Drawer.Screen name={routes.Import} component={DownloadSongsScreen}
+                             options={{
+                               drawerIcon: ({ focused, color, size }) =>
+                                 <Icon name="database" size={size} color={color} style={styles.drawerIcon} />,
+                             }} />
+              <Drawer.Screen name={routes.Settings} component={SettingsScreen}
+                             options={{
+                               drawerIcon: ({ focused, color, size }) =>
+                                 <Icon name="cogs" size={size} color={color} style={styles.drawerIcon} />,
+                             }} />
+              <Drawer.Screen name={routes.About} component={AboutScreen}
+                             options={{
+                               drawerIcon: ({ focused, color, size }) =>
+                                 <Icon name="info" size={size} color={color} style={styles.drawerIcon} />,
+                             }} />
+
+              {/* Hidden screens */}
+              <Drawer.Screen name={routes.Song} component={SongDisplayScreen}
+                             initialParams={{
+                               id: undefined,
+                               previousScreen: undefined,
+                               songListIndex: undefined,
+                             }}
+                             options={{
+                               hideInMenu: true,
+                             }} />
+            </Drawer.Navigator>
+          </NavigationContainer>
+        }
       </ErrorBoundary>
 
       <StatusBar style={"auto"} hidden={false} />
@@ -116,6 +127,6 @@ const styles = StyleSheet.create({
   drawerIcon: {
     width: 30,
     marginRight: -10,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
