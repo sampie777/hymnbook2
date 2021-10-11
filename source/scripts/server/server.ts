@@ -3,7 +3,7 @@ import { Result } from "../utils";
 import { SongBundle } from "../../models/ServerSongsModel";
 
 export namespace Server {
-  export const fetchSongBundles = (): Promise<Result> => {
+  export const fetchSongBundles = (includeOther: boolean = false): Promise<Result> => {
     return api.songBundles.list()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
@@ -12,7 +12,12 @@ export namespace Server {
           throw new Error(data.data);
         }
 
-        return new Result({ success: true, data: data.content });
+        let bundles: Array<SongBundle> = data.content;
+        if (!includeOther) {
+          bundles = bundles.filter(it => it.name !== "Other")
+        }
+
+        return new Result({ success: true, data: bundles });
       })
       .catch(error => {
         console.error(`Error fetching song bundles`, error);
