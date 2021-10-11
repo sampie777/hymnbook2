@@ -6,7 +6,7 @@ export class Survey {
   }
 
   static needToShow() {
-    return !Settings.surveyCompleted;
+    return !Settings.surveyCompleted && Settings.appOpenedTimes > 4;
   }
 
   static complete() {
