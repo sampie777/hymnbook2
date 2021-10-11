@@ -8,6 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
+    "bundle": "cd android && ./gradlew bundleRelease",
     "build": "cd android && ./gradlew assembleRelease",
     "device-install": "adb -d install ./android/app/build/outputs/apk/release/app-release.apk"
   },
