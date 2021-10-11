@@ -79,8 +79,10 @@ Make sure keystore is correctly defined in:
 ## Upload to play store
 
 ```bash
+yarn bundle
+# OR
 cd android && ./gradlew bundleRelease
 ```
 
-Upload the .aab file from android/app/build/outputs/bundle/release/.
+Upload the .aab file from `android/app/build/outputs/bundle/release/`.
 
