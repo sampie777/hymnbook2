@@ -15,18 +15,20 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import { SongProcessor } from "../../scripts/songProcessor";
 import { Server } from "../../scripts/server/server";
 import { LocalSongBundleItem, SongBundleItem } from "./SongBundleItems";
+import LanguageSelectBar from "./LanguageSelectBar";
 
 interface ComponentProps {
 }
 
 const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [bundles, setBundles] = useState([]);
+  const [bundles, setBundles] = useState<Array<SongBundle>>([]);
   const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle>>([]);
   const [progressResult, setProgressResult] = useState("");
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<SongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
   const [requestDeleteAll, setRequestDeleteAll] = useState(false);
+  const [filterLanguage, setFilterLanguage] = useState("");
 
   useEffect(() => {
     onOpen();
@@ -50,8 +52,10 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
 
     if (result.data !== undefined) {
       setLocalBundles(result.data);
+      setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(result.data));
     } else {
       setLocalBundles([]);
+      setFilterLanguage("");
     }
     setIsLoading(false);
   };
@@ -163,6 +167,16 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
       });
   };
 
+  const getAllLanguagesFromBundles = (bundles: Array<SongBundle>) => {
+    const languages = SongProcessor.getAllLanguagesFromBundles(bundles);
+
+    if (languages.length > 0 && filterLanguage === "") {
+      setFilterLanguage(languages[0]);
+    }
+
+    return languages;
+  };
+
   return (
     <View style={styles.container}>
       <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
@@ -189,6 +203,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
                          maxDuration={5000} />
 
       <Text style={styles.informationText}>Select a bundle to download or delete:</Text>
+
+      <LanguageSelectBar languages={getAllLanguagesFromBundles(bundles)}
+                         selectedLanguage={filterLanguage}
+                         onLanguageClick={setFilterLanguage} />
+
       <ScrollView
         style={styles.listContainer}
         refreshControl={<RefreshControl onRefresh={fetchSongBundles}
@@ -200,14 +219,20 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
                                onPress={onLocalSongBundlePress} />)}
 
         {bundles.filter(it => !isBundleLocal(it))
+          .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((bundle: SongBundle) =>
             <SongBundleItem key={bundle.name}
                             bundle={bundle}
                             onPress={onSongBundlePress} />)}
 
-        {bundles.length > 0 ? null :
+        {bundles.length > 0 ? undefined :
           <Text style={styles.emptyListText}>
             {isLoading ? "Loading..." : "No online data available..."}
+          </Text>
+        }
+        {isLoading || bundles.length === 0 || bundles.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
+          <Text style={styles.emptyListText}>
+            No bundles found for language "{filterLanguage}"...
           </Text>
         }
       </ScrollView>
@@ -230,8 +255,10 @@ const styles = StyleSheet.create({
   },
 
   informationText: {
-    fontSize: 16,
-    padding: 20
+    fontSize: 15,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 15,
   },
 
   listContainer: {},
