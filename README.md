@@ -75,3 +75,12 @@ Make sure keystore is correctly defined in:
 - Match Android font families with IOS families.
 - Fix default sorting mechanism for song titles (102 is displayed before 2 but should be the other way around)
 - Add Hermes (https://reactnative.dev/docs/hermes) for decreased binary size and increased performance
+
+## Upload to play store
+
+```bash
+cd android && ./gradlew bundleRelease
+```
+
+Upload the .aab file from android/app/build/outputs/bundle/release/.
+
