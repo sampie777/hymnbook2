@@ -1,6 +1,7 @@
 import { SongBundle as BackendSongBundle } from "../models/ServerSongsModel";
 import Db from "./db/db";
 import { Song, SongBundle, Verse } from "../models/Songs";
+import { SongBundle as ServerSongBundle } from "../models/ServerSongsModel";
 import { dateFrom, Result } from "./utils";
 import { SongBundleSchema, SongSchema, VerseSchema } from "../models/SongsSchema";
 import SongList from "./songList/songList";
@@ -119,5 +120,36 @@ export namespace SongProcessor {
     SongList.cleanUpAllSongLists();
 
     return new Result({ success: true, message: `Deleted all ${songCount} songs for ${bundleName}` });
+  };
+
+  export const getAllLanguagesFromBundles = (bundles: Array<ServerSongBundle | SongBundle>) => {
+    if (bundles.length === 0) {
+      return [];
+    }
+
+    const languages: Array<string> = [];
+    bundles.forEach(it => {
+      if (!languages.includes(it.language)) {
+        languages.push(it.language);
+      }
+    });
+
+    return languages;
+  };
+
+  export const determineDefaultFilterLanguage = (bundles: Array<ServerSongBundle | SongBundle>) => {
+    if (bundles.length === 0) {
+      return "";
+    }
+
+    const languageCount = {};
+    bundles.forEach(it => {
+      // @ts-ignore
+      languageCount[it.language] = (languageCount[it.language] || 0) + 1;
+    });
+
+    const languageTopList = Object.entries(languageCount)
+      .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
+    return languageTopList[0][0];
   };
 }
