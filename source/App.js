@@ -46,6 +46,10 @@ export default function App() {
       .catch(e => {
         rollbar.error("Could not load settings from database: " + e.toString(), e);
         alert("Could not load settings from database: " + e);
+      })
+      .then(() => {
+        Settings.appOpenedTimes++;
+        Settings.store();
       });
 
     Db.songs.connect()

@@ -69,6 +69,9 @@ const SettingsScreen: React.FC = () => {
     <Header title={"Developer"} />
     <SettingSwitchComponent name={"Survey completed"}
                             sKey={"surveyCompleted"} />
+    <SettingComponent name={"App opened times"}
+                      sKey={"appOpenedTimes"}
+                      onPress={(setValue) => setValue(0)} />
   </>;
 
   return (

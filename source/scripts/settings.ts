@@ -66,6 +66,7 @@ class SettingsProvider {
 class SettingsClass {
   // System
   keepScreenAwake = true;
+  appOpenedTimes = 0;
 
   // Search
   maxSearchInputLength = 3;
