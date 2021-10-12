@@ -23,13 +23,12 @@ import SongListScreen from "./screens/SongListScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { rollbar } from "./scripts/rollbar";
 import AboutScreen from "./screens/about/AboutScreen";
-import SurveyComponent from "./components/Survey/SurveyComponent";
-import { Survey } from "./scripts/survey";
+import LoadingOverlay from "./components/LoadingOverlay";
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
-  const [showSurvey, setShowSurvey] = useState(Survey.needToShow);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     onLaunch();
@@ -50,13 +49,17 @@ export default function App() {
       .then(() => {
         Settings.appOpenedTimes++;
         Settings.store();
-      });
-
-    Db.songs.connect()
-      .catch(e => {
-        rollbar.error("Could not connect to local song database: " + e.toString(), e);
-        alert("Could not connect to local song database: " + e);
-      });
+      })
+      .finally(() =>
+        Db.songs.connect()
+          .catch(e => {
+            rollbar.error("Could not connect to local song database: " + e.toString(), e);
+            alert("Could not connect to local song database: " + e);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          }),
+      );
   };
 
   const onExit = () => {
@@ -68,12 +71,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <ErrorBoundary>
-        {!showSurvey ? undefined :
-          <SurveyComponent onCompleted={() => setShowSurvey(false)}
-                           onDenied={() => setShowSurvey(false)} />
-        }
+        <LoadingOverlay isVisible={isLoading} />
 
-        {showSurvey ? undefined :
+        {isLoading ? undefined :
           <NavigationContainer>
             <Drawer.Navigator initialRouteName={routes.Search}
                               drawerContent={CustomDrawerContent}>

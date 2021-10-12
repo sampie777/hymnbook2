@@ -34,15 +34,22 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
           <View style={styles.modalText}>{children}</View>
 
           <View style={styles.buttons}>
-            <Pressable style={styles.button}
-                       onPress={onClose}>
-              <Text style={[styles.buttonText, styles.buttonDenyText]}>{closeText}</Text>
-            </Pressable>
-            <Pressable style={styles.button}
-                       onPress={onConfirm}>
-              <Text
-                style={[styles.buttonText, styles.buttonConfirmText, (invertConfirmColor ? styles.buttonConfirmTextInvert : {})]}>{confirmText}</Text>
-            </Pressable>
+            {onClose === undefined ? undefined :
+              <Pressable style={[styles.button, (onConfirm !== undefined ? {} : styles.soloButton)]}
+                         onPress={onClose}>
+                <Text style={[styles.buttonText, styles.buttonDenyText]}>{closeText}</Text>
+              </Pressable>
+            }
+            {onConfirm === undefined ? undefined :
+              <Pressable style={styles.button}
+                         onPress={onConfirm}>
+                <Text
+                  style={[styles.buttonText,
+                    styles.buttonConfirmText,
+                    (invertConfirmColor ? styles.buttonConfirmTextInvert : {}),
+                    (onClose !== undefined ? {} : styles.soloButton)]}>{confirmText}</Text>
+              </Pressable>
+            }
           </View>
         </View>
       </View>
@@ -105,7 +112,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
     textAlign: "center"
-    // fontSize: 16,
   },
 
   buttonDenyText: {
@@ -125,5 +131,12 @@ const styles = StyleSheet.create({
   buttonConfirmTextInvert: {
     backgroundColor: "#2196F3",
     color: "#fff"
+  },
+
+  soloButton: {
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   }
 });

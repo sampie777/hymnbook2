@@ -9,6 +9,7 @@ import { SongSchema } from "../../models/SongsSchema";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 import { isPortraitMode } from "../../scripts/utils";
+import PopupsComponent from "../../components/Popups/PopupsComponent";
 
 
 const SearchScreen: React.FC<{ navigation: any }> =
@@ -96,6 +97,8 @@ const SearchScreen: React.FC<{ navigation: any }> =
 
     return (
       <View style={[styles.container, isPortrait ? {} : stylesLandscape.container]}>
+        <PopupsComponent navigation={navigation} />
+
         <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
           <View style={styles.inputContainer}>
             <Text style={styles.infoText}>Enter song number:</Text>
