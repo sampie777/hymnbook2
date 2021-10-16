@@ -4,9 +4,11 @@ import { displayName, homepage } from "../../../app.json";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { getVersion } from "react-native-device-info";
 import UrlLink  from "../../components/UrlLink";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { routes } from "../../navigation";
 
 
-const AboutScreen: React.FC = () => {
+const AboutScreen: React.FC<{ navigation: any }> = ({navigation}) => {
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>
@@ -61,6 +63,12 @@ const AboutScreen: React.FC = () => {
         <UrlLink url={homepage}>
           <Text style={[styles.contentText, styles.webpageLink]}>{homepage}</Text>
         </UrlLink>
+
+        <TouchableOpacity onPress={() => navigation.navigate(routes.PrivacyPolicy)}>
+          <Text style={[styles.contentText, styles.webpageLink]}>
+            Privacy Policy
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   </ScrollView>);
