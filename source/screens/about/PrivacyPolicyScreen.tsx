@@ -10,7 +10,7 @@ const PrivacyPolicyScreen: React.FC = () => {
   return (<ScrollView style={styles.container}>
     <View style={styles.content}>
       <Text style={[styles.contentText]}>
-        Privacy is important, and we value it. That's why we want you to know what you can expect regarding your privacy while using this app. In short: we won't know who you are and what we know (which is very little), we will keep to ourselves.
+        INTRODUCTION. Privacy is important, and we value it. That's why we want you to know what you can expect regarding your privacy while using this app. In short: we won't know who you are and what we know (which is very little), we will keep to ourselves.
       </Text>
       <Text style={[styles.contentText]}>
         BACKEND. This app or it's backend doesn't collect any personal information from you. The authentication with the backend
@@ -48,13 +48,13 @@ const styles = StyleSheet.create({
   container: {},
 
   content: {
-    paddingTop: 70,
+    paddingTop: 50,
     paddingBottom: 200
   },
   contentText: {
     fontFamily: "sans-serif-light",
     lineHeight: 25,
-    marginBottom: 25,
+    marginBottom: 30,
     paddingHorizontal: 30
   },
   webpageLink: {
