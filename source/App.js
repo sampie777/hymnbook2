@@ -24,6 +24,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { rollbar } from "./scripts/rollbar";
 import AboutScreen from "./screens/about/AboutScreen";
 import LoadingOverlay from "./components/LoadingOverlay";
+import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -111,6 +112,10 @@ export default function App() {
                                previousScreen: undefined,
                                songListIndex: undefined,
                              }}
+                             options={{
+                               hideInMenu: true,
+                             }} />
+              <Drawer.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen}
                              options={{
                                hideInMenu: true,
                              }} />
