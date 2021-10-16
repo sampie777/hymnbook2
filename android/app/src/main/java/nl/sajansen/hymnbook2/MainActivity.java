@@ -1,4 +1,4 @@
-package com.hymnbook2;
+package nl.sajansen.hymnbook2;
 
 import com.facebook.react.ReactActivity;
 
