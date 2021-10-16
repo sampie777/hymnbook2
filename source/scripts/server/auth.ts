@@ -61,6 +61,7 @@ export class ServerAuth {
   static forgetCredentials() {
     Settings.authJwt = "";
     Settings.authRequestId = "";
+    Settings.authStatus = AccessRequestStatus.UNKNOWN;
   }
 
   static _requestAccess(): Promise<string> {
