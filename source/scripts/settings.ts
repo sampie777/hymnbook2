@@ -75,6 +75,7 @@ class SettingsClass {
   // Songs
   songScale = 1.0;
   scrollToTopAnimated = true;
+  songFadeIn = true;
 
   // Backend
   songBundlesApiUrl = "http://jschedule.sajansen.nl";
