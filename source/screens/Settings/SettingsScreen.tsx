@@ -91,10 +91,12 @@ const SettingsScreen: React.FC = () => {
                           sKey={"songScale"}
                           onPress={(setValue) => setValue(1)}
                           valueRender={(it) => Math.round(it * 100) + " %"} />
-        <SettingSwitchComponent name={"Animate scroll to top"}
-                                sKey={"scrollToTopAnimated"} />
         <SettingSwitchComponent name={"Keep screen on"}
                                 sKey={"keepScreenAwake"} />
+        <SettingSwitchComponent name={"Animate scroll to top"}
+                                sKey={"scrollToTopAnimated"} />
+        <SettingSwitchComponent name={"Animate song loading"}
+                                sKey={"songFadeIn"} />
 
         <Header title={"Backend"} />
         <SettingSwitchComponent name={"Use authentication with backend"}

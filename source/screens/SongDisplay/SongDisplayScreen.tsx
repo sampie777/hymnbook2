@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { BackHandler, FlatList, StyleSheet, View } from "react-native";
 import { Song, Verse } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
@@ -14,12 +14,21 @@ import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
 import { SongVerse } from "../../models/ServerSongsModel";
-import Animated  from "react-native-reanimated";
+import Animated, { Easing } from "react-native-reanimated";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 
-const Footer: React.FC = () => (
-  <View style={styles.footer} />
-);
+const Footer: React.FC<{
+  opacity: Animated.Value<number>
+}> =
+  ({ opacity }) => {
+    const animatedStyle = {
+      footer: {
+        opacity: opacity
+      }
+    };
+
+    return (<Animated.View style={[styles.footer, animatedStyle.footer]} />);
+  };
 
 interface SongDisplayScreenProps {
   route: any;
@@ -27,9 +36,10 @@ interface SongDisplayScreenProps {
 }
 
 const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {
+  const flatListComponentRef = useRef<FlatList>();
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const animatedScale = new Animated.Value(Settings.songScale);
-  const flatListComponentRef = useRef<FlatList>();
+  const animatedOpacity = new Animated.Value(Settings.songFadeIn ? 0 : 1);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -50,6 +60,17 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     setSong(undefined);
     navigation.setOptions({ title: "" });
   };
+
+  useEffect(() => {
+    if (Settings.songFadeIn) {
+      animate();
+    } else {
+      animatedOpacity.setValue(1);
+    }
+
+    // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
+    setTimeout(() => scrollToTop(), 50);
+  }, [song?.id]);
 
   const onBackPress = (): boolean => {
     if (route.params.previousScreen === undefined) {
@@ -86,13 +107,13 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
     setSong(newSong);
     navigation.setOptions({ title: newSong?.name });
-    scrollToTop();
   };
 
   const renderContentItem = ({ item }: { item: Verse }) => {
     return (
       <ContentVerse title={item.name}
                     content={item.content}
+                    opacity={animatedOpacity}
                     scale={animatedScale} />
     );
   };
@@ -106,13 +127,22 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   };
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    animatedScale.setValue(Settings.songScale * event.nativeEvent.scale)
-  }
+    animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
+  };
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    if (event.nativeEvent.state === State.END){
+    if (event.nativeEvent.state === State.END) {
       Settings.songScale *= event.nativeEvent.scale;
     }
+  };
+
+  const animate = () => {
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 180,
+      easing: Easing.inOut(Easing.ease)
+    })
+      .start();
   };
 
   return (
@@ -131,12 +161,13 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
           renderItem={renderContentItem}
           contentContainerStyle={styles.contentSectionList}
           keyExtractor={item => item.id.toString()}
-          ListFooterComponent={<Footer />} />
+          ListFooterComponent={<Footer opacity={animatedOpacity} />} />
 
         <LoadingOverlay text={null}
                         isVisible={
                           route.params.id !== undefined
-                          && (song === undefined || song.id !== route.params.id)} />
+                          && (song === undefined || song.id !== route.params.id)}
+                        animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>
   );
