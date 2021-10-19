@@ -1,25 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, View, ViewToken } from "react-native";
 import { Song, Verse } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
 import LoadingOverlay from "../../components/LoadingOverlay";
-import { routes } from "../../navigation";
 import Settings from "../../scripts/settings";
 import { GestureEvent, PinchGestureHandler, State } from "react-native-gesture-handler";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { SongListSongModel } from "../../models/SongListModel";
-import SongListControls from "./SongListControls";
 import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
 import { SongVerse } from "../../models/ServerSongsModel";
 import Animated, { Easing } from "react-native-reanimated";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
+import SongControls from "./SongControls";
 
-const Footer: React.FC<{
-  opacity: Animated.Value<number>
-}> =
+const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
     const animatedStyle = {
       footer: {
@@ -38,8 +34,9 @@ interface SongDisplayScreenProps {
 const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {
   const flatListComponentRef = useRef<FlatList>();
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
+  const [viewIndex, setViewIndex] = useState(0);
   const animatedScale = new Animated.Value(Settings.songScale);
-  const animatedOpacity = new Animated.Value(Settings.songFadeIn ? 0 : 1);
+  const animatedOpacity = new Animated.Value<number>(1);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -81,13 +78,6 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     return true;
   };
 
-  const scrollToTop = () => {
-    flatListComponentRef.current?.scrollToOffset({
-      offset: 0,
-      animated: Settings.scrollToTopAnimated
-    });
-  };
-
   const loadSong = () => {
     if (!Db.songs.isConnected()) {
       return;
@@ -109,6 +99,16 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     navigation.setOptions({ title: newSong?.name });
   };
 
+  const animate = () => {
+    animatedOpacity.setValue(0);
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 180,
+      easing: Easing.inOut(Easing.ease)
+    })
+      .start();
+  };
+
   const renderContentItem = ({ item }: { item: Verse }) => {
     return (
       <ContentVerse title={item.name}
@@ -116,14 +116,6 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
                     opacity={animatedOpacity}
                     scale={animatedScale} />
     );
-  };
-
-  const goToSongListSong = (songListSong: SongListSongModel) => {
-    navigation.navigate(routes.Song, {
-      id: songListSong.song.id,
-      previousScreen: routes.SongList,
-      songListIndex: songListSong.index
-    });
   };
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
@@ -136,13 +128,24 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     }
   };
 
-  const animate = () => {
-    Animated.timing(animatedOpacity, {
-      toValue: 1,
-      duration: 180,
-      easing: Easing.inOut(Easing.ease)
-    })
-      .start();
+  const onListViewableItemsChanged = React.useRef(
+    ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
+      if (viewableItems.length === 0) {
+        setViewIndex(0);
+      } else if (viewableItems[0].index !== null) {
+        setViewIndex(viewableItems[0].index);
+      }
+    });
+
+  const listViewabilityConfig = React.useRef({
+    itemVisiblePercentThreshold: 50
+  });
+
+  const scrollToTop = () => {
+    flatListComponentRef.current?.scrollToOffset({
+      offset: 0,
+      animated: Settings.animateScrolling
+    });
   };
 
   return (
@@ -150,17 +153,31 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
       onGestureEvent={_onPanGestureEvent}
       onHandlerStateChange={_onPinchHandlerStateChange}>
       <View style={styles.container}>
-        {route.params.songListIndex === undefined ? undefined :
-          <SongListControls index={route.params.songListIndex}
-                            goToSongListSong={goToSongListSong} />}
+        <SongControls navigation={navigation}
+                      songListIndex={route.params.songListIndex}
+                      song={song}
+                      listViewIndex={viewIndex}
+                      flatListComponentRef={flatListComponentRef.current} />
 
         <FlatList
           // @ts-ignore
           ref={flatListComponentRef}
           data={(song?.verses as (Realm.Results<SongVerse> | undefined))?.sorted("index")}
           renderItem={renderContentItem}
-          contentContainerStyle={styles.contentSectionList}
+          initialNumToRender={20}
           keyExtractor={item => item.id.toString()}
+          contentContainerStyle={styles.contentSectionList}
+          onViewableItemsChanged={onListViewableItemsChanged.current}
+          viewabilityConfig={listViewabilityConfig.current}
+          onScrollToIndexFailed={(error) => {
+            if (song === undefined || error.index < song.verses.length - 1) {
+              return;
+            }
+
+            flatListComponentRef.current?.scrollToEnd({
+              animated: Settings.animateScrolling
+            });
+          }}
           ListFooterComponent={<Footer opacity={animatedOpacity} />} />
 
         <LoadingOverlay text={null}
@@ -186,7 +203,7 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingTop: 20,
     paddingRight: 20,
-    paddingBottom: 300
+    paddingBottom: 200
   },
 
   footer: {
@@ -194,6 +211,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     width: "50%",
     marginTop: 70,
+    marginBottom: 100,
     alignSelf: "center"
   }
 });
