@@ -1,7 +1,15 @@
 import Db from "../scripts/db/db";
 import { SongBundleSchema, SongSchema, VerseSchema } from "./SongsSchema";
 
-export class Verse {
+export interface VerseProps {
+  id: number;
+  name: string;
+  content: string;
+  language: string;
+  index: number;
+}
+
+export class Verse implements VerseProps {
   id: number;
   name: string;
   content: string;

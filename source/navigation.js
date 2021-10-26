@@ -1,4 +1,5 @@
 export const routes = {
+    Home: "Home",
     Search: "Search",
     SongList: "SongList",
     Import: "Databases",
@@ -6,4 +7,5 @@ export const routes = {
     About: "About",
     PrivacyPolicy: "Privacy policy",
     Song: "Song",
+    VersePicker: "VersePicker",
 };

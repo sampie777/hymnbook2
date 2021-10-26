@@ -1,12 +1,11 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
-import { SongVerse } from "../../../models/ServerSongsModel";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Verse } from "../../../models/Songs";
 
 interface ComponentProps {
-  verse: SongVerse;
+  verse: Verse;
   isSelected?: boolean;
-  onPress?: (verse: SongVerse) => void;
+  onPress?: (verse: Verse) => void;
 }
 
 const VersePickerItem: React.FC<ComponentProps> = ({
@@ -19,9 +18,18 @@ const VersePickerItem: React.FC<ComponentProps> = ({
     return null;
   }
 
+  // Shorten names
+  const displayName = verse.name.trim()
+    .replace(/verse */gi, "V")
+    .replace(/chorus */gi, "C")
+    .replace(/bridge */gi, "B")
+    .replace(/end */gi, "B")
+
   return (<TouchableOpacity style={[styles.container, (!isSelected ? {} : styles.containerSelected)]}
                             onPress={() => onPress?.(verse)}>
-    <Text>{verse.name}</Text>
+    <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}>
+      {displayName}
+    </Text>
   </TouchableOpacity>);
 };
 
@@ -30,19 +38,28 @@ export default VersePickerItem;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#bbb",
-    paddingHorizontal: 10,
-    paddingVertical: 7,
     marginHorizontal: 5,
-    marginVertical: 5
+    marginVertical: 5,
   },
-  containerSelected: {
+  containerSelected: {},
+
+  text: {
+    borderWidth: 1,
+    borderRadius: 3,
+    borderColor: "#bbb",
+    paddingHorizontal: 12,
+    paddingVertical: 13,
+    minHeight: 47,
+    minWidth: 50,
+    fontSize: 14,
+    textAlign: "center",
+    color: "#373737"
+  },
+  textSelected: {
     backgroundColor: "dodgerblue",
     color: "#fff",
-    borderColor: "#f00"
+    borderColor: "#167fe5"
   }
 });

@@ -102,7 +102,6 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
       }
       navigation.navigate(routes.Song, {
         id: song.id,
-        previousScreen: routes.SongList,
         songListIndex: index
       });
     };
