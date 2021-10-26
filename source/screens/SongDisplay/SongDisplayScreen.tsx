@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, View, ViewToken } from "react-native";
-import { Song, Verse } from "../../models/Songs";
+import { FlatList, StyleSheet, View, ViewToken } from "react-native";
+import { Song, Verse, VerseProps } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -10,10 +10,11 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
-import { SongVerse } from "../../models/ServerSongsModel";
 import Animated, { Easing } from "react-native-reanimated";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 import SongControls from "./SongControls";
+import { routes } from "../../navigation";
+import HeaderIconButton from "../../components/HeaderIconButton";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
@@ -42,20 +43,21 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     React.useCallback(() => {
       onFocus();
       return onBlur;
-    }, [route.params.id, route.params.previousScreen])
+    }, [route.params.id])
   );
 
   const onFocus = () => {
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
     keepScreenAwake(Settings.keepScreenAwake);
     loadSong();
   };
 
   const onBlur = () => {
-    BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     keepScreenAwake(false);
     setSong(undefined);
-    navigation.setOptions({ title: "" });
+    navigation.setOptions({
+      title: "",
+      headerRight: undefined
+    });
   };
 
   useEffect(() => {
@@ -69,14 +71,27 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     setTimeout(() => scrollToTop(), 50);
   }, [song?.id]);
 
-  const onBackPress = (): boolean => {
-    if (route.params.previousScreen === undefined) {
-      return false;
+  useEffect(() => {
+    if (song === undefined) {
+      navigation.setOptions({
+        title: "",
+      });
+      return;
     }
 
-    navigation.navigate(route.params.previousScreen);
-    return true;
-  };
+    let title = song?.name;
+
+    if (route.params.selectedVerses !== undefined && route.params.selectedVerses.length > 0) {
+      title += ": " + (route.params.selectedVerses as Array<VerseProps>)
+        .filter(it => it.name.toLowerCase().includes("verse"))
+        .map(it => it.name.replace(/verse */gi, ""))
+        .join(", ")
+    }
+
+    navigation.setOptions({
+      title: title,
+    });
+  }, [song?.name, route.params.selectedVerses]);
 
   const loadSong = () => {
     if (!Db.songs.isConnected()) {
@@ -96,7 +111,34 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     }
 
     setSong(newSong);
-    navigation.setOptions({ title: newSong?.name });
+    navigation.setOptions({
+      title: newSong?.name,
+      headerRight: () => (
+        <HeaderIconButton icon={"list-ol"} onPress={() => openVersePicker(newSong)} />
+      )
+    });
+  };
+
+  const openVersePicker = (useSong?: Song) => {
+    if (useSong === undefined) {
+      console.warn("Can't open versepicker for undefined song");
+      return;
+    }
+
+    const verseParams = useSong?.verses.map(it => {
+      return {
+        id: it.id,
+        name: it.name,
+        content: "",
+        language: it.language,
+        index: it.index
+      } as VerseProps;
+    });
+
+    navigation.navigate(routes.VersePicker, {
+      verses: verseParams,
+      selectedVerses: route.params.selectedVerses
+    });
   };
 
   const animate = () => {
@@ -142,10 +184,19 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   });
 
   const scrollToTop = () => {
-    flatListComponentRef.current?.scrollToOffset({
-      offset: 0,
-      animated: Settings.animateScrolling
-    });
+    if (song === undefined
+      || song?.verses === undefined || song?.verses.length === 0
+      || route.params.selectedVerses === undefined || route.params.selectedVerses.length === 0) {
+      flatListComponentRef.current?.scrollToOffset({
+        offset: 0,
+        animated: Settings.animateScrolling
+      });
+    } else {
+      flatListComponentRef.current?.scrollToIndex({
+        index: song?.verses.findIndex(it => it.id === route.params.selectedVerses[0].id) || 0,
+        animated: Settings.animateScrolling
+      });
+    }
   };
 
   return (
@@ -162,7 +213,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
         <FlatList
           // @ts-ignore
           ref={flatListComponentRef}
-          data={(song?.verses as (Realm.Results<SongVerse> | undefined))?.sorted("index")}
+          data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
           renderItem={renderContentItem}
           initialNumToRender={20}
           keyExtractor={item => item.id.toString()}

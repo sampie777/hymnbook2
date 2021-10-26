@@ -32,7 +32,6 @@ const SongControls: React.FC<SongControlsProps> =
     const goToSongListSong = (songListSong: SongListSongModel) => {
       navigation.navigate(routes.Song, {
         id: songListSong.song.id,
-        previousScreen: routes.SongList,
         songListIndex: songListSong.index
       });
     };
