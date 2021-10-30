@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 14,
+    fontSize: 16,
     textAlign: "center",
     color: "#373737"
   },
