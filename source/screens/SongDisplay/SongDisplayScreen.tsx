@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
 
   contentSectionList: {
     paddingLeft: 30,
-    paddingTop: 20,
+    paddingTop: 5,
     paddingRight: 20,
     paddingBottom: 200
   },
