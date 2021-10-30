@@ -2,6 +2,8 @@
 
 _App name may vary on project name_
 
+Play store: [https://play.google.com/store/apps/details?id=nl.sajansen.hymnbook2](https://play.google.com/store/apps/details?id=nl.sajansen.hymnbook2)
+
 ## Develop
 
 ### Environment
@@ -85,4 +87,11 @@ cd android && ./gradlew bundleRelease
 ```
 
 Upload the .aab file from `android/app/build/outputs/bundle/release/`.
+
+
+### Share
+
+#### QR coe
+
+If package name changes, create a new QR code at: https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder
 
