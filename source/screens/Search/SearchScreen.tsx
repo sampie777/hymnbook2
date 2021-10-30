@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
-import { routes } from "../../navigation";
+import { SongRouteParams, routes } from "../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import Settings from "../../scripts/settings";
 import { SongSchema } from "../../models/SongsSchema";
@@ -80,7 +80,7 @@ const SearchScreen: React.FC<{ navigation: any }> =
         return;
       }
 
-      const results = Db.songs.realm().objects(SongSchema.name)
+      const results = Db.songs.realm().objects<Song>(SongSchema.name)
         .sorted("name")
         .filtered(`name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
 
@@ -88,7 +88,7 @@ const SearchScreen: React.FC<{ navigation: any }> =
     };
 
     const onSearchResultItemPress = (song: Song) => {
-      navigation.navigate(routes.Song, { id: song.id });
+      navigation.navigate(routes.Song, { id: song.id } as SongRouteParams);
     };
 
     const renderSearchResultItem = ({ item }: { item: Song }) => (

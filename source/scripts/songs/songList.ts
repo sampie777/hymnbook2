@@ -1,7 +1,8 @@
-import { Song } from "../../models/Songs";
+import { Song, Verse } from "../../models/Songs";
 import Db from "../db/db";
-import { SongListModel, SongListSongModel } from "../../models/SongListModel";
-import { SongListModelSchema } from "../../models/SongListModelSchema";
+import { SongListModel, SongListSongModel, SongListVerseModel } from "../../models/SongListModel";
+import { SongListModelSchema, SongListVerseModelSchema } from "../../models/SongListModelSchema";
+import { VerseSchema } from "../../models/SongsSchema";
 
 export default class SongList {
 
@@ -20,7 +21,7 @@ export default class SongList {
   }
 
   static getAllSongLists(): Realm.Results<SongListModel> {
-    return Db.songs.realm().objects(SongListModelSchema.name) as Realm.Results<SongListModel>;
+    return Db.songs.realm().objects<SongListModel>(SongListModelSchema.name);
   }
 
   static getFirstSongList(): SongListModel | undefined {
@@ -87,25 +88,50 @@ export default class SongList {
     this.getAllSongLists().forEach(it => this.cleanUpSongListFromNullsAndCorrectIndices(it));
   }
 
-  static previousSong(currentIndex: number): SongListSongModel | undefined {
+  static getSongAtIndex(index: number): SongListSongModel | undefined {
     const songList = this.getFirstSongList();
     if (songList === undefined) return undefined;
 
-    if (currentIndex === 0) {
+    if (index < 0 || index > songList.songs.length) {
       return undefined;
     }
 
-    return songList.songs.find(it => it.index === currentIndex - 1);
+    return songList.songs.find(it => it.index === index);
+  }
+
+  static previousSong(currentIndex: number): SongListSongModel | undefined {
+    return this.getSongAtIndex(currentIndex - 1);
   }
 
   static nextSong(currentIndex: number): SongListSongModel | undefined {
-    const songList = this.getFirstSongList();
-    if (songList === undefined) return undefined;
+    return this.getSongAtIndex(currentIndex + 1);
+  }
 
-    if (currentIndex === songList.songs.length - 1) {
-      return undefined;
+  static saveSelectedVersesForSong(index: number, verses: Array<Verse>) {
+    const songListSong = SongList.getSongAtIndex(index);
+    if (songListSong === undefined) {
+      return;
     }
 
-    return songList.songs.find(it => it.index === currentIndex + 1);
-  }
+    if (verses.length === 0) {
+      Db.songs.realm().write(() => {
+        Db.songs.realm().delete(songListSong.selectedVerses);
+      });
+      return;
+    }
+
+    // "id IN [..]" currently not supported by Realm.
+    // See: https://github.com/realm/realm-js/issues/2781#issuecomment-607213640
+    const idQuery = verses.map(it => `id = ${it.id}`).join(" OR ");
+
+    const dbVerses = Db.songs.realm().objects<Verse>(VerseSchema.name)
+      .filtered(`(${idQuery})`)
+      .sorted("index");
+
+    Db.songs.realm().write(() => {
+      Db.songs.realm().delete(songListSong.selectedVerses);
+
+      dbVerses.forEach(it => songListSong.selectedVerses.push(new SongListVerseModel(it)));
+    });
+  };
 }

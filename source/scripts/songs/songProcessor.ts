@@ -34,7 +34,7 @@ export namespace SongProcessor {
     }
 
     const existingBundle = Db.songs.realm()
-      .objects(SongBundleSchema.name)
+      .objects<SongBundle>(SongBundleSchema.name)
       .filtered(`name = "${bundle.name}"`);
     if (existingBundle.length > 0) {
       return new Result({ success: false, message: `Bundle ${bundle.name} already exists` });

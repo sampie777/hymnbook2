@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BackHandler, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Db from "../scripts/db/db";
 import { Song } from "../models/Songs";
-import { routes } from "../navigation";
+import { SongRouteParams, routes } from "../navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useFocusEffect } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -103,7 +103,7 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
       navigation.navigate(routes.Song, {
         id: song.id,
         songListIndex: index
-      });
+      } as SongRouteParams);
     };
 
     const renderSongListItem = ({ item }: { item: SongListSongModel }) => (

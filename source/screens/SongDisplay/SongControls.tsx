@@ -3,7 +3,7 @@ import { SongListSongModel } from "../../models/SongListModel";
 import SongList from "../../scripts/songs/songList";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { routes } from "../../navigation";
+import { SongRouteParams, routes } from "../../navigation";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import Settings from "../../scripts/settings";
 import { Song, Verse } from "../../models/Songs";
@@ -34,8 +34,9 @@ const SongControls: React.FC<SongControlsProps> =
     const goToSongListSong = (songListSong: SongListSongModel) => {
       navigation.navigate(routes.Song, {
         id: songListSong.song.id,
-        songListIndex: songListSong.index
-      });
+        songListIndex: songListSong.index,
+        selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
+      } as SongRouteParams);
     };
 
     const canJumpToNextVerse = () => {
