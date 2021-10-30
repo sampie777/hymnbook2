@@ -17,7 +17,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const verses = route.params.verses;
 
   useEffect(() => {
-    // Set the callback function for the button in this hook, so the function will use the updated values. Strange behaviour, I know..
+    // Set the callback function for the button in this hook,
+    // so the function will use the updated values. Strange behaviour, I know..
     navigation.setOptions({
       headerRight: () => (
         <HeaderIconButton icon={"check"} onPress={submit} />
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
 
   verseList: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     flexWrap: "wrap",
     paddingHorizontal: 20,

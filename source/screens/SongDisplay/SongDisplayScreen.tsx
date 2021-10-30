@@ -15,6 +15,7 @@ import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/sr
 import SongControls from "./SongControls";
 import { routes } from "../../navigation";
 import HeaderIconButton from "../../components/HeaderIconButton";
+import { generateSongTitle } from "../../scripts/songs/utils";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
@@ -79,14 +80,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
       return;
     }
 
-    let title = song?.name;
-
-    if (route.params.selectedVerses !== undefined && route.params.selectedVerses.length > 0) {
-      title += ": " + (route.params.selectedVerses as Array<VerseProps>)
-        .filter(it => it.name.toLowerCase().includes("verse"))
-        .map(it => it.name.replace(/verse */gi, ""))
-        .join(", ")
-    }
+    const title = generateSongTitle(song, route.params.selectedVerses);
 
     navigation.setOptions({
       title: title,
