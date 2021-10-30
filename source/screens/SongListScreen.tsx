@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BackHandler, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Db from "../scripts/db/db";
-import { Song } from "../models/Songs";
+import { Song, Verse } from "../models/Songs";
 import { SongRouteParams, routes } from "../navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useFocusEffect } from "@react-navigation/native";
@@ -10,6 +10,7 @@ import SongList from "../scripts/songs/songList";
 import { SongListSongModel } from "../models/SongListModel";
 import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../models/SongListModelSchema";
+import { generateSongTitle } from "../scripts/songs/utils";
 
 const DeleteModeButton: React.FC<{ callback: () => void }> =
   ({ callback }) => (
@@ -23,13 +24,15 @@ const DeleteModeButton: React.FC<{ callback: () => void }> =
 
 const SongItem: React.FC<{
   index: number,
-  song: Song,
-  onPress: (index: number, song: Song) => void,
+  songListSong: SongListSongModel,
+  onPress: (index: number, songListSong: SongListSongModel) => void,
   showDeleteButton: boolean,
 }> =
-  ({ index, song, onPress, showDeleteButton }) => (
-    <TouchableOpacity onPress={() => onPress(index, song)} style={styles.songListItem}>
-      <Text style={styles.songListItemText}>{song.name}</Text>
+  ({ index, songListSong, onPress, showDeleteButton }) => (
+    <TouchableOpacity onPress={() => onPress(index, songListSong)} style={styles.songListItem}>
+      <Text style={styles.songListItemText}>
+        {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
+      </Text>
 
       {!showDeleteButton ? undefined :
         <View style={styles.songListItemButton}>
@@ -96,19 +99,20 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
       reloadSongList();
     };
 
-    const onSearchResultItemPress = (index: number, song: Song) => {
+    const onSearchResultItemPress = (index: number, songListSong: SongListSongModel) => {
       if (isDeleteMode) {
         return SongList.deleteSongAtIndex(index);
       }
       navigation.navigate(routes.Song, {
-        id: song.id,
-        songListIndex: index
+        id: songListSong.song.id,
+        songListIndex: index,
+        selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
       } as SongRouteParams);
     };
 
     const renderSongListItem = ({ item }: { item: SongListSongModel }) => (
       <SongItem index={item.index}
-                song={item.song}
+                songListSong={item}
                 onPress={onSearchResultItemPress}
                 showDeleteButton={isDeleteMode} />
     );
