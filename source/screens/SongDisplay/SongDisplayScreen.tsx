@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, View, ViewToken } from "react-native";
-import { Song, Verse, VerseProps } from "../../models/Songs";
+import { Song, Verse } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -13,7 +13,7 @@ import { keepScreenAwake } from "../../scripts/utils";
 import Animated, { Easing } from "react-native-reanimated";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 import SongControls from "./SongControls";
-import { routes } from "../../navigation";
+import { routes, VersePickerRouteParams } from "../../navigation";
 import HeaderIconButton from "../../components/HeaderIconButton";
 import { generateSongTitle } from "../../scripts/songs/utils";
 
@@ -69,7 +69,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     }
 
     // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-    setTimeout(() => scrollToTop(), 50);
+    setTimeout(() => scrollToTop(), 150);
   }, [song?.id]);
 
   useEffect(() => {
@@ -120,20 +120,13 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
       return;
     }
 
-    const verseParams = useSong?.verses.map(it => {
-      return {
-        id: it.id,
-        name: it.name,
-        content: "",
-        language: it.language,
-        index: it.index
-      } as VerseProps;
-    });
+    const verseParams = useSong?.verses.map(it => Verse.toObject(it));
 
     navigation.navigate(routes.VersePicker, {
       verses: verseParams,
-      selectedVerses: route.params.selectedVerses
-    });
+      selectedVerses: route.params.selectedVerses,
+      songListIndex: route.params.songListIndex
+    } as VersePickerRouteParams);
   };
 
   const animate = () => {

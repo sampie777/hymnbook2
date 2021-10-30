@@ -1,21 +1,38 @@
 import Db from "../scripts/db/db";
-import { Song } from "./Songs";
-import { SongListModelSchema, SongListSongModelSchema } from "./SongListModelSchema";
+import { Song, Verse } from "./Songs";
+import { SongListModelSchema, SongListSongModelSchema, SongListVerseModelSchema } from "./SongListModelSchema";
+
+
+export class SongListVerseModel {
+  id: number;
+  verse: Verse;
+
+  constructor(
+    verse: Verse,
+    id = Db.songs.getIncrementedPrimaryKey(SongListVerseModelSchema)
+  ) {
+    this.id = id;
+    this.verse = verse;
+  }
+}
 
 
 export class SongListSongModel {
   id: number;
   index: number;
   song: Song;
+  selectedVerses: Array<SongListVerseModel>;
 
   constructor(
     index: number,
     song: Song,
+    selectedVerses: Array<SongListVerseModel> = [],
     id = Db.songs.getIncrementedPrimaryKey(SongListSongModelSchema)
   ) {
     this.id = id;
     this.index = index;
     this.song = song;
+    this.selectedVerses = selectedVerses;
   }
 }
 

@@ -34,12 +34,15 @@ class SettingsProvider {
       return Settings[key];
     }
 
-    const value = Db.settings.realm().objects(SettingSchema.name).filtered(`key = "${key}"`);
+    const value = Db.settings.realm()
+      .objects<Setting>(SettingSchema.name)
+      .filtered(`key = "${key}"`);
+
     if (value === null || value === undefined || value[0] === undefined) {
       // @ts-ignore
       return Settings[key];
     }
-    return (value[0] as unknown as Setting).value;
+    return value[0].value;
   }
 
   static getNumber(key: string): number | undefined {

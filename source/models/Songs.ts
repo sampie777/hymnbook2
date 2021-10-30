@@ -29,6 +29,16 @@ export class Verse implements VerseProps {
     this.language = language;
     this.index = index;
   }
+
+  static toObject(verse: VerseProps): VerseProps {
+    return {
+      id: verse.id,
+      name: verse.name,
+      content: verse.content,
+      language: verse.language,
+      index: verse.index
+    } as VerseProps;
+  }
 }
 
 export class Song {

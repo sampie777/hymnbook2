@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import VersePickerItem from "./VersePickerItem";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { routes } from "../../../navigation";
-import { VerseProps } from "../../../models/Songs";
+import { SongRouteParams, routes } from "../../../navigation";
+import { Verse, VerseProps } from "../../../models/Songs";
 import HeaderIconButton from "../../../components/HeaderIconButton";
+import SongList from "../../../scripts/songs/songList";
 
 interface ComponentProps {
   route: any;
@@ -14,7 +15,8 @@ interface ComponentProps {
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
-  const verses = route.params.verses;
+  const verses: Array<Verse> = route.params.verses;
+  const songListIndex: number | undefined = route.params.songListIndex;
 
   useEffect(() => {
     // Set the callback function for the button in this hook,
@@ -39,15 +41,19 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const isVerseListed = (verse: VerseProps): boolean => {
-    return selectedVerses.some(it => it.id === verse.id)
+    return selectedVerses.some(it => it.id === verse.id);
   };
 
   const submit = () => {
+    if (songListIndex !== undefined) {
+      SongList.saveSelectedVersesForSong(songListIndex, selectedVerses);
+    }
+
     navigation.navigate({
       name: routes.Song,
       params: {
         selectedVerses: selectedVerses
-      },
+      } as SongRouteParams,
       merge: true // Navigate 'back'
     });
   };
