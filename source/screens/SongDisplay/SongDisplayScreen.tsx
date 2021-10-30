@@ -75,7 +75,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   useEffect(() => {
     if (song === undefined) {
       navigation.setOptions({
-        title: ""
+        title: "",
+        headerRight: undefined
       });
       return;
     }
@@ -83,7 +84,10 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     const title = generateSongTitle(song, route.params.selectedVerses);
 
     navigation.setOptions({
-      title: title
+      title: title,
+      headerRight: () => (
+        <HeaderIconButton icon={"list-ol"} onPress={() => openVersePicker(song)} />
+      )
     });
   }, [song?.name, route.params.selectedVerses]);
 
@@ -106,10 +110,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
     setSong(newSong);
     navigation.setOptions({
-      title: newSong?.name,
-      headerRight: () => (
-        <HeaderIconButton icon={"list-ol"} onPress={() => openVersePicker(newSong)} />
-      )
+      title: newSong?.name
     });
   };
 
