@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Song } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
-import SongList from "../../scripts/songList/songList";
+import SongList from "../../scripts/songs/songList";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 

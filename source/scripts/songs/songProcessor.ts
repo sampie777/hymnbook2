@@ -1,11 +1,11 @@
-import { SongBundle as BackendSongBundle } from "../models/ServerSongsModel";
-import Db from "./db/db";
-import { Song, SongBundle, Verse } from "../models/Songs";
-import { SongBundle as ServerSongBundle } from "../models/ServerSongsModel";
-import { dateFrom, Result } from "./utils";
-import { SongBundleSchema, SongSchema, VerseSchema } from "../models/SongsSchema";
-import SongList from "./songList/songList";
-import { rollbar } from "./rollbar";
+import { SongBundle as BackendSongBundle } from "../../models/ServerSongsModel";
+import Db from "../db/db";
+import { Song, SongBundle, Verse } from "../../models/Songs";
+import { SongBundle as ServerSongBundle } from "../../models/ServerSongsModel";
+import { dateFrom, Result } from "../utils";
+import { SongBundleSchema, SongSchema, VerseSchema } from "../../models/SongsSchema";
+import SongList from "./songList";
+import { rollbar } from "../rollbar";
 
 export namespace SongProcessor {
 

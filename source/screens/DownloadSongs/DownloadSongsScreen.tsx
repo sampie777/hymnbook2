@@ -12,7 +12,7 @@ import { SongBundle } from "../../models/ServerSongsModel";
 import { SongBundle as LocalSongBundle } from "../../models/Songs";
 import DisposableMessage from "../../components/DisposableMessage";
 import ConfirmationModal from "../../components/ConfirmationModal";
-import { SongProcessor } from "../../scripts/songProcessor";
+import { SongProcessor } from "../../scripts/songs/songProcessor";
 import { Server } from "../../scripts/server/server";
 import { LocalSongBundleItem, SongBundleItem } from "./SongBundleItems";
 import LanguageSelectBar from "./LanguageSelectBar";

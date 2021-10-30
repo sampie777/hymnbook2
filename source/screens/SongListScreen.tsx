@@ -6,7 +6,7 @@ import { routes } from "../navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useFocusEffect } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import SongList from "../scripts/songList/songList";
+import SongList from "../scripts/songs/songList";
 import { SongListSongModel } from "../models/SongListModel";
 import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../models/SongListModelSchema";
