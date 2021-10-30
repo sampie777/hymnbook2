@@ -1,6 +1,6 @@
 import React from "react";
 import { SongListSongModel } from "../../models/SongListModel";
-import SongList from "../../scripts/songList/songList";
+import SongList from "../../scripts/songs/songList";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { routes } from "../../navigation";
