@@ -13,7 +13,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale, opac
 
   const animatedStyle = {
     container: {
-      marginBottom: Animated.multiply(scale, 50),
+      marginTop: Animated.multiply(scale, 15),
+      marginBottom: Animated.multiply(scale, 35),
       opacity: opacity
     },
     title: {
