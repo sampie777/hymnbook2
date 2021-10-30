@@ -29,7 +29,7 @@ const SongControls: React.FC<SongControlsProps> =
    }) => {
     const previousSong = songListIndex === undefined ? undefined : SongList.previousSong(songListIndex);
     const nextSong = songListIndex === undefined ? undefined : SongList.nextSong(songListIndex);
-    const invertVerseButton = selectedVerses !== undefined && selectedVerses.length > 0;
+    const hasSelectableVerses = selectedVerses !== undefined && selectedVerses.length > 0;
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
       navigation.navigate(routes.Song, {
@@ -39,11 +39,11 @@ const SongControls: React.FC<SongControlsProps> =
     };
 
     const canJumpToNextVerse = () => {
-      if (selectedVerses === undefined || selectedVerses.length === 0) {
+      if (!hasSelectableVerses) {
         return song !== undefined && listViewIndex + 1 < song?.verses.length;
       }
       return getNextVerseIndex(selectedVerses, listViewIndex) > -1;
-    }
+    };
 
     const jumpToNextVerse = () => {
       if (!canJumpToNextVerse()) {
@@ -51,7 +51,7 @@ const SongControls: React.FC<SongControlsProps> =
       }
 
       let nextIndex = listViewIndex + 1;
-      if (selectedVerses !== undefined && selectedVerses.length > 0) {
+      if (hasSelectableVerses) {
         nextIndex = getNextVerseIndex(selectedVerses, listViewIndex);
       }
 
@@ -66,8 +66,13 @@ const SongControls: React.FC<SongControlsProps> =
         return;
       }
 
+      let lastIndex = song!.verses.length - 1;
+      if (hasSelectableVerses) {
+        lastIndex = selectedVerses[selectedVerses.length - 1].index;
+      }
+
       flatListComponentRef?.scrollToIndex({
-        index: song!.verses.length - 1,
+        index: lastIndex,
         animated: Settings.animateScrolling
       });
     };
@@ -90,7 +95,7 @@ const SongControls: React.FC<SongControlsProps> =
         <TouchableOpacity style={[
           styles.buttonBase,
           styles.button,
-          (invertVerseButton ? {} : styles.buttonInvert),
+          (hasSelectableVerses ? {} : styles.buttonInvert),
           (canJumpToNextVerse() ? {} : styles.buttonDisabled)
         ]}
                           activeOpacity={canJumpToNextVerse() ? 0.7 : 1}
@@ -99,7 +104,7 @@ const SongControls: React.FC<SongControlsProps> =
           <Icon name={"chevron-down"}
                 style={[
                   styles.buttonText,
-                  (invertVerseButton ? {} : styles.buttonInvertText),
+                  (hasSelectableVerses ? {} : styles.buttonInvertText),
                   (canJumpToNextVerse() ? {} : styles.buttonTextDisabled)
                 ]} />
         </TouchableOpacity>

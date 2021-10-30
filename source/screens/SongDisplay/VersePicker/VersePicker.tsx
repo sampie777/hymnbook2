@@ -39,7 +39,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const isVerseListed = (verse: VerseProps): boolean => {
-    return selectedVerses.includes(verse);
+    return selectedVerses.some(it => it.id === verse.id)
   };
 
   const submit = () => {
@@ -48,7 +48,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       params: {
         selectedVerses: selectedVerses
       },
-      merge: true, // Navigate 'back'
+      merge: true // Navigate 'back'
     });
   };
 
