@@ -6,7 +6,8 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { routes } from "../../navigation";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import Settings from "../../scripts/settings";
-import { Song } from "../../models/Songs";
+import { Song, Verse } from "../../models/Songs";
+import { getNextVerseIndex } from "../../scripts/songs/utils";
 
 interface SongControlsProps {
   navigation: DrawerNavigationProp<any>;
@@ -14,7 +15,7 @@ interface SongControlsProps {
   song?: Song;
   listViewIndex: number;
   flatListComponentRef?: FlatList;
-  invertVerseButton?: boolean;
+  selectedVerses?: Array<Verse>;
 }
 
 const SongControls: React.FC<SongControlsProps> =
@@ -24,10 +25,11 @@ const SongControls: React.FC<SongControlsProps> =
      song,
      listViewIndex,
      flatListComponentRef,
-     invertVerseButton = true
+     selectedVerses = []
    }) => {
     const previousSong = songListIndex === undefined ? undefined : SongList.previousSong(songListIndex);
     const nextSong = songListIndex === undefined ? undefined : SongList.nextSong(songListIndex);
+    const invertVerseButton = selectedVerses !== undefined && selectedVerses.length > 0;
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
       navigation.navigate(routes.Song, {
@@ -36,15 +38,25 @@ const SongControls: React.FC<SongControlsProps> =
       });
     };
 
-    const canJumpToNextVerse = () => song !== undefined && listViewIndex + 1 < song?.verses.length;
+    const canJumpToNextVerse = () => {
+      if (selectedVerses === undefined || selectedVerses.length === 0) {
+        return song !== undefined && listViewIndex + 1 < song?.verses.length;
+      }
+      return getNextVerseIndex(selectedVerses, listViewIndex) > -1;
+    }
 
     const jumpToNextVerse = () => {
       if (!canJumpToNextVerse()) {
         return;
       }
 
+      let nextIndex = listViewIndex + 1;
+      if (selectedVerses !== undefined && selectedVerses.length > 0) {
+        nextIndex = getNextVerseIndex(selectedVerses, listViewIndex);
+      }
+
       flatListComponentRef?.scrollToIndex({
-        index: listViewIndex + 1,
+        index: nextIndex,
         animated: Settings.animateScrolling
       });
     };
@@ -78,7 +90,7 @@ const SongControls: React.FC<SongControlsProps> =
         <TouchableOpacity style={[
           styles.buttonBase,
           styles.button,
-          (!invertVerseButton ? {} : styles.buttonInvert),
+          (invertVerseButton ? {} : styles.buttonInvert),
           (canJumpToNextVerse() ? {} : styles.buttonDisabled)
         ]}
                           activeOpacity={canJumpToNextVerse() ? 0.7 : 1}
@@ -87,7 +99,7 @@ const SongControls: React.FC<SongControlsProps> =
           <Icon name={"chevron-down"}
                 style={[
                   styles.buttonText,
-                  (!invertVerseButton ? {} : styles.buttonInvertText),
+                  (invertVerseButton ? {} : styles.buttonInvertText),
                   (canJumpToNextVerse() ? {} : styles.buttonTextDisabled)
                 ]} />
         </TouchableOpacity>

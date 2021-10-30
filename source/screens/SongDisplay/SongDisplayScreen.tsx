@@ -75,7 +75,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   useEffect(() => {
     if (song === undefined) {
       navigation.setOptions({
-        title: "",
+        title: ""
       });
       return;
     }
@@ -83,7 +83,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     const title = generateSongTitle(song, route.params.selectedVerses);
 
     navigation.setOptions({
-      title: title,
+      title: title
     });
   }, [song?.name, route.params.selectedVerses]);
 
@@ -202,7 +202,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
                       songListIndex={route.params.songListIndex}
                       song={song}
                       listViewIndex={viewIndex}
-                      flatListComponentRef={flatListComponentRef.current} />
+                      flatListComponentRef={flatListComponentRef.current}
+                      selectedVerses={route.params.selectedVerses} />
 
         <FlatList
           // @ts-ignore
