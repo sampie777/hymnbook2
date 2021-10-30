@@ -40,3 +40,26 @@ export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): s
       .map(it => it.name.replace(/verse */gi, ""))
       .join(", ");
 };
+
+export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) => {
+  // Get current verse
+  let currentVerseIndex = verses.findIndex(it => it.index === currentIndex);
+
+  if (currentVerseIndex < 0) {
+    // Else, get previous verse
+    const previousVerses = verses.filter(it => it.index <= currentIndex);
+
+    if (previousVerses.length > 0) {
+      const latestVerse = previousVerses[previousVerses.length - 1];
+      currentVerseIndex = verses.indexOf(latestVerse);
+    }
+    // Else, leave index to -1, as it will be incremented later on
+  }
+
+  if (currentVerseIndex + 1 === verses.length) {
+    return -1;
+  }
+
+  const nextVerse = verses[currentVerseIndex + 1];
+  return nextVerse.index;
+}
