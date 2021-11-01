@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BackHandler, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Db from "../scripts/db/db";
-import { Song, Verse } from "../models/Songs";
+import { Verse } from "../models/Songs";
 import { SongRouteParams, routes } from "../navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useFocusEffect } from "@react-navigation/native";
