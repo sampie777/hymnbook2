@@ -211,6 +211,11 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
           viewabilityConfig={listViewabilityConfig.current}
           onScrollToIndexFailed={(error) => {
             if (song === undefined || error.index < song.verses.length - 1) {
+              // todo: Temp fix
+              flatListComponentRef.current?.scrollToIndex({
+                index: error.index / 2,
+                animated: Settings.animateScrolling
+              });
               return;
             }
 
