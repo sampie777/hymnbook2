@@ -3,12 +3,12 @@ import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { displayName, homepage } from "../../../app.json";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { getVersion } from "react-native-device-info";
-import UrlLink  from "../../components/UrlLink";
+import UrlLink from "../../components/UrlLink";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { routes } from "../../navigation";
 
 
-const AboutScreen: React.FC<{ navigation: any }> = ({navigation}) => {
+const AboutScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>
@@ -27,20 +27,27 @@ const AboutScreen: React.FC<{ navigation: any }> = ({navigation}) => {
         <Text style={styles.scriptureSourceText}>Psalmen 127: 1a (HTB)</Text>
       </View>
 
-      <Text style={[styles.contentText, styles.descriptionText]}>
-        This app is an effort to assist Christians with a readily available, easy-to-use, digital songbook. It can be
-        used in church, at home, or wherever you are.
-      </Text>
+      <View style={[styles.descriptionContainer]}>
+        <Text style={[styles.contentText]}>
+          This app is an effort to assist Christians with a readily available, easy-to-use, digital songbook. It can be
+          used in church, at home, or wherever you are.
+        </Text>
 
-      <Text style={[styles.contentText, styles.reasonText]}>
-        As such apps are already available, the main focus of this app is to enhance user experience with quick
-        song-look-up and easy song-list-creation.
-      </Text>
+        <Text style={[styles.contentText]}>
+          As such apps are already available, the main focus of this app is to enhance user experience with quick
+          song-look-up and easy song-list-creation.
+        </Text>
+
+        <Text style={[styles.contentText]}>
+          Feedback is always welcome. If you think some licenses are incorrect, please let me know.
+        </Text>
+      </View>
 
       <View style={styles.donationContainer}>
         <Text style={[styles.contentText, styles.contributionText]}>
           This app is made free in order to make the access to Christian songs available for everyone with a digital
-          device. As no profit is made, this app fully depend on donations. If you want to contribute or show your thanks,
+          device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
+          thanks,
           please consider donating using the following option:
         </Text>
 
@@ -91,7 +98,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 10,
     paddingBottom: 15,
-    flexDirection: "row",
+    flexDirection: "row"
   },
   titleIcon: {
     color: "dodgerblue",
@@ -101,7 +108,7 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
     color: "dodgerblue",
     fontSize: 28,
-    fontFamily: "sans-serif-light",
+    fontFamily: "sans-serif-light"
   },
   versionText: {
     color: "#aaa",
@@ -121,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: 45,
     paddingHorizontal: 20,
     backgroundColor: "#fcfcfc",
-    paddingVertical: 30,
+    paddingVertical: 30
   },
   scriptureText: {
     fontFamily: "serif",
@@ -138,22 +145,23 @@ const styles = StyleSheet.create({
     color: "#777",
     fontSize: 10
   },
-  descriptionText: {},
-  reasonText: {
-    marginBottom: 45
+
+  descriptionContainer: {
+    marginTop: 10,
+    marginBottom: 40
   },
 
   donationContainer: {
     alignItems: "center",
-    paddingTop: 40,
-    paddingBottom: 40,
-    backgroundColor: "#fcfcfc",
+    paddingTop: 60,
+    paddingBottom: 45,
+    backgroundColor: "#fcfcfc"
   },
   contributionText: {
-    marginBottom: 40,
+    marginBottom: 40
   },
   donationLink: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   donationLinkText: {
     backgroundColor: "#63adff",
@@ -163,7 +171,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 50,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
 
   greetingContainer: {
