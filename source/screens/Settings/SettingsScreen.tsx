@@ -4,7 +4,7 @@ import Settings from "../../scripts/settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { useFocusEffect } from "@react-navigation/native";
-import { SettingComponent, SettingSwitchComponent } from "./SettingComponent" ;
+import { SettingComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../scripts/server/models";
 
 const Header: React.FC<{ title: string }> = ({ title }) => (
@@ -90,7 +90,12 @@ const SettingsScreen: React.FC = () => {
         <SettingComponent name={"Songs scale"}
                           sKey={"songScale"}
                           onPress={(setValue) => setValue(1)}
-                          valueRender={(it) => Math.round(it * 100) + " %"} />
+                          valueRender={(it) => {
+                            if (it === 1.0) {
+                              return "100 %";
+                            }
+                            return Math.round(it * 100) + " % (press to reset)";
+                          }} />
         <SettingSwitchComponent name={"Keep screen on"}
                                 sKey={"keepScreenAwake"} />
         <SettingSwitchComponent name={"Animated scrolling"}
@@ -105,6 +110,12 @@ const SettingsScreen: React.FC = () => {
                                 sKey={"useAuthentication"} />
         <SettingComponent name={"Authentication status with backend"}
                           value={authenticationStatus}
+                          valueRender={(it) => {
+                            if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
+                              return it;
+                            }
+                            return it + " (press to reset)";
+                          }}
                           onPress={(setValue) =>
                             setConfirmModalCallback(
                               "Reset/forget authentication?",
