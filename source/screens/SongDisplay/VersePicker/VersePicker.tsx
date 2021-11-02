@@ -15,7 +15,7 @@ interface ComponentProps {
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
-  const verses: Array<Verse> = route.params.verses;
+  const verses: Array<Verse> = route.params.verses || [];
   const songListIndex: number | undefined = route.params.songListIndex;
 
   useEffect(() => {
@@ -45,14 +45,19 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const submit = () => {
+    let versesToSubmit = selectedVerses;
+    if (versesToSubmit.length === verses.length) {
+      versesToSubmit = [];
+    }
+
     if (songListIndex !== undefined) {
-      SongList.saveSelectedVersesForSong(songListIndex, selectedVerses);
+      SongList.saveSelectedVersesForSong(songListIndex, versesToSubmit);
     }
 
     navigation.navigate({
       name: routes.Song,
       params: {
-        selectedVerses: selectedVerses
+        selectedVerses: versesToSubmit
       } as SongRouteParams,
       merge: true // Navigate 'back'
     });
