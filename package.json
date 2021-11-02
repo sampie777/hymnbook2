@@ -1,6 +1,6 @@
 {
   "name": "hymnbook2",
-  "version": "0.7.0-SNAPSHOT",
+  "version": "0.8.0-SNAPSHOT",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "bundle": "cd android && ./gradlew bundleRelease",
     "build": "cd android && ./gradlew assembleRelease",
-    "device-install": "adb -d install ./android/app/build/outputs/apk/release/app-release.apk"
+    "device-install": "adb -d install \"$(ls -t ./android/app/build/outputs/apk/release/*.apk | head -1)\""
   },
   "dependencies": {
     "@react-navigation/drawer": "^6.1.4",
