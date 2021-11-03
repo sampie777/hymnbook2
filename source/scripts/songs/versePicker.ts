@@ -10,7 +10,7 @@ export const getMarginForVerses = (window: ScaledSize,
                                    listPadding: number,
                                    verseWidth: number,
                                    {
-                                     minMargin = 8,
+                                     minMargin = 7,
                                      itemsPerRow = 5
                                    }: getMarginForVersesConfig = {}): number => {
   const getMarginForAmountOfItems = (itemsPerRow: number) => {
