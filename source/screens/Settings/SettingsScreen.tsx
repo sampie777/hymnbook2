@@ -7,15 +7,17 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SettingComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../scripts/server/models";
 
-const Header: React.FC<{ title: string }> = ({ title }) => (
-  <Text style={styles.settingHeader}>{title}</Text>
-);
+const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) =>
+  !isVisible ? null : (
+    <Text style={styles.settingHeader}>{title}</Text>
+  );
 
 const SettingsScreen: React.FC = () => {
   const confirmModalCallback: MutableRefObject<((isConfirmed: boolean) => void) | undefined> =
     useRef(undefined);
   const [confirmModalMessage, setConfirmModalMessage] = useState<string | undefined>(undefined);
   const [isReloading, setReloading] = useState(false);
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
 
   const confirmModalCallbackWrapper = (isConfirmed: boolean) => {
     setConfirmModalMessage(undefined);
@@ -85,6 +87,14 @@ const SettingsScreen: React.FC = () => {
         <Text>{confirmModalMessage}</Text>
       </ConfirmationModal>
 
+      <SettingSwitchComponent name={"Show advanced settings"}
+                              value={showAdvancedSettings}
+                              lessObviousStyling={true}
+                              onPress={(setValue, sKey, newValue) => {
+                                setValue(newValue);
+                                setShowAdvancedSettings(newValue);
+                              }} />
+
       {isReloading ? null : <>
         <Header title={"Layout"} />
         <SettingComponent name={"Songs scale"}
@@ -99,17 +109,22 @@ const SettingsScreen: React.FC = () => {
         <SettingSwitchComponent name={"Keep screen on"}
                                 sKey={"keepScreenAwake"} />
         <SettingSwitchComponent name={"Animated scrolling"}
-                                sKey={"animateScrolling"} />
+                                sKey={"animateScrolling"}
+                                isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"Animate song loading"}
-                                sKey={"songFadeIn"} />
+                                sKey={"songFadeIn"}
+                                isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"\"Jump to next verse\" button"}
-                                sKey={"showJumpToNextVerseButton"} />
+                                sKey={"showJumpToNextVerseButton"}
+                                isVisible={showAdvancedSettings} />
 
-        <Header title={"Backend"} />
+        <Header title={"Backend"} isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"Use authentication with backend"}
-                                sKey={"useAuthentication"} />
+                                sKey={"useAuthentication"}
+                                isVisible={showAdvancedSettings} />
         <SettingComponent name={"Authentication status with backend"}
                           value={authenticationStatus}
+                          isVisible={showAdvancedSettings}
                           valueRender={(it) => {
                             if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
                               return it;
