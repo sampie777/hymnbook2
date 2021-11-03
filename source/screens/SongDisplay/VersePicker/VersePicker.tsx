@@ -40,6 +40,14 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     setSelectedVerses(newSelection);
   };
 
+  const clearOrSelectAll = () => {
+    if (selectedVerses.length > 0) {
+      setSelectedVerses([]);
+    } else {
+      setSelectedVerses(verses);
+    }
+  };
+
   const isVerseListed = (verse: VerseProps): boolean => {
     return selectedVerses.some(it => it.id === verse.id);
   };
@@ -69,7 +77,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       {verses?.map((it: VerseProps) => <VersePickerItem verse={it}
                                                         key={it.id}
                                                         isSelected={isVerseListed(it)}
-                                                        onPress={toggleVerse} />)}
+                                                        onPress={toggleVerse}
+                                                        onLongPress={clearOrSelectAll} />)}
     </ScrollView>
   </View>);
 };
