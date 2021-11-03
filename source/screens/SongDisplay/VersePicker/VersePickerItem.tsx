@@ -7,12 +7,14 @@ interface ComponentProps {
   verse: Verse;
   isSelected?: boolean;
   onPress?: (verse: Verse) => void;
+  onLongPress?: (verse: Verse) => void;
 }
 
 const VersePickerItem: React.FC<ComponentProps> = ({
                                                      verse,
                                                      isSelected = false,
-                                                     onPress
+                                                     onPress,
+                                                     onLongPress
                                                    }) => {
 
   if (verse.name.trim() === "") {
@@ -38,14 +40,15 @@ const VersePickerItem: React.FC<ComponentProps> = ({
     .replace(/chorus */gi, "C")
     .replace(/bridge */gi, "B")
     .replace(/intro */gi, "I")
-    .replace(/end */gi, "E")
+    .replace(/end */gi, "E");
 
   return (<TouchableOpacity style={[
     styles.container,
     styleForVerseType(getVerseType(verse)),
     (!isSelected ? {} : styles.containerSelected)
   ]}
-                            onPress={() => onPress?.(verse)}>
+                            onPress={() => onPress?.(verse)}
+                            onLongPress={() => onLongPress?.(verse)}>
     <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}>
       {displayName}
     </Text>
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   containerSelected: {
-    backgroundColor: "dodgerblue",
+    backgroundColor: "dodgerblue"
   },
 
   text: {
@@ -78,7 +81,7 @@ const styles = StyleSheet.create({
     color: "#373737"
   },
   textSelected: {
-    color: "#fff",
+    color: "#fff"
   },
 
   intro: {
@@ -92,5 +95,5 @@ const styles = StyleSheet.create({
   },
   end: {
     backgroundColor: "#fdd8d8"
-  },
+  }
 });
