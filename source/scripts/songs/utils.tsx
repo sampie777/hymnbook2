@@ -25,6 +25,86 @@ export const getVerseType = (verse: Verse): VerseType => {
   return VerseType.Verse;
 };
 
+// Creates string like "1-3, 5" or "1, 2, 5" or similar based on the selected verses
+function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
+  const onlyVerses = (selectedVerses as Array<VerseProps>)
+    .filter(it => it.name.toLowerCase().includes("verse"))
+    .map(it => it.name.replace(/verse */gi, ""));
+
+  if (onlyVerses.length === 0) {
+    return "";
+  }
+
+  // Create array with only the verses that needs to be displayed
+  // by looking at the previous added verses in the same array
+  const displayTheseVerses: Array<String> = [];
+  onlyVerses.forEach(it => {
+    const currentNumber = +it;
+    if (isNaN(currentNumber)) {
+      displayTheseVerses.push(it);
+      return;
+    }
+
+    if (displayTheseVerses.length < 2) {
+      displayTheseVerses.push(it);
+      return;
+    }
+
+    const lastAddedVerse = displayTheseVerses[displayTheseVerses.length - 1];
+    const lastAddedNumber = +lastAddedVerse;
+    const secondLastAddedVerse = displayTheseVerses[displayTheseVerses.length - 2];
+    const secondLastAddedNumber = +secondLastAddedVerse;
+
+    if (isNaN(lastAddedNumber) || (isNaN(secondLastAddedNumber) && secondLastAddedVerse !== "-")) {
+      displayTheseVerses.push(it);
+      return;
+    }
+
+    // Check if we are already in a squeeze-series
+    if (secondLastAddedVerse === "-") {
+      // Check if the current number is part of the squeeze-series
+      if (lastAddedNumber + 1 === currentNumber) {
+        // If so, replace the end number of the series with the new end number ("1-<endNumber>")
+        displayTheseVerses.pop();
+        displayTheseVerses.push(it);
+        return;
+      }
+
+      displayTheseVerses.push(it);
+      return;
+    }
+
+    // Check if we can start a new squeeze-series
+    if (lastAddedNumber + 1 === currentNumber && secondLastAddedNumber + 2 === currentNumber) {
+      displayTheseVerses.pop();
+      displayTheseVerses.push("-");
+      displayTheseVerses.push(it);
+      return;
+    }
+
+    displayTheseVerses.push(it);
+  });
+
+  // Now combine the selected verses for display to a representable string
+  // by adding commas in the correct places
+  return displayTheseVerses.reduce((result, currentValue) => {
+    const it = currentValue.toString();
+    if (it === "-") {
+      return result + it;
+    }
+
+    if (result.length === 0) {
+      return result + it;
+    }
+
+    if (result[result.length - 1] === "-") {
+      return result + it;
+    }
+
+    return result + ", " + it;
+  });
+}
+
 export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): string => {
   if (song === undefined) {
     return "";
@@ -34,14 +114,19 @@ export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): s
     return song.name;
   }
 
-  return song.name + ": "
-    + (selectedVerses as Array<VerseProps>)
-      .filter(it => it.name.toLowerCase().includes("verse"))
-      .map(it => it.name.replace(/verse */gi, ""))
-      .join(", ");
+  const verseString = generateSongTitleVersesString(selectedVerses);
+  if (verseString.length === 0) {
+    return song.name;
+  }
+
+  return song.name + ": " + verseString;
 };
 
 export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) => {
+  if (verses.length === 0) {
+    return -1;
+  }
+
   // Get current verse
   let currentVerseIndex = verses.findIndex(it => it.index === currentIndex);
 
@@ -62,4 +147,4 @@ export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) =>
 
   const nextVerse = verses[currentVerseIndex + 1];
   return nextVerse.index;
-}
+};
