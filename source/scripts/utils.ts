@@ -64,7 +64,7 @@ export function keepScreenAwake(value: boolean) {
 }
 
 export function isPortraitMode(window: ScaledSize) {
-  return window.height > window.width;
+  return window.height >= window.width;
 }
 
 export function openLink(url: string): Promise<any> {
