@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
 import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
 import { SongRouteParams, routes } from "../../navigation";
@@ -29,23 +29,22 @@ const SearchScreen: React.FC<{ navigation: any }> =
     );
 
     const onFocus = () => {
+      Dimensions.addEventListener("change", handleDimensionsChange);
     };
 
     const onBlur = () => {
       setInputValue("");
       setSearchResult([]);
+      Dimensions.removeEventListener("change", handleDimensionsChange);
     };
 
     useEffect(() => {
-      checkIfIsPortraitMode();
       fetchSearchResults();
       return () => undefined;
     }, [inputValue]);
 
-    const checkIfIsPortraitMode = () => {
-      Dimensions.addEventListener("change", (e) => {
-        setIsPortrait(isPortraitMode(e.window));
-      });
+    const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
+      setIsPortrait(isPortraitMode(e.window));
     };
 
     const onNumberKeyPress = (number: number) => {

@@ -8,15 +8,16 @@ interface ComponentProps {
   isSelected?: boolean;
   onPress?: (verse: Verse) => void;
   onLongPress?: (verse: Verse) => void;
+  horizontalMargin?: number;
 }
 
 const VersePickerItem: React.FC<ComponentProps> = ({
                                                      verse,
                                                      isSelected = false,
                                                      onPress,
-                                                     onLongPress
+                                                     onLongPress,
+                                                     horizontalMargin = 8,
                                                    }) => {
-
   if (verse.name.trim() === "") {
     return null;
   }
@@ -45,7 +46,8 @@ const VersePickerItem: React.FC<ComponentProps> = ({
   return (<TouchableOpacity style={[
     styles.container,
     styleForVerseType(getVerseType(verse)),
-    (!isSelected ? {} : styles.containerSelected)
+    (!isSelected ? {} : styles.containerSelected),
+    { marginHorizontal: horizontalMargin }
   ]}
                             onPress={() => onPress?.(verse)}
                             onLongPress={() => onLongPress?.(verse)}>
@@ -97,3 +99,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fdd8d8"
   }
 });
+
+export const versePickerItemStyles = styles;
