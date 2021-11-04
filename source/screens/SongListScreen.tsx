@@ -12,16 +12,24 @@ import { SongListModelSchema } from "../models/SongListModelSchema";
 import { generateSongTitle } from "../scripts/songs/utils";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
-const DeleteModeButton: React.FC<{ callback: () => void, isActivated: boolean }> =
-  ({ callback, isActivated = false }) => (
-    <TouchableOpacity onPress={callback}
-                      style={styles.deleteModeButton}>
-      <Icon name={"trash-alt"}
-            solid={isActivated}
-            size={styles.deleteModeButton.fontSize}
-            color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
-    </TouchableOpacity>
-  );
+const DeleteModeButton: React.FC<{
+  onPress: () => void,
+  onLongPress: () => void,
+  isActivated: boolean
+}> = ({
+        onPress,
+        onLongPress,
+        isActivated = false
+      }) => (
+  <TouchableOpacity onPress={onPress}
+                    onLongPress={onLongPress}
+                    style={styles.deleteModeButton}>
+    <Icon name={"trash-alt"}
+          solid={isActivated}
+          size={styles.deleteModeButton.fontSize}
+          color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
+  </TouchableOpacity>
+);
 
 const SongItem: React.FC<{
   index: number,
@@ -53,7 +61,9 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
     React.useLayoutEffect(() => {
       navigation.setOptions({
-        headerRight: () => (<DeleteModeButton callback={toggleDeleteMode} isActivated={isDeleteMode} />)
+        headerRight: () => (<DeleteModeButton onPress={toggleDeleteMode}
+                                              onLongPress={clearAll}
+                                              isActivated={isDeleteMode} />)
       });
     }, [navigation, isDeleteMode]);
 
@@ -119,6 +129,14 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     );
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
+
+    const clearAll = () => {
+      if (!isDeleteMode)
+        return;
+
+      SongList.clearAll();
+      setIsDeleteMode(false);
+    };
 
     return (
       <View style={styles.container}>
