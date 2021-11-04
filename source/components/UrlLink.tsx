@@ -1,6 +1,5 @@
 import React from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Alert, StyleSheet, View, TouchableOpacity } from "react-native";
 import { openLink } from "../scripts/utils";
 
 const UrlLink: React.FC<{
