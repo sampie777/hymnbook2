@@ -80,6 +80,7 @@ class SettingsClass {
   animateScrolling = true;
   songFadeIn = true;
   showJumpToNextVerseButton = true;
+  showSongListCountBadge = true;
 
   // Backend
   songBundlesApiUrl = "http://jschedule.sajansen.nl";

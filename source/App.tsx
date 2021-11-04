@@ -27,6 +27,9 @@ import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
+import { SongListModelSchema } from "./models/SongListModelSchema";
+import { CollectionChangeCallback } from "realm";
+import SongList from "./scripts/songs/songList";
 
 
 const RootNav = createNativeStackNavigator();
@@ -39,20 +42,20 @@ const RootNavigation = () => (
 
     <RootNav.Screen name={routes.Song} component={SongDisplayScreen}
                     options={{
-                      title: "",
+                      title: ""
                     }}
                     initialParams={{
                       id: undefined,
                       songListIndex: undefined,
-                      selectedVerses: [],
+                      selectedVerses: []
                     }} />
     <RootNav.Screen name={routes.VersePicker} component={VersePicker}
                     options={{
-                      title: "Select verses...",
+                      title: "Select verses..."
                     }}
                     initialParams={{
                       verses: undefined,
-                      selectedVerses: [],
+                      selectedVerses: []
                     }} />
 
     <RootNav.Screen name={routes.Import} component={DownloadSongsScreen} />
@@ -62,29 +65,50 @@ const RootNavigation = () => (
   </RootNav.Navigator>
 );
 
-const HomeNavigation = () => (
-  <HomeNav.Navigator initialRouteName={routes.Search}
-                     screenOptions={{
-                       tabBarStyle: styles.tabBar,
-                     }}>
+const HomeNavigation: React.FC = () => {
+  const [songListSize, setSongListSize] = useState(0);
+
+  useEffect(() => {
+    onLaunch();
+    return onExit;
+  }, []);
+
+  const onLaunch = () => {
+    Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+  };
+
+  const onExit = () => {
+    Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
+  };
+
+  const onCollectionChange: CollectionChangeCallback<Object> = (songLists, changes) => {
+    setSongListSize(SongList.list().length);
+  };
+
+  return (<HomeNav.Navigator initialRouteName={routes.Search}
+                             screenOptions={{
+                               tabBarStyle: styles.tabBar
+                             }}>
     <HomeNav.Screen name={routes.Search} component={SearchScreen}
                     options={{
                       tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="search" size={size} color={color} style={styles.tabIcon} />,
+                        <Icon name="search" size={size} color={color} style={styles.tabIcon} />
                     }} />
     <HomeNav.Screen name={routes.SongList} component={SongListScreen}
                     options={{
                       title: "Song list",
+                      tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
+                      tabBarBadgeStyle: styles.tabBarBadgeStyle,
                       tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="list-ul" size={size} color={color} style={styles.tabIcon} />,
+                        <Icon name="list-ul" size={size} color={color} style={styles.tabIcon} />
                     }} />
     <HomeNav.Screen name={routes.OtherMenu} component={OtherMenuScreen}
                     options={{
                       tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="bars" size={size} color={color} style={styles.tabIcon} />,
+                        <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
                     }} />
-  </HomeNav.Navigator>
-);
+  </HomeNav.Navigator>);
+};
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -117,7 +141,7 @@ export default function App() {
           })
           .finally(() => {
             setIsLoading(false);
-          }),
+          })
       );
   };
 
@@ -146,12 +170,20 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   tabBar: {
     paddingBottom: 10,
     paddingTop: 7,
-    height: 60,
+    height: 60
   },
   tabIcon: {},
+  tabBarBadgeStyle: {
+    left: 2,
+    top: -1,
+    fontSize: 12,
+    height: 18,
+    minWidth: 18,
+    backgroundColor: "dodgerblue"
+  }
 });
