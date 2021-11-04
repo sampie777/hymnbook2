@@ -69,6 +69,10 @@ export default class SongList {
 
   static cleanUpSongListFromNullsAndCorrectIndices(songList: SongListModel) {
     Db.songs.realm().write(() => {
+      // Delete all models with no song
+      songList.songs.filter(it => it.song == null)
+        .forEach(it => Db.songs.realm().delete(it))
+
       songList.songs = songList.songs.filter(it => it.song != null);
     });
 
