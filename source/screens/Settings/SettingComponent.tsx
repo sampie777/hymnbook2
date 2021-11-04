@@ -9,10 +9,23 @@ interface SettingProps {
   value?: any;
   onPress?: (setValue: (newValue: any) => void, key?: string, newValue?: any) => void;
   valueRender?: (value: any) => string;
+  isVisible?: boolean;
+  lessObviousStyling?: boolean;
 }
 
 export const SettingComponent: React.FC<SettingProps> =
-  ({ name, sKey, value, onPress = undefined, valueRender = undefined }) => {
+  ({
+     name,
+     sKey,
+     value,
+     onPress = undefined,
+     valueRender = undefined,
+     isVisible = true,
+     lessObviousStyling = false,
+   }) => {
+    if (!isVisible) {
+      return null;
+    }
 
     if (value === undefined && sKey !== undefined) {
       value = Settings.get(sKey);
@@ -41,7 +54,7 @@ export const SettingComponent: React.FC<SettingProps> =
 
     return (
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, (lessObviousStyling ? {} : styles.whiteContainer)]}
         onPress={onPress === undefined ? undefined : () => onPress(setValue, sKey)}>
         <Text style={styles.keyText}>{name}</Text>
         {value === undefined ? undefined : <Text style={styles.valueText}>{valueRender(_value)}</Text>}
@@ -50,7 +63,16 @@ export const SettingComponent: React.FC<SettingProps> =
   };
 
 export const SettingSwitchComponent: React.FC<SettingProps> =
-  ({ name, sKey, value, onPress = undefined }) => {
+  ({ name,
+     sKey,
+     value,
+     onPress = undefined,
+     isVisible = true,
+     lessObviousStyling = false,
+   }) => {
+    if (!isVisible) {
+      return null;
+    }
 
     if (value === undefined && sKey !== undefined) {
       value = Settings.get(sKey);
@@ -77,7 +99,7 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
     }
 
     return (
-      <View style={[styles.container, styles.switchContainer]}>
+      <View style={[styles.container, styles.switchContainer, (lessObviousStyling ? {} : styles.whiteContainer)]}>
         <Text style={styles.keyText}>{name}</Text>
         {value === undefined ? undefined :
           <Switch onValueChange={(newValue) => onPress?.(setValue, sKey, newValue)}
@@ -93,14 +115,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     marginBottom: 1,
-    backgroundColor: "#fcfcfc",
-    borderColor: "#ddd",
-    borderBottomWidth: 1
   },
   switchContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  whiteContainer: {
+    backgroundColor: "#fcfcfc",
+    borderColor: "#ddd",
+    borderBottomWidth: 1,
   },
 
   keyText: {
