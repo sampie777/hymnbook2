@@ -2,7 +2,7 @@ import { Verse } from "../../../../source/models/Songs";
 import { getNextVerseIndex } from "../../../../source/scripts/songs/utils";
 
 describe("test get next verse index", () => {
-  it("returns the first index when current is < 0", () => {
+  it("returns -1 when current is < 0 aka end of list", () => {
     const currentIndex = -1;
     const verses = [
       new Verse(1, "Verse 2", "", "", 0),
@@ -10,7 +10,7 @@ describe("test get next verse index", () => {
       new Verse(5, "Verse 6", "", "", 0),
     ];
 
-    expect(getNextVerseIndex(verses, currentIndex)).toBe(1);
+    expect(getNextVerseIndex(verses, currentIndex)).toBe(-1);
   });
   it("returns the first index when current is at the beginning of the list", () => {
     const currentIndex = 0;

@@ -123,6 +123,10 @@ export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): s
 };
 
 export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) => {
+  if (currentIndex === -1) {
+    return -1;
+  }
+
   if (verses.length === 0) {
     return -1;
   }
