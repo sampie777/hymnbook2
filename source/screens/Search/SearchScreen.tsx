@@ -22,27 +22,25 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     const maxInputLength = Settings.maxSearchInputLength;
     const maxResultsLength = Settings.maxSearchResultsLength;
 
-    useFocusEffect(
-      React.useCallback(() => {
-        onFocus();
-        return onBlur;
-      }, [])
-    );
-
-    const onFocus = () => {
-      Dimensions.addEventListener("change", handleDimensionsChange);
-    };
-
-    const onBlur = () => {
-      setInputValue("");
-      setSearchResult([]);
-      Dimensions.removeEventListener("change", handleDimensionsChange);
-    };
+    useEffect(() => {
+      onLaunch();
+      return onExit;
+    }, []);
 
     useEffect(() => {
       fetchSearchResults();
       return () => undefined;
     }, [inputValue]);
+
+    const onLaunch = () => {
+      Dimensions.addEventListener("change", handleDimensionsChange);
+    };
+
+    const onExit = () => {
+      setInputValue("");
+      setSearchResult([]);
+      Dimensions.removeEventListener("change", handleDimensionsChange);
+    };
 
     const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
       setIsPortrait(isPortraitMode(e.window));
