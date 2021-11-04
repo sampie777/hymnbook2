@@ -10,9 +10,10 @@ import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 import { isPortraitMode } from "../../scripts/utils";
 import PopupsComponent from "../../components/Popups/PopupsComponent";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 
-const SearchScreen: React.FC<{ navigation: any }> =
+const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
   ({ navigation }) => {
     const [isPortrait, setIsPortrait] = useState(isPortraitMode(Dimensions.get("window")));
     const [inputValue, setInputValue] = useState("");

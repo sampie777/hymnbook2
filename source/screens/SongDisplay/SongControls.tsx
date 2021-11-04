@@ -4,13 +4,13 @@ import SongList from "../../scripts/songs/songList";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SongRouteParams, routes } from "../../navigation";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
 import Settings from "../../scripts/settings";
 import { Song, Verse } from "../../models/Songs";
 import { getNextVerseIndex } from "../../scripts/songs/utils";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface SongControlsProps {
-  navigation: DrawerNavigationProp<any>;
+  navigation: NativeStackNavigationProp<any>;
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;

@@ -6,7 +6,6 @@ import Db from "../../scripts/db/db";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import Settings from "../../scripts/settings";
 import { GestureEvent, PinchGestureHandler, State } from "react-native-gesture-handler";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
 import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
@@ -16,6 +15,7 @@ import SongControls from "./SongControls";
 import { routes, VersePickerRouteParams } from "../../navigation";
 import HeaderIconButton from "../../components/HeaderIconButton";
 import { generateSongTitle } from "../../scripts/songs/utils";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
@@ -30,7 +30,7 @@ const Footer: React.FC<{ opacity: Animated.Value<number> }> =
 
 interface SongDisplayScreenProps {
   route: any;
-  navigation: DrawerNavigationProp<any>;
+  navigation: NativeStackNavigationProp<any>;
 }
 
 const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {

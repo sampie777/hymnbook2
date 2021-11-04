@@ -9,7 +9,8 @@ export const routes = {
   About: "About",
   PrivacyPolicy: "Privacy policy",
   Song: "Song",
-  VersePicker: "VersePicker"
+  VersePicker: "VersePicker",
+  OtherMenu: "More"
 };
 
 

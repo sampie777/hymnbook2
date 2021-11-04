@@ -4,11 +4,11 @@ import SurveyComponent from "./SurveyComponent";
 import { Survey } from "../../scripts/survey";
 import Db from "../../scripts/db/db";
 import { SongSchema } from "../../models/SongsSchema";
-import { DrawerNavigationHelpers } from "@react-navigation/drawer/src/types";
 import { StyleSheet, View } from "react-native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 interface ComponentProps {
-  navigation: DrawerNavigationHelpers,
+  navigation: BottomTabNavigationProp<any>,
 }
 
 const PopupsComponent: React.FC<ComponentProps> = ({ navigation }) => {

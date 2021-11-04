@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Dimensions, ScaledSize } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import VersePickerItem, { versePickerItemStyles } from "./VersePickerItem";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { SongRouteParams, routes } from "../../../navigation";
 import { Verse, VerseProps } from "../../../models/Songs";
 import HeaderIconButton from "../../../components/HeaderIconButton";
@@ -13,10 +12,11 @@ import {
   isVerseInList,
   toggleVerseInList
 } from "../../../scripts/songs/versePicker";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface ComponentProps {
   route: any;
-  navigation: DrawerNavigationProp<any>;
+  navigation: NativeStackNavigationProp<any>;
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
