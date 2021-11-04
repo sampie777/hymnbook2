@@ -24,7 +24,7 @@ export const throwErrorsIfNotOk = (response: Response) => {
     case 404:
       throw Error(`Could not connect to server: (${response.status}) ${response.statusText}`);
     case 401:
-      throw Error(`Could not connect to server: (${response.status}) Not authorized`);
+      throw Error(`Could not connect to server: (${response.status}) Not authorized. Go to (advanced) settings and reset your authentication.`);
     case 500:
       throw Error(`Could not connect to server: (${response.status}) Internal server error`);
     default:
