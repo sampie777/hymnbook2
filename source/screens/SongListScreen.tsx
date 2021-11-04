@@ -5,12 +5,12 @@ import { Verse } from "../models/Songs";
 import { SongRouteParams, routes } from "../navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { useFocusEffect } from "@react-navigation/native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
 import SongList from "../scripts/songs/songList";
 import { SongListSongModel } from "../models/SongListModel";
 import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../models/SongListModelSchema";
 import { generateSongTitle } from "../scripts/songs/utils";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 const DeleteModeButton: React.FC<{ callback: () => void }> =
   ({ callback }) => (
@@ -44,7 +44,7 @@ const SongItem: React.FC<{
     </TouchableOpacity>
   );
 
-const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
+const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
   ({ navigation }) => {
 
     const [list, setList] = useState<Array<SongListSongModel>>([]);

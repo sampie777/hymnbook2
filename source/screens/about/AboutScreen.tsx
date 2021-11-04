@@ -6,9 +6,10 @@ import { getVersion } from "react-native-device-info";
 import UrlLink from "../../components/UrlLink";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { routes } from "../../navigation";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 
-const AboutScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({ navigation }) => {
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>

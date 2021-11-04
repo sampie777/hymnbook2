@@ -2,10 +2,10 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import ConfirmationModal from "../ConfirmationModal";
 import { routes } from "../../navigation";
-import { DrawerNavigationHelpers } from "@react-navigation/drawer/src/types";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 const InitDatabaseComponent: React.FC<{
-  navigation: DrawerNavigationHelpers,
+  navigation: BottomTabNavigationProp<any>,
   onCompleted?: () => void
 }> = ({
         navigation,
