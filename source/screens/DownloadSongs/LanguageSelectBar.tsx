@@ -1,6 +1,5 @@
 import React from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface ComponentProps {
   languages: Array<string>;
