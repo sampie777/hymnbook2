@@ -78,6 +78,10 @@ Make sure keystore is correctly defined in:
 - Fix default sorting mechanism for song titles (102 is displayed before 2 but should be the other way around)
 - Add Hermes (https://reactnative.dev/docs/hermes) for decreased binary size and increased performance
 
+### Known issues
+
+- Scrolling to out-of-rendered-zone doesn't work. E.g., 20 verses are loaded but one want to scroll to verse 30. That doesn't work and as fallback it will scroll to half the index (verse 15).
+
 ## Upload to play store
 
 ```bash
