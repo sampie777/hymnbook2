@@ -12,13 +12,14 @@ import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../models/SongListModelSchema";
 import { generateSongTitle } from "../scripts/songs/utils";
 
-const DeleteModeButton: React.FC<{ callback: () => void }> =
-  ({ callback }) => (
+const DeleteModeButton: React.FC<{ callback: () => void, isActivated: boolean }> =
+  ({ callback, isActivated = false }) => (
     <TouchableOpacity onPress={callback}
                       style={styles.deleteModeButton}>
       <Icon name={"trash-alt"}
+            solid={isActivated}
             size={styles.deleteModeButton.fontSize}
-            color={styles.deleteModeButton.color} />
+            color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
     </TouchableOpacity>
   );
 
@@ -52,9 +53,9 @@ const SongListScreen: React.FC<{ navigation: DrawerNavigationProp<any> }> =
 
     React.useLayoutEffect(() => {
       navigation.setOptions({
-        headerRight: () => (<DeleteModeButton callback={toggleDeleteMode} />)
+        headerRight: () => (<DeleteModeButton callback={toggleDeleteMode} isActivated={isDeleteMode} />)
       });
-    }, [navigation]);
+    }, [navigation, isDeleteMode]);
 
     useFocusEffect(
       React.useCallback(() => {
@@ -169,6 +170,9 @@ const styles = StyleSheet.create({
     padding: 15,
     right: 5,
     fontSize: 21,
+    color: "#ffb8b8"
+  },
+  deleteModeButtonActive: {
     color: "#f17c7c"
   }
 });
