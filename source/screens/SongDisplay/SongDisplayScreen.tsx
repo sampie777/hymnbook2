@@ -161,7 +161,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   const onListViewableItemsChanged = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
       if (viewableItems.length === 0) {
-        setViewIndex(0);
+        setViewIndex(-1);
       } else if (viewableItems[0].index !== null) {
         setViewIndex(viewableItems[0].index);
       }
