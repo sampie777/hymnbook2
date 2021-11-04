@@ -88,6 +88,15 @@ export default class SongList {
     this.getAllSongLists().forEach(it => this.cleanUpSongListFromNullsAndCorrectIndices(it));
   }
 
+  static clearAll() {
+    const songList = this.getFirstSongList();
+    if (songList === undefined) return undefined;
+
+    Db.songs.realm().write(() => {
+      Db.songs.realm().delete(songList.songs);
+    })
+  }
+
   static getSongAtIndex(index: number): SongListSongModel | undefined {
     const songList = this.getFirstSongList();
     if (songList === undefined) return undefined;
