@@ -1,10 +1,9 @@
 import React from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { displayName, homepage } from "../../../app.json";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { getVersion } from "react-native-device-info";
 import UrlLink from "../../components/UrlLink";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { routes } from "../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
