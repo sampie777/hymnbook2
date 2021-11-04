@@ -117,6 +117,9 @@ const SettingsScreen: React.FC = () => {
         <SettingSwitchComponent name={"\"Jump to next verse\" button"}
                                 sKey={"showJumpToNextVerseButton"}
                                 isVisible={showAdvancedSettings} />
+        <SettingSwitchComponent name={"Display song list size badge"}
+                                sKey={"showSongListCountBadge"}
+                                isVisible={showAdvancedSettings} />
 
         <Header title={"Backend"} isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"Use authentication with backend"}
