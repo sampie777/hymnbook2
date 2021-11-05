@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import Db from "../../scripts/db/db";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import Settings from "../../scripts/settings";
-import { GestureEvent, PinchGestureHandler, State } from "react-native-gesture-handler";
+import { GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
 import ContentVerse from "./ContentVerse";
 import { SongSchema } from "../../models/SongsSchema";
 import { keepScreenAwake } from "../../scripts/utils";
@@ -188,50 +188,52 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   };
 
   return (
-    <PinchGestureHandler
-      onGestureEvent={_onPanGestureEvent}
-      onHandlerStateChange={_onPinchHandlerStateChange}>
-      <View style={styles.container}>
-        <SongControls navigation={navigation}
-                      songListIndex={route.params.songListIndex}
-                      song={song}
-                      listViewIndex={viewIndex}
-                      flatListComponentRef={flatListComponentRef.current}
-                      selectedVerses={route.params.selectedVerses} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PinchGestureHandler
+        onGestureEvent={_onPanGestureEvent}
+        onHandlerStateChange={_onPinchHandlerStateChange}>
+        <View style={styles.container}>
+          <SongControls navigation={navigation}
+                        songListIndex={route.params.songListIndex}
+                        song={song}
+                        listViewIndex={viewIndex}
+                        flatListComponentRef={flatListComponentRef.current}
+                        selectedVerses={route.params.selectedVerses} />
 
-        <FlatList
-          // @ts-ignore
-          ref={flatListComponentRef}
-          data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
-          renderItem={renderContentItem}
-          initialNumToRender={20}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.contentSectionList}
-          onViewableItemsChanged={onListViewableItemsChanged.current}
-          viewabilityConfig={listViewabilityConfig.current}
-          onScrollToIndexFailed={(error) => {
-            if (song === undefined || error.index < song.verses.length - 1) {
-              // todo: Temp fix
-              flatListComponentRef.current?.scrollToIndex({
-                index: error.index / 2,
+          <FlatList
+            // @ts-ignore
+            ref={flatListComponentRef}
+            data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+            renderItem={renderContentItem}
+            initialNumToRender={20}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={styles.contentSectionList}
+            onViewableItemsChanged={onListViewableItemsChanged.current}
+            viewabilityConfig={listViewabilityConfig.current}
+            onScrollToIndexFailed={(error) => {
+              if (song === undefined || error.index < song.verses.length - 1) {
+                // todo: Temp fix
+                flatListComponentRef.current?.scrollToIndex({
+                  index: error.index / 2,
+                  animated: Settings.animateScrolling
+                });
+                return;
+              }
+
+              flatListComponentRef.current?.scrollToEnd({
                 animated: Settings.animateScrolling
               });
-              return;
-            }
+            }}
+            ListFooterComponent={<Footer opacity={animatedOpacity} />} />
 
-            flatListComponentRef.current?.scrollToEnd({
-              animated: Settings.animateScrolling
-            });
-          }}
-          ListFooterComponent={<Footer opacity={animatedOpacity} />} />
-
-        <LoadingOverlay text={null}
-                        isVisible={
-                          route.params.id !== undefined
-                          && (song === undefined || song.id !== route.params.id)}
-                        animate={Settings.songFadeIn} />
-      </View>
-    </PinchGestureHandler>
+          <LoadingOverlay text={null}
+                          isVisible={
+                            route.params.id !== undefined
+                            && (song === undefined || song.id !== route.params.id)}
+                          animate={Settings.songFadeIn} />
+        </View>
+      </PinchGestureHandler>
+    </GestureHandlerRootView>
   );
 };
 
