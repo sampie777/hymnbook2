@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, View, ViewToken } from "react-native";
-import { Song, Verse } from "../../models/Songs";
-import { useFocusEffect } from "@react-navigation/native";
-import Db from "../../scripts/db/db";
-import LoadingOverlay from "../../components/LoadingOverlay";
-import Settings from "../../scripts/settings";
-import { GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
-import ContentVerse from "./ContentVerse";
-import { SongSchema } from "../../models/SongsSchema";
-import { keepScreenAwake } from "../../scripts/utils";
-import Animated, { Easing } from "react-native-reanimated";
-import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
-import SongControls from "./SongControls";
-import { routes, VersePickerRouteParams } from "../../navigation";
-import HeaderIconButton from "../../components/HeaderIconButton";
-import { generateSongTitle } from "../../scripts/songs/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
+import { GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
+import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
+import Animated, { Easing } from "react-native-reanimated";
+import Db from "../../scripts/db/db";
+import Settings from "../../scripts/settings";
+import { routes, VersePickerRouteParams } from "../../navigation";
+import { SongSchema } from "../../models/SongsSchema";
+import { Song, Verse } from "../../models/Songs";
+import { generateSongTitle } from "../../scripts/songs/utils";
+import { keepScreenAwake } from "../../scripts/utils";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import ContentVerse from "./ContentVerse";
+import SongControls from "./SongControls";
+import HeaderIconButton from "../../components/HeaderIconButton";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {

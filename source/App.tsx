@@ -1,6 +1,6 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Hymnbook
+ * https://github.com/sampie777/hymnbook2
  *
  * @format
  * @flow strict-local
@@ -8,14 +8,17 @@
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
-import { routes } from "./navigation";
+import { CollectionChangeCallback } from "realm";
 import Db from "./scripts/db/db";
-import Icon from "react-native-vector-icons/FontAwesome";
 import Settings from "./scripts/settings";
+import { routes } from "./navigation";
 import { rollbar } from "./scripts/rollbar";
+import { SongListModelSchema } from "./models/SongListModelSchema";
+import SongList from "./scripts/songs/songList";
+import Icon from "react-native-vector-icons/FontAwesome";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingOverlay from "./components/LoadingOverlay";
 import SearchScreen from "./screens/Search/SearchScreen";
@@ -27,9 +30,6 @@ import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
-import { SongListModelSchema } from "./models/SongListModelSchema";
-import { CollectionChangeCallback } from "realm";
-import SongList from "./scripts/songs/songList";
 
 
 const RootNav = createNativeStackNavigator();
