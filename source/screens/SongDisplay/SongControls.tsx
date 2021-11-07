@@ -1,20 +1,21 @@
 import React from "react";
 import { SongListSongModel } from "../../models/SongListModel";
 import SongList from "../../scripts/songs/songList";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SongRouteParams, routes } from "../../navigation";
 import Settings from "../../scripts/settings";
 import { Song, Verse } from "../../models/Songs";
 import { getNextVerseIndex } from "../../scripts/songs/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { FlatList } from "react-native-gesture-handler";
 
 interface SongControlsProps {
   navigation: NativeStackNavigationProp<any>;
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;
-  flatListComponentRef?: FlatList;
+  flatListComponentRef?: FlatList<any>;
   selectedVerses?: Array<Verse>;
 }
 

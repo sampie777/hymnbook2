@@ -34,7 +34,8 @@ interface SongDisplayScreenProps {
 }
 
 const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {
-  const flatListComponentRef = useRef<FlatList>();
+  const flatListComponentRef = useRef<FlatList<any>>();
+  const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
   const animatedScale = new Animated.Value(Settings.songScale);
@@ -190,6 +191,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PinchGestureHandler
+        ref={pinchGestureHandlerRef}
         onGestureEvent={_onPanGestureEvent}
         onHandlerStateChange={_onPinchHandlerStateChange}>
         <View style={styles.container}>
@@ -203,7 +205,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
           <FlatList
             // @ts-ignore
             ref={flatListComponentRef}
-            data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+            waitFor={pinchGestureHandlerRef}data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
             renderItem={renderContentItem}
             initialNumToRender={20}
             keyExtractor={item => item.id.toString()}
