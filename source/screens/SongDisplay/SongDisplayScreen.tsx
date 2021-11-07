@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet, View, ViewToken } from "react-native";
+import { StyleSheet, View, ViewToken } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import { GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
+import { FlatList, GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 import Animated, { Easing } from "react-native-reanimated";
 import Db from "../../scripts/db/db";
@@ -155,6 +155,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     if (event.nativeEvent.state === State.END) {
+      animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
       Settings.songScale *= event.nativeEvent.scale;
     }
   };
