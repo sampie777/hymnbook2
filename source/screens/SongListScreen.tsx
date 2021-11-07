@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
     paddingBottom: 10,
-    paddingTop: 20
+    paddingTop: 10
   },
   songListItem: {
     marginBottom: 1,
