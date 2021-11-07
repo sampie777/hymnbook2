@@ -1,11 +1,12 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid } from "react-native";
 import Settings from "../../scripts/settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { SettingComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../scripts/server/models";
+import { rollbar } from "../../scripts/rollbar";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) =>
   !isVisible ? null : (
@@ -18,6 +19,8 @@ const SettingsScreen: React.FC = () => {
   const [confirmModalMessage, setConfirmModalMessage] = useState<string | undefined>(undefined);
   const [isReloading, setReloading] = useState(false);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV !== "development");
+  const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
 
   const confirmModalCallbackWrapper = (isConfirmed: boolean) => {
     setConfirmModalMessage(undefined);
@@ -54,6 +57,15 @@ const SettingsScreen: React.FC = () => {
     setTimeout(() => setReloading(false), 100);
   };
 
+  const increaseEasterEggDevMode = () => {
+    setEasterEggEnableDevModeCount(easterEggEnableDevModeCount + 1);
+    if (easterEggEnableDevModeCount == 9) {
+      setShowDevSettings(true);
+      rollbar.info("Someone switched on developer mode: " + ServerAuth.getDeviceId());
+      ToastAndroid.show("You're now a developer!", ToastAndroid.LONG)
+    }
+  };
+
   function getAuthenticationStateAsMessage() {
     if (ServerAuth.isAuthenticated()) {
       return "Approved as " + Settings.authClientName;
@@ -78,8 +90,9 @@ const SettingsScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={styles.container}
-      refreshControl={<RefreshControl onRefresh={reloadSettings} refreshing={isReloading} />}>
+      contentContainerStyle={styles.container}
+      refreshControl={<RefreshControl onRefresh={reloadSettings}
+                                      refreshing={isReloading} />}>
 
       <ConfirmationModal isOpen={confirmModalMessage !== undefined}
                          onClose={() => confirmModalCallbackWrapper(false)}
@@ -93,6 +106,7 @@ const SettingsScreen: React.FC = () => {
                               onPress={(setValue, sKey, newValue) => {
                                 setValue(newValue);
                                 setShowAdvancedSettings(newValue);
+                                increaseEasterEggDevMode();
                               }} />
 
       {isReloading ? null : <>
@@ -147,7 +161,7 @@ const SettingsScreen: React.FC = () => {
                                 setValue(getAuthenticationStateAsMessage);
                               })} />
 
-        {process.env.NODE_ENV !== "development" ? undefined : developerSettings}
+        {!showDevSettings ? undefined : developerSettings}
 
       </>}
     </ScrollView>
@@ -157,7 +171,9 @@ const SettingsScreen: React.FC = () => {
 export default SettingsScreen;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    paddingBottom: 100
+  },
 
   settingHeader: {
     marginTop: 15,

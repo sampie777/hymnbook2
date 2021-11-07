@@ -67,7 +67,7 @@ export class ServerAuth {
   static _requestAccess(): Promise<string> {
     this.forgetCredentials();
 
-    return api.auth.requestAccess(this._getDeviceId())
+    return api.auth.requestAccess(this.getDeviceId())
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
       .then(data => {
@@ -86,7 +86,7 @@ export class ServerAuth {
         }
 
         if (accessRequestResponse.requestID == null || accessRequestResponse.requestID == "") {
-          rollbar.error(`Access request for '${this._getDeviceId()}' requested but received no (valid) requestID but: '${accessRequestResponse.requestID}'`);
+          rollbar.error(`Access request for '${this.getDeviceId()}' requested but received no (valid) requestID but: '${accessRequestResponse.requestID}'`);
           return "";
         }
 
@@ -111,7 +111,7 @@ export class ServerAuth {
       return new Promise<string>(() => "");
     }
 
-    return api.auth.retrieveAccess(this._getDeviceId(), Settings.authRequestId)
+    return api.auth.retrieveAccess(this.getDeviceId(), Settings.authRequestId)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
       .then(data => {
@@ -149,7 +149,7 @@ export class ServerAuth {
       });
   }
 
-  static _getDeviceId(): string {
+  static getDeviceId(): string {
     if (Settings.authClientName === "") {
       Settings.authClientName = getUniqueId();
       Settings.store();
