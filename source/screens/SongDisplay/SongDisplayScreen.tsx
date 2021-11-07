@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, ViewToken } from "react-native";
+import { FlatList as NativeFlatList } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList, GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
@@ -189,6 +190,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     }
   };
 
+  const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PinchGestureHandler
@@ -203,10 +206,11 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
                         flatListComponentRef={flatListComponentRef.current}
                         selectedVerses={route.params.selectedVerses} />
 
-          <FlatList
+          <VerseList
             // @ts-ignore
             ref={flatListComponentRef}
-            waitFor={pinchGestureHandlerRef}data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+            waitFor={pinchGestureHandlerRef}
+            data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
             renderItem={renderContentItem}
             initialNumToRender={20}
             keyExtractor={item => item.id.toString()}
