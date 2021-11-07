@@ -32,11 +32,10 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       return () => undefined;
     }, [inputValue]);
 
-    // This listener fixes the problem where the app is closed in landscape
-    // and opened in portrait, but than this screens still thinks it's in landscape
     useFocusEffect(
       React.useCallback(() => {
-        handleDimensionsChange({window: Dimensions.get("window")});
+        onFocus();
+        return onBlur;
       }, [])
     );
 
@@ -48,6 +47,17 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       setInputValue("");
       setSearchResult([]);
       Dimensions.removeEventListener("change", handleDimensionsChange);
+    };
+
+    const onFocus = () => {
+      // This listener fixes the problem where the app is closed in landscape
+      // and opened in portrait, but than this screens still thinks it's in landscape
+      handleDimensionsChange({window: Dimensions.get("window")});
+    };
+
+    const onBlur = () => {
+      setInputValue("");
+      setSearchResult([]);
     };
 
     const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
