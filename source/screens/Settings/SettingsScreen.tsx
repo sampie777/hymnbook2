@@ -96,7 +96,7 @@ const SettingsScreen: React.FC = () => {
                               }} />
 
       {isReloading ? null : <>
-        <Header title={"Layout"} />
+        <Header title={"Display"} />
         <SettingComponent name={"Songs scale"}
                           sKey={"songScale"}
                           onPress={(setValue) => setValue(1)}
@@ -116,6 +116,9 @@ const SettingsScreen: React.FC = () => {
                                 isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"\"Jump to next verse\" button"}
                                 sKey={"showJumpToNextVerseButton"}
+                                isVisible={showAdvancedSettings} />
+        <SettingSwitchComponent name={"Use native list component for song verses"}
+                                sKey={"useNativeFlatList"}
                                 isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"Display song list size badge"}
                                 sKey={"showSongListCountBadge"}

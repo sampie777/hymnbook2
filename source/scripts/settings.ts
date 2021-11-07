@@ -81,6 +81,7 @@ class SettingsClass {
   songFadeIn = true;
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
+  useNativeFlatList = false;
 
   // Backend
   songBundlesApiUrl = "http://jschedule.sajansen.nl";
