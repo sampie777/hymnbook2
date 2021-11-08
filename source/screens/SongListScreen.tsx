@@ -55,9 +55,19 @@ const SongItem: React.FC<{
 
 const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
   ({ navigation }) => {
-
     const [list, setList] = useState<Array<SongListSongModel>>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
+
+    useEffect(() => {
+      onLaunch();
+      return onExit;
+    }, []);
+
+    const onLaunch = () => {
+      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    };
+
+    const onExit = () => Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
 
     React.useLayoutEffect(() => {
       navigation.setOptions({
@@ -69,18 +79,24 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
     useFocusEffect(
       React.useCallback(() => {
-        onFocus();
-        return onBlur;
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        reloadSongList();
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       }, [isDeleteMode])
     );
 
+    useFocusEffect(
+      React.useCallback(() => {
+        onFocus();
+        return onBlur;
+      }, [])
+    );
+
     const onFocus = () => {
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      reloadSongList();
     };
 
     const onBlur = () => {
-      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      setIsDeleteMode(false);
     };
 
     const reloadSongList = () => {
@@ -94,17 +110,6 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       }
       return false;
     };
-
-    useEffect(() => {
-      onLaunch();
-      return onExit;
-    }, []);
-
-    const onLaunch = () => {
-      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
-    };
-
-    const onExit = () => Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
 
     const onCollectionChange: CollectionChangeCallback<Object> = (songLists, changes) => {
       reloadSongList();
