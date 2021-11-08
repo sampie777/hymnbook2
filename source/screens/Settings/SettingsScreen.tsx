@@ -19,7 +19,7 @@ const SettingsScreen: React.FC = () => {
   const [confirmModalMessage, setConfirmModalMessage] = useState<string | undefined>(undefined);
   const [isReloading, setReloading] = useState(false);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV !== "development");
+  const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
 
   const confirmModalCallbackWrapper = (isConfirmed: boolean) => {
