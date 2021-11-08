@@ -62,9 +62,6 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
     const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
       setIsPortrait(isPortraitMode(e.window));
-      navigation.setOptions({
-        headerShown: isPortraitMode(e.window)
-      });
     };
 
     const onNumberKeyPress = (number: number) => {
