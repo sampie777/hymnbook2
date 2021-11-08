@@ -91,6 +91,7 @@ const HomeNavigation: React.FC = () => {
                              }}>
     <HomeNav.Screen name={routes.Search} component={SearchScreen}
                     options={{
+                      headerShown: false,
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="search" size={size} color={color} style={styles.tabIcon} />
                     }} />
