@@ -40,7 +40,7 @@ export class ServerAuth {
 
   static getJwt(): string {
     if (!this.isAuthenticated()) {
-      console.warn("Trying to get JWT but I'm not authenticated yet");
+      rollbar.warning("Trying to get JWT but I'm not authenticated yet");
     }
     return Settings.authJwt;
   }
@@ -100,7 +100,7 @@ export class ServerAuth {
         return "";
       })
       .catch(error => {
-        console.error(`Error requesting access token.`, error);
+        rollbar.error(`Error requesting access token.`, error);
         throw error;
       });
   }
@@ -144,7 +144,7 @@ export class ServerAuth {
         return Settings.authJwt;
       })
       .catch(error => {
-        console.error(`Error retrieving access token.`, error);
+        rollbar.error(`Error retrieving access token.`, error);
         throw error;
       });
   }

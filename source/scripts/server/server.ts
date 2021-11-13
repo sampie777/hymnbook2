@@ -1,6 +1,7 @@
 import { api, throwErrorsIfNotOk } from "../../api";
 import { Result } from "../utils";
 import { SongBundle } from "../../models/ServerSongsModel";
+import { rollbar } from "../rollbar";
 
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<Result> => {
@@ -20,13 +21,12 @@ export namespace Server {
         return new Result({ success: true, data: bundles });
       })
       .catch(error => {
-        console.error(`Error fetching song bundles`, error);
+        rollbar.error(`Error fetching song bundles`, error);
         throw error;
       });
   };
 
   export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<Result> => {
-    console.log("Downloading song bundle: " + bundle.name);
     return api.songBundles.getWithSongs(bundle.id, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
@@ -38,7 +38,7 @@ export namespace Server {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
-        console.error(`Error fetching songs for song bundle ${bundle.name}`, error);
+        rollbar.error(`Error fetching songs for song bundle ${bundle.name}`, error);
         throw error;
       });
   };
