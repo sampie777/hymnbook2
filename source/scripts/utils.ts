@@ -1,4 +1,4 @@
-import { Alert, Linking, ScaledSize } from "react-native";
+import { Alert, Linking, Platform, ScaledSize } from "react-native";
 import KeepAwake from "react-native-keep-awake";
 import { rollbar } from "./rollbar";
 
@@ -78,3 +78,5 @@ export function openLink(url: string): Promise<any> {
       }
     });
 }
+
+export const isAndroid = Platform.OS === "android";

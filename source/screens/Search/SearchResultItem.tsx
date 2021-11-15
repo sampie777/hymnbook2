@@ -5,15 +5,23 @@ import SongList from "../../scripts/songs/songList";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
-export const SearchResultItem: React.FC<{ song: Song, onPress: (song: Song) => void }> =
-  ({ song, onPress }) => {
+export const SearchResultItem: React.FC<{
+  song: Song,
+  onPress: (song: Song) => void,
+  onAddedToSongList?: () => void,
+}> =
+  ({ song, onPress, onAddedToSongList }) => {
     const [songAddedToSongList, setSongAddedToSongList] = useState(false);
-    const timeout = useRef<NodeJS.Timeout>();
+    const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
+    const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>();
 
     useFocusEffect(React.useCallback(() =>
       () => { // on blur
-        if (timeout.current !== undefined) {
-          clearTimeout(timeout.current);
+        if (clearCheckmarkTimeout.current !== undefined) {
+          clearTimeout(clearCheckmarkTimeout.current);
+        }
+        if (runOnAddedCallbackTimeout.current !== undefined) {
+          clearTimeout(runOnAddedCallbackTimeout.current);
         }
       }, []));
 
@@ -21,9 +29,15 @@ export const SearchResultItem: React.FC<{ song: Song, onPress: (song: Song) => v
       if (songAddedToSongList) {
         return; // Wait for cool down
       }
+
       SongList.addSong(song);
+
       setSongAddedToSongList(true);
-      timeout.current = setTimeout(() => setSongAddedToSongList(false), 3000);
+      clearCheckmarkTimeout.current = setTimeout(() => setSongAddedToSongList(false), 3000);
+
+      if (onAddedToSongList !== undefined) {
+        runOnAddedCallbackTimeout.current = setTimeout(onAddedToSongList, 300);
+      }
     };
 
     return (<TouchableOpacity onPress={() => onPress(song)} style={styles.searchListItem}>
@@ -61,5 +75,5 @@ const styles = StyleSheet.create({
   },
   searchListItemButtonHighlight: {
     color: "#2fd32f"
-  },
+  }
 });
