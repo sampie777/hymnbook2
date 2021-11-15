@@ -4,8 +4,8 @@ import { capitalize } from "../../scripts/utils";
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 
 interface SettingProps {
-  name: string;
-  sKey?: string;
+  title: string;
+  keyName?: string;
   value?: any;
   onPress?: (setValue: (newValue: any) => void, key?: string, newValue?: any) => void;
   valueRender?: (value: any) => string;
@@ -15,8 +15,8 @@ interface SettingProps {
 
 export const SettingComponent: React.FC<SettingProps> =
   ({
-     name,
-     sKey,
+     title,
+     keyName,
      value,
      onPress = undefined,
      valueRender = undefined,
@@ -27,17 +27,17 @@ export const SettingComponent: React.FC<SettingProps> =
       return null;
     }
 
-    if (value === undefined && sKey !== undefined) {
-      value = Settings.get(sKey);
+    if (value === undefined && keyName !== undefined) {
+      value = Settings.get(keyName);
     }
 
     const [_value, _setValue] = useState(value);
     const setValue = (newValue: any) => {
-      if (sKey !== undefined) {
+      if (keyName !== undefined) {
         // @ts-ignore
-        Settings[sKey] = newValue;
+        Settings[keyName] = newValue;
         // @ts-ignore
-        _setValue(Settings[sKey]);
+        _setValue(Settings[keyName]);
       } else {
         _setValue(newValue);
       }
@@ -55,16 +55,16 @@ export const SettingComponent: React.FC<SettingProps> =
     return (
       <TouchableOpacity
         style={[styles.container, (lessObviousStyling ? {} : styles.whiteContainer)]}
-        onPress={onPress === undefined ? undefined : () => onPress(setValue, sKey)}>
-        <Text style={styles.keyText}>{name}</Text>
+        onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName)}>
+        <Text style={styles.titleText}>{title}</Text>
         {value === undefined ? undefined : <Text style={styles.valueText}>{valueRender(_value)}</Text>}
       </TouchableOpacity>
     );
   };
 
 export const SettingSwitchComponent: React.FC<SettingProps> =
-  ({ name,
-     sKey,
+  ({ title,
+     keyName,
      value,
      onPress = undefined,
      isVisible = true,
@@ -74,8 +74,8 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
       return null;
     }
 
-    if (value === undefined && sKey !== undefined) {
-      value = Settings.get(sKey);
+    if (value === undefined && keyName !== undefined) {
+      value = Settings.get(keyName);
     }
 
     if (onPress === undefined) {
@@ -84,25 +84,25 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
 
     const [_value, _setValue] = useState(value);
     const setValue = (newValue: any) => {
-      if (sKey !== undefined) {
+      if (keyName !== undefined) {
         // @ts-ignore
-        Settings[sKey] = newValue;
+        Settings[keyName] = newValue;
         // @ts-ignore
-        _setValue(Settings[sKey]);
+        _setValue(Settings[keyName]);
       } else {
         _setValue(newValue);
       }
     };
 
     if (typeof _value !== "boolean") {
-      console.warn("Using boolean switch component for non boolean setting:", sKey, _value);
+      console.warn("Using boolean switch component for non boolean setting:", keyName, _value);
     }
 
     return (
       <View style={[styles.container, styles.switchContainer, (lessObviousStyling ? {} : styles.whiteContainer)]}>
-        <Text style={styles.keyText}>{name}</Text>
+        <Text style={styles.titleText}>{title}</Text>
         {value === undefined ? undefined :
-          <Switch onValueChange={(newValue) => onPress?.(setValue, sKey, newValue)}
+          <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
                   thumbColor={"dodgerblue"}
                   value={_value} />}
       </View>
@@ -127,8 +127,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
 
-  keyText: {
-    fontSize: 16
+  titleText: {
+    fontSize: 16,
+    flex: 1
   },
   valueText: {
     color: "#555",

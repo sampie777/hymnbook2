@@ -88,10 +88,10 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
-    <SettingSwitchComponent name={"Survey completed"}
-                            sKey={"surveyCompleted"} />
-    <SettingComponent name={"App opened times"}
-                      sKey={"appOpenedTimes"}
+    <SettingSwitchComponent title={"Survey completed"}
+                            keyName={"surveyCompleted"} />
+    <SettingComponent title={"App opened times"}
+                      keyName={"appOpenedTimes"}
                       onPress={(setValue) => setValue(0)} />
   </>;
 
@@ -107,7 +107,7 @@ const SettingsScreen: React.FC = () => {
         <Text>{confirmModalMessage}</Text>
       </ConfirmationModal>
 
-      <SettingSwitchComponent name={"Show advanced settings"}
+      <SettingSwitchComponent title={"Show advanced settings"}
                               value={showAdvancedSettings}
                               lessObviousStyling={true}
                               onPress={(setValue, sKey, newValue) => {
@@ -118,8 +118,8 @@ const SettingsScreen: React.FC = () => {
 
       {isReloading ? null : <>
         <Header title={"Display"} />
-        <SettingComponent name={"Songs scale"}
-                          sKey={"songScale"}
+        <SettingComponent title={"Songs scale"}
+                          keyName={"songScale"}
                           onPress={(setValue) => setValue(1)}
                           valueRender={(it) => {
                             if (it === 1.0) {
@@ -127,33 +127,33 @@ const SettingsScreen: React.FC = () => {
                             }
                             return Math.round(it * 100) + " % (press to reset)";
                           }} />
-        <SettingSwitchComponent name={"Keep screen on"}
-                                sKey={"keepScreenAwake"} />
-        <SettingSwitchComponent name={"Animated scrolling"}
-                                sKey={"animateScrolling"}
+        <SettingSwitchComponent title={"Keep screen on"}
+                                keyName={"keepScreenAwake"} />
+        <SettingSwitchComponent title={"Animated scrolling"}
+                                keyName={"animateScrolling"}
                                 isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent name={"Animate song loading"}
-                                sKey={"songFadeIn"}
+        <SettingSwitchComponent title={"Animate song loading"}
+                                keyName={"songFadeIn"}
                                 isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent name={"\"Jump to next verse\" button"}
-                                sKey={"showJumpToNextVerseButton"}
+        <SettingSwitchComponent title={"\"Jump to next verse\" button"}
+                                keyName={"showJumpToNextVerseButton"}
                                 isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent name={"Use native list component for song verses"}
-                                sKey={"useNativeFlatList"}
+        <SettingSwitchComponent title={"Use native list component for song verses"}
+                                keyName={"useNativeFlatList"}
                                 isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent name={"Display song list size badge"}
-                                sKey={"showSongListCountBadge"}
+        <SettingSwitchComponent title={"Display song list size badge"}
+                                keyName={"showSongListCountBadge"}
                                 isVisible={showAdvancedSettings} />
 
         <Header title={"Other"} />
-        <SettingSwitchComponent name={"Clear search after adding song to song list"}
-                                sKey={"clearSearchAfterAddedToSongList"} />
+        <SettingSwitchComponent title={"Clear search after adding song to song list"}
+                                keyName={"clearSearchAfterAddedToSongList"} />
 
         <Header title={"Backend"} isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent name={"Use authentication with backend"}
-                                sKey={"useAuthentication"}
+        <SettingSwitchComponent title={"Use authentication with backend"}
+                                keyName={"useAuthentication"}
                                 isVisible={showAdvancedSettings} />
-        <SettingComponent name={"Authentication status with backend"}
+        <SettingComponent title={"Authentication status with backend"}
                           value={authenticationStatus}
                           isVisible={showAdvancedSettings}
                           valueRender={(it) => {
