@@ -7,6 +7,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SettingComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../scripts/server/models";
 import { rollbar } from "../../scripts/rollbar";
+import { isAndroid } from "../../scripts/utils";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) =>
   !isVisible ? null : (
@@ -66,7 +67,9 @@ const SettingsScreen: React.FC = () => {
     if (easterEggEnableDevModeCount >= 9) {
       setShowDevSettings(true);
       rollbar.info("Someone switched on developer mode: " + ServerAuth.getDeviceId());
-      ToastAndroid.show("You're now a developer!", ToastAndroid.LONG)
+      if (isAndroid) {
+        ToastAndroid.show("You're now a developer!", ToastAndroid.LONG);
+      }
     }
   };
 
@@ -141,6 +144,10 @@ const SettingsScreen: React.FC = () => {
         <SettingSwitchComponent name={"Display song list size badge"}
                                 sKey={"showSongListCountBadge"}
                                 isVisible={showAdvancedSettings} />
+
+        <Header title={"Other"} />
+        <SettingSwitchComponent name={"Clear search after adding song to song list"}
+                                sKey={"clearSearchAfterAddedToSongList"} />
 
         <Header title={"Backend"} isVisible={showAdvancedSettings} />
         <SettingSwitchComponent name={"Use authentication with backend"}

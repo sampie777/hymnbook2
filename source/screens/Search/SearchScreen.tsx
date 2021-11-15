@@ -52,7 +52,7 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     const onFocus = () => {
       // This listener fixes the problem where the app is closed in landscape
       // and opened in portrait, but than this screens still thinks it's in landscape
-      handleDimensionsChange({window: Dimensions.get("window")});
+      handleDimensionsChange({ window: Dimensions.get("window") });
     };
 
     const onBlur = () => {
@@ -107,8 +107,15 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       navigation.navigate(routes.Song, { id: song.id } as SongRouteParams);
     };
 
+    const onAddedToSongList = () => {
+      if (!Settings.clearSearchAfterAddedToSongList) return;
+      setInputValue("");
+    };
+
     const renderSearchResultItem = ({ item }: { item: Song }) => (
-      <SearchResultItem song={item} onPress={onSearchResultItemPress} />
+      <SearchResultItem song={item}
+                        onPress={onSearchResultItemPress}
+                        onAddedToSongList={onAddedToSongList} />
     );
 
     return (

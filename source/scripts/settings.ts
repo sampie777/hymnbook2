@@ -74,6 +74,7 @@ class SettingsClass {
   // Search
   maxSearchInputLength = 3;
   maxSearchResultsLength = 40;
+  clearSearchAfterAddedToSongList = true;
 
   // Songs
   songScale = 1.0;
