@@ -132,15 +132,19 @@ const SettingsScreen: React.FC = () => {
         <SettingSwitchComponent title={"Use colored verse numbers"}
                                 keyName={"coloredVerseTitles"} />
         <SettingSwitchComponent title={"Animated scrolling"}
+                                description={"Disable this if scrolling isn't performing smooth"}
                                 keyName={"animateScrolling"}
                                 isVisible={showAdvancedSettings} />
         <SettingSwitchComponent title={"Animate song loading"}
+                                description={"Use fade-in effect when showing a song"}
                                 keyName={"songFadeIn"}
                                 isVisible={showAdvancedSettings} />
         <SettingSwitchComponent title={"\"Jump to next verse\" button"}
+                                description={"Show this button in the bottom right corner"}
                                 keyName={"showJumpToNextVerseButton"}
                                 isVisible={showAdvancedSettings} />
         <SettingSwitchComponent title={"Use native list component for song verses"}
+                                description={"Try to enable this if pinch-to-zoom or scrolling glitches"}
                                 keyName={"useNativeFlatList"}
                                 isVisible={showAdvancedSettings} />
         <SettingSwitchComponent title={"Display song list size badge"}
@@ -153,6 +157,7 @@ const SettingsScreen: React.FC = () => {
 
         <Header title={"Backend"} isVisible={showAdvancedSettings} />
         <SettingSwitchComponent title={"Use authentication with backend"}
+                                description={"Disabling this probably won't help you"}
                                 keyName={"useAuthentication"}
                                 isVisible={showAdvancedSettings} />
         <SettingComponent title={"Authentication status with backend"}
