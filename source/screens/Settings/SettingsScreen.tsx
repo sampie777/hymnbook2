@@ -129,6 +129,8 @@ const SettingsScreen: React.FC = () => {
                           }} />
         <SettingSwitchComponent title={"Keep screen on"}
                                 keyName={"keepScreenAwake"} />
+        <SettingSwitchComponent title={"Use colored verse numbers"}
+                                keyName={"coloredVerseTitles"} />
         <SettingSwitchComponent title={"Animated scrolling"}
                                 keyName={"animateScrolling"}
                                 isVisible={showAdvancedSettings} />

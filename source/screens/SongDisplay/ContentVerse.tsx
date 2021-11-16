@@ -1,25 +1,30 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import Animated  from "react-native-reanimated";
+import Animated from "react-native-reanimated";
+import { getVerseType, VerseType } from "../../scripts/songs/utils";
+import { Verse } from "../../models/Songs";
+import Settings from "../../scripts/settings";
 
 interface ContentVerseProps {
-  title: string;
-  content: string;
+  verse: Verse;
   scale: Animated.Value<number>;
   opacity: Animated.Value<number>;
 }
 
-const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale, opacity }) => {
-
+const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) => {
   const animatedStyle = {
     container: {
-      marginTop: Animated.multiply(scale, 15),
+      marginTop: Animated.multiply(scale, 10),
       marginBottom: Animated.multiply(scale, 35),
       opacity: opacity
     },
     title: {
-      fontSize: Animated.multiply(scale, 14),
-      marginBottom: Animated.multiply(scale, 7)
+      fontSize: Animated.multiply(scale, 19),
+      marginBottom: Animated.multiply(scale, 5)
+    },
+    titleLarge: {
+      fontSize: Animated.multiply(scale, 30),
+      marginBottom: Animated.multiply(scale, 5)
     },
     text: {
       fontSize: Animated.multiply(scale, 20),
@@ -27,11 +32,34 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ title, content, scale, opac
     }
   };
 
+  const styleForVerseType = (type: VerseType) => {
+    switch (type) {
+      case VerseType.Verse:
+        return animatedStyle.titleLarge;
+      default:
+        return styles.titleItalics;
+    }
+  };
+
+  // Shorten name
+  const displayName = verse.name.trim()
+    .replace(/verse */gi, "");
+
   return (
     <Animated.View style={[styles.container, animatedStyle.container]}>
-      {title === "" ? null :
-        <Animated.Text style={[styles.title, animatedStyle.title]}>{title}</Animated.Text>}
-      <Animated.Text style={[styles.text, animatedStyle.text]}>{content}</Animated.Text>
+      {displayName === "" ? undefined :
+        <Animated.Text style={[
+          styles.title,
+          (Settings.coloredVerseTitles ? styles.titleColored : {}),
+          animatedStyle.title,
+          styleForVerseType(getVerseType(verse))
+        ]}>
+          {displayName}
+        </Animated.Text>
+      }
+      <Animated.Text style={[styles.text, animatedStyle.text]}>
+        {verse.content}
+      </Animated.Text>
     </Animated.View>
   );
 };
@@ -41,9 +69,17 @@ export default ContentVerse;
 const styles = StyleSheet.create({
   container: {},
   title: {
-    color: "#777",
+    color: "#333",
     textTransform: "lowercase",
-    left: -10
+    fontFamily: "sans-serif-light",
+    fontStyle: "italic"
+  },
+  titleColored: {
+    color: "dodgerblue",
+    fontStyle: "normal"
+  },
+  titleItalics: {
+    fontStyle: "italic"
   },
   text: {}
 });

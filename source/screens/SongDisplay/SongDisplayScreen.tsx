@@ -143,8 +143,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
   const renderContentItem = ({ item }: { item: Verse }) => {
     return (
-      <ContentVerse title={item.name}
-                    content={item.content}
+      <ContentVerse verse={item}
                     opacity={animatedOpacity}
                     scale={animatedScale} />
     );
