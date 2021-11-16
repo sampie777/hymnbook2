@@ -1,5 +1,6 @@
 {
   "name": "hymnbook2",
   "displayName": "Hymnbook",
-  "homepage": "http://sajansen.nl"
+  "homepage": "https://sajansen.nl",
+  "songBundlesApiUrl": "https://jschedule.sajansen.nl"
 }

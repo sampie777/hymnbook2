@@ -73,10 +73,13 @@ export function openLink(url: string): Promise<any> {
       if (isSupported) {
         return Linking.openURL(url);
       } else {
-        rollbar.warning("Can't open URL '" + url + "': not supported");
         throw new Error("Can't open URL '" + url + "': not supported");
       }
-    });
+    })
+    .catch(error => {
+      rollbar.warning(error);
+      throw error;
+    })
 }
 
 export const isAndroid = Platform.OS === "android";

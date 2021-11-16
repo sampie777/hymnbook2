@@ -29,7 +29,7 @@ const PrivacyPolicyScreen: React.FC = () => {
         schedules/liturgies. This provides us with a extensive and growing database of all kind of Christian songs.
       </Text>
 
-      <UrlLink url={"http://jschedule.sajansen.nl"}>
+      <UrlLink url={"https://jschedule.sajansen.nl"}>
         <Text style={[styles.contentText, styles.webpageLink]}>Visit jSchedule.</Text>
       </UrlLink>
 

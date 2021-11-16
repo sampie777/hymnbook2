@@ -1,7 +1,7 @@
-import Settings from "./scripts/settings";
 import { ServerAuth } from "./scripts/server/auth";
+import { songBundlesApiUrl } from "../app.json";
 
-const apiHostUrl = Settings.songBundlesApiUrl;
+const apiHostUrl = songBundlesApiUrl;
 const apiBaseUrl = `${apiHostUrl}/api/v1`;
 
 const get = (url: string) =>
