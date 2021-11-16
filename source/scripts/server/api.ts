@@ -1,6 +1,6 @@
-import Settings from "../settings";
+import { songBundlesApiUrl } from "../../../app.json";
 
-const apiHostUrl = Settings.songBundlesApiUrl;
+const apiHostUrl = songBundlesApiUrl;
 const apiBaseUrl = `${apiHostUrl}/api/v1`;
 
 const post = (url: string, data: any = "") =>

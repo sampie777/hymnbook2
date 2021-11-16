@@ -84,9 +84,6 @@ class SettingsClass {
   showSongListCountBadge = true;
   useNativeFlatList = false;
 
-  // Backend
-  songBundlesApiUrl = "http://jschedule.sajansen.nl";
-
   // Server authentication
   useAuthentication = true;
   authClientName = "";
