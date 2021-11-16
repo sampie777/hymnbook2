@@ -83,6 +83,7 @@ class SettingsClass {
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
   useNativeFlatList = false;
+  coloredVerseTitles = Math.random() >= 0.5;
 
   // Server authentication
   useAuthentication = true;
