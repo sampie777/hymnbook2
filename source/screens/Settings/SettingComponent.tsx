@@ -58,7 +58,9 @@ export const SettingComponent: React.FC<SettingProps> =
       <TouchableOpacity
         style={[styles.container, (lessObviousStyling ? {} : styles.whiteContainer)]}
         onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName)}>
-        <Text style={styles.titleText}>{title}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>{title}</Text>
+        </View>
         {description === undefined ? undefined : <Text style={styles.descriptionText}>{description}</Text>}
         {value === undefined ? undefined : <Text style={styles.valueText}>{valueRender(_value)}</Text>}
       </TouchableOpacity>
@@ -136,11 +138,10 @@ const styles = StyleSheet.create({
   },
 
   titleContainer: {
-    flex: 1
+    flex: 1,
   },
   titleText: {
     fontSize: 16,
-    flex: 1
   },
   descriptionText: {
     color: "#555",
