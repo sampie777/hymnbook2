@@ -7,6 +7,7 @@ interface SettingProps {
   title: string;
   keyName?: string;
   value?: any;
+  description?: string;
   onPress?: (setValue: (newValue: any) => void, key?: string, newValue?: any) => void;
   valueRender?: (value: any) => string;
   isVisible?: boolean;
@@ -16,12 +17,13 @@ interface SettingProps {
 export const SettingComponent: React.FC<SettingProps> =
   ({
      title,
+     description,
      keyName,
      value,
-     onPress = undefined,
-     valueRender = undefined,
+     onPress,
+     valueRender,
      isVisible = true,
-     lessObviousStyling = false,
+     lessObviousStyling = false
    }) => {
     if (!isVisible) {
       return null;
@@ -57,18 +59,21 @@ export const SettingComponent: React.FC<SettingProps> =
         style={[styles.container, (lessObviousStyling ? {} : styles.whiteContainer)]}
         onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName)}>
         <Text style={styles.titleText}>{title}</Text>
+        {description === undefined ? undefined : <Text style={styles.descriptionText}>{description}</Text>}
         {value === undefined ? undefined : <Text style={styles.valueText}>{valueRender(_value)}</Text>}
       </TouchableOpacity>
     );
   };
 
 export const SettingSwitchComponent: React.FC<SettingProps> =
-  ({ title,
+  ({
+     title,
+     description,
      keyName,
      value,
      onPress = undefined,
      isVisible = true,
-     lessObviousStyling = false,
+     lessObviousStyling = false
    }) => {
     if (!isVisible) {
       return null;
@@ -100,7 +105,10 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
 
     return (
       <View style={[styles.container, styles.switchContainer, (lessObviousStyling ? {} : styles.whiteContainer)]}>
-        <Text style={styles.titleText}>{title}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>{title}</Text>
+          {description === undefined ? undefined : <Text style={styles.descriptionText}>{description}</Text>}
+        </View>
         {value === undefined ? undefined :
           <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
                   thumbColor={"dodgerblue"}
@@ -114,7 +122,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingVertical: 15,
-    marginBottom: 1,
+    marginBottom: 1
   },
   switchContainer: {
     flexDirection: "row",
@@ -124,12 +132,22 @@ const styles = StyleSheet.create({
   whiteContainer: {
     backgroundColor: "#fcfcfc",
     borderColor: "#ddd",
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
 
+  titleContainer: {
+    flex: 1
+  },
   titleText: {
     fontSize: 16,
     flex: 1
+  },
+  descriptionText: {
+    color: "#555",
+    fontSize: 14,
+    paddingLeft: 10,
+    paddingTop: 5,
+    fontStyle: "italic"
   },
   valueText: {
     color: "#555",
