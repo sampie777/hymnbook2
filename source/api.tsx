@@ -112,6 +112,7 @@ export const api = {
     retrieveAccess: (clientName: string, requestId: string) =>
       post(`${apiBaseUrl}/auth/application/request-access/hymnbook?clientName=${clientName}&requestID=${requestId}`, "", false)
   },
+
   songBundles: {
     list: (loadSongs?: boolean, loadVerses?: boolean) =>
       get(`${apiBaseUrl}/songs/bundles?loadSongs=${loadSongs ? "true" : "false"}&loadVerses=${loadVerses ? "true" : "false"}`),
@@ -126,5 +127,19 @@ export const api = {
         `&fieldLanguages=${fieldLanguages.join(",")}` +
         `&loadSongs=${loadSongs ? "true" : "false"}` +
         `&loadVerses=${loadVerses ? "true" : "false"}`)
-  }
+  },
+
+  documents: {
+    groups: {
+      root: (loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean, page = 0, page_size = 50,) =>
+        get(`${apiBaseUrl}/documents/groups/root?loadGroups=${loadGroups ? "true" : "false"}` +
+          `&loadItems=${loadItems ? "true" : "false"}` +
+          `&loadContent=${loadContent ? "true" : "false"}` +
+          `&page=${page}&page_size=${page_size}`),
+      get: (id: number, loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean) =>
+        get(`${apiBaseUrl}/documents/groups/${id}?loadGroups=${loadGroups ? "true" : "false"}` +
+          `&loadItems=${loadItems ? "true" : "false"}` +
+          `&loadContent=${loadContent ? "true" : "false"}`),
+    }
+  },
 };
