@@ -11,7 +11,7 @@ export namespace SongProcessor {
 
   export const loadLocalSongBundles = (): Result => {
     if (!Db.songs.isConnected()) {
-      console.log("Database is not connected");
+      rollbar.warning("Cannot load local song bundles: song database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
     }
 
@@ -24,7 +24,7 @@ export namespace SongProcessor {
 
   export const saveSongBundleToDatabase = (bundle: BackendSongBundle): Result => {
     if (!Db.songs.isConnected()) {
-      console.log("Database is not connected");
+      rollbar.warning("Cannot save local song bundle to database: song database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
     }
 
@@ -74,7 +74,6 @@ export namespace SongProcessor {
       songs
     );
 
-    console.log("Saving to database.");
     try {
       Db.songs.realm().write(() => {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
@@ -84,25 +83,23 @@ export namespace SongProcessor {
       return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
     }
 
-    console.log(`Created ${songs.length} songs`);
     return new Result({ success: true, message: `${songs.length} songs added!` });
   };
 
   export const deleteSongDatabase = (): Promise<Result> => {
-    console.log("Deleting database");
     Db.songs.deleteDb();
 
     return Db.songs.connect()
       .then(_ => new Result({ success: true, message: "Deleted all songs" }))
       .catch(e => {
-        rollbar.error("Could not connect to local database after deletions: " + e?.toString(), e);
+        rollbar.error("Could not connect to local song database after deletions: " + e?.toString(), e);
         return new Result({ success: false, message: "Could not reconnect to local database after deletions: " + e });
       });
   };
 
   export const deleteSongBundle = (bundle: SongBundle): Result => {
     if (!Db.songs.isConnected()) {
-      console.log("Database is not connected");
+      rollbar.warning("Cannot delete song bundle: song database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
     }
 
@@ -110,10 +107,7 @@ export namespace SongProcessor {
     const bundleName = bundle.name;
 
     Db.songs.realm().write(() => {
-      console.log("Deleting songs for song bundle: " + bundle.name);
       Db.songs.realm().delete(bundle.songs);
-
-      console.log("Deleting song bundle: " + bundle.name);
       Db.songs.realm().delete(bundle);
     });
 

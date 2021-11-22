@@ -6,6 +6,7 @@ import {
   SongListVerseModelSchema
 } from "../../models/SongListModelSchema";
 import { SettingSchema } from "../../models/SettingsSchema";
+import { DocumentGroupSchema, DocumentSchema } from "../../models/DocumentsSchema";
 
 const Db = {
   songs: new DatabaseProvider({
@@ -15,6 +16,13 @@ const Db = {
       SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema
     ],
     schemaVersion: 2
+  }),
+  documents: new DatabaseProvider({
+    path: "hymnbook_documents",
+    schemas: [
+      DocumentSchema, DocumentGroupSchema
+    ],
+    schemaVersion: 1
   }),
   settings: new DatabaseProvider({
     path: "hymnbook_settings",

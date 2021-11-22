@@ -141,7 +141,14 @@ export default function App() {
             alert("Could not connect to local song database: " + e);
           })
           .finally(() => {
-            setIsLoading(false);
+            Db.documents.connect()
+              .catch(e => {
+                rollbar.error("Could not connect to local document database: " + e.toString(), e);
+                alert("Could not connect to local document database: " + e);
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
           })
       );
   };
