@@ -11,6 +11,7 @@ import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../models/SongListModelSchema";
 import { generateSongTitle } from "../scripts/songs/utils";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { ThemeContextProps, useTheme } from "../components/ThemeProvider";
 
 const DeleteModeButton: React.FC<{
   onPress: () => void,
@@ -20,16 +21,17 @@ const DeleteModeButton: React.FC<{
         onPress,
         onLongPress,
         isActivated = false
-      }) => (
-  <TouchableOpacity onPress={onPress}
-                    onLongPress={onLongPress}
-                    style={styles.deleteModeButton}>
+      }) => {
+  const styles = createStyles(useTheme());
+  return <TouchableOpacity onPress={onPress}
+                           onLongPress={onLongPress}
+                           style={styles.deleteModeButton}>
     <Icon name={"trash-alt"}
           solid={isActivated}
           size={styles.deleteModeButton.fontSize}
           color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
-  </TouchableOpacity>
-);
+  </TouchableOpacity>;
+};
 
 const SongItem: React.FC<{
   index: number,
@@ -37,8 +39,9 @@ const SongItem: React.FC<{
   onPress: (index: number, songListSong: SongListSongModel) => void,
   showDeleteButton: boolean,
 }> =
-  ({ index, songListSong, onPress, showDeleteButton }) => (
-    <TouchableOpacity onPress={() => onPress(index, songListSong)} style={styles.songListItem}>
+  ({ index, songListSong, onPress, showDeleteButton }) => {
+    const styles = createStyles(useTheme());
+    return <TouchableOpacity onPress={() => onPress(index, songListSong)} style={styles.songListItem}>
       <Text style={styles.songListItemText}>
         {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
       </Text>
@@ -50,13 +53,14 @@ const SongItem: React.FC<{
                 color={styles.songListItemButton.color} />
         </View>
       }
-    </TouchableOpacity>
-  );
+    </TouchableOpacity>;
+  };
 
 const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
   ({ navigation }) => {
     const [list, setList] = useState<Array<SongListSongModel>>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
+    const styles = createStyles(useTheme());
 
     useEffect(() => {
       onLaunch();
@@ -156,11 +160,12 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
 export default SongListScreen;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    backgroundColor: colors.height0,
   },
 
   songList: {
@@ -171,8 +176,8 @@ const styles = StyleSheet.create({
   },
   songListItem: {
     marginBottom: 1,
-    backgroundColor: "#fcfcfc",
-    borderColor: "#ddd",
+    backgroundColor: colors.height1,
+    borderColor: colors.border0,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
@@ -180,7 +185,8 @@ const styles = StyleSheet.create({
   songListItemText: {
     padding: 15,
     fontSize: 24,
-    flex: 1
+    flex: 1,
+    color: colors.text0,
   },
   songListItemButton: {
     padding: 15,

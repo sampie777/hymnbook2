@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import Settings from "../../scripts/settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -7,12 +7,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SettingComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../scripts/server/models";
 import { rollbar } from "../../scripts/rollbar";
-import { isAndroid } from "../../scripts/utils";
+import { capitalize, isAndroid } from "../../scripts/utils";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
-const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) =>
-  !isVisible ? null : (
-    <Text style={styles.settingHeader}>{title}</Text>
-  );
+const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
+  const styles = createStyles(useTheme());
+  return !isVisible ? null : <Text style={styles.settingHeader}>{title}</Text>;
+};
 
 const SettingsScreen: React.FC = () => {
   const confirmModalCallback: MutableRefObject<((isConfirmed: boolean) => void) | undefined> =
@@ -22,6 +23,8 @@ const SettingsScreen: React.FC = () => {
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   const confirmModalCallbackWrapper = (isConfirmed: boolean) => {
     setConfirmModalMessage(undefined);
@@ -50,6 +53,7 @@ const SettingsScreen: React.FC = () => {
   };
 
   const onBlur = () => {
+    Settings.store()
   };
 
 
@@ -96,101 +100,124 @@ const SettingsScreen: React.FC = () => {
   </>;
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      refreshControl={<RefreshControl onRefresh={reloadSettings}
-                                      refreshing={isReloading} />}>
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={<RefreshControl onRefresh={reloadSettings}
+                                        refreshing={isReloading} />}>
 
-      <ConfirmationModal isOpen={confirmModalMessage !== undefined}
-                         onClose={() => confirmModalCallbackWrapper(false)}
-                         onConfirm={() => confirmModalCallbackWrapper(true)}>
-        <Text>{confirmModalMessage}</Text>
-      </ConfirmationModal>
+        <ConfirmationModal isOpen={confirmModalMessage !== undefined}
+                           onClose={() => confirmModalCallbackWrapper(false)}
+                           onConfirm={() => confirmModalCallbackWrapper(true)}
+                           message={confirmModalMessage}/>
 
-      <SettingSwitchComponent title={"Show advanced settings"}
-                              value={showAdvancedSettings}
-                              lessObviousStyling={true}
-                              onPress={(setValue, sKey, newValue) => {
-                                setValue(newValue);
-                                setShowAdvancedSettings(newValue);
-                                increaseEasterEggDevMode();
-                              }} />
+        <SettingSwitchComponent title={"Show advanced settings"}
+                                value={showAdvancedSettings}
+                                lessObviousStyling={true}
+                                onPress={(setValue, sKey, newValue) => {
+                                  setValue(newValue);
+                                  setShowAdvancedSettings(newValue);
+                                  increaseEasterEggDevMode();
+                                }} />
 
-      {isReloading ? null : <>
-        <Header title={"Display"} />
-        <SettingComponent title={"Songs scale"}
-                          keyName={"songScale"}
-                          onPress={(setValue) => setValue(1)}
-                          valueRender={(it) => {
-                            if (it === 1.0) {
-                              return "100 %";
-                            }
-                            return Math.round(it * 100) + " % (press to reset)";
-                          }} />
-        <SettingSwitchComponent title={"Keep screen on"}
-                                keyName={"keepScreenAwake"} />
-        <SettingSwitchComponent title={"Use colored verse numbers"}
-                                keyName={"coloredVerseTitles"} />
-        <SettingSwitchComponent title={"Animated scrolling"}
-                                description={"Disable this if scrolling isn't performing smooth"}
-                                keyName={"animateScrolling"}
-                                isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent title={"Animate song loading"}
-                                description={"Use fade-in effect when showing a song"}
-                                keyName={"songFadeIn"}
-                                isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent title={"\"Jump to next verse\" button"}
-                                description={"Show this button in the bottom right corner"}
-                                keyName={"showJumpToNextVerseButton"}
-                                isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent title={"Use native list component for song verses"}
-                                description={"Try to enable this if pinch-to-zoom or scrolling glitches"}
-                                keyName={"useNativeFlatList"}
-                                isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent title={"Display song list size badge"}
-                                keyName={"showSongListCountBadge"}
-                                isVisible={showAdvancedSettings} />
+        {isReloading ? null : <>
+          <Header title={"Display"} />
+          <SettingComponent title={"Songs scale"}
+                            keyName={"songScale"}
+                            onPress={(setValue) => setValue(1)}
+                            valueRender={(it) => {
+                              if (it === 1.0) {
+                                return "100 %";
+                              }
+                              return Math.round(it * 100) + " % (press to reset)";
+                            }} />
+          <SettingComponent title={"Theme"}
+                            keyName={"theme"}
+                            onPress={(setValue) => {
+                              let newValue = "";
+                              if (Settings.theme === "")
+                                newValue = "dark"
+                              if (Settings.theme === "dark")
+                                newValue = "light"
 
-        <Header title={"Other"} />
-        <SettingSwitchComponent title={"Clear search after adding song to song list"}
-                                keyName={"clearSearchAfterAddedToSongList"} />
+                              setValue(newValue)
+                              theme.reload()
+                            }}
+                            valueRender={(it: string) => {
+                              if (it === "") {
+                                return "System (auto)"
+                              }
+                              return capitalize(it)
+                            }} />
+          <SettingSwitchComponent title={"Keep screen on"}
+                                  keyName={"keepScreenAwake"} />
+          <SettingSwitchComponent title={"Use colored verse numbers"}
+                                  keyName={"coloredVerseTitles"} />
+          <SettingSwitchComponent title={"Animated scrolling"}
+                                  description={"Disable this if scrolling isn't performing smooth"}
+                                  keyName={"animateScrolling"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Animate song loading"}
+                                  description={"Use fade-in effect when showing a song"}
+                                  keyName={"songFadeIn"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"\"Jump to next verse\" button"}
+                                  description={"Show this button in the bottom right corner"}
+                                  keyName={"showJumpToNextVerseButton"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Use native list component for song verses"}
+                                  description={"Try to enable this if pinch-to-zoom or scrolling glitches"}
+                                  keyName={"useNativeFlatList"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Display song list size badge"}
+                                  keyName={"showSongListCountBadge"}
+                                  isVisible={showAdvancedSettings} />
 
-        <Header title={"Backend"} isVisible={showAdvancedSettings} />
-        <SettingSwitchComponent title={"Use authentication with backend"}
-                                description={"Disabling this probably won't help you"}
-                                keyName={"useAuthentication"}
-                                isVisible={showAdvancedSettings} />
-        <SettingComponent title={"Authentication status with backend"}
-                          value={authenticationStatus}
-                          isVisible={showAdvancedSettings}
-                          valueRender={(it) => {
-                            if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
-                              return it;
-                            }
-                            return it + " (press to reset)";
-                          }}
-                          onPress={(setValue) =>
-                            setConfirmModalCallback(
-                              "Reset/forget authentication?",
-                              (isConfirmed) => {
-                                if (isConfirmed) {
-                                  ServerAuth.forgetCredentials();
-                                }
-                                setValue(getAuthenticationStateAsMessage);
-                              })} />
+          <Header title={"Other"} />
+          <SettingSwitchComponent title={"Clear search after adding song to song list"}
+                                  keyName={"clearSearchAfterAddedToSongList"} />
 
-        {!showDevSettings ? undefined : developerSettings}
+          <Header title={"Backend"} isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Use authentication with backend"}
+                                  description={"Disabling this probably won't help you"}
+                                  keyName={"useAuthentication"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingComponent title={"Authentication status with backend"}
+                            value={authenticationStatus}
+                            isVisible={showAdvancedSettings}
+                            valueRender={(it) => {
+                              if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
+                                return it;
+                              }
+                              return it + " (press to reset)";
+                            }}
+                            onPress={(setValue) =>
+                              setConfirmModalCallback(
+                                "Reset/forget authentication?",
+                                (isConfirmed) => {
+                                  if (isConfirmed) {
+                                    ServerAuth.forgetCredentials();
+                                  }
+                                  setValue(getAuthenticationStateAsMessage);
+                                })} />
 
-      </>}
-    </ScrollView>
+          {!showDevSettings ? undefined : developerSettings}
+
+        </>}
+      </ScrollView>
+    </View>
   );
 };
 
 export default SettingsScreen;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    paddingBottom: 100
+    flex: 1,
+    backgroundColor: colors.height0
+  },
+  scrollContainer: {
+    paddingBottom: 100,
   },
 
   settingHeader: {

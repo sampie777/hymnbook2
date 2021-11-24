@@ -4,6 +4,7 @@ import Animated from "react-native-reanimated";
 import { getVerseType, VerseType } from "../../scripts/songs/utils";
 import { Verse } from "../../models/Songs";
 import Settings from "../../scripts/settings";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -12,6 +13,7 @@ interface ContentVerseProps {
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) => {
+  const styles = createStyles(useTheme());
   const animatedStyle = {
     container: {
       marginTop: Animated.multiply(scale, 10),
@@ -66,20 +68,22 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) =>
 
 export default ContentVerse;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {},
   title: {
-    color: "#333",
+    color: colors.verseTitle,
     textTransform: "lowercase",
     fontFamily: "sans-serif-light",
     fontStyle: "italic"
   },
   titleColored: {
-    color: "dodgerblue",
+    color: colors.tint,
     fontStyle: "normal"
   },
   titleItalics: {
     fontStyle: "italic"
   },
-  text: {}
+  text: {
+    color: colors.text0
+  }
 });
