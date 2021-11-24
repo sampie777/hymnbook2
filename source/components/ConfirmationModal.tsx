@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, View, Text, Pressable } from "react-native";
+import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
 interface ComponentProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface ComponentProps {
   closeText?: string;
   confirmText?: string;
   title?: string;
+  message?: string;
 }
 
 const ConfirmationModal: React.FC<ComponentProps> = ({
@@ -19,8 +21,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        invertConfirmColor = false,
                                                        closeText = "Close",
                                                        confirmText = "Confirm",
-                                                       title
+                                                       title,
+                                                       message
                                                      }) => {
+  const styles = createStyles(useTheme());
   return (
     <Modal
       animationType="none"
@@ -31,7 +35,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalTitle}>{title}</Text>
-          <View style={styles.modalText}>{children}</View>
+          <View style={styles.modalMessage}>
+            {children ? children :
+              <Text style={styles.modalMessageText}>{message}</Text>}
+          </View>
 
           <View style={styles.buttons}>
             {onClose === undefined ? undefined :
@@ -59,18 +66,18 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
 
 export default ConfirmationModal;
 
-const styles = StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#00000022"
+    backgroundColor: isDark ? "#0008" : "#0002"
   },
 
   modalView: {
     margin: 20,
     minWidth: 220,
-    backgroundColor: "white",
+    backgroundColor: colors.height2,
     borderRadius: 8,
     alignItems: "stretch",
     shadowColor: "#000",
@@ -87,9 +94,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 25,
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    color: colors.text0
   },
-  modalText: {
+  modalMessage: {
     paddingHorizontal: 30,
     paddingTop: 15,
     paddingBottom: 50,
@@ -97,12 +105,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  modalMessageText: {
+    color: colors.text0
+  },
 
   buttons: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     borderTopWidth: 1,
-    borderTopColor: "#eee"
+    borderTopColor: colors.border1,
   },
   button: {
     flex: 1,
@@ -111,25 +122,25 @@ const styles = StyleSheet.create({
   buttonText: {
     paddingVertical: 15,
     paddingHorizontal: 10,
-    textAlign: "center"
+    textAlign: "center",
+    backgroundColor: colors.height2,
+    color: colors.text0
   },
 
   buttonDenyText: {
     borderBottomLeftRadius: 8,
-    backgroundColor: "#fff",
-    color: "#8f979a"
+    color: "#eee",
   },
   buttonConfirmText: {
-    backgroundColor: "#fff",
     borderLeftWidth: 1,
-    borderLeftColor: "#eee",
-    color: "#2196F3",
+    borderLeftColor: colors.border1,
+    color: colors.tint,
     borderBottomRightRadius: 8,
     fontWeight: "bold",
     fontFamily: "sans-serif-light"
   },
   buttonConfirmTextInvert: {
-    backgroundColor: "#2196F3",
+    backgroundColor: colors.tint1,
     color: "#fff"
   },
 

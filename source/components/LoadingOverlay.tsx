@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, Text } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
+import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
 
 const LoadingOverlay: React.FC<{
@@ -12,6 +13,8 @@ const LoadingOverlay: React.FC<{
     if (!isVisible) {
       return null;
     }
+
+    const styles = createStyles(useTheme());
 
     if (text === undefined) {
       text = "Loading...";
@@ -51,11 +54,11 @@ const LoadingOverlay: React.FC<{
 
 export default LoadingOverlay;
 
-const styles = StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     position: "absolute",
-    backgroundColor: "#ffffffcc",
+    backgroundColor: isDark ? colors.height0 : "#fffc",
     top: 0,
     left: 0,
     right: 0,
@@ -66,11 +69,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 80,
-    color: "#ccc"
+    color: colors.text5
   },
   text: {
     paddingTop: 10,
     fontSize: 16,
-    color: "#aaa"
+    color: colors.text3
   }
 });

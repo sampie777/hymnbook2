@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { SongBundle } from "../../models/ServerSongsModel";
 import { SongBundle as LocalSongBundle } from "../../models/Songs";
-import DisposableMessage from "../../components/DisposableMessage";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { SongProcessor } from "../../scripts/songs/songProcessor";
 import { Server } from "../../scripts/server/server";
 import { LocalSongBundleItem, SongBundleItem } from "./SongBundleItems";
 import LanguageSelectBar from "./LanguageSelectBar";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface ComponentProps {
 }
@@ -24,11 +24,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [bundles, setBundles] = useState<Array<SongBundle>>([]);
   const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle>>([]);
-  const [progressResult, setProgressResult] = useState("");
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<SongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
   const [requestDeleteAll, setRequestDeleteAll] = useState(false);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const styles = createStyles(useTheme());
 
   useEffect(() => {
     onOpen();
@@ -182,25 +182,18 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
       <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
                          onClose={() => setRequestDownloadForBundle(undefined)}
                          onConfirm={onConfirmDownloadSongBundle}
-                         invertConfirmColor={true}>
-        <Text>Download songs for {requestDownloadForBundle?.name}?</Text>
-      </ConfirmationModal>
+                         invertConfirmColor={true}
+                         message={`Download songs for ${requestDownloadForBundle?.name}?`} />
 
       <ConfirmationModal isOpen={requestDeleteForBundle !== undefined}
                          onClose={() => setRequestDeleteForBundle(undefined)}
-                         onConfirm={onConfirmDeleteSongBundle}>
-        <Text>Delete all songs for {requestDeleteForBundle?.name}?</Text>
-      </ConfirmationModal>
+                         onConfirm={onConfirmDeleteSongBundle}
+                         message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
 
       <ConfirmationModal isOpen={requestDeleteAll}
                          onClose={() => setRequestDeleteAll(false)}
-                         onConfirm={onConfirmDeleteAll}>
-        <Text>Delete ALL songs?</Text>
-      </ConfirmationModal>
-
-      <DisposableMessage message={progressResult}
-                         onPress={() => setProgressResult("")}
-                         maxDuration={5000} />
+                         onConfirm={onConfirmDeleteAll}
+                         message={`Delete ALL songs?`} />
 
       <Text style={styles.informationText}>Select a bundle to download or delete:</Text>
 
@@ -247,11 +240,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
 
 export default DownloadSongsScreen;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    backgroundColor: colors.height0
   },
 
   informationText: {
@@ -259,13 +253,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 15,
+    color: colors.text0
   },
 
   listContainer: {},
 
   emptyListText: {
     padding: 20,
-    textAlign: "center"
+    textAlign: "center",
+    color: colors.text0
   },
 
   deleteAllButton: {

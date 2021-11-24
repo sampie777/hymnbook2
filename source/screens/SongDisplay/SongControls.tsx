@@ -9,6 +9,7 @@ import { Song, Verse } from "../../models/Songs";
 import { getNextVerseIndex } from "../../scripts/songs/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { FlatList } from "react-native-gesture-handler";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface SongControlsProps {
   navigation: NativeStackNavigationProp<any>;
@@ -31,6 +32,7 @@ const SongControls: React.FC<SongControlsProps> =
     const previousSong = songListIndex === undefined ? undefined : SongList.previousSong(songListIndex);
     const nextSong = songListIndex === undefined ? undefined : SongList.nextSong(songListIndex);
     const hasSelectableVerses = selectedVerses !== undefined && selectedVerses.length > 0;
+    const styles = createStyles(useTheme());
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
       navigation.navigate(routes.Song, {
@@ -127,7 +129,7 @@ const SongControls: React.FC<SongControlsProps> =
 
 export default SongControls;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     alignItems: "center",
     flexDirection: "row",
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   button: {
-    backgroundColor: "dodgerblue",
+    backgroundColor: colors.tint1,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -159,11 +161,11 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   buttonDisabled: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: colors.height4,
     elevation: 2
   },
   buttonInvert: {
-    backgroundColor: "#fcfcfc"
+    backgroundColor: colors.height7
   },
 
   buttonText: {
@@ -171,10 +173,10 @@ const styles = StyleSheet.create({
     fontSize: 18
   },
   buttonTextDisabled: {
-    color: "#ccc"
+    opacity: 0.3
   },
   buttonInvertText: {
-    color: "#999"
+    color: colors.text2
   },
 
   horizontalGap: {

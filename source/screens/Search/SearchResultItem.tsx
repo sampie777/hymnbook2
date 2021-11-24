@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../scripts/songs/songList";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 export const SearchResultItem: React.FC<{
   song: Song,
@@ -14,6 +15,7 @@ export const SearchResultItem: React.FC<{
     const [songAddedToSongList, setSongAddedToSongList] = useState(false);
     const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
     const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>();
+    const styles = createStyles(useTheme());
 
     useFocusEffect(React.useCallback(() =>
       () => { // on blur
@@ -54,11 +56,11 @@ export const SearchResultItem: React.FC<{
     </TouchableOpacity>);
   };
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   searchListItem: {
     marginBottom: 1,
-    backgroundColor: "#fcfcfc",
-    borderColor: "#ddd",
+    backgroundColor: colors.height1,
+    borderColor: colors.border0,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
@@ -66,7 +68,8 @@ const styles = StyleSheet.create({
   searchListItemText: {
     padding: 15,
     fontSize: 24,
-    flex: 1
+    flex: 1,
+    color: colors.text0,
   },
   searchListItemButton: {
     padding: 15,
