@@ -7,12 +7,12 @@ const configuration = new Configuration(
     captureUncaught: true,
     captureUnhandledRejections: true,
     payload: {
-      environment: "development",
+      environment: process.env.NODE_ENV,
       client: {
         javascript: {
           source_map_enabled: true,
           code_version: getVersion(),
-          environment: 'production'
+          environment: process.env.NODE_ENV
         }
       }
     },
