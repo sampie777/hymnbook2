@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface ComponentProps {
   languages: Array<string>;
@@ -8,6 +9,7 @@ interface ComponentProps {
 }
 
 const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLanguage, onLanguageClick }) => {
+  const styles = createStyles(useTheme());
   return (<View style={styles.container}>
     {languages.map(it => <TouchableOpacity key={it}
                                            onPress={() => onLanguageClick?.(it)}>
@@ -21,7 +23,7 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLangua
 export default LanguageSelectBar;
 
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
     paddingHorizontal: 20,
@@ -32,16 +34,17 @@ const styles = StyleSheet.create({
 
   language: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: colors.border0,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: colors.height4,
     marginBottom: 5,
     marginLeft: 2,
-    marginRight: 2
+    marginRight: 2,
+    color: colors.text0
   },
   selectedLanguage: {
-    backgroundColor: "#eee"
+    backgroundColor: colors.height5
   }
 });

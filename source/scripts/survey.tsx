@@ -11,5 +11,6 @@ export class Survey {
 
   static complete() {
     Settings.surveyCompleted = true;
+    Settings.store()
   }
 }

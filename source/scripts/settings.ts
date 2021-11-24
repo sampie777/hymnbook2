@@ -70,6 +70,7 @@ class SettingsClass {
   // System
   keepScreenAwake = true;
   appOpenedTimes = 0;
+  theme = "";
 
   // Search
   maxSearchInputLength = 3;
