@@ -207,7 +207,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   keyPad: {
-    height: 300,
+    height: 250,
     minHeight: "40%",
     maxHeight: "50%"
   },
