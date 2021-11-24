@@ -3,6 +3,7 @@ import { SongBundle } from "../../models/ServerSongsModel";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SongBundle as LocalSongBundle } from "../../models/Songs";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface SongBundleItemComponentProps {
   bundle: SongBundle;
@@ -14,6 +15,7 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
        bundle,
        onPress
      }) => {
+  const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
                       style={styles.songBundleItemContainer}>
@@ -49,6 +51,7 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
        bundle,
        onPress
      }) => {
+  const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
                       style={styles.songBundleItemContainer}>
@@ -73,20 +76,21 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
 };
 
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   songBundleItemContainer: {
     paddingHorizontal: 20,
     paddingVertical: 14,
-    borderColor: "#ddd",
+    borderColor: colors.border0,
     borderBottomWidth: 1,
-    backgroundColor: "#fafafa",
+    backgroundColor: colors.height1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
   },
   songBundleItemText: {
     fontSize: 17,
-    flexGrow: 1
+    flexGrow: 1,
+    color: colors.text0
   },
   songBundleItemInfoContainer: {
     paddingRight: 20,
@@ -94,7 +98,7 @@ const styles = StyleSheet.create({
   },
   songBundleItemInfoText: {
     fontSize: 13,
-    color: "#888"
+    color: colors.text2
   },
   songBundleItemIcon: {
     fontSize: 18

@@ -1,13 +1,17 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface KeyProps {
   onPress: () => void;
   extraStyle?: Object;
 }
 
+const isDark = true;
+
 export const Key: React.FC<KeyProps> = ({ children, onPress, extraStyle }) => {
+  const styles = createStyles(useTheme());
   const keyTextStyle: Array<Object> = [styles.keyText];
   if (extraStyle !== undefined) {
     keyTextStyle.push(extraStyle);
@@ -29,33 +33,35 @@ export const NumberKey: React.FC<{ number: number, onPress: (number: number) => 
   );
 
 export const ClearKey: React.FC<{ onPress: () => void, text?: string }> =
-  ({ onPress, text = "Clear" }) => (
-    <Key onPress={onPress}
-         extraStyle={styles.specialKeyText}>{text}</Key>
-  );
+  ({ onPress, text = "Clear" }) => {
+    const styles = createStyles(useTheme());
+    return <Key onPress={onPress}
+                extraStyle={styles.specialKeyText}>{text}</Key>;
+  };
 
 export const BackspaceKey: React.FC<{ onPress: () => void }> =
-  ({ onPress }) => (
-    <Key onPress={onPress}
-         extraStyle={styles.specialKeyText}>
-      <Icon name="backspace" size={styles.keyText.fontSize - 10} color={styles.keyText.color} />
-    </Key>
-  );
+  ({ onPress }) => {
+    const styles = createStyles(useTheme());
+    return <Key onPress={onPress}
+                extraStyle={styles.specialKeyText}>
+      <Icon name="backspace" size={styles.keyText.fontSize - 10} color={styles.keyText.color as string} />
+    </Key>;
+  };
 
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   key: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderColor: "#eee",
+    backgroundColor: colors.height2,
+    borderColor: colors.height0,
     borderWidth: 1
   },
   keyText: {
     fontSize: 40,
     fontFamily: "sans-serif-thin",
-    color: "#888"
+    color: colors.text2
   },
   specialKeyText: {
     fontSize: 20,

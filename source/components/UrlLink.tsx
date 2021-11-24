@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Alert, View, TouchableOpacity } from "react-native";
 import { openLink } from "../scripts/utils";
 
 const UrlLink: React.FC<{
@@ -31,10 +31,3 @@ const UrlLink: React.FC<{
 
 export default UrlLink;
 
-const styles = StyleSheet.create({
-  url: {
-    color: "dodgerblue"
-  }
-});
-
-export const urlLinkStyle = styles.url;

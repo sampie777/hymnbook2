@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Settings from "../../scripts/settings";
 import { capitalize } from "../../scripts/utils";
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface SettingProps {
   title: string;
@@ -28,6 +29,8 @@ export const SettingComponent: React.FC<SettingProps> =
     if (!isVisible) {
       return null;
     }
+
+    const styles = createStyles(useTheme());
 
     if (value === undefined && keyName !== undefined) {
       value = Settings.get(keyName);
@@ -81,6 +84,8 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
       return null;
     }
 
+    const styles = createStyles(useTheme());
+
     if (value === undefined && keyName !== undefined) {
       value = Settings.get(keyName);
     }
@@ -120,11 +125,12 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
   };
 
 
-const styles = StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingVertical: 15,
-    marginBottom: 1
+    marginBottom: 1,
+    backgroundColor: colors.height0,
   },
   switchContainer: {
     flexDirection: "row",
@@ -132,8 +138,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   whiteContainer: {
-    backgroundColor: "#fcfcfc",
-    borderColor: "#ddd",
+    backgroundColor: isDark ? colors.height0 : colors.height1,
+    borderColor: colors.border0,
     borderBottomWidth: 1
   },
 
@@ -142,16 +148,17 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 16,
+    color: colors.text0,
   },
   descriptionText: {
-    color: "#555",
+    color: colors.text1,
     fontSize: 14,
     paddingLeft: 10,
     paddingTop: 5,
     fontStyle: "italic"
   },
   valueText: {
-    color: "#555",
+    color: colors.text1,
     fontSize: 14,
     paddingLeft: 10,
     paddingTop: 5

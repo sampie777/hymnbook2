@@ -30,13 +30,20 @@ import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
+import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
 
 
 const RootNav = createNativeStackNavigator();
 const HomeNav = createBottomTabNavigator();
 
-const RootNavigation = () => (
-  <RootNav.Navigator initialRouteName={routes.Home}>
+const RootNavigation = () => {
+  const styles = createStyles(useTheme());
+  return <RootNav.Navigator initialRouteName={routes.Home}
+                            screenOptions={{
+                              headerStyle: styles.tabBarHeader,
+                              headerTitleStyle: styles.tabBarHeaderTitle,
+                              headerTintColor: styles.tabBarHeaderTitle.color
+                            }}>
     <RootNav.Screen name={"Home"} component={HomeNavigation}
                     options={{ headerShown: false }} />
 
@@ -62,11 +69,12 @@ const RootNavigation = () => (
     <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
     <RootNav.Screen name={routes.About} component={AboutScreen} />
     <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
-  </RootNav.Navigator>
-);
+  </RootNav.Navigator>;
+};
 
 const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
+  const styles = createStyles(useTheme());
 
   useEffect(() => {
     onLaunch();
@@ -87,7 +95,11 @@ const HomeNavigation: React.FC = () => {
 
   return (<HomeNav.Navigator initialRouteName={routes.Search}
                              screenOptions={{
-                               tabBarStyle: styles.tabBar
+                               tabBarStyle: styles.tabBar,
+                               tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
+                               tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
+                               headerStyle: styles.tabBarHeader,
+                               headerTitleStyle: styles.tabBarHeaderTitle
                              }}>
     <HomeNav.Screen name={routes.Search} component={SearchScreen}
                     options={{
@@ -111,8 +123,10 @@ const HomeNavigation: React.FC = () => {
   </HomeNav.Navigator>);
 };
 
-export default function App() {
+const AppRoot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   useEffect(() => {
     onLaunch();
@@ -131,6 +145,7 @@ export default function App() {
         alert("Could not load settings from database: " + e);
       })
       .then(() => {
+        theme.reload()
         Settings.appOpenedTimes++;
         Settings.store();
       })
@@ -152,31 +167,55 @@ export default function App() {
     Db.settings.disconnect();
   };
 
+  return <SafeAreaView style={styles.container}>
+    <ErrorBoundary>
+      <LoadingOverlay isVisible={isLoading} />
+
+      {isLoading ? undefined :
+        <NavigationContainer>
+          <RootNavigation />
+        </NavigationContainer>
+      }
+    </ErrorBoundary>
+
+    <StatusBar barStyle={"default"} hidden={false} />
+  </SafeAreaView>;
+};
+
+export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <ErrorBoundary>
-        <LoadingOverlay isVisible={isLoading} />
-
-        {isLoading ? undefined :
-          <NavigationContainer>
-            <RootNavigation />
-          </NavigationContainer>
-        }
-      </ErrorBoundary>
-
-      <StatusBar barStyle={"default"} hidden={false} />
-    </SafeAreaView>
+    <ThemeProvider>
+      <AppRoot />
+    </ThemeProvider>
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: colors.height0
   },
+
   tabBar: {
     paddingBottom: 10,
     paddingTop: 7,
-    height: 60
+    height: 60,
+    backgroundColor: colors.height1,
+    borderTopColor: colors.height0
+  },
+
+  tabBarHeader: {
+    backgroundColor: colors.height1 as string
+  },
+  tabBarHeaderTitle: {
+    color: colors.textHeader as string
+  },
+
+  tabBarInactiveLabel: {
+    color: colors.text2
+  },
+  tabBarActiveLabel: {
+    color: colors.tint
   },
   tabIcon: {},
   tabBarBadgeStyle: {
@@ -185,6 +224,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     height: 18,
     minWidth: 18,
-    backgroundColor: "dodgerblue"
+    backgroundColor: colors.tint
   }
 });
