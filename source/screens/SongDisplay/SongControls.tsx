@@ -87,7 +87,7 @@ const SongControls: React.FC<SongControlsProps> =
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(previousSong)}>
           <Icon name={"chevron-left"}
-                color={styles.buttonText.color}
+                color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
                 style={styles.buttonText} />
         </TouchableOpacity>
@@ -119,7 +119,7 @@ const SongControls: React.FC<SongControlsProps> =
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(nextSong)}>
           <Icon name={"chevron-right"}
-                color={styles.buttonText.color}
+                color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
                 style={styles.buttonText} />
         </TouchableOpacity>
@@ -145,7 +145,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginHorizontal: 10
   },
   button: {
-    backgroundColor: colors.tint1,
+    backgroundColor: colors.primaryVariant,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -161,22 +161,23 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     elevation: 5
   },
   buttonDisabled: {
-    backgroundColor: colors.height4,
+    backgroundColor: colors.buttonVariant,
     elevation: 2
   },
   buttonInvert: {
-    backgroundColor: colors.height7
+    backgroundColor: colors.button,
   },
 
   buttonText: {
-    color: "white",
+    color: colors.onPrimary,
     fontSize: 18
   },
   buttonTextDisabled: {
-    opacity: 0.3
+    opacity: 0.3,
+    color: colors.textLighter
   },
   buttonInvertText: {
-    color: colors.text2
+    color: colors.textLighter
   },
 
   horizontalGap: {

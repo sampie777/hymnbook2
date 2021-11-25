@@ -45,7 +45,9 @@ const LoadingOverlay: React.FC<{
 
     return (
       <Animated.View style={[styles.container, animatedStyle.container]}>
-        <ActivityIndicator size={styles.icon.fontSize} color={styles.icon.color} />
+        <ActivityIndicator style={styles.icon}
+                           size={styles.icon.fontSize}
+                           color={styles.icon.color} />
         {text === "" || text === null ? null : <Text style={styles.text}>{text}</Text>}
       </Animated.View>
     );
@@ -58,7 +60,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   container: {
     flex: 1,
     position: "absolute",
-    backgroundColor: isDark ? colors.height0 : "#fffc",
+    backgroundColor: isDark ? colors.background : "#fffc",
     top: 0,
     left: 0,
     right: 0,
@@ -69,11 +71,12 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   },
   icon: {
     fontSize: 80,
-    color: colors.text5
+    color: colors.textLighter,
+    opacity: 0.7
   },
   text: {
     paddingTop: 10,
     fontSize: 16,
-    color: colors.text3
+    color: colors.textLighter
   }
 });

@@ -245,7 +245,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "stretch",
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
 
   informationText: {
@@ -253,7 +253,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 15,
-    color: colors.text0
+    color: colors.text
   },
 
   listContainer: {},
@@ -261,7 +261,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   emptyListText: {
     padding: 20,
     textAlign: "center",
-    color: colors.text0
+    color: colors.text
   },
 
   deleteAllButton: {

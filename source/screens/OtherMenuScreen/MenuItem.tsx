@@ -25,8 +25,8 @@ export default MenuItem;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: colors.height1,
-    borderColor: colors.border0,
+    backgroundColor: colors.surface1,
+    borderColor: colors.border,
     borderBottomWidth: 1,
     alignItems: "center",
   },
@@ -36,12 +36,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingRight: 10,
     paddingVertical: 18,
     fontSize: 15,
-    color: colors.text0,
+    color: colors.text,
   },
   icon: {
     marginLeft: 15,
     fontSize: 18,
-    color: colors.text1,
+    color: colors.textLight,
     textAlign: "center",
     width: 30,
   },

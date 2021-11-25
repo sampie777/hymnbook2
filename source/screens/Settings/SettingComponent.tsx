@@ -130,7 +130,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingHorizontal: 20,
     paddingVertical: 15,
     marginBottom: 1,
-    backgroundColor: colors.height0,
+    backgroundColor: colors.background,
   },
   switchContainer: {
     flexDirection: "row",
@@ -138,8 +138,8 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     alignItems: "center"
   },
   whiteContainer: {
-    backgroundColor: isDark ? colors.height0 : colors.height1,
-    borderColor: colors.border0,
+    backgroundColor: isDark ? colors.background : colors.surface1,
+    borderColor: colors.border,
     borderBottomWidth: 1
   },
 
@@ -148,17 +148,17 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   },
   titleText: {
     fontSize: 16,
-    color: colors.text0,
+    color: colors.text,
   },
   descriptionText: {
-    color: colors.text1,
+    color: colors.textLight,
     fontSize: 14,
     paddingLeft: 10,
     paddingTop: 5,
     fontStyle: "italic"
   },
   valueText: {
-    color: colors.text1,
+    color: colors.textLight,
     fontSize: 14,
     paddingLeft: 10,
     paddingTop: 5
