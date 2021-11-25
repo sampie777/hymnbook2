@@ -260,7 +260,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "stretch",
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
 
   contentSectionList: {
@@ -271,7 +271,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   footer: {
-    borderTopColor: colors.border0,
+    borderTopColor: colors.border,
     borderTopWidth: 1,
     width: "50%",
     marginTop: 70,

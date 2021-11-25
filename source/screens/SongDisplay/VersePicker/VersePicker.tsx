@@ -108,7 +108,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "stretch",
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
 
   verseList: {

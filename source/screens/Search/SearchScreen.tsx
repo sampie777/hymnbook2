@@ -166,12 +166,12 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
 export default SearchScreen;
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
     alignItems: "stretch",
-    backgroundColor: colors.height0,
+    backgroundColor: colors.background,
   },
 
   inputAndResults: {
@@ -183,17 +183,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   infoText: {
     fontSize: 18,
-    color: colors.text0,
+    color: colors.text,
     paddingTop: 20,
     fontFamily: "sans-serif-light"
   },
   inputTextField: {
     fontSize: 90,
     fontFamily: "sans-serif-light",
-    color: colors.text1,
+    color: colors.textLight,
     borderStyle: "dashed",
     borderBottomWidth: 2,
-    borderBottomColor: colors.height3,
+    borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140,
     paddingLeft: 40,
     paddingRight: 40

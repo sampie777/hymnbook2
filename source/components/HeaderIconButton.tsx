@@ -29,6 +29,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: colors.text0
+    color: colors.text
   }
 });

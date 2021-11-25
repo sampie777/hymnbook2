@@ -54,14 +54,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.height2,
-    borderColor: colors.height0,
+    backgroundColor: colors.surface2,
+    borderColor: colors.background,
     borderWidth: 1
   },
   keyText: {
     fontSize: 40,
     fontFamily: "sans-serif-thin",
-    color: colors.text2
+    color: colors.textLighter
   },
   specialKeyText: {
     fontSize: 20,

@@ -38,7 +38,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.height8,
+    backgroundColor: "#fff",
     margin: 15,
     marginBottom: 0,
     padding: 20,
@@ -56,12 +56,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   text: {
     fontSize: 20,
     paddingRight: 50,
-    color: colors.text0
+    color: colors.text
   },
 
   icon: {
     fontSize: 24,
-    color: colors.text1,
+    color: colors.textLight,
     position: "absolute",
     right: 30
   }
