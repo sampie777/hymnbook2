@@ -59,8 +59,8 @@ export const SearchResultItem: React.FC<{
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   searchListItem: {
     marginBottom: 1,
-    backgroundColor: colors.height1,
-    borderColor: colors.border0,
+    backgroundColor: colors.surface1,
+    borderColor: colors.border,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
@@ -69,7 +69,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 15,
     fontSize: 24,
     flex: 1,
-    color: colors.text0,
+    color: colors.text,
   },
   searchListItemButton: {
     padding: 15,

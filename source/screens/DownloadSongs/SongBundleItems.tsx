@@ -80,9 +80,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   songBundleItemContainer: {
     paddingHorizontal: 20,
     paddingVertical: 14,
-    borderColor: colors.border0,
+    borderColor: colors.border,
     borderBottomWidth: 1,
-    backgroundColor: colors.height1,
+    backgroundColor: colors.surface1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
@@ -90,7 +90,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   songBundleItemText: {
     fontSize: 17,
     flexGrow: 1,
-    color: colors.text0
+    color: colors.text
   },
   songBundleItemInfoContainer: {
     paddingRight: 20,
@@ -98,7 +98,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   songBundleItemInfoText: {
     fontSize: 13,
-    color: colors.text2
+    color: colors.textLighter
   },
   songBundleItemIcon: {
     fontSize: 18

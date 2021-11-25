@@ -200,29 +200,29 @@ export default function App() {
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
 
   tabBar: {
     paddingBottom: 10,
     paddingTop: 7,
     height: 60,
-    backgroundColor: colors.height1,
-    borderTopColor: colors.height0
+    backgroundColor: colors.surface1,
+    borderTopColor: colors.background
   },
 
   tabBarHeader: {
-    backgroundColor: colors.height1 as string
+    backgroundColor: colors.surface1 as string
   },
   tabBarHeaderTitle: {
     color: colors.textHeader as string
   },
 
   tabBarInactiveLabel: {
-    color: colors.text2
+    color: colors.textLighter
   },
   tabBarActiveLabel: {
-    color: colors.tint
+    color: colors.primary
   },
   tabIcon: {},
   tabBarBadgeStyle: {
@@ -231,6 +231,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontSize: 12,
     height: 18,
     minWidth: 18,
-    backgroundColor: colors.tint
+    backgroundColor: colors.primary
   }
 });

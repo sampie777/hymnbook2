@@ -65,7 +65,7 @@ export default VersePickerItem;
 
 const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    backgroundColor: colors.height1,
+    backgroundColor: colors.surface1,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 8,
@@ -77,16 +77,18 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingVertical: 10
   },
   containerSelected: {
-    backgroundColor: colors.tint1
+    backgroundColor: colors.primaryVariant
   },
 
   text: {
     fontSize: 16,
     textAlign: "center",
-    color: colors.text6
+    color: colors.text,
+    opacity: 0.9
   },
   textSelected: {
-    color: "#fff"
+    color: colors.onPrimary,
+    opacity: 1
   },
 
   intro: {

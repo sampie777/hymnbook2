@@ -214,7 +214,7 @@ export default SettingsScreen;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
   scrollContainer: {
     paddingBottom: 100,

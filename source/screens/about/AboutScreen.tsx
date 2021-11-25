@@ -65,8 +65,8 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
         {/*</View>*/}
       </View>
 
-      <View style={styles.greetingContainer}>
-        <Text style={[styles.contentText, styles.greetingText]}>
+      <View style={styles.footerContainer}>
+        <Text style={[styles.contentText, styles.footerText]}>
           Made with passion by S. Jansen
         </Text>
         <UrlLink url={homepage}>
@@ -88,7 +88,7 @@ export default AboutScreen;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
 
   headerContainer: {
@@ -96,7 +96,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     paddingTop: 80,
     paddingBottom: 80,
-    borderBottomColor: colors.border0
+    borderBottomColor: colors.border
   },
   headerTitle: {
     alignItems: "center",
@@ -106,17 +106,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "row"
   },
   titleIcon: {
-    color: colors.tint,
+    color: colors.primary,
     fontSize: 30
   },
   titleContent: {
     paddingLeft: 18,
-    color: colors.tint,
+    color: colors.primary,
     fontSize: 28,
     fontFamily: "sans-serif-light"
   },
   versionText: {
-    color: colors.text3,
+    color: colors.textLighter,
     fontSize: 12,
     fontFamily: "sans-serif-light"
   },
@@ -127,21 +127,21 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     lineHeight: 25,
     marginBottom: 25,
     paddingHorizontal: 30,
-    color: colors.text0,
+    color: colors.text,
   },
 
   scriptureContainer: {
     alignSelf: "center",
     marginBottom: 45,
     paddingHorizontal: 20,
-    backgroundColor: colors.height1,
+    backgroundColor: colors.surface1,
     paddingVertical: 30,
   },
   scriptureText: {
     fontFamily: "serif",
     fontStyle: "italic",
     textAlign: "center",
-    color: colors.text1,
+    color: colors.textLight,
     marginBottom: 10,
     fontSize: 13
   },
@@ -149,7 +149,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     textAlign: "center",
     fontStyle: "italic",
     fontFamily: "serif",
-    color: colors.text2,
+    color: colors.textLighter,
     fontSize: 10
   },
 
@@ -162,7 +162,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     paddingTop: 60,
     paddingBottom: 45,
-    backgroundColor: colors.height1,
+    backgroundColor: colors.surface1,
   },
   contributionText: {
     marginBottom: 40,
@@ -171,32 +171,33 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginBottom: 20
   },
   donationLinkText: {
-    backgroundColor: colors.tintLight,
+    backgroundColor: colors.primaryLight,
     alignItems: "center",
     borderRadius: 80,
     marginBottom: 0,
     paddingVertical: 15,
     paddingHorizontal: 50,
-    color: colors.text0,
+    color: colors.onPrimary,
     fontWeight: "bold"
   },
 
-  greetingContainer: {
+  footerContainer: {
     paddingTop: 80,
     paddingBottom: 80,
-    backgroundColor: colors.height6
+    backgroundColor: colors.surface3
   },
-  greetingText: {
+  footerText: {
     fontFamily: "sans-serif",
     textAlign: "center",
     fontStyle: "italic",
     marginBottom: 0,
     fontSize: 13,
-    color: colors.text4
+    color: colors.onPrimary,
+    opacity: 0.8
   },
   webpageLink: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.url0
+    color: colors.url
   }
 });

@@ -77,7 +77,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   modalView: {
     margin: 20,
     minWidth: 220,
-    backgroundColor: colors.height2,
+    backgroundColor: colors.surface2,
     borderRadius: 8,
     alignItems: "stretch",
     shadowColor: "#000",
@@ -95,7 +95,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingTop: 25,
     fontWeight: "bold",
     textAlign: "center",
-    color: colors.text0
+    color: colors.text
   },
   modalMessage: {
     paddingHorizontal: 30,
@@ -106,14 +106,14 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     justifyContent: "center"
   },
   modalMessageText: {
-    color: colors.text0
+    color: colors.text
   },
 
   buttons: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     borderTopWidth: 1,
-    borderTopColor: colors.border1,
+    borderTopColor: colors.borderLight,
   },
   button: {
     flex: 1,
@@ -123,25 +123,24 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingVertical: 15,
     paddingHorizontal: 10,
     textAlign: "center",
-    backgroundColor: colors.height2,
-    color: colors.text0
+    backgroundColor: colors.surface2,
+    color: colors.textLight
   },
 
   buttonDenyText: {
     borderBottomLeftRadius: 8,
-    color: "#eee",
   },
   buttonConfirmText: {
     borderLeftWidth: 1,
-    borderLeftColor: colors.border1,
-    color: colors.tint,
+    borderLeftColor: colors.borderLight,
+    color: colors.primary,
     borderBottomRightRadius: 8,
     fontWeight: "bold",
     fontFamily: "sans-serif-light"
   },
   buttonConfirmTextInvert: {
-    backgroundColor: colors.tint1,
-    color: "#fff"
+    backgroundColor: colors.primaryVariant,
+    color: colors.onPrimary
   },
 
   soloButton: {
