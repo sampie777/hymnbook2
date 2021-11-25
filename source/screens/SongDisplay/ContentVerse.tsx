@@ -5,14 +5,18 @@ import { getVerseType, VerseType } from "../../scripts/songs/utils";
 import { Verse } from "../../models/Songs";
 import Settings from "../../scripts/settings";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { isVerseInList } from "../../scripts/songs/versePicker";
 
 interface ContentVerseProps {
   verse: Verse;
   scale: Animated.Value<number>;
   opacity: Animated.Value<number>;
+  selectedVerses: Array<Verse>;
 }
 
-const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) => {
+const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, selectedVerses }) => {
+  const isSelected = isVerseInList(selectedVerses, verse);
+
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: {
@@ -53,6 +57,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) =>
         <Animated.Text style={[
           styles.title,
           (Settings.coloredVerseTitles ? styles.titleColored : {}),
+          (isSelected && !Settings.coloredVerseTitles ? styles.titleSelected : {}),
+          ((isSelected || selectedVerses.length === 0) && Settings.coloredVerseTitles ? styles.titleColoredSelected : {}),
           animatedStyle.title,
           styleForVerseType(getVerseType(verse))
         ]}>
@@ -77,12 +83,18 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontStyle: "italic"
   },
   titleColored: {
-    color: colors.primary,
     fontStyle: "normal"
   },
   titleItalics: {
     fontStyle: "italic"
   },
+  titleSelected: {
+    fontWeight: "bold",
+  },
+  titleColoredSelected: {
+    color: colors.primary,
+  },
+
   text: {
     color: colors.text
   }

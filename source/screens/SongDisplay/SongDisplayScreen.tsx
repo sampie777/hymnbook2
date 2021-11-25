@@ -155,7 +155,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     return (
       <ContentVerse verse={item}
                     opacity={animatedOpacity}
-                    scale={animatedScale} />
+                    scale={animatedScale}
+                    selectedVerses={route.params.selectedVerses} />
     );
   };
 
