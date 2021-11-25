@@ -77,13 +77,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontStyle: "italic"
   },
   titleColored: {
-    color: colors.tint,
+    color: colors.primary,
     fontStyle: "normal"
   },
   titleItalics: {
     fontStyle: "italic"
   },
   text: {
-    color: colors.text0
+    color: colors.text
   }
 });

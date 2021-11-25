@@ -34,17 +34,18 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   language: {
     borderWidth: 1,
-    borderColor: colors.border0,
+    borderColor: colors.border,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
-    backgroundColor: colors.height4,
+    backgroundColor: colors.button,
     marginBottom: 5,
     marginLeft: 2,
     marginRight: 2,
-    color: colors.text0
+    color: colors.text
   },
   selectedLanguage: {
-    backgroundColor: colors.height5
+    backgroundColor: colors.buttonVariant,
+    borderColor: colors.borderVariant
   }
 });

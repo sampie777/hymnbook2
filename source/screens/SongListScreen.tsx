@@ -165,7 +165,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "stretch",
-    backgroundColor: colors.height0,
+    backgroundColor: colors.background,
   },
 
   songList: {
@@ -176,8 +176,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   songListItem: {
     marginBottom: 1,
-    backgroundColor: colors.height1,
-    borderColor: colors.border0,
+    backgroundColor: colors.surface1,
+    borderColor: colors.border,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
@@ -186,7 +186,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 15,
     fontSize: 24,
     flex: 1,
-    color: colors.text0,
+    color: colors.text,
   },
   songListItemButton: {
     padding: 15,

@@ -50,7 +50,7 @@ export default PrivacyPolicyScreen;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.height0
+    backgroundColor: colors.background
   },
 
   content: {
@@ -62,10 +62,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     lineHeight: 25,
     marginBottom: 30,
     paddingHorizontal: 30,
-    color: colors.text0,
+    color: colors.text,
   },
   webpageLink: {
     textAlign: "center",
-    color: colors.url0
+    color: colors.url
   }
 });
