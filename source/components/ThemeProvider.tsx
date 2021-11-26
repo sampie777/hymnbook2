@@ -38,7 +38,7 @@ const ThemeProvider: React.FC = ({ children }) => {
     Appearance.removeChangeListener(handleSystemThemeChange);
   };
 
-  const handleSystemThemeChange = ({ colorScheme }: Appearance.AppearancePreferences) => {
+  const handleSystemThemeChange = () => {
     loadTheme();
   };
 

@@ -1,7 +1,7 @@
 import { Song, Verse } from "../../models/Songs";
 import Db from "../db/db";
 import { SongListModel, SongListSongModel, SongListVerseModel } from "../../models/SongListModel";
-import { SongListModelSchema, SongListVerseModelSchema } from "../../models/SongListModelSchema";
+import { SongListModelSchema } from "../../models/SongListModelSchema";
 import { VerseSchema } from "../../models/SongsSchema";
 
 export default class SongList {
