@@ -8,8 +8,6 @@ interface KeyProps {
   extraStyle?: Object;
 }
 
-const isDark = true;
-
 export const Key: React.FC<KeyProps> = ({ children, onPress, extraStyle }) => {
   const styles = createStyles(useTheme());
   const keyTextStyle: Array<Object> = [styles.keyText];
