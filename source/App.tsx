@@ -89,7 +89,7 @@ const HomeNavigation: React.FC = () => {
     Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = (songLists, changes) => {
+  const onCollectionChange: CollectionChangeCallback<Object> = () => {
     setSongListSize(SongList.list().length);
   };
 
