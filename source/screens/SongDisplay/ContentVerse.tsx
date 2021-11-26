@@ -4,14 +4,20 @@ import Animated from "react-native-reanimated";
 import { getVerseType, VerseType } from "../../scripts/songs/utils";
 import { Verse } from "../../models/Songs";
 import Settings from "../../scripts/settings";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { isVerseInList } from "../../scripts/songs/versePicker";
 
 interface ContentVerseProps {
   verse: Verse;
   scale: Animated.Value<number>;
   opacity: Animated.Value<number>;
+  selectedVerses: Array<Verse>;
 }
 
-const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) => {
+const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, selectedVerses }) => {
+  const isSelected = isVerseInList(selectedVerses, verse);
+
+  const styles = createStyles(useTheme());
   const animatedStyle = {
     container: {
       marginTop: Animated.multiply(scale, 10),
@@ -51,6 +57,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) =>
         <Animated.Text style={[
           styles.title,
           (Settings.coloredVerseTitles ? styles.titleColored : {}),
+          (isSelected && !Settings.coloredVerseTitles ? styles.titleSelected : {}),
+          ((isSelected || selectedVerses.length === 0) && Settings.coloredVerseTitles ? styles.titleColoredSelected : {}),
           animatedStyle.title,
           styleForVerseType(getVerseType(verse))
         ]}>
@@ -66,20 +74,28 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity }) =>
 
 export default ContentVerse;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {},
   title: {
-    color: "#333",
+    color: colors.verseTitle,
     textTransform: "lowercase",
     fontFamily: "sans-serif-light",
     fontStyle: "italic"
   },
   titleColored: {
-    color: "dodgerblue",
     fontStyle: "normal"
   },
   titleItalics: {
     fontStyle: "italic"
   },
-  text: {}
+  titleSelected: {
+    fontWeight: "bold",
+  },
+  titleColoredSelected: {
+    color: colors.primary,
+  },
+
+  text: {
+    color: colors.text
+  }
 });

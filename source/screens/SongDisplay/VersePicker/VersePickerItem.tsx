@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Verse } from "../../../models/Songs";
 import { getVerseType, VerseType } from "../../../scripts/songs/utils";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 
 interface ComponentProps {
   verse: Verse;
@@ -16,11 +17,13 @@ const VersePickerItem: React.FC<ComponentProps> = ({
                                                      isSelected = false,
                                                      onPress,
                                                      onLongPress,
-                                                     horizontalMargin = 8,
+                                                     horizontalMargin = 8
                                                    }) => {
   if (verse.name.trim() === "") {
     return null;
   }
+
+  const styles = createStyles(useTheme());
 
   const styleForVerseType = (type: VerseType) => {
     switch (type) {
@@ -60,9 +63,9 @@ const VersePickerItem: React.FC<ComponentProps> = ({
 export default VersePickerItem;
 
 
-const styles = StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    backgroundColor: "#fcfcfc",
+    backgroundColor: colors.surface1,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 8,
@@ -74,30 +77,32 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   containerSelected: {
-    backgroundColor: "dodgerblue"
+    backgroundColor: colors.primaryVariant
   },
 
   text: {
     fontSize: 16,
     textAlign: "center",
-    color: "#373737"
+    color: colors.text,
+    opacity: 0.9
   },
   textSelected: {
-    color: "#fff"
+    color: colors.onPrimary,
+    opacity: 1
   },
 
   intro: {
-    backgroundColor: "#b6fdbf"
+    backgroundColor: isDark ? "#259332" : "#b6fdbf"
   },
   chorus: {
-    backgroundColor: "#fcd0ff"
+    backgroundColor: isDark ? "#bb1ac5" : "#fcd0ff"
   },
   bridge: {
-    backgroundColor: "#b7f5ed"
+    backgroundColor: isDark ? "#269b8c" : "#b7f5ed"
   },
   end: {
-    backgroundColor: "#fdd8d8"
+    backgroundColor: isDark ? "#a62828" : "#fdd8d8"
   }
 });
 
-export const versePickerItemStyles = styles;
+export const versePickerItemStyles = createStyles;

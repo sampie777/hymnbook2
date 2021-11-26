@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Dimensions, ScaledSize } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import VersePickerItem, { versePickerItemStyles } from "./VersePickerItem";
+import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 import { SongRouteParams, routes } from "../../../navigation";
 import { Verse, VerseProps } from "../../../models/Songs";
 import HeaderIconButton from "../../../components/HeaderIconButton";
@@ -13,6 +13,7 @@ import {
   toggleVerseInList
 } from "../../../scripts/songs/versePicker";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 
 interface ComponentProps {
   route: any;
@@ -23,6 +24,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
   const verses: Array<Verse> = route.params.verses || [];
   const songListIndex: number | undefined = route.params.songListIndex;
+  const styles = createStyles(useTheme());
+  const versePickerItemStyles = createVersePickerItemStyles(useTheme());
   const [horizontalMargin, setHorizontalMargin] = useState(
     getMarginForVerses(Dimensions.get("window"),
       styles.verseList.paddingHorizontal,
@@ -100,11 +103,12 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
 export default VersePicker;
 
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    backgroundColor: colors.background
   },
 
   verseList: {

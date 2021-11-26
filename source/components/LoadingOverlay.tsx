@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, Text } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
+import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
 
 const LoadingOverlay: React.FC<{
@@ -12,6 +13,8 @@ const LoadingOverlay: React.FC<{
     if (!isVisible) {
       return null;
     }
+
+    const styles = createStyles(useTheme());
 
     if (text === undefined) {
       text = "Loading...";
@@ -42,7 +45,9 @@ const LoadingOverlay: React.FC<{
 
     return (
       <Animated.View style={[styles.container, animatedStyle.container]}>
-        <ActivityIndicator size={styles.icon.fontSize} color={styles.icon.color} />
+        <ActivityIndicator style={styles.icon}
+                           size={styles.icon.fontSize}
+                           color={styles.icon.color} />
         {text === "" || text === null ? null : <Text style={styles.text}>{text}</Text>}
       </Animated.View>
     );
@@ -51,11 +56,11 @@ const LoadingOverlay: React.FC<{
 
 export default LoadingOverlay;
 
-const styles = StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     position: "absolute",
-    backgroundColor: "#ffffffcc",
+    backgroundColor: isDark ? colors.background : "#fffc",
     top: 0,
     left: 0,
     right: 0,
@@ -66,11 +71,12 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 80,
-    color: "#ccc"
+    color: colors.textLighter,
+    opacity: 0.7
   },
   text: {
     paddingTop: 10,
     fontSize: 16,
-    color: "#aaa"
+    color: colors.textLighter
   }
 });
