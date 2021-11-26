@@ -115,7 +115,7 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       return false;
     };
 
-    const onCollectionChange: CollectionChangeCallback<Object> = (songLists, changes) => {
+    const onCollectionChange: CollectionChangeCallback<Object> = () => {
       reloadSongList();
     };
 
