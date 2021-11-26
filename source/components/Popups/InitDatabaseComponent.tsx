@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import ConfirmationModal from "../ConfirmationModal";
 import { routes } from "../../navigation";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -17,32 +16,14 @@ const InitDatabaseComponent: React.FC<{
     onCompleted?.();
   };
 
-  return (<View style={styles.container}>
-      <ConfirmationModal isOpen={true}
-                         title={"Empty database"}
-                         confirmText={"Let's go"}
-                         invertConfirmColor={false}
-                         onClose={undefined}
-                         onConfirm={onConfirm}>
-        <Text>
-          You don't have any songs in your database yet. Go to the {routes.Import}-screen to download some songs!
-        </Text>
-      </ConfirmationModal>
-    </View>
-  );
+  return <ConfirmationModal isOpen={true}
+                            title={"Empty database"}
+                            confirmText={"Let's go"}
+                            invertConfirmColor={false}
+                            onClose={undefined}
+                            onConfirm={onConfirm}
+                            message={`You don't have any songs in your database yet. Go to the ${routes.Import}-screen to download some songs!`} />;
 };
 
 export default InitDatabaseComponent;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#00000088",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  popupContent: {},
-  contentText: {
-    paddingTop: 10
-  }
-});

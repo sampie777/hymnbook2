@@ -1,10 +1,11 @@
 import React  from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
 interface ComponentProps {
   message: string;
-  onPress: () => void;
+  onPress?: (() => void) | undefined;
   maxDuration: number;
 }
 
@@ -15,7 +16,9 @@ const DisposableMessage: React.FC<ComponentProps>
     return null;
   }
 
-  if (maxDuration > 0) {
+  const styles = createStyles(useTheme());
+
+  if (maxDuration > 0 && onPress !== undefined) {
     setTimeout(onPress, maxDuration);
   }
 
@@ -23,7 +26,7 @@ const DisposableMessage: React.FC<ComponentProps>
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Text style={styles.text}>{message}</Text>
       <View style={styles.icon}>
-        <Icon name="times-circle" size={styles.icon.fontSize} color={styles.icon.color} />
+        <Icon name="times-circle" size={styles.icon.fontSize} color={styles.icon.color as string} />
       </View>
     </TouchableOpacity>
   );
@@ -31,7 +34,7 @@ const DisposableMessage: React.FC<ComponentProps>
 
 export default DisposableMessage;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
@@ -52,12 +55,13 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 20,
-    paddingRight: 50
+    paddingRight: 50,
+    color: colors.text
   },
 
   icon: {
     fontSize: 24,
-    color: "#555",
+    color: colors.textLight,
     position: "absolute",
     right: 30
   }

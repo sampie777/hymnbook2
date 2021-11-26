@@ -9,6 +9,7 @@ import { Song, Verse } from "../../models/Songs";
 import { getNextVerseIndex } from "../../scripts/songs/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { FlatList } from "react-native-gesture-handler";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface SongControlsProps {
   navigation: NativeStackNavigationProp<any>;
@@ -31,6 +32,7 @@ const SongControls: React.FC<SongControlsProps> =
     const previousSong = songListIndex === undefined ? undefined : SongList.previousSong(songListIndex);
     const nextSong = songListIndex === undefined ? undefined : SongList.nextSong(songListIndex);
     const hasSelectableVerses = selectedVerses !== undefined && selectedVerses.length > 0;
+    const styles = createStyles(useTheme());
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
       navigation.navigate(routes.Song, {
@@ -85,7 +87,7 @@ const SongControls: React.FC<SongControlsProps> =
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(previousSong)}>
           <Icon name={"chevron-left"}
-                color={styles.buttonText.color}
+                color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
                 style={styles.buttonText} />
         </TouchableOpacity>
@@ -117,7 +119,7 @@ const SongControls: React.FC<SongControlsProps> =
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(nextSong)}>
           <Icon name={"chevron-right"}
-                color={styles.buttonText.color}
+                color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
                 style={styles.buttonText} />
         </TouchableOpacity>
@@ -127,7 +129,7 @@ const SongControls: React.FC<SongControlsProps> =
 
 export default SongControls;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     alignItems: "center",
     flexDirection: "row",
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   button: {
-    backgroundColor: "dodgerblue",
+    backgroundColor: colors.primaryVariant,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -159,22 +161,23 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   buttonDisabled: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: colors.buttonVariant,
     elevation: 2
   },
   buttonInvert: {
-    backgroundColor: "#fcfcfc"
+    backgroundColor: colors.button,
   },
 
   buttonText: {
-    color: "white",
+    color: colors.onPrimary,
     fontSize: 18
   },
   buttonTextDisabled: {
-    color: "#ccc"
+    opacity: 0.3,
+    color: colors.textLighter
   },
   buttonInvertText: {
-    color: "#999"
+    color: colors.textLighter
   },
 
   horizontalGap: {

@@ -70,6 +70,7 @@ class SettingsClass {
   // System
   keepScreenAwake = true;
   appOpenedTimes = 0;
+  theme = "";
 
   // Search
   maxSearchInputLength = 3;
@@ -83,7 +84,8 @@ class SettingsClass {
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
   useNativeFlatList = false;
-  coloredVerseTitles = Math.random() >= 0.5;
+  coloredVerseTitles = Math.random() > 0.5;
+  highlightSelectedVerses = true;
 
   // Server authentication
   useAuthentication = true;

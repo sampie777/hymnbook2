@@ -3,7 +3,13 @@ import { StyleSheet, View, ViewToken } from "react-native";
 import { FlatList as NativeFlatList } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import { FlatList, GestureEvent, GestureHandlerRootView, PinchGestureHandler, State } from "react-native-gesture-handler";
+import {
+  FlatList,
+  GestureEvent,
+  GestureHandlerRootView,
+  PinchGestureHandler,
+  State
+} from "react-native-gesture-handler";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 import Animated, { Easing } from "react-native-reanimated";
 import Db from "../../scripts/db/db";
@@ -17,9 +23,11 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
 import HeaderIconButton from "../../components/HeaderIconButton";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
+    const styles = createStyles(useTheme());
     const animatedStyle = {
       footer: {
         opacity: opacity
@@ -41,6 +49,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   const [viewIndex, setViewIndex] = useState(0);
   const animatedScale = new Animated.Value(Settings.songScale);
   const animatedOpacity = new Animated.Value<number>(1);
+  const styles = createStyles(useTheme());
 
   useFocusEffect(
     React.useCallback(() => {
@@ -88,7 +97,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     navigation.setOptions({
       title: title,
       headerRight: () => (
-        <HeaderIconButton icon={"list-ol"} onPress={() => openVersePicker(song)} />
+        <HeaderIconButton icon={"list-ol"}
+                          onPress={() => openVersePicker(song)} />
       )
     });
   }, [song?.name, route.params.selectedVerses]);
@@ -145,7 +155,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     return (
       <ContentVerse verse={item}
                     opacity={animatedOpacity}
-                    scale={animatedScale} />
+                    scale={animatedScale}
+                    selectedVerses={route.params.selectedVerses} />
     );
   };
 
@@ -245,11 +256,12 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
 export default SongDisplayScreen;
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    backgroundColor: colors.background
   },
 
   contentSectionList: {
@@ -260,7 +272,7 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    borderTopColor: "#ccc",
+    borderTopColor: colors.border,
     borderTopWidth: 1,
     width: "50%",
     marginTop: 70,

@@ -6,13 +6,15 @@ import { getVersion } from "react-native-device-info";
 import UrlLink from "../../components/UrlLink";
 import { routes } from "../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 
 const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({ navigation }) => {
+  const styles = createStyles(useTheme());
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>
-        <Icon name={"book-open"} size={styles.titleIcon.fontSize} color={styles.titleIcon.color} />
+        <Icon name={"book-open"} size={styles.titleIcon.fontSize} color={styles.titleIcon.color as string} />
         <Text style={styles.titleContent}>{displayName}</Text>
       </View>
       <Text
@@ -63,8 +65,8 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
         {/*</View>*/}
       </View>
 
-      <View style={styles.greetingContainer}>
-        <Text style={[styles.contentText, styles.greetingText]}>
+      <View style={styles.footerContainer}>
+        <Text style={[styles.contentText, styles.footerText]}>
           Made with passion by S. Jansen
         </Text>
         <UrlLink url={homepage}>
@@ -83,15 +85,18 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
 
 export default AboutScreen;
 
-const styles = StyleSheet.create({
-  container: {},
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background
+  },
 
   headerContainer: {
     alignSelf: "stretch",
     alignItems: "center",
     paddingTop: 80,
     paddingBottom: 80,
-    borderBottomColor: "#ddd"
+    borderBottomColor: colors.border
   },
   headerTitle: {
     alignItems: "center",
@@ -101,17 +106,17 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   titleIcon: {
-    color: "dodgerblue",
+    color: colors.primary,
     fontSize: 30
   },
   titleContent: {
     paddingLeft: 18,
-    color: "dodgerblue",
+    color: colors.primary,
     fontSize: 28,
     fontFamily: "sans-serif-light"
   },
   versionText: {
-    color: "#aaa",
+    color: colors.textLighter,
     fontSize: 12,
     fontFamily: "sans-serif-light"
   },
@@ -121,20 +126,22 @@ const styles = StyleSheet.create({
     fontFamily: "sans-serif-light",
     lineHeight: 25,
     marginBottom: 25,
-    paddingHorizontal: 30
+    paddingHorizontal: 30,
+    color: colors.text,
   },
+
   scriptureContainer: {
     alignSelf: "center",
     marginBottom: 45,
     paddingHorizontal: 20,
-    backgroundColor: "#fcfcfc",
-    paddingVertical: 30
+    backgroundColor: colors.surface1,
+    paddingVertical: 30,
   },
   scriptureText: {
     fontFamily: "serif",
     fontStyle: "italic",
     textAlign: "center",
-    color: "#555",
+    color: colors.textLight,
     marginBottom: 10,
     fontSize: 13
   },
@@ -142,7 +149,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontStyle: "italic",
     fontFamily: "serif",
-    color: "#777",
+    color: colors.textLighter,
     fontSize: 10
   },
 
@@ -155,41 +162,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 60,
     paddingBottom: 45,
-    backgroundColor: "#fcfcfc"
+    backgroundColor: colors.surface1,
   },
   contributionText: {
-    marginBottom: 40
+    marginBottom: 40,
   },
   donationLink: {
     marginBottom: 20
   },
   donationLinkText: {
-    backgroundColor: "#63adff",
+    backgroundColor: colors.primaryLight,
     alignItems: "center",
     borderRadius: 80,
     marginBottom: 0,
     paddingVertical: 15,
     paddingHorizontal: 50,
-    color: "#fff",
+    color: colors.onPrimary,
     fontWeight: "bold"
   },
 
-  greetingContainer: {
+  footerContainer: {
     paddingTop: 80,
     paddingBottom: 80,
-    backgroundColor: "#707070"
+    backgroundColor: colors.surface3
   },
-  greetingText: {
+  footerText: {
     fontFamily: "sans-serif",
     textAlign: "center",
     fontStyle: "italic",
     marginBottom: 0,
     fontSize: 13,
-    color: "#ddd"
+    color: colors.onPrimary,
+    opacity: 0.8
   },
   webpageLink: {
     textAlign: "center",
     fontSize: 13,
-    color: "#57a4fd"
+    color: colors.url
   }
 });

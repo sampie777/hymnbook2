@@ -11,6 +11,7 @@ import { SearchResultItem } from "./SearchResultItem";
 import { isPortraitMode } from "../../scripts/utils";
 import PopupsComponent from "../../components/Popups/PopupsComponent";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 
 const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
@@ -19,6 +20,8 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     const [inputValue, setInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
 
+    const theme = useTheme();
+    const styles = createStyles(theme);
     const maxInputLength = Settings.maxSearchInputLength;
     const maxResultsLength = Settings.maxSearchResultsLength;
 
@@ -163,11 +166,12 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
 export default SearchScreen;
 
-const styles = StyleSheet.create({
+const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    backgroundColor: colors.background,
   },
 
   inputAndResults: {
@@ -179,17 +183,17 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 18,
-    color: "#888",
+    color: colors.text,
     paddingTop: 20,
     fontFamily: "sans-serif-light"
   },
   inputTextField: {
     fontSize: 90,
     fontFamily: "sans-serif-light",
-    color: "#555",
+    color: colors.textLight,
     borderStyle: "dashed",
     borderBottomWidth: 2,
-    borderBottomColor: "#ddd",
+    borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140,
     paddingLeft: 40,
     paddingRight: 40
@@ -203,7 +207,7 @@ const styles = StyleSheet.create({
   },
 
   keyPad: {
-    height: 300,
+    height: 275,
     minHeight: "40%",
     maxHeight: "50%"
   },
