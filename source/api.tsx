@@ -47,46 +47,40 @@ const post = (url: string, data: any = "", authenticate: boolean = true) => {
 };
 
 const put = (url: string, data: any = "") => ServerAuth.withJwt(jwt =>
-  ServerAuth.withJwt(jwt =>
-    fetch(url, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${jwt}`
-      },
-      body: JSON.stringify(data)
-    }))
-);
+  fetch(url, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${jwt}`
+    },
+    body: JSON.stringify(data)
+  }));
 
 const remove = (url: string, data: any = "") => ServerAuth.withJwt(jwt =>
-  ServerAuth.withJwt(jwt =>
-    fetch(url, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${jwt}`
-      },
-      body: JSON.stringify(data)
-    }))
-);
+  fetch(url, {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${jwt}`
+    },
+    body: JSON.stringify(data)
+  }));
 
 const upload = (url: string, data: FormData) => ServerAuth.withJwt(jwt =>
-  ServerAuth.withJwt(jwt =>
-    fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${jwt}`
-        // 'Content-Type': 'multipart/form-data'
-      },
-      // mode: 'no-cors',
-      body: data
-    }))
-);
+  fetch(url, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept": "application/json",
+      "Authorization": `Bearer ${jwt}`
+      // 'Content-Type': 'multipart/form-data'
+    },
+    // mode: 'no-cors',
+    body: data
+  }));
 
 // eslint-disable-next-line no-unused-vars
 export const throwErrorsIfNotOk = (response: Response) => {
