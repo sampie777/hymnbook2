@@ -130,7 +130,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingHorizontal: 20,
     paddingVertical: 15,
     marginBottom: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   switchContainer: {
     flexDirection: "row",
@@ -144,23 +144,21 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   },
 
   titleContainer: {
-    flex: 1,
+    flex: 1
   },
   titleText: {
     fontSize: 16,
-    color: colors.text,
+    color: colors.text
   },
   descriptionText: {
     color: colors.textLight,
     fontSize: 14,
-    paddingLeft: 10,
     paddingTop: 5,
     fontStyle: "italic"
   },
   valueText: {
     color: colors.textLight,
     fontSize: 14,
-    paddingLeft: 10,
     paddingTop: 5
   }
 });
