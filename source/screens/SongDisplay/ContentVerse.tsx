@@ -43,8 +43,17 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
       case VerseType.Verse:
         return animatedStyle.titleLarge;
       default:
-        return styles.titleItalics;
+        return styles.titleNoSelection;
     }
+  };
+
+  const specificStyleForTitle = () => {
+    if (selectedVerses.length === 0) {
+      return Settings.coloredVerseTitles ? styles.titleColoredNoSelection : styles.titleNoSelection;
+    } else if (isSelected) {
+      return Settings.coloredVerseTitles ? styles.titleColoredSelected : styles.titleSelected;
+    }
+    return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
   // Shorten name
@@ -56,9 +65,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
       {displayName === "" ? undefined :
         <Animated.Text style={[
           styles.title,
-          (Settings.coloredVerseTitles ? styles.titleColored : {}),
-          (isSelected && !Settings.coloredVerseTitles ? styles.titleSelected : {}),
-          ((isSelected || selectedVerses.length === 0) && Settings.coloredVerseTitles ? styles.titleColoredSelected : {}),
+          specificStyleForTitle(),
           animatedStyle.title,
           styleForVerseType(getVerseType(verse))
         ]}>
@@ -82,17 +89,24 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontFamily: "sans-serif-light",
     fontStyle: "italic"
   },
-  titleColored: {
+
+  titleNotSelected: {},
+  titleSelected: {
+    fontWeight: "bold"
+  },
+  titleNoSelection: {},
+
+  titleColoredNotSelected: {
     fontStyle: "normal"
   },
-  titleItalics: {
-    fontStyle: "italic"
-  },
-  titleSelected: {
-    fontWeight: "bold",
-  },
   titleColoredSelected: {
+    fontStyle: "normal",
     color: colors.primary,
+    fontWeight: "bold"
+  },
+  titleColoredNoSelection: {
+    fontStyle: "normal",
+    color: colors.primary
   },
 
   text: {
