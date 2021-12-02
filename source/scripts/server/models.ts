@@ -4,3 +4,13 @@ export enum AccessRequestStatus {
   APPROVED = "APPROVED",
   DENIED = "DENIED",
 }
+
+export enum JsonResponseType {
+  SUCCESS = "SUCCESS",
+  ERROR = "ERROR"
+}
+
+export interface JsonResponse {
+  content: any | null;
+  type: JsonResponseType;
+}
