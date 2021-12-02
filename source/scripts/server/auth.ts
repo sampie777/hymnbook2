@@ -1,8 +1,9 @@
 import Settings from "../settings";
-import { api, throwErrorsIfNotOk } from "./api";
+import { authApi, throwErrorsIfNotOk } from "./authApi";
 import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
+import { JsonResponse, JsonResponseType } from "../../api";
 
 class AccessRequestResponse {
   status: AccessRequestStatus;
@@ -67,12 +68,12 @@ export class ServerAuth {
   static _requestAccess(): Promise<string> {
     this.forgetCredentials();
 
-    return api.auth.requestAccess(this.getDeviceId())
+    return authApi.auth.requestAccess(this.getDeviceId())
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then(data => {
-        if (data.status === "error") {
-          throw new Error(data.data);
+      .then((data: JsonResponse) => {
+        if (data.type === JsonResponseType.ERROR) {
+          throw new Error(data.content);
         }
 
         const accessRequestResponse = data.content as AccessRequestResponse;
@@ -111,12 +112,12 @@ export class ServerAuth {
       return new Promise<string>(() => "");
     }
 
-    return api.auth.retrieveAccess(this.getDeviceId(), Settings.authRequestId)
+    return authApi.auth.retrieveAccess(this.getDeviceId(), Settings.authRequestId)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then(data => {
-        if (data.status === "error") {
-          throw new Error(data.data);
+      .then((data: JsonResponse) => {
+        if (data.type === JsonResponseType.ERROR) {
+          throw new Error(data.content);
         }
 
         const accessRequestResponse = data.content as AccessRequestResponse;
