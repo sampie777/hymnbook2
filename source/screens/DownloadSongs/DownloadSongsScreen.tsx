@@ -64,7 +64,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     setIsLoading(true);
     Server.fetchSongBundles()
       .then(result => setBundles(result.data))
-      .catch(error => Alert.alert("Error", `Error fetching song bundles: ${error}`))
+      .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}`))
       .finally(() => setIsLoading(false));
   };
 
