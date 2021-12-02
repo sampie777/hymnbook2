@@ -1,7 +1,8 @@
-import { api, JsonResponse, JsonResponseType, throwErrorsIfNotOk } from "../../api";
+import { api, throwErrorsIfNotOk } from "../../api";
 import { Result } from "../utils";
 import { SongBundle } from "../../models/ServerSongsModel";
 import { rollbar } from "../rollbar";
+import { JsonResponse, JsonResponseType } from "./models";
 
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<Result> => {

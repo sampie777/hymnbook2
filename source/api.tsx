@@ -4,16 +4,6 @@ import { songBundlesApiUrl } from "../app.json";
 const apiHostUrl = songBundlesApiUrl;
 const apiBaseUrl = `${apiHostUrl}/api/v1`;
 
-export enum JsonResponseType {
-  SUCCESS = "SUCCESS",
-  ERROR = "ERROR"
-}
-
-export interface JsonResponse {
-  content: any | null;
-  type: JsonResponseType;
-}
-
 const get = (url: string) =>
   ServerAuth.withJwt(jwt =>
     fetch(url, {
