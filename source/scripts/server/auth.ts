@@ -1,9 +1,8 @@
 import Settings from "../settings";
 import { authApi, throwErrorsIfNotOk } from "./authApi";
 import { getUniqueId } from "react-native-device-info";
-import { AccessRequestStatus } from "./models";
+import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
-import { JsonResponse, JsonResponseType } from "../../api";
 
 class AccessRequestResponse {
   status: AccessRequestStatus;
