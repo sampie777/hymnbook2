@@ -32,7 +32,7 @@ export const throwErrorsIfNotOk = (response: Response) => {
   }
 };
 
-export const api = {
+export const authApi = {
   auth: {
     requestAccess: (clientName: string) =>
       post(`${apiBaseUrl}/auth/application/request-access/hymnbook?clientName=${clientName}`, ""),

@@ -4,6 +4,16 @@ import { songBundlesApiUrl } from "../app.json";
 const apiHostUrl = songBundlesApiUrl;
 const apiBaseUrl = `${apiHostUrl}/api/v1`;
 
+export enum JsonResponseType {
+  SUCCESS = "SUCCESS",
+  ERROR = "ERROR"
+}
+
+export interface JsonResponse {
+  content: any | null;
+  type: JsonResponseType;
+}
+
 const get = (url: string) =>
   ServerAuth.withJwt(jwt =>
     fetch(url, {
@@ -89,9 +99,9 @@ export const throwErrorsIfNotOk = (response: Response) => {
   }
   switch (response.status) {
     case 404:
-      throw Error(`Could not connect to server: (${response.status}) ${response.statusText}`);
+      throw Error(`Could not find the requested data: (${response.status}) ${response.statusText}`);
     case 401:
-      throw Error(`Could not connect to server: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`);
+      throw Error(`Could not retrieve the requested data: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`);
     case 500:
       throw Error(`Could not connect to server: (${response.status}) Internal server error`);
     default:

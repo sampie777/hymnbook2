@@ -1,4 +1,4 @@
-import { api, throwErrorsIfNotOk } from "../../api";
+import { api, JsonResponse, JsonResponseType, throwErrorsIfNotOk } from "../../api";
 import { Result } from "../utils";
 import { SongBundle } from "../../models/ServerSongsModel";
 import { rollbar } from "../rollbar";
@@ -8,9 +8,9 @@ export namespace Server {
     return api.songBundles.list()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then(data => {
-        if (data.status === "error") {
-          throw new Error(data.data);
+      .then((data: JsonResponse) => {
+        if (data.type === JsonResponseType.ERROR) {
+          throw new Error(data.content);
         }
 
         let bundles: Array<SongBundle> = data.content;
@@ -30,9 +30,9 @@ export namespace Server {
     return api.songBundles.getWithSongs(bundle.id, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then(data => {
-        if (data.status === "error") {
-          throw new Error(data.data);
+      .then((data: JsonResponse) => {
+        if (data.type === JsonResponseType.ERROR) {
+          throw new Error(data.content);
         }
 
         return new Result({ success: true, data: data.content });
