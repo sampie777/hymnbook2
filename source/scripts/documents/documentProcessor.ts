@@ -145,4 +145,35 @@ export namespace DocumentProcessor {
 
     return new Result({ success: true, message: `Deleted all for ${groupName}` });
   };
+
+  export const getAllLanguagesFromDocumentGroups = (groups: Array<ServerDocumentGroup | DocumentGroup>) => {
+    if (groups.length === 0) {
+      return [];
+    }
+
+    const languages: Array<string> = [];
+    groups.forEach(it => {
+      if (!languages.includes(it.language)) {
+        languages.push(it.language);
+      }
+    });
+
+    return languages;
+  };
+
+  export const determineDefaultFilterLanguage = (groups: Array<ServerDocumentGroup | DocumentGroup>) => {
+    if (groups.length === 0) {
+      return "";
+    }
+
+    const languageCount = {};
+    groups.forEach(it => {
+      // @ts-ignore
+      languageCount[it.language] = (languageCount[it.language] || 0) + 1;
+    });
+
+    const languageTopList = Object.entries(languageCount)
+      .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
+    return languageTopList[0][0];
+  };
 }
