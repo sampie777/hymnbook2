@@ -12,7 +12,7 @@ const InitDatabaseComponent: React.FC<{
       }) => {
 
   const onConfirm = () => {
-    navigation.navigate(routes.Import);
+    navigation.navigate(routes.ImportSongs);
     onCompleted?.();
   };
 
@@ -22,7 +22,7 @@ const InitDatabaseComponent: React.FC<{
                             invertConfirmColor={false}
                             onClose={undefined}
                             onConfirm={onConfirm}
-                            message={`You don't have any songs in your database yet. Go to the ${routes.Import}-screen to download some songs!`} />;
+                            message={`You don't have any songs in your database yet. Go to the ${routes.ImportSongs}-screen to download some songs!`} />;
 };
 
 export default InitDatabaseComponent;

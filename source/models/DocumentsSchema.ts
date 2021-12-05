@@ -20,6 +20,7 @@ export const DocumentGroupSchema = {
         language: "string",
         groups: "DocumentGroup[]",
         items: DocumentSchema.name + "[]",
+        size: "int",
         createdAt: "date",
         modifiedAt: "date",
     },
