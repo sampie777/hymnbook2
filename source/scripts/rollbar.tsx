@@ -1,6 +1,6 @@
 import { Client, Configuration } from "rollbar-react-native";
 import { getVersion } from "react-native-device-info";
-import Settings from "./settings";
+import Settings from "./settings/settings";
 
 const configuration = new Configuration(
   "abf5a622224c49b9956d9daae28affbb",

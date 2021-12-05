@@ -1,5 +1,5 @@
 import React from "react";
-import { SongBundle } from "../../models/ServerSongsModel";
+import { SongBundle } from "../../models/server/ServerSongsModel";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SongBundle as LocalSongBundle } from "../../models/Songs";

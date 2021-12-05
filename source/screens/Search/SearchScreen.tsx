@@ -4,7 +4,7 @@ import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
 import { SongRouteParams, routes } from "../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
-import Settings from "../../scripts/settings";
+import Settings from "../../scripts/settings/settings";
 import { SongSchema } from "../../models/SongsSchema";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";

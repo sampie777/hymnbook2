@@ -1,7 +1,6 @@
-import { SongBundle as BackendSongBundle } from "../../models/ServerSongsModel";
 import Db from "../db/db";
 import { Song, SongBundle, Verse } from "../../models/Songs";
-import { SongBundle as ServerSongBundle } from "../../models/ServerSongsModel";
+import { SongBundle as ServerSongBundle } from "../../models/server/ServerSongsModel";
 import { dateFrom, Result } from "../utils";
 import { SongBundleSchema, SongSchema, VerseSchema } from "../../models/SongsSchema";
 import SongList from "./songList";
@@ -22,7 +21,7 @@ export namespace SongProcessor {
     return new Result({ success: true, data: bundles });
   };
 
-  export const saveSongBundleToDatabase = (bundle: BackendSongBundle): Result => {
+  export const saveSongBundleToDatabase = (bundle: ServerSongBundle): Result => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot save local song bundle to database: song database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
@@ -79,7 +78,7 @@ export namespace SongProcessor {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
       });
     } catch (e: any) {
-      rollbar.error(e);
+      rollbar.error(`Failed to import songs: ${e}`, e);
       return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
     }
 
