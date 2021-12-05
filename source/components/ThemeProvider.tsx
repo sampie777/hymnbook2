@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Appearance } from "react-native";
 import { darkColors, lightColors, ThemeColors } from "../scripts/theme";
-import Settings from "../scripts/settings";
+import Settings from "../scripts/settings/settings";
 
 export interface ThemeContextProps {
   isDark: boolean;

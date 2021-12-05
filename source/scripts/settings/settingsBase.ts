@@ -1,8 +1,7 @@
-import { Setting } from "../models/Settings";
-import Db from "./db/db";
-import { AccessRequestStatus } from "./server/models";
-import { SettingSchema } from "../models/SettingsSchema";
-import { rollbar } from "./rollbar";
+import { Setting } from "../../models/Settings";
+import Db from "../db/db";
+import { SettingSchema } from "../../models/SettingsSchema";
+import { rollbar } from "../rollbar";
 
 class SettingsProvider {
   static set(key: string, value: string) {
@@ -66,37 +65,7 @@ class SettingsProvider {
   }
 }
 
-class SettingsClass {
-  // System
-  keepScreenAwake = true;
-  appOpenedTimes = 0;
-  theme = "";
-
-  // Search
-  maxSearchInputLength = 3;
-  maxSearchResultsLength = 40;
-  clearSearchAfterAddedToSongList = true;
-
-  // Songs
-  songScale = 1.0;
-  animateScrolling = true;
-  songFadeIn = true;
-  showJumpToNextVerseButton = true;
-  showSongListCountBadge = true;
-  useNativeFlatList = false;
-  coloredVerseTitles = Math.random() > 0.5;
-  highlightSelectedVerses = true;
-
-  // Server authentication
-  useAuthentication = true;
-  authClientName = "";
-  authRequestId = "";
-  authJwt = "";
-  authStatus = AccessRequestStatus.UNKNOWN;
-  authDeniedReason = "";
-
-  // Survey
-  surveyCompleted = false;
+export class SettingsBaseClass {
 
   load() {
     console.log("Loading settings");
@@ -144,6 +113,3 @@ class SettingsClass {
     return this[key];
   }
 }
-
-const Settings = new SettingsClass();
-export default Settings;

@@ -3,7 +3,7 @@ export const DocumentSchema = {
     properties: {
         id: "int",
         name: "string",
-        content: "string",
+        html: "string",
         language: "string",
         index: "int",
         createdAt: "date",

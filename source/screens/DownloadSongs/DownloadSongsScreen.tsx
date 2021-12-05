@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   View
 } from "react-native";
-import { SongBundle } from "../../models/ServerSongsModel";
+import { SongBundle } from "../../models/server/ServerSongsModel";
 import { SongBundle as LocalSongBundle } from "../../models/Songs";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { SongProcessor } from "../../scripts/songs/songProcessor";

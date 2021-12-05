@@ -1,5 +1,3 @@
-import Db from "../scripts/db/db";
-import { DocumentGroupSchema, DocumentSchema } from "./DocumentsSchema";
 
 export class Document {
   id: number;
@@ -7,17 +5,17 @@ export class Document {
   html: string;
   language: string;
   index: number;
-  createdAt: Date;
-  modifiedAt: Date;
+  createdAt: string;
+  modifiedAt: string;
 
   constructor(
     name: string,
     html: string,
     language: string,
     index: number,
-    createdAt: Date,
-    modifiedAt: Date,
-    id = Db.documents.getIncrementedPrimaryKey(DocumentSchema)
+    createdAt: string,
+    modifiedAt: string,
+    id: number
   ) {
     this.id = id;
     this.name = name;
@@ -35,8 +33,8 @@ export class DocumentGroup {
   language: string;
   groups: Array<DocumentGroup> | null;
   items: Array<Document> | null;
-  createdAt: Date;
-  modifiedAt: Date;
+  createdAt: string;
+  modifiedAt: string;
   size: number;
 
   constructor(
@@ -44,10 +42,10 @@ export class DocumentGroup {
     language: string,
     groups: Array<DocumentGroup> | null,
     items: Array<Document> | null,
-    createdAt: Date,
-    modifiedAt: Date,
+    createdAt: string,
+    modifiedAt: string,
     size: number = 0,
-    id = Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema)
+    id: number
   ) {
     this.id = id;
     this.name = name;
