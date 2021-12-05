@@ -15,22 +15,23 @@ import { CollectionChangeCallback } from "realm";
 import Db from "./scripts/db/db";
 import Settings from "./scripts/settings/settings";
 import { routes } from "./navigation";
-import { rollbar } from "./scripts/rollbar";
 import { SongListModelSchema } from "./models/SongListModelSchema";
+import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
 import SongList from "./scripts/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingOverlay from "./components/LoadingOverlay";
 import SearchScreen from "./screens/Search/SearchScreen";
 import SongDisplayScreen from "./screens/SongDisplay/SongDisplayScreen";
-import DownloadSongsScreen from "./screens/DownloadSongs/DownloadSongsScreen";
+import DownloadSongsScreen from "./screens/downloads/DownloadSongsScreen";
+import DownloadDocumentsScreen from "./screens/downloads/DownloadDocumentsScreen";
 import SettingsScreen from "./screens/Settings/SettingsScreen";
 import SongListScreen from "./screens/SongListScreen";
 import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
-import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
+import { closeDatabases, initDatabases } from "./scripts/app";
 
 
 const RootNav = createNativeStackNavigator();
@@ -65,7 +66,8 @@ const RootNavigation = () => {
                       selectedVerses: []
                     }} />
 
-    <RootNav.Screen name={routes.Import} component={DownloadSongsScreen} />
+    <RootNav.Screen name={routes.ImportSongs} component={DownloadSongsScreen} />
+    <RootNav.Screen name={routes.ImportDocuments} component={DownloadDocumentsScreen} />
     <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
     <RootNav.Screen name={routes.About} component={AboutScreen} />
     <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
@@ -134,44 +136,14 @@ const AppRoot: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    Db.settings.connect()
-      .catch(e => {
-        rollbar.error("Could not connect to local settings database: " + e.toString(), e);
-        alert("Could not connect to local settings database: " + e);
-      })
-      .then(() => Settings.load())
-      .catch(e => {
-        rollbar.error("Could not load settings from database: " + e.toString(), e);
-        alert("Could not load settings from database: " + e);
-      })
-      .then(() => {
-        theme.reload()
-        Settings.appOpenedTimes++;
-        Settings.store();
-      })
-      .finally(() =>
-        Db.songs.connect()
-          .catch(e => {
-            rollbar.error("Could not connect to local song database: " + e.toString(), e);
-            alert("Could not connect to local song database: " + e);
-          })
-          .finally(() => {
-            Db.documents.connect()
-              .catch(e => {
-                rollbar.error("Could not connect to local document database: " + e.toString(), e);
-                alert("Could not connect to local document database: " + e);
-              })
-              .finally(() => {
-                setIsLoading(false);
-              });
-          })
-      );
+    initDatabases(theme)
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const onExit = () => {
-    Settings.store();
-    Db.songs.disconnect();
-    Db.settings.disconnect();
+    closeDatabases();
   };
 
   return <SafeAreaView style={styles.container}>

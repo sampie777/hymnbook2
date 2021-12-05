@@ -85,7 +85,7 @@ export namespace DocumentProcessor {
   const convertServerDocumentToLocalDocument = (document: ServerDocument, conversionState: ConversionState): Document => {
     return new Document(
       document.name,
-      document.html,
+      document.content,
       document.language,
       document.index,
       dateFrom(document.createdAt),

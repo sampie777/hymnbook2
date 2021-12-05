@@ -17,7 +17,11 @@ const OtherMenuScreen: React.FC<{ route: any, navigation: BottomTabNavigationPro
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="cogs" style={style} />
       },
       {
-        name: routes.Import,
+        name: routes.ImportSongs,
+        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="database" style={style} />
+      },
+      {
+        name: routes.ImportDocuments,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="database" style={style} />
       },
       {

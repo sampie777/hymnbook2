@@ -2,7 +2,7 @@
 export class Document {
   id: number;
   name: string;
-  html: string;
+  content: string;
   language: string;
   index: number;
   createdAt: string;
@@ -10,7 +10,7 @@ export class Document {
 
   constructor(
     name: string,
-    html: string,
+    content: string,
     language: string,
     index: number,
     createdAt: string,
@@ -19,7 +19,7 @@ export class Document {
   ) {
     this.id = id;
     this.name = name;
-    this.html = html;
+    this.content = content;
     this.language = language;
     this.index = index;
     this.createdAt = createdAt;

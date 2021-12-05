@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { SongBundle as LocalSongBundle } from "../../models/Songs";
+import { SongBundle } from "../../models/server/ServerSongsModel";
+import { SongProcessor } from "../../scripts/songs/songProcessor";
+import { Server } from "../../scripts/server/server";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
   RefreshControl,
@@ -8,14 +13,9 @@ import {
   TouchableHighlight,
   View
 } from "react-native";
-import { SongBundle } from "../../models/server/ServerSongsModel";
-import { SongBundle as LocalSongBundle } from "../../models/Songs";
+import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/ConfirmationModal";
-import { SongProcessor } from "../../scripts/songs/songProcessor";
-import { Server } from "../../scripts/server/server";
-import { LocalSongBundleItem, SongBundleItem } from "./SongBundleItems";
 import LanguageSelectBar from "./LanguageSelectBar";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface ComponentProps {
 }
@@ -111,7 +111,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(result => saveSongBundle(result.data))
       .catch(error =>
-        Alert.alert("Error", `Error fetching songs for song bundle ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error downloading songs for song bundle ${bundle.name}: ${error}`))
       .finally(() => setIsLoading(false));
   };
 
