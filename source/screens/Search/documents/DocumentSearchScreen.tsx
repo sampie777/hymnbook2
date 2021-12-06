@@ -118,7 +118,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   pageHeader: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    paddingLeft: 10,
   },
 
   pageTitle: {
