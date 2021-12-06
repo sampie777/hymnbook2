@@ -2,14 +2,16 @@ import { Verse } from "./models/Songs";
 
 export const routes = {
   Home: "Home",
-  Search: "Search",
+  SongSearch: "Search songs",
+  DocumentSearch: "Search documents",
   SongList: "SongList",
-  ImportSongs: "Databases",
-  ImportDocuments: "Document databases",
+  SongImport: "Databases",
+  DocumentImport: "Document databases",
   Settings: "Settings",
   About: "About",
   PrivacyPolicy: "Privacy policy",
   Song: "Song",
+  Document: "Document",
   VersePicker: "VersePicker",
   OtherMenu: "More"
 };
@@ -25,4 +27,8 @@ export interface VersePickerRouteParams {
   verses: Array<Verse>;
   selectedVerses?: Array<Verse>;
   songListIndex?: number;
+}
+
+export interface DocumentRouteParams {
+  id: number;
 }

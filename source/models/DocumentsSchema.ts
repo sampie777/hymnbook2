@@ -8,11 +8,16 @@ export const DocumentSchema = {
         index: "int",
         createdAt: "date",
         modifiedAt: "date",
+        group: {
+            type: "linkingObjects",
+            objectType: "DocumentGroup",    // DocumentGroupSchema.name
+            property: "items"
+        }
     },
     primaryKey: "id"
 };
 
-export const DocumentGroupSchema = {
+export const DocumentGroupSchema: Realm.ObjectSchema = {
     name: "DocumentGroup",
     properties: {
         id: "int",
@@ -23,6 +28,13 @@ export const DocumentGroupSchema = {
         size: "int",
         createdAt: "date",
         modifiedAt: "date",
+        isRoot: "bool"
+        // parent: {
+        //     type: "linkingObjects?",
+        //     objectType: "DocumentGroup",    // DocumentGroupSchema.name
+        //     property: "groups",
+        //     default: null,
+        // }
     },
     primaryKey: "id"
 };

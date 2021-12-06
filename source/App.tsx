@@ -19,7 +19,7 @@ import { SongListModelSchema } from "./models/SongListModelSchema";
 import { closeDatabases, initDatabases } from "./scripts/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
 import SongList from "./scripts/songs/songList";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./components/ErrorBoundary";
 import HeaderIconButton from "./components/HeaderIconButton";
 import LoadingOverlay from "./components/LoadingOverlay";
@@ -33,6 +33,8 @@ import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
+import DocumentSearchScreen from "./screens/Search/documents/DocumentSearchScreen";
+import SingleDocument from "./screens/Document/SingleDocument";
 
 
 const RootNav = createNativeStackNavigator();
@@ -51,6 +53,7 @@ const RootNavigation = () => {
     <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
     <RootNav.Screen name={routes.About} component={AboutScreen} />
     <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
+    <RootNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen} />
 
     <RootNav.Screen name={routes.Song} component={SongDisplayScreen}
                     options={{
@@ -70,15 +73,23 @@ const RootNavigation = () => {
                       selectedVerses: []
                     }} />
 
-    <RootNav.Screen name={routes.ImportSongs} component={DownloadSongsScreen}
+    <RootNav.Screen name={routes.Document} component={SingleDocument}
+                    options={{
+                      title: ""
+                    }}
+                    initialParams={{
+                      id: undefined
+                    }} />
+
+    <RootNav.Screen name={routes.SongImport} component={DownloadSongsScreen}
                     options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
                       headerRight: () => (<HeaderIconButton icon={"file-alt"}
-                                                            onPress={() => navigation.navigate(routes.ImportDocuments)} />)
+                                                            onPress={() => navigation.navigate(routes.DocumentImport)} />)
                     })} />
-    <RootNav.Screen name={routes.ImportDocuments} component={DownloadDocumentsScreen}
+    <RootNav.Screen name={routes.DocumentImport} component={DownloadDocumentsScreen}
                     options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
                       headerRight: () => (<HeaderIconButton icon={"music"}
-                                                            onPress={() => navigation.navigate(routes.ImportSongs)} />)
+                                                            onPress={() => navigation.navigate(routes.SongImport)} />)
                     })} />
   </RootNav.Navigator>;
 };
@@ -104,7 +115,7 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
-  return (<HomeNav.Navigator initialRouteName={routes.Search}
+  return (<HomeNav.Navigator initialRouteName={routes.SongSearch}
                              screenOptions={{
                                tabBarStyle: styles.tabBar,
                                tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
@@ -112,7 +123,7 @@ const HomeNavigation: React.FC = () => {
                                headerStyle: styles.tabBarHeader,
                                headerTitleStyle: styles.tabBarHeaderTitle
                              }}>
-    <HomeNav.Screen name={routes.Search} component={SearchScreen}
+    <HomeNav.Screen name={routes.SongSearch} component={SearchScreen}
                     options={{
                       headerShown: false,
                       tabBarIcon: ({ focused, color, size }) =>

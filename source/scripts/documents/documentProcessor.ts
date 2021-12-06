@@ -25,7 +25,7 @@ export namespace DocumentProcessor {
 
     const existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`name = "${group.name}"`);
+      .filtered(`name = "${group.name}" AND isRoot = true`);
     if (existingGroup.length > 0) {
       return new Result({ success: false, message: `Document group ${group.name} already exists` });
     }
@@ -35,7 +35,7 @@ export namespace DocumentProcessor {
       documentId: Db.documents.getIncrementedPrimaryKey(DocumentSchema),
       totalDocuments: 0
     };
-    const documentGroup = convertServerDocumentGroupToLocalDocumentGroup(group, conversionState);
+    const documentGroup = convertServerDocumentGroupToLocalDocumentGroup(group, conversionState, true);
 
     try {
       Db.documents.realm().write(() => {
@@ -49,7 +49,7 @@ export namespace DocumentProcessor {
     return new Result({ success: true, message: `${documentGroup.size} documents added!` });
   };
 
-  export const convertServerDocumentGroupToLocalDocumentGroup = (group: ServerDocumentGroup, conversionState: ConversionState): DocumentGroup => {
+  export const convertServerDocumentGroupToLocalDocumentGroup = (group: ServerDocumentGroup, conversionState: ConversionState, isRoot: boolean = false): DocumentGroup => {
     const privateConversionState: ConversionState = {
       groupId: conversionState.groupId,
       documentId: conversionState.documentId,
@@ -78,6 +78,7 @@ export namespace DocumentProcessor {
       dateFrom(group.createdAt),
       dateFrom(group.modifiedAt),
       privateConversionState.totalDocuments,
+      isRoot,
       conversionState.groupId++
     );
   };
@@ -94,7 +95,7 @@ export namespace DocumentProcessor {
     );
   };
 
-  export const loadLocalDocumentGroups = (): Result => {
+  export const loadLocalDocumentRoot = (): Result => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot load local document groups: document database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
@@ -102,6 +103,7 @@ export namespace DocumentProcessor {
 
     const groups = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
+      .filtered(`isRoot = true`)
       .map(it => it as unknown as DocumentGroup);
 
     return new Result({ success: true, data: groups });

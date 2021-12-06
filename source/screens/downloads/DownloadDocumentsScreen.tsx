@@ -46,7 +46,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
   const loadLocalDocumentGroups = () => {
     setIsLoading(true);
 
-    const result = DocumentProcessor.loadLocalDocumentGroups();
+    const result = DocumentProcessor.loadLocalDocumentRoot();
     result.alert();
     result.throwIfException();
 
