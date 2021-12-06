@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, Platform } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
-import {
-  GestureHandlerRootView
-} from "react-native-gesture-handler";
-import Animated, { Easing } from "react-native-reanimated";
 import Db from "../../scripts/db/db";
 import Settings from "../../scripts/settings/settings";
 import { DocumentSchema } from "../../models/DocumentsSchema";
 import { Document } from "../../models/Documents";
-import { keepScreenAwake } from "../../scripts/utils";
-import LoadingOverlay from "../../components/LoadingOverlay";
+import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { keepScreenAwake } from "../../scripts/utils";
+import {
+  GestureHandlerRootView
+} from "react-native-gesture-handler";
+import Animated, { Easing } from "react-native-reanimated";
+import LoadingOverlay from "../../components/LoadingOverlay";
 import HTMLView from "react-native-htmlview";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
@@ -132,15 +132,9 @@ const SingleDocument: React.FC<DocumentDisplayScreenProps> = ({ route, navigatio
             ref={scrollViewComponent}
             contentContainerStyle={styles.contentSectionList}>
 
-
-            <HTMLView value={document.html}
-                      stylesheet={{
-                        p: {
-                          color: styles.text.color,
-                          fontSize: 20 * Settings.songScale,
-                          lineHeight: 30 * Settings.songScale
-                        }
-                      }} />
+            <HTMLView value={document.html.replace(/\n/gi, "")}
+                      paragraphBreak={""}
+                      stylesheet={styles} />
 
             <Footer opacity={animatedOpacity} />
           </ScrollView>
@@ -168,21 +162,116 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   contentSectionList: {
     paddingLeft: 30,
-    paddingTop: 5,
+    paddingTop: 15,
     paddingRight: 20,
     paddingBottom: 200
   },
-
-  text: {
-    color: colors.text
-  },
-
   footer: {
     borderTopColor: colors.border,
     borderTopWidth: 1,
     width: "50%",
-    marginTop: 70,
+    marginTop: 100,
     marginBottom: 100,
     alignSelf: "center"
-  }
+  },
+
+  p: {
+    color: colors.text,
+    fontSize: 20 * Settings.songScale,
+    lineHeight: 30 * Settings.songScale
+  },
+  h1: {
+    color: colors.text,
+    fontSize: 38 * Settings.songScale,
+    lineHeight: 50 * Settings.songScale,
+    paddingTop: 10 * Settings.songScale,
+    marginBottom: -30 * Settings.songScale,
+    fontWeight: "bold",
+  },
+  h2: {
+    color: colors.text,
+    fontSize: 32 * Settings.songScale,
+    lineHeight: 50 * Settings.songScale,
+    paddingTop: 20 * Settings.songScale,
+    marginBottom: -30 * Settings.songScale,
+    fontWeight: "bold",
+  },
+  h3: {
+    color: colors.text,
+    fontSize: 26 * Settings.songScale,
+    lineHeight: 45 * Settings.songScale,
+    paddingTop: 20 * Settings.songScale,
+    marginBottom: -25 * Settings.songScale,
+    fontWeight: "bold"
+  },
+  h4: {
+    color: colors.text,
+    fontSize: 20 * Settings.songScale,
+    lineHeight: 40 * Settings.songScale,
+    paddingTop: 15 * Settings.songScale,
+    marginBottom: -18 * Settings.songScale,
+    fontWeight: "bold"
+  },
+  h5: {
+    color: colors.text,
+    fontSize: 18 * Settings.songScale,
+    lineHeight: 35 * Settings.songScale,
+    paddingTop: 15 * Settings.songScale,
+    marginBottom: -20 * Settings.songScale,
+    fontWeight: "bold"
+  },
+  h6: {
+    color: colors.text,
+    fontSize: 12 * Settings.songScale,
+    lineHeight: 30 * Settings.songScale,
+    paddingTop: 10 * Settings.songScale,
+    fontWeight: "bold"
+  },
+  ul: {
+    color: colors.text,
+    fontSize: 20 * Settings.songScale,
+    lineHeight: 30 * Settings.songScale,
+    marginVertical: 10 * Settings.songScale,
+  },
+  ol: {
+    color: colors.text,
+    fontSize: 20 * Settings.songScale,
+    lineHeight: 30 * Settings.songScale,
+    marginVertical: 10 * Settings.songScale,
+  },
+  pre: {
+    color: colors.text,
+    fontSize: 19 * Settings.songScale,
+    lineHeight: 30 * Settings.songScale,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+
+  blockquote: {
+    color: colors.text,
+    fontSize: 20 * Settings.songScale,
+    lineHeight: 30 * Settings.songScale,
+    borderLeftWidth: 5,
+    borderLeftColor: colors.borderVariant,
+    paddingLeft: 30,
+    paddingVertical: 15 * Settings.songScale,
+    marginVertical: 15 * Settings.songScale,
+  },
+  code: {
+    fontSize: 19 * Settings.songScale,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  ins: {
+    textDecorationLine: "underline"
+  },
+  del: {
+    textDecorationLine: "line-through"
+  },
+  sup: {
+    fontSize: 13 * Settings.songScale,
+    textAlignVertical: "top", // todo: fix
+  },
+  sub: {
+    fontSize: 13 * Settings.songScale,
+    textAlignVertical: "bottom",
+  },
 });
