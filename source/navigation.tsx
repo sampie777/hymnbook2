@@ -5,7 +5,7 @@ export const routes = {
   Search: "Search",
   SongList: "SongList",
   ImportSongs: "Databases",
-  ImportDocuments: "Document database",
+  ImportDocuments: "Document databases",
   Settings: "Settings",
   About: "About",
   PrivacyPolicy: "Privacy policy",
