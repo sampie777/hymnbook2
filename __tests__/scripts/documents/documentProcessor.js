@@ -8,7 +8,7 @@ import {
 } from "../../../source/models/server/Documents";
 
 describe("test document processor", () => {
-  const group = (name = "group 1", id = undefined) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), 0, id);
+  const group = (name = "group 1", id = undefined, isRoot = false) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), 0, isRoot, id);
   const document = (name = "doc 1", id = undefined) => new Document(name, "", "NL", -1, new Date(), new Date(), id);
   const serverGroup = (name = "group 1", id = undefined) => new ServerDocumentGroup(name, "NL", [], [], (new Date()).toISOString(), (new Date()).toISOString(), 0, id);
   const serverDocument = (name = "doc 1", id = undefined) => new ServerDocument(name, "", "NL", -1, (new Date()).toISOString(), (new Date()).toISOString(), id);
@@ -29,10 +29,12 @@ describe("test document processor", () => {
 
     group2.groups.push(group21);
     group2.groups.push(group22);
-    group2.items.push(serverDocument("doc 1", 1));
-    group2.items.push(serverDocument("doc 2", 2));
+    group2.items.push(serverDocument("doc 2.1", 1));
+    group2.items.push(serverDocument("doc 2.2", 2));
+
     group22.groups.push(group221);
     group22.items.push(serverDocument("doc 2.2.1", 3));
+
     group221.items.push(serverDocument("doc 2.2.1.1", 4));
 
     const conversionState = {
@@ -40,21 +42,29 @@ describe("test document processor", () => {
       documentId: 1,
       totalDocuments: 0,
     };
-    const result = DocumentProcessor.convertServerDocumentGroupToLocalDocumentGroup(group2, conversionState);
+    const result = DocumentProcessor.convertServerDocumentGroupToLocalDocumentGroup(group2, conversionState, true);
 
+    expect(result.name).toBe("group 2");
     expect(result.size).toBe(4);
+    expect(result.isRoot).toBe(true);
     expect(result.items.length).toBe(2);
     expect(result.groups.length).toBe(2);
 
+    expect(result.groups[0].name).toBe("group 2.1");
     expect(result.groups[0].size).toBe(0);
+    expect(result.groups[0].isRoot).toBe(false);
     expect(result.groups[0].items.length).toBe(0);
     expect(result.groups[0].groups.length).toBe(0);
 
+    expect(result.groups[1].name).toBe("group 2.2");
     expect(result.groups[1].size).toBe(2);
+    expect(result.groups[1].isRoot).toBe(false);
     expect(result.groups[1].items.length).toBe(1);
     expect(result.groups[1].groups.length).toBe(1);
 
+    expect(result.groups[1].groups[0].name).toBe("group 2.2.1");
     expect(result.groups[1].groups[0].size).toBe(1);
+    expect(result.groups[1].groups[0].isRoot).toBe(false);
     expect(result.groups[1].groups[0].items.length).toBe(1);
     expect(result.groups[1].groups[0].groups.length).toBe(0);
 
@@ -89,11 +99,11 @@ describe("test document processor", () => {
 
   it("loads all document groups from the database", () => {
     Db.documents.realm().write(() => {
-      Db.documents.realm().create(DocumentGroupSchema.name, group("group 1"));
-      Db.documents.realm().create(DocumentGroupSchema.name, group("group 2"));
+      Db.documents.realm().create(DocumentGroupSchema.name, group("group 1", undefined, true));
+      Db.documents.realm().create(DocumentGroupSchema.name, group("group 2", undefined, true));
     });
 
-    const result = DocumentProcessor.loadLocalDocumentGroups();
+    const result = DocumentProcessor.loadLocalDocumentRoot();
     expect(result.success).toBe(true);
     expect(result.data.length).toBe(2);
     expect(result.data[0].name).toBe("group 1");
@@ -103,7 +113,7 @@ describe("test document processor", () => {
   it("give error if db not connected when trying to load all document groups from the database", () => {
     Db.documents.disconnect();
 
-    const result = DocumentProcessor.loadLocalDocumentGroups();
+    const result = DocumentProcessor.loadLocalDocumentRoot();
     expect(result.success).toBe(false);
     expect(result.message).toBe("Database is not connected");
   });

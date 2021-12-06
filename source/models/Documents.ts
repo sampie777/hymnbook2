@@ -38,6 +38,7 @@ export class DocumentGroup {
   createdAt: Date;
   modifiedAt: Date;
   size: number;
+  isRoot: boolean;
 
   constructor(
     name: string,
@@ -47,6 +48,7 @@ export class DocumentGroup {
     createdAt: Date,
     modifiedAt: Date,
     size: number = 0,
+    isRoot: boolean = false,
     id = Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema)
   ) {
     this.id = id;
@@ -57,5 +59,6 @@ export class DocumentGroup {
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.size = size || 0;
+    this.isRoot = isRoot;
   }
 }
