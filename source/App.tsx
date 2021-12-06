@@ -9,17 +9,19 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { CollectionChangeCallback } from "realm";
 import Db from "./scripts/db/db";
 import Settings from "./scripts/settings/settings";
 import { routes } from "./navigation";
 import { SongListModelSchema } from "./models/SongListModelSchema";
+import { closeDatabases, initDatabases } from "./scripts/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
 import SongList from "./scripts/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ErrorBoundary from "./components/ErrorBoundary";
+import HeaderIconButton from "./components/HeaderIconButton";
 import LoadingOverlay from "./components/LoadingOverlay";
 import SearchScreen from "./screens/Search/SearchScreen";
 import SongDisplayScreen from "./screens/SongDisplay/SongDisplayScreen";
@@ -31,7 +33,6 @@ import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
-import { closeDatabases, initDatabases } from "./scripts/app";
 
 
 const RootNav = createNativeStackNavigator();
@@ -47,6 +48,9 @@ const RootNavigation = () => {
                             }}>
     <RootNav.Screen name={"Home"} component={HomeNavigation}
                     options={{ headerShown: false }} />
+    <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
+    <RootNav.Screen name={routes.About} component={AboutScreen} />
+    <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
 
     <RootNav.Screen name={routes.Song} component={SongDisplayScreen}
                     options={{
@@ -66,11 +70,16 @@ const RootNavigation = () => {
                       selectedVerses: []
                     }} />
 
-    <RootNav.Screen name={routes.ImportSongs} component={DownloadSongsScreen} />
-    <RootNav.Screen name={routes.ImportDocuments} component={DownloadDocumentsScreen} />
-    <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
-    <RootNav.Screen name={routes.About} component={AboutScreen} />
-    <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
+    <RootNav.Screen name={routes.ImportSongs} component={DownloadSongsScreen}
+                    options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
+                      headerRight: () => (<HeaderIconButton icon={"file-alt"}
+                                                            onPress={() => navigation.navigate(routes.ImportDocuments)} />)
+                    })} />
+    <RootNav.Screen name={routes.ImportDocuments} component={DownloadDocumentsScreen}
+                    options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
+                      headerRight: () => (<HeaderIconButton icon={"music"}
+                                                            onPress={() => navigation.navigate(routes.ImportSongs)} />)
+                    })} />
   </RootNav.Navigator>;
 };
 
@@ -208,3 +217,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.primary
   }
 });
+;
