@@ -11,6 +11,7 @@ import { ScrollView, View, Text, StyleSheet, BackHandler } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import DocumentItem from "./DocumentItem";
 import DocumentGroupItem from "./DocumentGroupItem";
+import DownloadInstructions from "./DownloadInstructions";
 
 
 interface ScreenProps {
@@ -76,14 +77,19 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
   };
 
   return (<View style={styles.container}>
-    <View style={styles.pageHeader}>
-      {group === undefined ? undefined :
-        <HeaderIconButton onPress={previousLevel} icon={"arrow-left"} />}
 
-      <Text style={styles.pageTitle}>
-        {group?.name || "Browse"}
-      </Text>
-    </View>
+    {rootGroups.length === 0 ? undefined :
+      <View style={styles.pageHeader}>
+        {group === undefined ? undefined :
+          <HeaderIconButton onPress={previousLevel} icon={"arrow-left"} />}
+
+        <Text style={styles.pageTitle}>
+          {group?.name || "Browse"}
+        </Text>
+      </View>
+    }
+
+    {rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
     <ScrollView>
       {group !== undefined ? undefined :
@@ -119,7 +125,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   pageHeader: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 10,
+    paddingLeft: 10
   },
 
   pageTitle: {

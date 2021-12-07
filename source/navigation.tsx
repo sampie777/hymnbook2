@@ -3,7 +3,7 @@ import { Verse } from "./models/Songs";
 export const routes = {
   Home: "Home",
   SongSearch: "Search songs",
-  DocumentSearch: "Search documents",
+  DocumentSearch: "Documents",
   SongList: "SongList",
   SongImport: "Databases",
   DocumentImport: "Document databases",
