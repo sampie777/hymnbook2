@@ -12,8 +12,9 @@ import {
   GestureHandlerRootView
 } from "react-native-gesture-handler";
 import Animated, { Easing } from "react-native-reanimated";
-import LoadingOverlay from "../../components/LoadingOverlay";
 import HTMLView from "react-native-htmlview";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import DocumentControls from "./DocumentControls";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
@@ -125,6 +126,8 @@ const SingleDocument: React.FC<DocumentDisplayScreenProps> = ({ route, navigatio
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
+        <DocumentControls navigation={navigation}
+                          document={document} />
 
         {document === undefined ? undefined :
           <ScrollView
@@ -186,7 +189,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     lineHeight: 50 * Settings.songScale,
     paddingTop: 10 * Settings.songScale,
     marginBottom: -30 * Settings.songScale,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   h2: {
     color: colors.text,
@@ -194,7 +197,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     lineHeight: 50 * Settings.songScale,
     paddingTop: 20 * Settings.songScale,
     marginBottom: -30 * Settings.songScale,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   h3: {
     color: colors.text,
@@ -231,19 +234,19 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text,
     fontSize: 20 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
-    marginVertical: 10 * Settings.songScale,
+    marginVertical: 10 * Settings.songScale
   },
   ol: {
     color: colors.text,
     fontSize: 20 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
-    marginVertical: 10 * Settings.songScale,
+    marginVertical: 10 * Settings.songScale
   },
   pre: {
     color: colors.text,
     fontSize: 19 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
   },
 
   blockquote: {
@@ -254,11 +257,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderLeftColor: colors.borderVariant,
     paddingLeft: 30,
     paddingVertical: 15 * Settings.songScale,
-    marginVertical: 15 * Settings.songScale,
+    marginVertical: 15 * Settings.songScale
   },
   code: {
     fontSize: 19 * Settings.songScale,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
   },
   ins: {
     textDecorationLine: "underline"
@@ -268,10 +271,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   sup: {
     fontSize: 13 * Settings.songScale,
-    textAlignVertical: "top", // todo: fix
+    textAlignVertical: "top" // todo: fix
   },
   sub: {
     fontSize: 13 * Settings.songScale,
-    textAlignVertical: "bottom",
-  },
+    textAlignVertical: "bottom"
+  }
 });

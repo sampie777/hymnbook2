@@ -9,6 +9,7 @@ export class Document {
   index: number;
   createdAt: Date;
   modifiedAt: Date;
+  _parent?: Array<DocumentGroup>;
 
   constructor(
     name: string,
@@ -17,7 +18,8 @@ export class Document {
     index: number,
     createdAt: Date,
     modifiedAt: Date,
-    id = Db.documents.getIncrementedPrimaryKey(DocumentSchema)
+    id = Db.documents.getIncrementedPrimaryKey(DocumentSchema),
+    parent?: DocumentGroup
   ) {
     this.id = id;
     this.name = name;
@@ -26,6 +28,19 @@ export class Document {
     this.index = index;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this._parent = parent === undefined ? [] : [parent];
+  }
+
+  static getParent(document?: Document): DocumentGroup | undefined {
+    if (document === undefined) {
+      return undefined;
+    }
+
+    if (document._parent === undefined || document._parent.length === 0) {
+      return undefined;
+    }
+
+    return document._parent[0];
   }
 }
 
