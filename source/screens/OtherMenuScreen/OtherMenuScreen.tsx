@@ -3,7 +3,7 @@ import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { routes } from "../../navigation";
 import { ScrollView } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import MenuItem from "./MenuItem";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
@@ -17,7 +17,7 @@ const OtherMenuScreen: React.FC<{ route: any, navigation: BottomTabNavigationPro
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="cogs" style={style} />
       },
       {
-        name: routes.Import,
+        name: routes.SongImport,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="database" style={style} />
       },
       {

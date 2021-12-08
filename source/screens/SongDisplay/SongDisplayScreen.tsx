@@ -13,7 +13,7 @@ import {
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 import Animated, { Easing } from "react-native-reanimated";
 import Db from "../../scripts/db/db";
-import Settings from "../../scripts/settings";
+import Settings from "../../scripts/settings/settings";
 import { routes, VersePickerRouteParams } from "../../navigation";
 import { SongSchema } from "../../models/SongsSchema";
 import { Song, Verse } from "../../models/Songs";

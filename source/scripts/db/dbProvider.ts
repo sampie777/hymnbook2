@@ -62,7 +62,7 @@ export class DatabaseProvider {
       this.disconnect();
     }
 
-    console.warn("Deleting database");
+    console.info("Deleting database");
     Realm.deleteFile(this.config);
   }
 

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { SongRouteParams, routes } from "../../navigation";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import Settings from "../../scripts/settings/settings";
 import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
-import { SongRouteParams, routes } from "../../navigation";
-import { useFocusEffect } from "@react-navigation/native";
-import Settings from "../../scripts/settings";
 import { SongSchema } from "../../models/SongsSchema";
+import { isPortraitMode } from "../../scripts/utils";
+import { useFocusEffect } from "@react-navigation/native";
+import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import PopupsComponent from "../../components/Popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
-import { isPortraitMode } from "../../scripts/utils";
-import PopupsComponent from "../../components/Popups/PopupsComponent";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 
 const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
@@ -110,6 +111,10 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       navigation.navigate(routes.Song, { id: song.id } as SongRouteParams);
     };
 
+    const onDocumentPress = () => {
+      navigation.navigate(routes.DocumentSearch);
+    };
+
     const onAddedToSongList = () => {
       if (!Settings.clearSearchAfterAddedToSongList) return;
       setInputValue("");
@@ -128,7 +133,20 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
         <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
           <View style={styles.inputContainer}>
             <Text style={styles.infoText}>Enter song number:</Text>
-            <Text style={styles.inputTextField}>{inputValue}</Text>
+
+            <View style={styles.inputTextView}>
+              <View style={styles.documentIconContainer} />
+
+              <View style={styles.inputTextViewContainer}>
+                <Text style={styles.inputTextField}>{inputValue}</Text>
+              </View>
+
+              <TouchableOpacity style={styles.documentIconContainer}
+                                onPress={onDocumentPress}>
+                <Icon name={"arrow-right"} style={styles.documentIconArrow} />
+                <Icon name={"file-alt"} style={styles.documentIcon} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <FlatList
@@ -171,7 +189,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     flex: 1,
     justifyContent: "space-between",
     alignItems: "stretch",
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
 
   inputAndResults: {
@@ -187,16 +205,43 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingTop: 20,
     fontFamily: "sans-serif-light"
   },
+  inputTextView: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  inputTextViewContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center"
+  },
   inputTextField: {
-    fontSize: 90,
+    fontSize: 70,
+    textAlign: "center",
     fontFamily: "sans-serif-light",
     color: colors.textLight,
     borderStyle: "dashed",
     borderBottomWidth: 2,
     borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140,
-    paddingLeft: 40,
-    paddingRight: 40
+    paddingHorizontal: 30
+  },
+
+  documentIconContainer: {
+    width: 80,
+    paddingRight: 40,
+    paddingTop: 10,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center"
+  },
+  documentIconArrow: {
+    fontSize: 15,
+    color: colors.textLighter,
+    paddingRight: 2
+  },
+  documentIcon: {
+    fontSize: 30,
+    color: colors.textLighter
   },
 
   searchList: {

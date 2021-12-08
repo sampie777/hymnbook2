@@ -1,6 +1,6 @@
 import { api, throwErrorsIfNotOk } from "../../api";
 import { Result } from "../utils";
-import { SongBundle } from "../../models/ServerSongsModel";
+import { SongBundle } from "../../models/server/ServerSongsModel";
 import { rollbar } from "../rollbar";
 import { JsonResponse, JsonResponseType } from "./models";
 

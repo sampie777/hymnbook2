@@ -6,18 +6,20 @@ const configuration = new Configuration(
   {
     captureUncaught: true,
     captureUnhandledRejections: true,
+    enabled: process.env.NODE_ENV === "production",
+    verbose: true,
     payload: {
       environment: process.env.NODE_ENV,
       client: {
         javascript: {
           source_map_enabled: true,
           code_version: getVersion(),
-          environment: process.env.NODE_ENV
         }
+      },
+      person: {
+        id: null,
       }
     },
-    verbose: true,
-    enabled: process.env.NODE_ENV === "production"
   });
 
 export const rollbar = new Client(configuration);
