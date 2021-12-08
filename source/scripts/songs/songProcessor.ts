@@ -16,6 +16,7 @@ export namespace SongProcessor {
 
     const bundles = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
+      .sorted(`name`)
       .map(it => it as unknown as SongBundle);
 
     return new Result({ success: true, data: bundles });
