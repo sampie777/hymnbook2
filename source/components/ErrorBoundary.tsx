@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
+    backgroundColor: "#ffffff"
   },
   deathFace: {
     fontSize: 50,

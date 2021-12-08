@@ -9,28 +9,32 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { CollectionChangeCallback } from "realm";
 import Db from "./scripts/db/db";
-import Settings from "./scripts/settings";
+import Settings from "./scripts/settings/settings";
 import { routes } from "./navigation";
-import { rollbar } from "./scripts/rollbar";
 import { SongListModelSchema } from "./models/SongListModelSchema";
+import { closeDatabases, initDatabases } from "./scripts/app";
+import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
 import SongList from "./scripts/songs/songList";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./components/ErrorBoundary";
+import HeaderIconButton from "./components/HeaderIconButton";
 import LoadingOverlay from "./components/LoadingOverlay";
 import SearchScreen from "./screens/Search/SearchScreen";
 import SongDisplayScreen from "./screens/SongDisplay/SongDisplayScreen";
-import DownloadSongsScreen from "./screens/DownloadSongs/DownloadSongsScreen";
+import DownloadSongsScreen from "./screens/downloads/DownloadSongsScreen";
+import DownloadDocumentsScreen from "./screens/downloads/DownloadDocumentsScreen";
 import SettingsScreen from "./screens/Settings/SettingsScreen";
 import SongListScreen from "./screens/SongListScreen";
 import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
-import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
+import DocumentSearchScreen from "./screens/Search/documents/DocumentSearchScreen";
+import SingleDocument from "./screens/Document/SingleDocument";
 
 
 const RootNav = createNativeStackNavigator();
@@ -46,6 +50,10 @@ const RootNavigation = () => {
                             }}>
     <RootNav.Screen name={"Home"} component={HomeNavigation}
                     options={{ headerShown: false }} />
+    <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
+    <RootNav.Screen name={routes.About} component={AboutScreen} />
+    <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
+    <RootNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen} />
 
     <RootNav.Screen name={routes.Song} component={SongDisplayScreen}
                     options={{
@@ -65,10 +73,24 @@ const RootNavigation = () => {
                       selectedVerses: []
                     }} />
 
-    <RootNav.Screen name={routes.Import} component={DownloadSongsScreen} />
-    <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
-    <RootNav.Screen name={routes.About} component={AboutScreen} />
-    <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
+    <RootNav.Screen name={routes.Document} component={SingleDocument}
+                    options={{
+                      title: ""
+                    }}
+                    initialParams={{
+                      id: undefined
+                    }} />
+
+    <RootNav.Screen name={routes.SongImport} component={DownloadSongsScreen}
+                    options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
+                      headerRight: () => (<HeaderIconButton icon={"file-alt"}
+                                                            onPress={() => navigation.navigate(routes.DocumentImport)} />)
+                    })} />
+    <RootNav.Screen name={routes.DocumentImport} component={DownloadDocumentsScreen}
+                    options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
+                      headerRight: () => (<HeaderIconButton icon={"music"}
+                                                            onPress={() => navigation.navigate(routes.SongImport)} />)
+                    })} />
   </RootNav.Navigator>;
 };
 
@@ -93,7 +115,7 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
-  return (<HomeNav.Navigator initialRouteName={routes.Search}
+  return (<HomeNav.Navigator initialRouteName={routes.SongSearch}
                              screenOptions={{
                                tabBarStyle: styles.tabBar,
                                tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
@@ -101,7 +123,7 @@ const HomeNavigation: React.FC = () => {
                                headerStyle: styles.tabBarHeader,
                                headerTitleStyle: styles.tabBarHeaderTitle
                              }}>
-    <HomeNav.Screen name={routes.Search} component={SearchScreen}
+    <HomeNav.Screen name={routes.SongSearch} component={SearchScreen}
                     options={{
                       headerShown: false,
                       tabBarIcon: ({ focused, color, size }) =>
@@ -134,37 +156,14 @@ const AppRoot: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    Db.settings.connect()
-      .catch(e => {
-        rollbar.error("Could not connect to local settings database: " + e.toString(), e);
-        alert("Could not connect to local settings database: " + e);
-      })
-      .then(() => Settings.load())
-      .catch(e => {
-        rollbar.error("Could not load settings from database: " + e.toString(), e);
-        alert("Could not load settings from database: " + e);
-      })
-      .then(() => {
-        theme.reload()
-        Settings.appOpenedTimes++;
-        Settings.store();
-      })
-      .finally(() =>
-        Db.songs.connect()
-          .catch(e => {
-            rollbar.error("Could not connect to local song database: " + e.toString(), e);
-            alert("Could not connect to local song database: " + e);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          })
-      );
+    initDatabases(theme)
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const onExit = () => {
-    Settings.store();
-    Db.songs.disconnect();
-    Db.settings.disconnect();
+    closeDatabases();
   };
 
   return <SafeAreaView style={styles.container}>
@@ -229,3 +228,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.primary
   }
 });
+;
