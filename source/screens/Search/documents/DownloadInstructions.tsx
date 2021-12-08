@@ -17,7 +17,7 @@ const DocumentItem: React.FC<ScreenProps> = ({ navigation }) => {
     }
 
     return (<View style={styles.container}>
-        <Text style={styles.titleText}>No files</Text>
+        <Text style={styles.titleText}>Nothing to show</Text>
         <Text style={styles.text}>You need to download some files first before you can use them.</Text>
         <TouchableOpacity onPress={onPress}>
             <Text style={styles.downloadText}>Download</Text>
