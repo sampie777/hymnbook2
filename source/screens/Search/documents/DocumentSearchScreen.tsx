@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { CollectionChangeCallback } from "realm";
 import Db from "../../../scripts/db/db";
 import { DocumentGroup, Document } from "../../../models/Documents";
 import { DocumentRouteParams, routes } from "../../../navigation";
@@ -19,6 +20,7 @@ interface ScreenProps {
 }
 
 const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
+  let isMounted = true;
   const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentGroup>>([]);
   const styles = createStyles(useTheme());
@@ -29,10 +31,14 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
   }, []);
 
   const onLaunch = () => {
-    reloadRootGroups();
+    isMounted = true;
+    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange)
   };
 
   const onExit = () => {
+    // This is needed, as the removeListener doesn't seem to correctly work.
+    isMounted = false;
+    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange)
   };
 
   useFocusEffect(
@@ -44,13 +50,19 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   const onBackPress = (): boolean => {
     if (group === undefined) {
-      console.log("Group is undefined 2");
       return false;
     }
 
     previousLevel();
     return true;
   };
+
+  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+    if (!isMounted) {
+      return;
+    }
+    reloadRootGroups();
+  }
 
   const reloadRootGroups = () => {
     const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
