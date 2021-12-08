@@ -104,6 +104,7 @@ export namespace DocumentProcessor {
     const groups = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
       .filtered(`isRoot = true`)
+      .sorted(`name`)
       .map(it => it as unknown as DocumentGroup);
 
     return new Result({ success: true, data: groups });
