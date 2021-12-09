@@ -1,4 +1,4 @@
-import Settings from "../settings/settings";
+import Settings from "../../settings";
 import { authApi, throwErrorsIfNotOk } from "./authApi";
 import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";

@@ -1,4 +1,4 @@
-import Settings from "../../source/scripts/settings/settings";
+import Settings from "../../source/settings";
 import { Survey } from "../../source/scripts/survey";
 
 describe("test survey", () => {

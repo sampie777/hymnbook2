@@ -1,6 +1,6 @@
 import React, { MutableRefObject, useRef, useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
-import Settings from "../../scripts/settings/settings";
+import Settings from "../../settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { useFocusEffect } from "@react-navigation/native";

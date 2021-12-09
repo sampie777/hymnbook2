@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import { getVerseType, VerseType } from "../../scripts/songs/utils";
 import { Verse } from "../../models/Songs";
-import Settings from "../../scripts/settings/settings";
+import Settings from "../../settings";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { isVerseInList } from "../../scripts/songs/versePicker";
 

@@ -13,7 +13,7 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-na
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { CollectionChangeCallback } from "realm";
 import Db from "./scripts/db/db";
-import Settings from "./scripts/settings/settings";
+import Settings from "./settings";
 import { routes } from "./navigation";
 import { SongListModelSchema } from "./models/SongListModelSchema";
 import { closeDatabases, initDatabases } from "./scripts/app";

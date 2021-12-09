@@ -1,6 +1,6 @@
 import { rollbar } from "./rollbar";
 import Db from "./db/db";
-import Settings from "./settings/settings";
+import Settings from "../settings";
 import { ThemeContextProps } from "../components/ThemeProvider";
 
 export const initDatabases = (theme?: ThemeContextProps) =>

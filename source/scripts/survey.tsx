@@ -1,4 +1,4 @@
-import Settings from "./settings/settings";
+import Settings from "../settings";
 
 export class Survey {
   static url() {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Settings from "../../scripts/settings/settings";
+import Settings from "../../settings";
 import { capitalize } from "../../scripts/utils";
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
