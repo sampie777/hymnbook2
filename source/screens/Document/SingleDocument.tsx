@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View, Platform } from "react-native";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { ScrollView, StyleSheet, View, Platform, Text } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Db from "../../scripts/db/db";
 import Settings from "../../scripts/settings/settings";
@@ -12,7 +12,7 @@ import {
   GestureHandlerRootView
 } from "react-native-gesture-handler";
 import Animated, { Easing } from "react-native-reanimated";
-import HTMLView from "react-native-htmlview";
+import HTMLView, { HTMLViewNode } from "react-native-htmlview";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 
@@ -123,6 +123,20 @@ const SingleDocument: React.FC<DocumentDisplayScreenProps> = ({ route, navigatio
     });
   };
 
+  const renderNode = (
+    node: HTMLViewNode & { children: any },
+    index: number,
+    siblings: HTMLViewNode,
+    parent: HTMLViewNode,
+    defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode): ReactNode | undefined => {
+    if (node.name === "sup") {
+      return <View key={index}>
+        {defaultRenderer(node.children, node)}
+      </View>;
+    }
+    return undefined;
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -137,6 +151,7 @@ const SingleDocument: React.FC<DocumentDisplayScreenProps> = ({ route, navigatio
 
             <HTMLView value={document.html.replace(/\n/gi, "")}
                       paragraphBreak={""}
+                      renderNode={renderNode}
                       stylesheet={styles} />
 
             <Footer opacity={animatedOpacity} />
@@ -270,11 +285,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     textDecorationLine: "line-through"
   },
   sup: {
-    fontSize: 13 * Settings.songScale,
-    textAlignVertical: "top" // todo: fix
+    fontSize: 13 * Settings.songScale
   },
   sub: {
-    fontSize: 13 * Settings.songScale,
-    textAlignVertical: "bottom"
+    fontSize: 13 * Settings.songScale
+  },
+  hr: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#555"
   }
 });
