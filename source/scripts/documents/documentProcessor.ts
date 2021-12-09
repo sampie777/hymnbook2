@@ -1,9 +1,10 @@
-import { dateFrom, Result } from "../utils";
+import { rollbar } from "../rollbar";
 import Db from "../db/db";
+import { dateFrom, Result } from "../utils";
 import { Document, DocumentGroup } from "../../models/Documents";
 import { DocumentGroup as ServerDocumentGroup, Document as ServerDocument } from "../../models/server/Documents";
 import { DocumentGroupSchema, DocumentSchema } from "../../models/DocumentsSchema";
-import { rollbar } from "../rollbar";
+import { DocumentServer } from "./documentServer";
 
 export namespace DocumentProcessor {
   interface ConversionState {
@@ -43,7 +44,7 @@ export namespace DocumentProcessor {
       });
     } catch (e: any) {
       rollbar.error(`Failed to import documents: ${e}`, e);
-      return new Result({ success: false, message: `Failed to import document group: ${e}`, error: e as Error });
+      return new Result({ success: false, message: `Failed to import documents: ${e}`, error: e as Error });
     }
 
     return new Result({ success: true, message: `${documentGroup.size} documents added!` });
@@ -93,6 +94,59 @@ export namespace DocumentProcessor {
       dateFrom(document.modifiedAt),
       conversionState.documentId++
     );
+  };
+
+
+  export const fetchAndUpdateDocumentGroup = (group: ServerDocumentGroup): Promise<Result> => {
+    return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
+      .then((result: Result) => updateAndSaveDocumentGroup(result.data))
+  };
+
+  const updateAndSaveDocumentGroup = (group: ServerDocumentGroup): Result => {
+    if (!Db.documents.isConnected()) {
+      rollbar.warning("Cannot update documents: document database is not connected");
+      return new Result({ success: false, message: "Database is not connected" });
+    }
+
+    if (group.items == null && group.groups == null) {
+      rollbar.warning("New document group contains no documents or groups: " + group.name, group);
+      return new Result({
+        success: false,
+        message: `New update contains no documents. If this is correct, please manually remove ${group.name}.`
+      });
+    }
+
+    const conversionState: ConversionState = {
+      groupId: Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema),
+      documentId: Db.documents.getIncrementedPrimaryKey(DocumentSchema),
+      totalDocuments: 0
+    };
+    const documentGroup = convertServerDocumentGroupToLocalDocumentGroup(group, conversionState, true);
+
+    const existingGroup = Db.documents.realm()
+      .objects<DocumentGroup>(DocumentGroupSchema.name)
+      .filtered(`name = "${group.name}" AND isRoot = true`);
+    if (existingGroup.length === 0) {
+      rollbar.warning("To-be-updated document group doesn't exists locally: " + group.name, group);
+    }
+
+    try {
+      Db.documents.realm().write(() => {
+        Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
+      });
+    } catch (e: any) {
+      rollbar.error(`Failed to update documents: ${e}`, e);
+      return new Result({ success: false, message: `Failed to update documents: ${e}`, error: e as Error });
+    }
+
+    if (existingGroup.length > 0) {
+      const deleteResult = deleteDocumentGroup(existingGroup[0]);
+      if (!deleteResult.success) {
+        return deleteResult;
+      }
+    }
+
+    return new Result({ success: true, message: `${documentGroup.name} updated!` });
   };
 
   export const loadLocalDocumentRoot = (): Result => {

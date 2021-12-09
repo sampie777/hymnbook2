@@ -1,10 +1,11 @@
+import { rollbar } from "../rollbar";
 import Db from "../db/db";
+import { dateFrom, Result } from "../utils";
 import { Song, SongBundle, Verse } from "../../models/Songs";
 import { SongBundle as ServerSongBundle } from "../../models/server/ServerSongsModel";
-import { dateFrom, Result } from "../utils";
 import { SongBundleSchema, SongSchema, VerseSchema } from "../../models/SongsSchema";
 import SongList from "./songList";
-import { rollbar } from "../rollbar";
+import { Server } from "../server/server";
 
 export namespace SongProcessor {
 
@@ -37,12 +38,75 @@ export namespace SongProcessor {
       .objects<SongBundle>(SongBundleSchema.name)
       .filtered(`name = "${bundle.name}"`);
     if (existingBundle.length > 0) {
+      rollbar.warning("New song bundle already exists locally: " + bundle.name, bundle);
       return new Result({ success: false, message: `Bundle ${bundle.name} already exists` });
     }
 
+    const songBundle = convertServerSongBundleToLocalSongBundle(bundle);
+
+    try {
+      Db.songs.realm().write(() => {
+        Db.songs.realm().create(SongBundleSchema.name, songBundle);
+      });
+    } catch (e: any) {
+      rollbar.error(`Failed to import songs: ${e}`, e);
+      return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
+    }
+
+    return new Result({ success: true, message: `${bundle.songs.length} songs added!` });
+  };
+
+  export const fetchAndUpdateSongBundle = (bundle: ServerSongBundle): Promise<Result> => {
+    return Server.fetchSongBundleWithSongsAndVerses(bundle)
+      .then((result: Result) => updateAndSaveSongBundle(result.data))
+  };
+
+  const updateAndSaveSongBundle = (bundle: ServerSongBundle): Result => {
+    if (!Db.songs.isConnected()) {
+      rollbar.warning("Cannot update song bundle: song database is not connected");
+      return new Result({ success: false, message: "Database is not connected" });
+    }
+
+    if (bundle.songs == null) {
+      rollbar.warning("Song bundle contains no songs: " + bundle.name, bundle);
+      return new Result({
+        success: false,
+        message: "New song bundle contains no songs. If this is correct, please manually remove this song bundle."
+      });
+    }
+
+    const songBundle = convertServerSongBundleToLocalSongBundle(bundle);
+
+    const existingBundle = Db.songs.realm()
+      .objects<SongBundle>(SongBundleSchema.name)
+      .filtered(`name = "${bundle.name}"`);
+    if (existingBundle.length === 0) {
+      rollbar.warning("To-be-updated song bundle doesn't exists locally: " + bundle.name, bundle);
+    }
+
+    try {
+      Db.songs.realm().write(() => {
+        Db.songs.realm().create(SongBundleSchema.name, songBundle);
+      });
+    } catch (e: any) {
+      rollbar.error(`Failed to update/import songs: ${e}`, e);
+      return new Result({ success: false, message: `Failed to update songs: ${e}`, error: e as Error });
+    }
+
+    if (existingBundle.length > 0) {
+      const deleteResult = deleteSongBundle(existingBundle[0]);
+      if (!deleteResult.success) {
+        return deleteResult;
+      }
+    }
+
+    return new Result({ success: true, message: `${bundle.name} updated!` });
+  };
+
+  const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle) => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
-    let songs = bundle.songs
+    let songs = (bundle.songs || [])
       .sort((a, b) => a.id - b.id)
       .map(song =>
         new Song(
@@ -65,7 +129,7 @@ export namespace SongProcessor {
         )
       );
 
-    const songBundle = new SongBundle(
+    return new SongBundle(
       bundle.abbreviation,
       bundle.name,
       bundle.language,
@@ -73,17 +137,6 @@ export namespace SongProcessor {
       dateFrom(bundle.modifiedAt),
       songs
     );
-
-    try {
-      Db.songs.realm().write(() => {
-        Db.songs.realm().create(SongBundleSchema.name, songBundle);
-      });
-    } catch (e: any) {
-      rollbar.error(`Failed to import songs: ${e}`, e);
-      return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
-    }
-
-    return new Result({ success: true, message: `${songs.length} songs added!` });
   };
 
   export const deleteSongDatabase = (): Promise<Result> => {

@@ -1,13 +1,13 @@
 import React from "react";
-import { SongBundle } from "../../models/server/ServerSongsModel";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
 import { SongBundle as LocalSongBundle } from "../../models/Songs";
+import { SongBundle as ServerSongBundle } from "../../models/server/ServerSongsModel";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
 
 interface SongBundleItemComponentProps {
-  bundle: SongBundle;
-  onPress: (bundle: SongBundle) => void;
+  bundle: ServerSongBundle;
+  onPress: (bundle: ServerSongBundle) => void;
 }
 
 export const SongBundleItem: React.FC<SongBundleItemComponentProps>
@@ -18,25 +18,23 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
-                      style={styles.songBundleItemContainer}>
-      <Text style={styles.songBundleItemText}>
+                      style={styles.container}>
+      <Text style={styles.titleText}>
         {bundle.name}
       </Text>
-      <View style={styles.songBundleItemInfoContainer}>
+      <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
-          <Text style={styles.songBundleItemInfoText}>
+          <Text style={styles.infoText}>
             {bundle.language}
           </Text>
         }
         {bundle.size === undefined ? undefined :
-          <Text style={styles.songBundleItemInfoText}>
+          <Text style={styles.infoText}>
             {bundle.size} songs
           </Text>
         }
       </View>
-      <Icon name={"cloud-download-alt"}
-            size={styles.songBundleItemIcon.fontSize}
-            color={styles.songBundleItemIconDownload.color} />
+      <DownloadIcon />
     </TouchableOpacity>
   );
 };
@@ -44,40 +42,42 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
 interface LocalSongBundleItemComponentProps {
   bundle: LocalSongBundle;
   onPress: (bundle: LocalSongBundle) => void;
+  hasUpdate?: boolean;
 }
 
 export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
   = ({
        bundle,
-       onPress
+       onPress,
+       hasUpdate = false
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
-                      style={styles.songBundleItemContainer}>
-      <Text style={styles.songBundleItemText}>
+                      style={styles.container}>
+      <Text style={styles.titleText}>
         {bundle.name}
       </Text>
-      <View style={styles.songBundleItemInfoContainer}>
+      <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
-          <Text style={styles.songBundleItemInfoText}>
+          <Text style={styles.infoText}>
             {bundle.language}
           </Text>
         }
-        <Text style={styles.songBundleItemInfoText}>
+        <Text style={styles.infoText}>
           {bundle.songs.length} songs
         </Text>
       </View>
-      <Icon name={"check"}
-            size={styles.songBundleItemIcon.fontSize}
-            color={styles.songBundleItemIconLocal.color} />
+      <View>
+        {!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />}
+      </View>
     </TouchableOpacity>
   );
 };
 
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
-  songBundleItemContainer: {
+  container: {
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderColor: colors.border,
@@ -87,26 +87,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center"
   },
-  songBundleItemText: {
+  titleText: {
     fontSize: 17,
     flexGrow: 1,
     color: colors.text
   },
-  songBundleItemInfoContainer: {
+  infoContainer: {
     paddingRight: 20,
     alignItems: "flex-end"
   },
-  songBundleItemInfoText: {
+  infoText: {
     fontSize: 13,
     color: colors.textLighter
   },
-  songBundleItemIcon: {
-    fontSize: 18
-  },
-  songBundleItemIconDownload: {
-    color: "dodgerblue"
-  },
-  songBundleItemIconLocal: {
-    color: "#0d0"
-  }
 });

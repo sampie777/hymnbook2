@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { DocumentGroup } from "../../models/Documents";
+import { DocumentGroup as LocalDocumentGroup } from "../../models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../models/server/Documents";
 import { DocumentProcessor } from "../../scripts/documents/documentProcessor";
 import { DocumentServer } from "../../scripts/documents/documentServer";
+import { dateFrom } from "../../scripts/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -23,9 +24,10 @@ interface ComponentProps {
 const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverGroups, setServerGroups] = useState<Array<ServerDocumentGroup>>([]);
-  const [localGroups, setLocalGroups] = useState<Array<DocumentGroup>>([]);
+  const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup>>([]);
   const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
-  const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<DocumentGroup | undefined>(undefined);
+  const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
+  const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
   const [requestDeleteAll, setRequestDeleteAll] = useState(false);
   const [filterLanguage, setFilterLanguage] = useState("");
   const styles = createStyles(useTheme());
@@ -78,9 +80,16 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     setRequestDownloadForGroup(group);
   };
 
-  const onLocalDocumentGroupPress = (group: DocumentGroup) => {
+  const onLocalDocumentGroupPress = (group: LocalDocumentGroup) => {
     if (isLoading || isPopupOpen()) {
       return;
+    }
+
+    if (hasUpdate(group)) {
+      const serverGroup = serverGroups.find(it => it.name == group.name);
+      if (serverGroup !== undefined) {
+        return setRequestUpdateForGroup(serverGroup);
+      }
     }
 
     setRequestDeleteForGroup(group);
@@ -105,6 +114,17 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     downloadDocumentGroup(serverDocumentGroup);
   };
 
+  const onConfirmUpdateDocumentGroup = () => {
+    const group = requestUpdateForGroup;
+    setRequestUpdateForGroup(undefined);
+
+    if (isLoading || group === undefined) {
+      return;
+    }
+
+    updateDocumentGroup(group);
+  };
+
   const downloadDocumentGroup = (group: ServerDocumentGroup) => {
     setIsLoading(true);
 
@@ -126,6 +146,23 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     loadLocalDocumentGroups();
   };
 
+  const updateDocumentGroup = (group: ServerDocumentGroup) => {
+    setIsLoading(true);
+
+    DocumentProcessor.fetchAndUpdateDocumentGroup(group)
+      .then(result => {
+        result.alert();
+        result.throwIfException();
+      })
+      .catch(error =>
+        Alert.alert("Error", `Error updating documents ${group.name}: ${error}`))
+      .finally(() => {
+        setLocalGroups([]);
+        setIsLoading(false);
+        loadLocalDocumentGroups();
+      });
+  };
+
   const onConfirmDeleteDocumentGroup = () => {
     const group = requestDeleteForGroup;
     setRequestDeleteForGroup(undefined);
@@ -137,7 +174,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     deleteDocumentGroup(group);
   };
 
-  const deleteDocumentGroup = (group: DocumentGroup) => {
+  const deleteDocumentGroup = (group: LocalDocumentGroup) => {
     setIsLoading(true);
 
     const result = DocumentProcessor.deleteDocumentGroup(group);
@@ -149,6 +186,17 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
 
   const isGroupLocal = (group: ServerDocumentGroup) => {
     return localGroups.some(it => it.name == group.name);
+  };
+
+  const hasUpdate = (localGroup: LocalDocumentGroup) => {
+    const serverGroup = serverGroups.find(it => it.name == localGroup.name);
+    if (serverGroup === undefined) {
+      return false;
+    }
+
+    const serverDate = dateFrom(serverGroup.modifiedAt);
+    const localDate = localGroup.modifiedAt;
+    return serverDate > localDate;
   };
 
   const onConfirmDeleteAll = () => {
@@ -185,6 +233,12 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
                          invertConfirmColor={true}
                          message={`Download documents for ${requestDownloadForGroup?.name}?`} />
 
+      <ConfirmationModal isOpen={requestUpdateForGroup !== undefined}
+                         onClose={() => setRequestUpdateForGroup(undefined)}
+                         onConfirm={onConfirmUpdateDocumentGroup}
+                         invertConfirmColor={true}
+                         message={`Update ${requestUpdateForGroup?.name}?`} />
+
       <ConfirmationModal isOpen={requestDeleteForGroup !== undefined}
                          onClose={() => setRequestDeleteForGroup(undefined)}
                          onConfirm={onConfirmDeleteDocumentGroup}
@@ -206,17 +260,18 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
         refreshControl={<RefreshControl onRefresh={fetchDocumentGroups}
                                         refreshing={isLoading} />}>
 
-        {localGroups.map((group: DocumentGroup) =>
+        {localGroups.map((group: LocalDocumentGroup) =>
           <LocalDocumentGroupItem key={group.name}
-                               group={group}
-                               onPress={onLocalDocumentGroupPress} />)}
+                                  group={group}
+                                  onPress={onLocalDocumentGroupPress}
+                                  hasUpdate={hasUpdate(group)} />)}
 
         {serverGroups.filter(it => !isGroupLocal(it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((group: ServerDocumentGroup) =>
             <ServerDocumentGroupItem key={group.name}
-                            group={group}
-                            onPress={onDocumentGroupPress} />)}
+                                     group={group}
+                                     onPress={onDocumentGroupPress} />)}
 
         {serverGroups.length > 0 ? undefined :
           <Text style={styles.emptyListText}>
