@@ -112,6 +112,10 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     };
 
     const onDocumentPress = () => {
+      if (!Settings.enableDocumentsFeatureSwitch) {
+        return;
+      }
+
       navigation.navigate(routes.DocumentSearch);
     };
 
@@ -143,8 +147,10 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
               <TouchableOpacity style={styles.documentIconContainer}
                                 onPress={onDocumentPress}>
-                <Icon name={"arrow-right"} style={styles.documentIconArrow} />
-                <Icon name={"file-alt"} style={styles.documentIcon} />
+                {!Settings.enableDocumentsFeatureSwitch ? undefined : <>
+                  <Icon name={"arrow-right"} style={styles.documentIconArrow} />
+                  <Icon name={"file-alt"} style={styles.documentIcon} />
+                </>}
               </TouchableOpacity>
             </View>
           </View>

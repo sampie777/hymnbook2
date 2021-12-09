@@ -83,8 +83,9 @@ const RootNavigation = () => {
 
     <RootNav.Screen name={routes.SongImport} component={DownloadSongsScreen}
                     options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
-                      headerRight: () => (<HeaderIconButton icon={"file-alt"}
-                                                            onPress={() => navigation.navigate(routes.DocumentImport)} />)
+                      headerRight: () => !Settings.enableDocumentsFeatureSwitch ? undefined :
+                        (<HeaderIconButton icon={"file-alt"}
+                                           onPress={() => navigation.navigate(routes.DocumentImport)} />)
                     })} />
     <RootNav.Screen name={routes.DocumentImport} component={DownloadDocumentsScreen}
                     options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
