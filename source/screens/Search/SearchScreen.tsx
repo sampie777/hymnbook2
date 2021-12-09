@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { SongRouteParams, routes } from "../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import Settings from "../../scripts/settings/settings";
+import Settings from "../../settings";
 import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
 import { SongSchema } from "../../models/SongsSchema";

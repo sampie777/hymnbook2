@@ -4,7 +4,7 @@ import SongList from "../../scripts/songs/songList";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SongRouteParams, routes } from "../../navigation";
-import Settings from "../../scripts/settings/settings";
+import Settings from "../../settings";
 import { Song, Verse } from "../../models/Songs";
 import { getNextVerseIndex } from "../../scripts/songs/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

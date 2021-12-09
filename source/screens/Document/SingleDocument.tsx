@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View, Platform, Text } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Db from "../../scripts/db/db";
-import Settings from "../../scripts/settings/settings";
+import Settings from "../../settings";
 import { DocumentSchema } from "../../models/DocumentsSchema";
 import { Document } from "../../models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
