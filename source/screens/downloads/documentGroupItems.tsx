@@ -1,9 +1,9 @@
 import React from "react";
-import { DocumentGroup } from "../../models/Documents";
+import { DocumentGroup as LocalDocumentGroup} from "../../models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../models/server/Documents";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
 
 interface ServerDocumentGroupItemComponentProps {
   group: ServerDocumentGroup;
@@ -18,66 +18,66 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(group)}
-                      style={styles.documentGroupItemContainer}>
-      <Text style={styles.documentGroupItemText}>
+                      style={styles.container}>
+      <Text style={styles.titleText}>
         {group.name}
       </Text>
-      <View style={styles.documentGroupItemInfoContainer}>
+      <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.documentGroupItemInfoText}>
+          <Text style={styles.infoText}>
             {group.language}
           </Text>
         }
         {group.size === undefined ? undefined :
-          <Text style={styles.documentGroupItemInfoText}>
+          <Text style={styles.infoText}>
             {group.size} documents
           </Text>
         }
       </View>
-      <Icon name={"cloud-download-alt"}
-            size={styles.documentGroupItemIcon.fontSize}
-            color={styles.documentGroupItemIconDownload.color} />
+      <DownloadIcon />
     </TouchableOpacity>
   );
 };
 
 interface LocalDocumentGroupItemComponentProps {
-  group: DocumentGroup;
-  onPress: (group: DocumentGroup) => void;
+  group: LocalDocumentGroup;
+  onPress: (group: LocalDocumentGroup) => void;
+  hasUpdate?: boolean;
 }
 
 export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentProps>
   = ({
        group,
-       onPress
+       onPress,
+       hasUpdate = false,
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(group)}
-                      style={styles.documentGroupItemContainer}>
-      <Text style={styles.documentGroupItemText}>
+                      style={styles.container}>
+      <Text style={styles.titleText}>
         {group.name}
       </Text>
-      <View style={styles.documentGroupItemInfoContainer}>
+      <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.documentGroupItemInfoText}>
+          <Text style={styles.infoText}>
             {group.language}
           </Text>
         }
-        <Text style={styles.documentGroupItemInfoText}>
+        <Text style={styles.infoText}>
           {group.size} documents
         </Text>
       </View>
-      <Icon name={"check"}
-            size={styles.documentGroupItemIcon.fontSize}
-            color={styles.documentGroupItemIconLocal.color} />
+      <View>
+        {!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />}
+      </View>
     </TouchableOpacity>
   );
 };
 
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
-  documentGroupItemContainer: {
+  container: {
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderColor: colors.border,
@@ -87,26 +87,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center"
   },
-  documentGroupItemText: {
+  titleText: {
     fontSize: 17,
     flexGrow: 1,
     color: colors.text
   },
-  documentGroupItemInfoContainer: {
+  infoContainer: {
     paddingRight: 20,
     alignItems: "flex-end"
   },
-  documentGroupItemInfoText: {
+  infoText: {
     fontSize: 13,
     color: colors.textLighter
   },
-  documentGroupItemIcon: {
-    fontSize: 18
-  },
-  documentGroupItemIconDownload: {
-    color: "dodgerblue"
-  },
-  documentGroupItemIconLocal: {
-    color: "#0d0"
-  }
 });

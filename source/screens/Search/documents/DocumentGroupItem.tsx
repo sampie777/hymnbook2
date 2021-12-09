@@ -17,8 +17,8 @@ const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress }) => {
     <Icon name={"folder-open"} style={styles.searchListItemIcon} />
     <Text style={styles.searchListItemText}>{group.name}</Text>
 
-    <View style={styles.documentGroupItemInfoContainer}>
-      <Text style={styles.documentGroupItemInfoText}>
+    <View style={styles.infoContainer}>
+      <Text style={styles.infoText}>
         {group.size} files
       </Text>
     </View>
@@ -47,11 +47,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontSize: 20,
     color: colors.text
   },
-  documentGroupItemInfoContainer: {
+  infoContainer: {
     paddingRight: 20,
     alignItems: "flex-end"
   },
-  documentGroupItemInfoText: {
+  infoText: {
     fontSize: 13,
     color: colors.textLighter
   }
