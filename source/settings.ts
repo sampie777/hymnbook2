@@ -22,6 +22,9 @@ class SettingsClass extends SettingsBaseClass {
   coloredVerseTitles = Math.random() > 0.5;
   highlightSelectedVerses = true;
 
+  // Documents
+  enableDocumentsFeatureSwitch = false;
+
   // Server authentication
   useAuthentication = true;
   authClientName = "";
