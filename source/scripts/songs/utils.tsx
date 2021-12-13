@@ -106,11 +106,11 @@ function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
 }
 
 export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): string => {
-  if (song === undefined) {
+  if (song === undefined || song === null) {
     return "";
   }
 
-  if (selectedVerses === undefined || selectedVerses.length === 0) {
+  if (selectedVerses === undefined || selectedVerses === null || selectedVerses.length === 0) {
     return song.name;
   }
 
