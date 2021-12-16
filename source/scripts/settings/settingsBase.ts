@@ -29,8 +29,7 @@ class SettingsProvider {
 
   static get(key: string): string | undefined {
     if (!Db.settings.isConnected()) {
-      // @ts-ignore
-      return Settings[key];
+      return undefined;
     }
 
     const value = Db.settings.realm()
@@ -38,8 +37,7 @@ class SettingsProvider {
       .filtered(`key = "${key}"`);
 
     if (value === null || value === undefined || value[0] === undefined) {
-      // @ts-ignore
-      return Settings[key];
+      return undefined;
     }
     return value[0].value;
   }
@@ -47,8 +45,7 @@ class SettingsProvider {
   static getNumber(key: string): number | undefined {
     const stringValue = this.get(key);
     if (stringValue === undefined) {
-      // @ts-ignore
-      return Settings[key];
+      return undefined;
     }
 
     return +stringValue;
@@ -57,8 +54,7 @@ class SettingsProvider {
   static getBoolean(key: string): boolean | undefined {
     const stringValue = this.get(key);
     if (stringValue === undefined) {
-      // @ts-ignore
-      return Settings[key];
+      return undefined;
     }
 
     return stringValue.toString() == "true";
