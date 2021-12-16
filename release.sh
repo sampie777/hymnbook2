@@ -37,7 +37,7 @@ function releaseMinor {
   git checkout master || exit 1
   git merge develop || exit 1
 
-  npm --no-git-tag-version version patch || exit 1
+  npm --no-git-tag-version version minor || exit 1
 
   pushAndRelease
 }
