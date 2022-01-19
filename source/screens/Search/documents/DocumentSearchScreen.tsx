@@ -5,6 +5,7 @@ import { CollectionChangeCallback } from "realm";
 import Db from "../../../scripts/db/db";
 import { DocumentGroup, Document } from "../../../models/Documents";
 import { DocumentRouteParams, routes } from "../../../navigation";
+import { DocumentSearch } from "../../../scripts/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../scripts/documents/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -13,6 +14,7 @@ import HeaderIconButton from "../../../components/HeaderIconButton";
 import DocumentItem from "./DocumentItem";
 import DocumentGroupItem from "./DocumentGroupItem";
 import DownloadInstructions from "./DownloadInstructions";
+import SearchInput from "./SearchInput";
 
 
 interface ScreenProps {
@@ -23,6 +25,7 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
   let isMounted = true;
   const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentGroup>>([]);
+  const [searchText, setSearchText] = useState("");
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -32,29 +35,34 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   const onLaunch = () => {
     isMounted = true;
-    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange)
+    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange);
   };
 
   const onExit = () => {
     // This is needed, as the removeListener doesn't seem to correctly work.
     isMounted = false;
-    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange)
+    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange);
   };
 
   useFocusEffect(
     React.useCallback(() => {
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
       return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [group])
+    }, [group, searchText])
   );
 
   const onBackPress = (): boolean => {
-    if (group === undefined) {
-      return false;
+    if (searchText.length > 0) {
+      setSearchText("");
+      return true;
     }
 
-    previousLevel();
-    return true;
+    if (group !== undefined) {
+      previousLevel();
+      return true;
+    }
+
+    return false;
   };
 
   const onCollectionChange: CollectionChangeCallback<Object> = () => {
@@ -62,7 +70,7 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
       return;
     }
     reloadRootGroups();
-  }
+  };
 
   const reloadRootGroups = () => {
     const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
@@ -78,6 +86,7 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
     const parent = getParentForDocumentGroup(group);
     setGroup(parent || undefined);
+    setSearchText("");
   };
 
   const onGroupPress = (group: DocumentGroup) => {
@@ -88,8 +97,42 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
     navigation.navigate(routes.Document, { id: document.id } as DocumentRouteParams);
   };
 
-  return (<View style={styles.container}>
+  const groups = (): Array<DocumentGroup> => {
+    if (group === undefined) {
+      return rootGroups;
+    }
 
+    if (group.groups == null) {
+      return [];
+    }
+
+    return group.groups;
+  };
+
+  const items = (): Array<Document> => {
+    if (searchText.length > 0) {
+      return itemsForSearch();
+    }
+
+    if (group === undefined) {
+      return [];
+    }
+
+    if (group.items == null) {
+      return [];
+    }
+
+    return group.items;
+  };
+
+  const itemsForSearch = () => {
+    if (group === undefined) {
+      return DocumentSearch.searchForItems(groups(), searchText);
+    }
+    return DocumentSearch.searchForItems([group], searchText);
+  }
+
+  return (<View style={styles.container}>
     {rootGroups.length === 0 ? undefined :
       <View style={styles.pageHeader}>
         {group === undefined ? undefined :
@@ -101,25 +144,25 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
       </View>
     }
 
+    <SearchInput value={searchText} onChange={setSearchText} />
+
     {rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
     <ScrollView>
-      {group !== undefined ? undefined :
-        rootGroups
+      {searchText.length > 0 ? undefined :
+        groups().map(it => it as DocumentGroup)
           .sort((a, b) => a.name.localeCompare(b.name))
-          .map(it => <DocumentGroupItem key={it.id} group={it} onPress={onGroupPress} />)}
+          .map(it => <DocumentGroupItem
+            key={it.id}
+            group={it}
+            onPress={onGroupPress} />)}
 
-      {group === undefined ? undefined :
-        group.groups
-          ?.map(it => it as DocumentGroup)
-          .sort((a, b) => a.name.localeCompare(b.name))
-          ?.map(it => <DocumentGroupItem key={it.id} group={it} onPress={onGroupPress} />)}
-
-      {group === undefined ? undefined :
-        group.items
-          ?.map(it => it as Document)
-          ?.sort((a, b) => a.index - b.index)
-          ?.map(it => <DocumentItem key={it.id} document={it} onPress={onDocumentPress} />)}
+      {items().map(it => it as Document)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.index - b.index)
+        .map(it => <DocumentItem key={it.id}
+                                 document={it}
+                                 onPress={onDocumentPress} />)}
     </ScrollView>
   </View>);
 };
