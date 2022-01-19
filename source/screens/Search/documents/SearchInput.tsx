@@ -46,21 +46,20 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   icon: {
     fontSize: 18,
-    paddingRight: 14,
-    paddingLeft: 5,
-    paddingVertical: 8,
-    color: colors.textLighter
+    width: 45,
+    textAlign: "center",
+    paddingVertical: 12,
+    color: colors.textLighter,
   },
 
   input: {
     flex: 1,
-    backgroundColor: colors.surface1,
     color: colors.text,
     fontSize: 17,
     paddingLeft: 20,
     paddingRight: 3,
-    paddingVertical: 8,
-    borderRadius: 40
+    paddingVertical: 2,
+    alignSelf: "stretch",
   },
   inputPlaceholder: {
     color: colors.textLighter
