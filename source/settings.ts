@@ -7,7 +7,7 @@ class SettingsClass extends SettingsBaseClass {
   appOpenedTimes = 0;
   theme = "";
 
-  // Search
+  // Song search
   maxSearchInputLength = 3;
   maxSearchResultsLength = 40;
   clearSearchAfterAddedToSongList = true;
@@ -24,6 +24,7 @@ class SettingsClass extends SettingsBaseClass {
 
   // Documents
   enableDocumentsFeatureSwitch = false;
+  documentsMultiKeywordSearch = true;
 
   // Server authentication
   useAuthentication = true;
