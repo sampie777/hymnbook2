@@ -53,7 +53,7 @@ const SettingsScreen: React.FC = () => {
   };
 
   const onBlur = () => {
-    Settings.store()
+    Settings.store();
   };
 
 
@@ -111,7 +111,7 @@ const SettingsScreen: React.FC = () => {
         <ConfirmationModal isOpen={confirmModalMessage !== undefined}
                            onClose={() => confirmModalCallbackWrapper(false)}
                            onConfirm={() => confirmModalCallbackWrapper(true)}
-                           message={confirmModalMessage}/>
+                           message={confirmModalMessage} />
 
         <SettingSwitchComponent title={"Show advanced settings"}
                                 value={showAdvancedSettings}
@@ -138,18 +138,18 @@ const SettingsScreen: React.FC = () => {
                             onPress={(setValue) => {
                               let newValue = "";
                               if (Settings.theme === "")
-                                newValue = "dark"
+                                newValue = "dark";
                               if (Settings.theme === "dark")
-                                newValue = "light"
+                                newValue = "light";
 
-                              setValue(newValue)
-                              theme.reload()
+                              setValue(newValue);
+                              theme.reload();
                             }}
                             valueRender={(it: string) => {
                               if (it === "") {
-                                return "System (auto)"
+                                return "System (auto)";
                               }
-                              return capitalize(it)
+                              return capitalize(it);
                             }} />
           <SettingSwitchComponent title={"Keep screen on"}
                                   keyName={"keepScreenAwake"} />
@@ -182,6 +182,11 @@ const SettingsScreen: React.FC = () => {
           <Header title={"Other"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
                                   keyName={"clearSearchAfterAddedToSongList"} />
+          <SettingSwitchComponent title={"Multi keyword search for documents"}
+                                  description={"When enabled, each keyword will be matched individually instead of " +
+                                  "the whole search phrase. This will yield more results."}
+                                  keyName={"documentsMultiKeywordSearch"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use authentication with backend"}
@@ -223,7 +228,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.background
   },
   scrollContainer: {
-    paddingBottom: 100,
+    paddingBottom: 100
   },
 
   settingHeader: {
