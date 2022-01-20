@@ -130,7 +130,7 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
       return DocumentSearch.searchForItems(groups(), searchText);
     }
     return DocumentSearch.searchForItems([group], searchText);
-  }
+  };
 
   return (<View style={styles.container}>
     {rootGroups.length === 0 ? undefined :
@@ -162,6 +162,7 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
         .sort((a, b) => a.index - b.index)
         .map(it => <DocumentItem key={it.id}
                                  document={it}
+                                 searchText={searchText}
                                  onPress={onDocumentPress} />)}
     </ScrollView>
   </View>);
