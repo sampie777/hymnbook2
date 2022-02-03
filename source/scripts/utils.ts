@@ -79,7 +79,17 @@ export function openLink(url: string): Promise<any> {
     .catch(error => {
       rollbar.warning(error);
       throw error;
-    })
+    });
 }
 
 export const isAndroid = Platform.OS === "android";
+
+export class ValidationError extends Error {
+}
+
+export function validate(result: boolean, message?: string) {
+  if (result) {
+    return;
+  }
+  throw new ValidationError(message || "Value is not true");
+}

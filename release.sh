@@ -20,7 +20,7 @@ function releasePatch {
 
   git checkout master || exit 1
 
-  # Create patch versionn
+  # Create patch version
   CURRENT_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | awk -F'.' '{print $1"."$2"."$3+1}')
 
