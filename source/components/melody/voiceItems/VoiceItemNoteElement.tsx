@@ -49,16 +49,16 @@ const Note: React.FC<NoteProps> = ({ pitch, note, verticalSpacing }) => {
 
 interface Props {
   item: VoiceItemNote;
+  verticalSpacing: number;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ item }) => {
+const VoiceItemNoteElement: React.FC<Props> = ({ item, verticalSpacing }) => {
   const lyrics = item.lyric.map(it => it.syllable).join(" ");
 
   const textWidth = lyrics.length * 10;
-  const verticalSpacing = 8;
   const padding = verticalSpacing / 10 * 10;
   const width = 2 * padding + verticalSpacing / 10 * textWidth;
-  const height = 12 * verticalSpacing;
+  const height = 14 * verticalSpacing;
 
   return <View style={styles.container}>
     <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
@@ -88,7 +88,6 @@ const VoiceItemNoteElement: React.FC<Props> = ({ item }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // borderWidth: 1,
   }
 });
 

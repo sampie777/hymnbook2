@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import { ABC } from "../../scripts/songs/abc/abc";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
+import VoiceItemIntroElement from "./voiceItems/VoiceItemIntroElement";
 
 interface ComponentProps {
 }
@@ -10,6 +11,7 @@ interface ComponentProps {
 const MelodyTest2: React.FC<ComponentProps>
   = ({}) => {
   const styles = createStyles(useTheme());
+  const verticalSpacing = 8;
   const data = "X:1\n" +
     "T: this is the title\n" +
     "C2 DE F2 c2 | FG G4 A B | G8|]\n" +
@@ -20,7 +22,8 @@ const MelodyTest2: React.FC<ComponentProps>
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        {song?.melody.map(it => <VoiceItemElement item={it} />)}
+        <VoiceItemIntroElement verticalSpacing={verticalSpacing}/>
+        {song?.melody.map(it => <VoiceItemElement item={it} verticalSpacing={verticalSpacing} />)}
       </View>
     </ScrollView>
   );
