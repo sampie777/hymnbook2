@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import Svg, {G, Text } from "react-native-svg";
+import Svg, { G, Text } from "react-native-svg";
 import Lines from "./Lines";
 import { AbcConfig } from "./config";
 import Note from "./Note";
@@ -14,7 +14,8 @@ interface Props {
 const VoiceItemNoteElement: React.FC<Props> = ({ item, scale }) => {
   const lyrics = item.lyric?.map(it => it.syllable).join(" ") || "";
 
-  const noteWidth = AbcConfig.noteWidth + 2 * AbcConfig.notePadding;
+  const noteWidth = AbcConfig.noteWidth + 2 * AbcConfig.notePadding
+    + (item.pitches.some(it => it.accidental !== undefined) ? AbcConfig.accidentalWidth : 0);
   const textWidth = lyrics.length * 10 * (24 / AbcConfig.textSize) + 2 * AbcConfig.textPadding;
   const width = Math.max(noteWidth, textWidth);
   const height = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing + (lyrics.length === 0 ? 0 : (AbcConfig.textSize)) + AbcConfig.bottomSpacing;

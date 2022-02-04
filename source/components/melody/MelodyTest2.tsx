@@ -15,7 +15,7 @@ const MelodyTest2: React.FC<ComponentProps>
 
   const data = "X:1\n" +
     "T: this is the title\n" +
-    "C2 DE F2 c2 | FG G4 A B | G8|]\n" +
+    "C2 _D=E F2 c2 | F^G G4 A B | G8|]\n" +
     "w: ik ben_ ge-test of niet waar~ik dan ook end_";
 
   const song = ABC.parse(data);

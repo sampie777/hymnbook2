@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
 import { AbcConfig } from "./config";
-import { Ellipse, G, Line, Path } from "react-native-svg";
+import { Ellipse, G, Line, Path, Text } from "react-native-svg";
 
 interface Props {
   pitch: AbcPitch,
@@ -53,7 +53,7 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
 
     {note.duration !== 0.125 ? undefined :
       <G x={stemX} y={(stem === "up" ? -1 : 1) * AbcConfig.stemHeight}
-      transform={stem === "up" ? undefined : "scale(1, -1)"}>
+         transform={stem === "up" ? undefined : "scale(1, -1)"}>
         <Path
           d={"M0 0 C 1 8 8 13 6 20 S 8 12 0 10 z"}
           fill={"#000"}
@@ -75,6 +75,32 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
              strokeWidth={2.5}
              stroke={"#000"}
              fill={fill ? "#000" : "none"} />
+
+    {note.duration !== 1 ? undefined :
+      <Ellipse rotation={note.duration === 1 ? 0 : -30}
+               rx={width + 2.3}
+               ry={note.duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
+               strokeWidth={2.0}
+               stroke={"#000"}
+               fill={"none"} />}
+
+    {pitch.accidental !== "sharp" ? undefined :
+      <Text fontSize={22}
+            x={-7} y={6}
+            fill={"#000"}
+            textAnchor={"end"}>♯</Text>}
+
+    {pitch.accidental !== "flat" ? undefined :
+      <Text fontSize={34}
+            x={-7} y={4}
+            fill={"#000"}
+            textAnchor={"end"}>♭</Text>}
+
+    {pitch.accidental !== "natural" ? undefined :
+      <Text fontSize={28}
+            x={-7} y={4}
+            fill={"#000"}
+            textAnchor={"end"}>♮</Text>}
   </G>;
 };
 
