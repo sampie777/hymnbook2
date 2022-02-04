@@ -12,7 +12,7 @@ const VoiceItemElement: React.FC<Props> = ({ item, verticalSpacing }) => {
 
   switch (item.el_type) {
     case "note":
-      return <VoiceItemNoteElement item={item} scale={verticalSpacing} />;
+      return <VoiceItemNoteElement note={item} scale={verticalSpacing} />;
     case "bar":
       return <VoiceItemBarElement item={item} scale={verticalSpacing} />;
     default:

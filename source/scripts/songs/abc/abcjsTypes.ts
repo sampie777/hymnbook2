@@ -1,19 +1,63 @@
-
 // See also: https://github.com/paulrosen/abcjs/blob/2616d88ddf0222e255c508f944df3089960c13dc/types/index.d.ts
 
-export type AccidentalName = 'flat' | 'natural' | 'sharp' | 'dblsharp' | 'dblflat' | 'quarterflat' | 'quartersharp';
-export type ChordPlacement = 'above' | 'below' | 'left' | 'right' | 'default';
-export type StemDirection = 'up' | 'down' | 'auto' | 'none';
-export type AbcType = "bar_thin" | "bar_thin_thick" | "bar_thin_thin" | "bar_thick_thin" | "bar_right_repeat" | "bar_left_repeat" | "bar_double_repeat";
+export type AccidentalName = "flat" | "natural" | "sharp" | "dblsharp" | "dblflat" | "quarterflat" | "quartersharp";
+export type ChordPlacement = "above" | "below" | "left" | "right" | "default";
+export type StemDirection = "up" | "down" | "auto" | "none";
+export type AbcType =
+  "bar_thin"
+  | "bar_thin_thick"
+  | "bar_thin_thin"
+  | "bar_thick_thin"
+  | "bar_right_repeat"
+  | "bar_left_repeat"
+  | "bar_double_repeat";
 export type AbcElementType = "note" | "bar";
-export type Clef = 'treble' | 'tenor' | 'bass' | 'alto' | 'treble+8' | 'tenor+8' | 'bass+8' | 'alto+8' | 'treble-8' | 'tenor-8' | 'bass-8' | 'alto-8' | 'none' | 'perc';
-export type NoteHeadType = 'normal' | 'harmonic' | 'rhythm' | 'x' | 'triangle';
-export type NoteLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
-export type KeyRoot = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'HP' | 'Hp' | 'none';
-export type KeyAccidentalName = '' | '#' | 'b';
-export type Mode = '' | 'm' | 'Dor' | 'Mix' | 'Loc' | 'Phr' | 'Lyd';
-export type ChordType = '' | 'm' | '7' | 'm7' | 'maj7' | 'M7' | '6' | 'm6' | 'aug' | '+' | 'aug7' | 'dim' | 'dim7' | '9' |
-  'm9' | 'maj9' | 'M9' | '11' | 'dim9' | 'sus' | 'sus9' | '7sus4' | '7sus9' | '5';
+export type Clef =
+  "treble"
+  | "tenor"
+  | "bass"
+  | "alto"
+  | "treble+8"
+  | "tenor+8"
+  | "bass+8"
+  | "alto+8"
+  | "treble-8"
+  | "tenor-8"
+  | "bass-8"
+  | "alto-8"
+  | "none"
+  | "perc";
+export type NoteHeadType = "normal" | "harmonic" | "rhythm" | "x" | "triangle";
+export type NoteLetter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "a" | "b" | "c" | "d" | "e" | "f" | "g";
+export type KeyRoot = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "HP" | "Hp" | "none";
+export type KeyAccidentalName = "" | "#" | "b";
+export type Mode = "" | "m" | "Dor" | "Mix" | "Loc" | "Phr" | "Lyd";
+export type ChordType =
+  ""
+  | "m"
+  | "7"
+  | "m7"
+  | "maj7"
+  | "M7"
+  | "6"
+  | "m6"
+  | "aug"
+  | "+"
+  | "aug7"
+  | "dim"
+  | "dim7"
+  | "9"
+  |
+  "m9"
+  | "maj9"
+  | "M9"
+  | "11"
+  | "dim9"
+  | "sus"
+  | "sus9"
+  | "7sus4"
+  | "7sus9"
+  | "5";
 export type BracePosition = "start" | "continue" | "end";
 
 type NumberFunction = () => number;
@@ -27,6 +71,11 @@ export interface AbcPitch {
   pitch: number;
   verticalPos: number;
   accidental?: AccidentalName;
+}
+
+export interface AbcRest {
+  type: "rest" | "whole" | "multimeasure";
+  text?: number;
 }
 
 export interface AbcLyric {
@@ -46,9 +95,10 @@ export interface VoiceItemNote {
   duration: number;
   startChar: number;
   endChar: number;
-  pitches: AbcPitch[];
+  pitches?: AbcPitch[];
   lyric?: AbcLyric[];
   chord?: AbcChord[];
+  rest?: AbcRest;
 }
 
 export interface VoiceItemStem {
@@ -95,10 +145,10 @@ export interface KeySignature {
 }
 
 export interface AbcStaff {
-  barNumber?: number
+  barNumber?: number;
   brace: BracePosition;
   bracket: BracePosition;
-  connectBarLines: BracePosition
+  connectBarLines: BracePosition;
   stafflines?: number;
   clef?: KeySignature;
   key?: KeySignature;
@@ -129,7 +179,7 @@ export interface MetaText {
     left: string;
     center: string;
     right: string;
-  }
+  };
   history?: string;
   instruction?: string;
   measurebox?: boolean;
