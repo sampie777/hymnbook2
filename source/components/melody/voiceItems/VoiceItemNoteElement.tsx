@@ -5,17 +5,18 @@ import Svg, { G, Text } from "react-native-svg";
 import Lines from "./Lines";
 import { AbcConfig } from "./config";
 import Note from "./Note";
+import Rest from "./Rest";
+import { AbcGui } from "../../../scripts/songs/abc/gui";
 
 interface Props {
-  item: VoiceItemNote;
+  note: VoiceItemNote;
   scale: number;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ item, scale }) => {
-  const lyrics = item.lyric?.map(it => it.syllable).join(" ") || "";
+const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
+  const lyrics = note.lyric?.map(it => it.syllable).join(" ") || "";
 
-  const noteWidth = AbcConfig.noteWidth + 2 * AbcConfig.notePadding
-    + (item.pitches.some(it => it.accidental !== undefined) ? AbcConfig.accidentalWidth : 0);
+  const noteWidth = AbcGui.calculateNoteWidth(note);
   const textWidth = lyrics.length * 10 * (24 / AbcConfig.textSize) + 2 * AbcConfig.textPadding;
   const width = Math.max(noteWidth, textWidth);
   const height = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing + (lyrics.length === 0 ? 0 : (AbcConfig.textSize)) + AbcConfig.bottomSpacing;
@@ -27,11 +28,13 @@ const VoiceItemNoteElement: React.FC<Props> = ({ item, scale }) => {
         <Lines />
 
         <G x={width / 2}>
-          {item.pitches.map((it, index) =>
+          {note.pitches?.map((it, index) =>
             <Note key={index + "_" + it.pitch}
                   pitch={it}
-                  note={item} />
+                  note={note} />
           )}
+          {note.rest === undefined ? undefined :
+            <Rest note={note} />}
         </G>
 
         <Text fontSize={AbcConfig.textSize}
