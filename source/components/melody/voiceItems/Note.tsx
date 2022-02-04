@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
 import { AbcConfig } from "./config";
-import { Ellipse, G, Line, Path, Text } from "react-native-svg";
+import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
 
 interface Props {
   pitch: AbcPitch,
@@ -13,7 +13,7 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
   const y = (10 - pitch.pitch) * (AbcConfig.lineSpacing / 2);
   const width = AbcConfig.noteWidth;
 
-  const fill = note.duration <= 0.25;
+  const fill = note.duration < 0.5;
   let stem: StemDirection = "none";
   if (note.duration < 1) {
     if (pitch.pitch < 6) {
@@ -74,7 +74,7 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
              ry={note.duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
              strokeWidth={2.5}
              stroke={"#000"}
-             fill={fill ? "#000" : "none"} />
+             fill={fill  ? "#000" : "none"} />
 
     {note.duration !== 1 ? undefined :
       <Ellipse rotation={note.duration === 1 ? 0 : -30}
@@ -83,6 +83,14 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
                strokeWidth={2.0}
                stroke={"#000"}
                fill={"none"} />}
+
+
+    {!(note.duration === 0.375 || note.duration === 0.625) ? undefined :
+      <Circle cx={width + 6.5}
+              cy={pitch.pitch % 2 === 0 ? -1 * (AbcConfig.lineSpacing / 2) : 0}
+              r={2}
+              fill={"#000"} />
+    }
 
     {pitch.accidental !== "sharp" ? undefined :
       <Text fontSize={22}

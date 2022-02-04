@@ -15,7 +15,7 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
     return null;
   }
 
-  const paddingLeft = 16;
+  const paddingLeft = 30;
   const width = paddingLeft + 5 + 6;
   const height = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.bottomSpacing;
 
