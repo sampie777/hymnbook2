@@ -1,5 +1,5 @@
 import * as ABCJS from "abcjs";
-import { TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
+import { AbcClef, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
 import { validate } from "../../utils";
 
 // See also https://abcnotation.com/examples
@@ -33,6 +33,11 @@ export namespace ABC {
     referenceNumber?: string;
     transcription?: string;
     melody: VoiceItem[] = [];
+    clef: AbcClef = {
+      clefPos: 4,
+      type: "treble",
+      verticalPos: 0
+    };
   }
 
   export interface NoteGroupInterface {
@@ -48,12 +53,16 @@ export namespace ABC {
     abc = extractInfoFields(abc, song);
 
     const { notes, lyrics } = extractNotesAndLyrics(abc);
-    const tuneObject = ABC.convertStringToAbcTune(notes + "\nw: " + lyrics);
+    const tuneObject = ABC.convertStringToAbcTune(
+      "V:" + song.voice + "\n" +
+      notes + "\n" +
+      "w: " + lyrics);
     if (tuneObject === undefined) {
       return undefined;
     }
 
     song.melody = tuneObject.lines!![0].staff!![0].voices!![0];
+    song.clef = tuneObject.lines!![0].staff!![0].clef || song.clef;
 
     return song;
   };
@@ -151,7 +160,7 @@ export namespace ABC {
             .forEach(voice => {
               voice.lyric?.forEach(lyric =>
                 lyric.syllable = lyric.syllable.replace(" ", " ")
-              )
+              );
             })
         )
       )

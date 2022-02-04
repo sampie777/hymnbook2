@@ -137,6 +137,12 @@ export interface Accidental {
   verticalPos: number;
 }
 
+export interface AbcClef {
+  clefPos: number
+  type: Clef
+  verticalPos: number
+}
+
 export interface KeySignature {
   accidentals?: Array<Accidental>;
   root: KeyRoot;
@@ -150,7 +156,7 @@ export interface AbcStaff {
   bracket: BracePosition;
   connectBarLines: BracePosition;
   stafflines?: number;
-  clef?: KeySignature;
+  clef?: AbcClef;
   key?: KeySignature;
   voices?: Array<Array<VoiceItem>>;
 }
