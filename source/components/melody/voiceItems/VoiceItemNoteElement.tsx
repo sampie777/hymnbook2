@@ -58,7 +58,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ item, verticalSpacing }) => {
   const textWidth = lyrics.length * 10;
   const padding = verticalSpacing / 10 * 10;
   const width = 2 * padding + verticalSpacing / 10 * textWidth;
-  const height = 14 * verticalSpacing;
+  const height = (5 + (lyrics.length === 0 ? 0 : 8)) * verticalSpacing;
 
   return <View style={styles.container}>
     <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>

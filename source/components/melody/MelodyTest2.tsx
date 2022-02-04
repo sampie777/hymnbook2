@@ -12,6 +12,7 @@ const MelodyTest2: React.FC<ComponentProps>
   = ({}) => {
   const styles = createStyles(useTheme());
   const verticalSpacing = 8;
+
   const data = "X:1\n" +
     "T: this is the title\n" +
     "C2 DE F2 c2 | FG G4 A B | G8|]\n" +
@@ -22,8 +23,9 @@ const MelodyTest2: React.FC<ComponentProps>
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        <VoiceItemIntroElement verticalSpacing={verticalSpacing}/>
-        {song?.melody.map(it => <VoiceItemElement item={it} verticalSpacing={verticalSpacing} />)}
+        <VoiceItemIntroElement verticalSpacing={verticalSpacing} />
+        {song?.melody.map((it, index) =>
+          <VoiceItemElement key={index} item={it} verticalSpacing={verticalSpacing} />)}
       </View>
     </ScrollView>
   );
