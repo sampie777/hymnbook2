@@ -1,21 +1,20 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import Svg, { Ellipse, G, Line, Rect, Text } from "react-native-svg";
+import Svg, { Ellipse, G, Line, Text } from "react-native-svg";
 import Lines from "./Lines";
+import { AbcConfig } from "./config";
 
 interface NoteProps {
   pitch: AbcPitch,
   note: VoiceItemNote,
-  verticalSpacing: number
 }
 
-const Note: React.FC<NoteProps> = ({ pitch, note, verticalSpacing }) => {
-  const y = (10 - pitch.pitch) * (verticalSpacing / 2);
-  const lineWidth = 2;
-  const lineHeight = verticalSpacing * 3;
-  const width = verticalSpacing / 10 * 6;
-  const height = verticalSpacing / 10 * 3.5;
+const Note: React.FC<NoteProps> = ({ pitch, note }) => {
+  const y = (10 - pitch.pitch) * (AbcConfig.lineSpacing / 2);
+  const lineHeight = AbcConfig.stemHeight;
+  const width = AbcConfig.noteWidth;
+  const height = AbcConfig.noteHeight;
 
   const fill = note.duration <= 0.25;
   let stem: StemDirection = "none";
@@ -27,20 +26,39 @@ const Note: React.FC<NoteProps> = ({ pitch, note, verticalSpacing }) => {
     }
   }
 
+  const extraLines = [];
+  for (let i = 0; i >= pitch.pitch; i--) {
+    if ((pitch.pitch - i) % 2 === 0) {
+      extraLines.push(i / 2);
+    }
+  }
+  for (let i = 0; i <= pitch.pitch - 12; i++) {
+    if ((pitch.pitch - i) % 2 === 0) {
+      extraLines.push(i / 2);
+    }
+  }
+
   return <G y={y}>
     {stem !== "up" ? undefined :
-      <Line x1={width - lineWidth + 2} y1={-2.5}
-            x2={width - lineWidth + 1.5} y2={-1 * lineHeight}
+      <Line x1={AbcConfig.stemWidth + width * 0.6} y1={-1.5}
+            x2={AbcConfig.stemWidth + width * 0.6} y2={-1 * lineHeight}
             stroke="#000"
-            strokeWidth={lineWidth} />}
+            strokeWidth={AbcConfig.stemWidth} />}
     {stem !== "down" ? undefined :
-      <Line x1={-1 * width - lineWidth + 2} y1={2.5}
-            x2={-1 * width - lineWidth + 1.5} y2={lineHeight}
+      <Line x1={AbcConfig.stemWidth - width * 1.4} y1={2.5}
+            x2={AbcConfig.stemWidth - width * 1.4} y2={lineHeight}
             stroke="#000"
-            strokeWidth={lineWidth} />}
+            strokeWidth={AbcConfig.stemWidth} />}
+
+    {extraLines.map(it =>
+      <Line x1={-1 * width - 5} y1={it * AbcConfig.lineSpacing}
+            x2={width + 5} y2={it * AbcConfig.lineSpacing}
+            stroke="#000"
+            strokeWidth={AbcConfig.lineWidth} />)}
 
     <Ellipse rotation={note.duration === 1 ? 0 : -30}
-             rx={width} ry={note.duration === 1 ? 1.3 * height : height}
+             rx={width}
+             ry={note.duration === 1 ? 1.3 * height : height}
              strokeWidth={2.5}
              stroke={"#000"}
              fill={fill ? "#000" : "none"} />
@@ -49,34 +67,34 @@ const Note: React.FC<NoteProps> = ({ pitch, note, verticalSpacing }) => {
 
 interface Props {
   item: VoiceItemNote;
-  verticalSpacing: number;
+  scale: number;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ item, verticalSpacing }) => {
-  const lyrics = item.lyric.map(it => it.syllable).join(" ");
+const VoiceItemNoteElement: React.FC<Props> = ({ item, scale }) => {
+  const lyrics = item.lyric?.map(it => it.syllable).join(" ") || "";
 
-  const textWidth = lyrics.length * 10;
-  const padding = verticalSpacing / 10 * 10;
-  const width = 2 * padding + verticalSpacing / 10 * textWidth;
-  const height = (5 + (lyrics.length === 0 ? 0 : 8)) * verticalSpacing;
+  const noteWidth = AbcConfig.noteWidth + 2 * AbcConfig.notePadding;
+  const textWidth = lyrics.length * 10 * (24 / AbcConfig.textSize) + 2 * AbcConfig.textPadding;
+  const width = Math.max(noteWidth, textWidth);
+  const height = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing + (lyrics.length === 0 ? 0 : (AbcConfig.textSize)) + AbcConfig.bottomSpacing;
+  const textHeight = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
 
   return <View style={styles.container}>
     <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      <G scale={1} y={2}>
-        <Lines verticalSpacing={verticalSpacing} />
+      <G scale={scale} y={AbcConfig.topSpacing}>
+        <Lines />
 
         <G x={width / 2}>
           {item.pitches.map((it, index) =>
             <Note key={index + "_" + it.pitch}
                   pitch={it}
-                  note={item}
-                  verticalSpacing={verticalSpacing} />
+                  note={item} />
           )}
         </G>
 
-        <Text fontSize={verticalSpacing / 10 * 24}
+        <Text fontSize={AbcConfig.textSize}
               x={width / 2}
-              y={10 * verticalSpacing}
+              y={textHeight}
               fill={"#000"}
               textAnchor={"middle"}>
           {lyrics}
@@ -87,8 +105,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ item, verticalSpacing }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-  }
+  container: {}
 });
 
 export default VoiceItemNoteElement;

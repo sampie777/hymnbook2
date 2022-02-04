@@ -148,11 +148,11 @@ export namespace ABC {
         staff.voices!!.forEach(element =>
           element.filter(voice => voice.el_type === "note")
             .map(voice => voice as VoiceItemNote)
-            .forEach(voice =>
-              voice.lyric.forEach(lyric =>
+            .forEach(voice => {
+              voice.lyric?.forEach(lyric =>
                 lyric.syllable = lyric.syllable.replace(" ", " ")
               )
-            )
+            })
         )
       )
     );

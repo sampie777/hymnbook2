@@ -11,11 +11,11 @@ interface ComponentProps {
 const MelodyTest2: React.FC<ComponentProps>
   = ({}) => {
   const styles = createStyles(useTheme());
-  const verticalSpacing = 8;
+  const scale = 1;
 
   const data = "X:1\n" +
     "T: this is the title\n" +
-    "C2 DE F2 c2 | FG G4 A B | G8|]\n" +
+    "F, G, A, B, C2 D f g a b c E F2 c2 | FG G4 A B | G8|]\n" +
     "w: ik ben_ ge-test of niet waar~ik dan ook end_";
 
   const song = ABC.parse(data);
@@ -23,9 +23,9 @@ const MelodyTest2: React.FC<ComponentProps>
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        <VoiceItemIntroElement verticalSpacing={verticalSpacing} />
+        <VoiceItemIntroElement scale={scale} />
         {song?.melody.map((it, index) =>
-          <VoiceItemElement key={index} item={it} verticalSpacing={verticalSpacing} />)}
+          <VoiceItemElement key={index} item={it} verticalSpacing={scale} />)}
       </View>
     </ScrollView>
   );

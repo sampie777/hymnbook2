@@ -1,18 +1,18 @@
 import React from "react";
 import { Line } from "react-native-svg";
+import { AbcConfig } from "./config";
 
 interface Props {
-  verticalSpacing: number;
 }
 
-const Lines: React.FC<Props> = ({ verticalSpacing }) => {
+const Lines: React.FC<Props> = () => {
   return <>
     {[0, 1, 2, 3, 4].map(it =>
       <Line key={it}
-            x1="0" y1={it * verticalSpacing}
-            x2="100" y2={it * verticalSpacing}
+            x1="0" y1={it * AbcConfig.lineSpacing}
+            x2="1000" y2={it * AbcConfig.lineSpacing}
             stroke="#333"
-            strokeWidth={1} />
+            strokeWidth={AbcConfig.lineWidth} />
     )}
   </>;
 };

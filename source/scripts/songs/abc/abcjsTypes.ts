@@ -47,7 +47,7 @@ export interface VoiceItemNote {
   startChar: number;
   endChar: number;
   pitches: AbcPitch[];
-  lyric: AbcLyric[];
+  lyric?: AbcLyric[];
   chord?: AbcChord[];
 }
 
