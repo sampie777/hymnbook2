@@ -4,6 +4,7 @@ import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import { ABC } from "../../scripts/songs/abc/abc";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
 import VoiceItemIntroElement from "./voiceItems/VoiceItemIntroElement";
+import Clef from "./other/Clef";
 
 interface ComponentProps {
 }
@@ -23,6 +24,8 @@ const MelodyTest2: React.FC<ComponentProps>
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
+        {song === undefined ? undefined :
+          <Clef scale={scale} clef={song.clef} />}
         <VoiceItemIntroElement scale={scale} />
         {song?.melody.map((it, index) =>
           <VoiceItemElement key={index} item={it} verticalSpacing={scale} />)}
