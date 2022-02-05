@@ -1,5 +1,5 @@
 import * as ABCJS from "abcjs";
-import { AbcClef, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
+import { AbcClef, KeySignature, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
 import { validate } from "../../utils";
 
 // See also https://abcnotation.com/examples
@@ -38,6 +38,12 @@ export namespace ABC {
       type: "treble",
       verticalPos: 0
     };
+    keySignature: KeySignature = {
+      accidentals: [],
+      root: "C",
+      acc: "",
+      mode: ""
+    };
   }
 
   export interface NoteGroupInterface {
@@ -53,16 +59,21 @@ export namespace ABC {
     abc = extractInfoFields(abc, song);
 
     const { notes, lyrics } = extractNotesAndLyrics(abc);
-    const tuneObject = ABC.convertStringToAbcTune(
-      "V:" + song.voice + "\n" +
+    const convertedAbc =
+      (song.voice === undefined ? "" : "V:" + song.voice + "\n") +
+      (song.key === undefined ? "" : "K:" + song.key + "\n") +
       notes + "\n" +
-      "w: " + lyrics);
+      "w: " + lyrics;
+
+    const tuneObject = ABC.convertStringToAbcTune(
+      convertedAbc);
     if (tuneObject === undefined) {
       return undefined;
     }
 
     song.melody = tuneObject.lines!![0].staff!![0].voices!![0];
     song.clef = tuneObject.lines!![0].staff!![0].clef || song.clef;
+    song.keySignature = tuneObject.lines!![0].staff!![0].key || song.keySignature;
 
     return song;
   };
