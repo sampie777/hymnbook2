@@ -9,7 +9,7 @@ interface Props {
 }
 
 const VoiceItemIntroElement: React.FC<Props> = ({ scale }) => {
-  const width = 40;
+  const width = 10;
   const height = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.bottomSpacing;
 
   return <View style={styles.container}>

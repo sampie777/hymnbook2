@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Clef: React.FC<Props> = ({ scale, clef }) => {
-  const width = 32;
+  const width = 34;
   const height = AbcConfig.topSpacing + 6 * AbcConfig.lineSpacing;
 
   return <View style={styles.container}>
