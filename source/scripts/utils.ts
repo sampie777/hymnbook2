@@ -73,13 +73,17 @@ export function openLink(url: string): Promise<any> {
       if (isSupported) {
         return Linking.openURL(url);
       } else {
-        throw new Error("Can't open URL '" + url + "': not supported");
+        throw new Error("Can't open URL '" + url + "': your device can't open these type of URLs.");
       }
     })
     .catch(error => {
-      rollbar.warning(error);
+      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Can't open Url '")) {
+        rollbar.info(error);
+      } else {
+        rollbar.warning(error);
+      }
       throw error;
-    })
+    });
 }
 
 export const isAndroid = Platform.OS === "android";
