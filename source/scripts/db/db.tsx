@@ -15,7 +15,7 @@ const Db = {
       VerseSchema, SongSchema, SongBundleSchema,
       SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema
     ],
-    schemaVersion: 2
+    schemaVersion: 3
   }),
   documents: new DatabaseProvider({
     path: "hymnbook_documents",
