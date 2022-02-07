@@ -228,8 +228,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     borderStyle: "dashed",
     borderBottomWidth: 2,
     borderBottomColor: isDark ? "#404040" : "#ddd",
-    minWidth: 140,
-    paddingHorizontal: 30
+    minWidth: 140
   },
 
   documentIconContainer: {
