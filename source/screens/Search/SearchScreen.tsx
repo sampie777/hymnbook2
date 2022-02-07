@@ -105,7 +105,7 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
       const results = Db.songs.realm().objects<Song>(SongSchema.name)
         .sorted("name")
-        .filtered(`name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
+        .filtered(`number = ${query} OR name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
 
       setSearchResult(results as unknown as Array<Song>);
     };

@@ -27,6 +27,7 @@ export class SongVerse {
 export class Song {
   id: number;
   name: string;
+  number?: number;
   author: string;
   copyright: string;
   language: string;
@@ -45,9 +46,11 @@ export class Song {
     songBundle: SongBundle | null,
     createdAt: string,
     modifiedAt: string,
+    number?: number,
   ) {
     this.id = id;
     this.name = name;
+    this.number = number;
     this.author = author;
     this.copyright = copyright;
     this.language = language;

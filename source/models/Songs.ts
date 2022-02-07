@@ -44,6 +44,7 @@ export class Verse implements VerseProps {
 export class Song {
   id: number;
   name: string;
+  number?: number;
   author: string;
   copyright: string;
   language: string;
@@ -59,10 +60,12 @@ export class Song {
     createdAt: Date,
     modifiedAt: Date,
     verses: Array<Verse> = [],
-    id = Db.songs.getIncrementedPrimaryKey(SongSchema)
+    id = Db.songs.getIncrementedPrimaryKey(SongSchema),
+    number?: number,
   ) {
     this.id = id;
     this.name = name;
+    this.number = number;
     this.author = author;
     this.copyright = copyright;
     this.language = language;
