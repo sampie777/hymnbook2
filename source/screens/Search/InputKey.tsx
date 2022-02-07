@@ -12,7 +12,11 @@ export const Key: React.FC<KeyProps> = ({ children, onPress, extraStyle }) => {
   const styles = createStyles(useTheme());
   const keyTextStyle: Array<Object> = [styles.keyText];
   if (extraStyle !== undefined) {
-    keyTextStyle.push(extraStyle);
+    if (extraStyle instanceof Array) {
+      keyTextStyle.push(...extraStyle);
+    } else {
+      keyTextStyle.push(extraStyle);
+    }
   }
 
   return (
@@ -23,26 +27,28 @@ export const Key: React.FC<KeyProps> = ({ children, onPress, extraStyle }) => {
   );
 };
 
-export const NumberKey: React.FC<{ number: number, onPress: (number: number) => void }> =
-  ({ number, onPress }) => (
-    <Key onPress={() => onPress(number)}>
-      {number}
-    </Key>
-  );
-
-export const ClearKey: React.FC<{ onPress: () => void, text?: string }> =
-  ({ onPress, text = "Clear" }) => {
+export const NumberKey: React.FC<{ number: number, onPress: (number: number) => void, useSmallerFontSize?: boolean }> =
+  ({ number, onPress, useSmallerFontSize = false }) => {
     const styles = createStyles(useTheme());
-    return <Key onPress={onPress}
-                extraStyle={styles.specialKeyText}>{text}</Key>;
+    return <Key onPress={() => onPress(number)} extraStyle={!useSmallerFontSize ? undefined : styles.keyTextSmaller}>
+      {number}
+    </Key>;
   };
 
-export const BackspaceKey: React.FC<{ onPress: () => void }> =
-  ({ onPress }) => {
+export const ClearKey: React.FC<{ onPress: () => void, text?: string, useSmallerFontSize?: boolean }> =
+  ({ onPress, text = "Clear", useSmallerFontSize = false }) => {
     const styles = createStyles(useTheme());
     return <Key onPress={onPress}
-                extraStyle={styles.specialKeyText}>
-      <Icon name="backspace" size={styles.keyText.fontSize - 10} color={styles.keyText.color as string} />
+                extraStyle={[styles.specialKeyText, (!useSmallerFontSize ? undefined : styles.specialKeyTextSmaller)]}>{text}</Key>;
+  };
+
+export const BackspaceKey: React.FC<{ onPress: () => void, useSmallerFontSize?: boolean }> =
+  ({ onPress, useSmallerFontSize = false }) => {
+    const styles = createStyles(useTheme());
+    const fontSize = useSmallerFontSize ? styles.keyTextSmaller.fontSize - 8 : styles.keyText.fontSize - 10;
+    return <Key onPress={onPress}
+                extraStyle={[styles.specialKeyText, (!useSmallerFontSize ? undefined : styles.specialKeyTextSmaller)]}>
+      <Icon name="backspace" size={fontSize} color={styles.keyText.color as string} />
     </Key>;
   };
 
@@ -61,8 +67,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontFamily: "sans-serif-thin",
     color: colors.textLighter
   },
+  keyTextSmaller: {
+    fontSize: 34
+  },
   specialKeyText: {
     fontSize: 20,
     fontFamily: "sans-serif-light"
+  },
+  specialKeyTextSmaller: {
+    fontSize: 18
   }
 });
