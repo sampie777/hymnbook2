@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { AbcConfig } from "../voiceItems/config";
-import Lines from "../voiceItems/Lines";
 import Svg, { G, Text } from "react-native-svg";
 import { KeySignature } from "../../../scripts/songs/abc/abcjsTypes";
 
@@ -17,14 +16,12 @@ const Key: React.FC<Props> = ({ scale, keySignature }) => {
 
   const charWidth = 10;
   const width = keySignature.accidentals.length * charWidth + charWidth / 2;
-  const height = AbcConfig.topSpacing + 6 * AbcConfig.lineSpacing;
 
   let xOffset = 0;
   return <View style={styles.container}>
-    <Svg width={width * scale} height={height * scale} viewBox={`0 0 ${width * scale} ${height * scale}`}>
-      <G scale={scale} y={AbcConfig.topSpacing}>
-        <Lines />
-
+    <Svg width={width * scale} height={AbcConfig.totalLineHeight * scale}
+         viewBox={`0 0 ${width * scale} ${AbcConfig.totalLineHeight * scale}`}>
+      <G scale={scale} y={AbcConfig.topSpacing * scale}>
         {keySignature.accidentals.map(it => {
           const y = 4 + (10 - it.verticalPos) * (AbcConfig.lineSpacing / 2);
 

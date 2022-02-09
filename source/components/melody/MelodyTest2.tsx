@@ -6,6 +6,7 @@ import VoiceItemElement from "./voiceItems/VoiceItemElement";
 import VoiceItemIntroElement from "./voiceItems/VoiceItemIntroElement";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
+import Background from "./other/Background";
 
 interface ComponentProps {
 }
@@ -30,11 +31,15 @@ const MelodyTest2: React.FC<ComponentProps>
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
+        <Background scale={scale} />
+
         <Clef scale={scale} clef={song.clef} />
         <Key scale={scale} keySignature={song.keySignature} />
         <VoiceItemIntroElement scale={scale} />
+
         {song?.melody.map((it, index) =>
           <VoiceItemElement key={index} item={it} verticalSpacing={scale} />)}
+
       </View>
     </ScrollView>
   );
@@ -44,12 +49,13 @@ export default MelodyTest2;
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   scrollContainer: {
-    flex: 1
+    flex: 1,
+    paddingHorizontal: 20
   },
   container: {
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
   }
 });

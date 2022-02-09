@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { VoiceItemBar } from "../../../scripts/songs/abc/abcjsTypes";
 import Svg, { G, Line } from "react-native-svg";
-import Lines from "./Lines";
 import { AbcConfig } from "./config";
 
 interface Props {
@@ -11,17 +10,14 @@ interface Props {
 }
 
 const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
-  const height = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing;
-
   if (item.type === "bar_thin_thick") {
     const paddingLeft = 20;
     const width = paddingLeft + 5 + 6;
 
-    return <View style={styles.container}>
-      <Svg width={width * scale} height={height * scale} viewBox={`0 0 ${width * scale} ${height * scale}`}>
-        <G scale={scale} y={AbcConfig.topSpacing}>
-          <Lines />
-
+    return <View style={[styles.endBar, { minWidth: width }]}>
+      <Svg width={width * scale} height={AbcConfig.totalLineHeight * scale}
+           viewBox={`0 0 ${width * scale} ${AbcConfig.totalLineHeight * scale}`}>
+        <G scale={scale} y={AbcConfig.topSpacing * scale}>
           <Line x1={paddingLeft} y1={0}
                 x2={paddingLeft} y2={4 * AbcConfig.lineSpacing}
                 stroke="#333"
@@ -40,10 +36,9 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
     const width = 2 * AbcConfig.notePadding;
 
     return <View style={styles.container}>
-      <Svg width={width * scale} height={height * scale} viewBox={`0 0 ${width * scale} ${height * scale}`}>
-        <G scale={scale} y={AbcConfig.topSpacing}>
-          <Lines />
-
+      <Svg width={width * scale} height={AbcConfig.totalLineHeight * scale}
+           viewBox={`0 0 ${width * scale} ${AbcConfig.totalLineHeight * scale}`}>
+        <G scale={scale} y={AbcConfig.topSpacing * scale}>
           <Line x1={width / 2} y1={0}
                 x2={width / 2} y2={4 * AbcConfig.lineSpacing}
                 stroke="#333"
@@ -57,7 +52,12 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {}
+  container: {},
+  endBar: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end"
+  }
 });
 
 export default VoiceItemBarElement;

@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
-import Lines from "../voiceItems/Lines";
 import { AbcConfig } from "../voiceItems/config";
 import { AbcClef } from "../../../scripts/songs/abc/abcjsTypes";
 
@@ -12,13 +11,11 @@ interface Props {
 
 const Clef: React.FC<Props> = ({ scale, clef }) => {
   const width = 34;
-  const height = AbcConfig.topSpacing + 6 * AbcConfig.lineSpacing;
 
   return <View style={styles.container}>
-    <Svg width={width * scale} height={height * scale} viewBox={`0 0 ${width * scale} ${height * scale}`}>
-      <G scale={scale} y={AbcConfig.topSpacing}>
-        <Lines />
-
+    <Svg width={width * scale} height={AbcConfig.totalLineHeight * scale}
+         viewBox={`0 0 ${width * scale} ${AbcConfig.totalLineHeight * scale}`}>
+      <G scale={scale} y={AbcConfig.topSpacing * scale}>
         {clef.type !== "bass"
           ? <G scale={0.385} y={-12}>
             <Path
