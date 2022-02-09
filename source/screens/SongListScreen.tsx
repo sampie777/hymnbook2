@@ -140,9 +140,6 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
 
     const clearAll = () => {
-      if (!isDeleteMode)
-        return;
-
       SongList.clearAll();
       setIsDeleteMode(false);
     };

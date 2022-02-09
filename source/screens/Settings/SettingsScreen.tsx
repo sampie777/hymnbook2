@@ -182,11 +182,13 @@ const SettingsScreen: React.FC = () => {
           <Header title={"Other"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
                                   keyName={"clearSearchAfterAddedToSongList"} />
-          <SettingSwitchComponent title={"Multi keyword search for documents"}
-                                  description={"When enabled, each keyword will be matched individually instead of " +
-                                  "the whole search phrase. This will yield more results."}
-                                  keyName={"documentsMultiKeywordSearch"}
-                                  isVisible={showAdvancedSettings} />
+          {!Settings.enableDocumentsFeatureSwitch ? undefined :
+            <SettingSwitchComponent title={"Multi keyword search for documents"}
+                                    description={"When enabled, each keyword will be matched individually instead of " +
+                                    "the whole search phrase. This will yield more results."}
+                                    keyName={"documentsMultiKeywordSearch"}
+                                    isVisible={showAdvancedSettings} />
+          }
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use authentication with backend"}

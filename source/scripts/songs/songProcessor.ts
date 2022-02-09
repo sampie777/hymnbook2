@@ -58,7 +58,7 @@ export namespace SongProcessor {
 
   export const fetchAndUpdateSongBundle = (bundle: ServerSongBundle): Promise<Result> => {
     return Server.fetchSongBundleWithSongsAndVerses(bundle)
-      .then((result: Result) => updateAndSaveSongBundle(result.data))
+      .then((result: Result) => updateAndSaveSongBundle(result.data));
   };
 
   const updateAndSaveSongBundle = (bundle: ServerSongBundle): Result => {
@@ -125,7 +125,8 @@ export namespace SongProcessor {
               verse.language,
               verseId++
             )),
-          songId++
+          songId++,
+          song.number
         )
       );
 
