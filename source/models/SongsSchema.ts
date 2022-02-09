@@ -15,6 +15,7 @@ export const SongSchema = {
   properties: {
     id: "int",
     name: "string",
+    number: "int?",
     author: "string",
     copyright: "string",
     language: "string",

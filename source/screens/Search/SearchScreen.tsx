@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { SongRouteParams, routes } from "../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { getFontScale } from "react-native-device-info";
 import Settings from "../../settings";
 import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
@@ -20,6 +21,7 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     const [isPortrait, setIsPortrait] = useState(isPortraitMode(Dimensions.get("window")));
     const [inputValue, setInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
+    const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
 
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -45,6 +47,7 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
     const onLaunch = () => {
       Dimensions.addEventListener("change", handleDimensionsChange);
+      getFontScale().then(scale => setUseSmallerFontSize(scale >= 1.4));
     };
 
     const onExit = () => {
@@ -102,7 +105,7 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
       const results = Db.songs.realm().objects<Song>(SongSchema.name)
         .sorted("name")
-        .filtered(`name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
+        .filtered(`number = ${query} OR name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
 
       setSearchResult(results as unknown as Array<Song>);
     };
@@ -136,13 +139,15 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
 
         <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
           <View style={styles.inputContainer}>
-            <Text style={styles.infoText}>Enter song number:</Text>
+            <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
+              number:</Text>
 
             <View style={styles.inputTextView}>
               <View style={styles.documentIconContainer} />
 
               <View style={styles.inputTextViewContainer}>
-                <Text style={styles.inputTextField}>{inputValue}</Text>
+                <Text
+                  style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>{inputValue}</Text>
               </View>
 
               <TouchableOpacity style={styles.documentIconContainer}
@@ -162,26 +167,29 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
             contentContainerStyle={styles.searchList} />
         </View>
 
-        <View style={[styles.keyPad, isPortrait ? {} : stylesLandscape.keyPad]}>
+        <View style={[styles.keyPad,
+          (!useSmallerFontSize ? {} : styles.keyPadSmaller),
+          (isPortrait ? {} : stylesLandscape.keyPad)
+        ]}>
           <View style={styles.keyPadRow}>
-            <NumberKey number={1} onPress={onNumberKeyPress} />
-            <NumberKey number={2} onPress={onNumberKeyPress} />
-            <NumberKey number={3} onPress={onNumberKeyPress} />
+            <NumberKey number={1} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={2} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={3} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
           </View>
           <View style={styles.keyPadRow}>
-            <NumberKey number={4} onPress={onNumberKeyPress} />
-            <NumberKey number={5} onPress={onNumberKeyPress} />
-            <NumberKey number={6} onPress={onNumberKeyPress} />
+            <NumberKey number={4} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={5} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={6} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
           </View>
           <View style={styles.keyPadRow}>
-            <NumberKey number={7} onPress={onNumberKeyPress} />
-            <NumberKey number={8} onPress={onNumberKeyPress} />
-            <NumberKey number={9} onPress={onNumberKeyPress} />
+            <NumberKey number={7} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={8} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={9} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
           </View>
           <View style={styles.keyPadRow}>
-            <ClearKey onPress={onClearKeyPress} />
-            <NumberKey number={0} onPress={onNumberKeyPress} />
-            <BackspaceKey onPress={onDeleteKeyPress} />
+            <ClearKey onPress={onClearKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <NumberKey number={0} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <BackspaceKey onPress={onDeleteKeyPress} useSmallerFontSize={useSmallerFontSize} />
           </View>
         </View>
       </View>
@@ -211,6 +219,9 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingTop: 20,
     fontFamily: "sans-serif-light"
   },
+  infoTextSmaller: {
+    fontSize: 14
+  },
   inputTextView: {
     flexDirection: "row",
     alignItems: "center"
@@ -228,8 +239,10 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     borderStyle: "dashed",
     borderBottomWidth: 2,
     borderBottomColor: isDark ? "#404040" : "#ddd",
-    minWidth: 140,
-    paddingHorizontal: 30
+    minWidth: 140
+  },
+  inputTextFieldSmaller: {
+    fontSize: 40
   },
 
   documentIconContainer: {
@@ -261,6 +274,9 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     height: 275,
     minHeight: "40%",
     maxHeight: "50%"
+  },
+  keyPadSmaller: {
+    height: 230
   },
   keyPadRow: {
     flex: 1,

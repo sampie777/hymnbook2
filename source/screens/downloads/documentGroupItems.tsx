@@ -78,22 +78,23 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    paddingRight: 20,
     paddingVertical: 14,
     borderColor: colors.border,
     borderBottomWidth: 1,
     backgroundColor: colors.surface1,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center"
   },
   titleText: {
+    paddingLeft: 20,
     fontSize: 17,
-    flexGrow: 1,
+    flex: 1,
     color: colors.text
   },
   infoContainer: {
     paddingRight: 20,
+    paddingLeft: 5,
     alignItems: "flex-end"
   },
   infoText: {
