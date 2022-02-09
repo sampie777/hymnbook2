@@ -14,5 +14,10 @@ export const AbcConfig = {
   accidentalWidth: 8,
 
   textPadding: 3,
-  textSize: 19
+  textSize: 19,
+
+  totalLineHeight: 0,
+  introEmptyGapWidth: 10
 };
+
+AbcConfig.totalLineHeight = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing + AbcConfig.textSize + AbcConfig.bottomSpacing;
