@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import { Circle, G, Path, Rect } from "react-native-svg";
 import { AbcConfig } from "./config";
+import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
+import { StyleSheet } from "react-native";
+import { Circle, G, Path, Rect } from "react-native-svg";
 
 interface Props {
   note: VoiceItemNote;

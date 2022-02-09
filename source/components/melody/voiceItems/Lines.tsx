@@ -1,6 +1,6 @@
 import React from "react";
-import { Line } from "react-native-svg";
 import { AbcConfig } from "./config";
+import { Line } from "react-native-svg";
 
 interface Props {
   width?: number;

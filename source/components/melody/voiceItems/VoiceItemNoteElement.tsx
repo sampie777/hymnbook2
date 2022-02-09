@@ -1,11 +1,12 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import Svg, { G, Text } from "react-native-svg";
+import React, { useState } from "react";
 import { AbcConfig } from "./config";
 import Note from "./Note";
 import Rest from "./Rest";
+import Lines from "./Lines";
 import { AbcGui } from "../../../scripts/songs/abc/gui";
+import Svg, { G, Text } from "react-native-svg";
+import { StyleSheet, View } from "react-native";
+import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
 
 interface Props {
   note: VoiceItemNote;
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
+  const [screenWidth, setScreenWidth] = useState(0);
+
   const lyrics = note.lyric
     ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + " " + it.divider)
     .join(" ") || "";
@@ -22,10 +25,13 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
   const width = Math.max(noteWidth, textWidth);
   const textHeight = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
 
-  return <View style={styles.container}>
-    <Svg width={width * scale} height={AbcConfig.totalLineHeight * scale}
-         viewBox={`0 0 ${width * scale} ${AbcConfig.totalLineHeight * scale}`}>
+  return <View style={[styles.container, { minWidth: width * scale }]}
+               onLayout={(e) => setScreenWidth(e.nativeEvent.layout.width)}>
+    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}
+         viewBox={`0 0 ${screenWidth} ${AbcConfig.totalLineHeight * scale}`}>
       <G scale={scale} y={AbcConfig.topSpacing * scale}>
+        <Lines />
+
         <G x={width / 2}>
           {note.pitches?.map((it, index) =>
             <Note key={index + "_" + it.pitch}
@@ -49,7 +55,9 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {}
+  container: {
+    flex: 1
+  }
 });
 
 export default VoiceItemNoteElement;

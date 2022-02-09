@@ -1,7 +1,7 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
 import { AbcConfig } from "./config";
+import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
+import { StyleSheet } from "react-native";
 import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
 
 interface Props {
