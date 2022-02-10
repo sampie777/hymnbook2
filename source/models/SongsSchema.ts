@@ -5,7 +5,9 @@ export const VerseSchema = {
     name: "string",
     content: "string",
     language: "string",
-    index: "int"
+    index: "int",
+    abcMelody: "string?",
+    abcLyrics: "string?",
   },
   primaryKey: "id"
 };
@@ -21,7 +23,8 @@ export const SongSchema = {
     language: "string",
     createdAt: "date",
     modifiedAt: "date",
-    verses: VerseSchema.name + "[]"
+    verses: VerseSchema.name + "[]",
+    abcMelody: "string?",
   },
   primaryKey: "id"
 };

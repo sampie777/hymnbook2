@@ -7,6 +7,8 @@ export interface VerseProps {
   content: string;
   language: string;
   index: number;
+  abcMelody?: string;
+  abcLyrics?: string;
 }
 
 export class Verse implements VerseProps {
@@ -15,19 +17,25 @@ export class Verse implements VerseProps {
   content: string;
   language: string;
   index: number;
+  abcMelody?: string;
+  abcLyrics?: string;
 
   constructor(
     index: number,
     name: string,
     content: string,
     language: string,
-    id = Db.songs.getIncrementedPrimaryKey(VerseSchema)
+    id = Db.songs.getIncrementedPrimaryKey(VerseSchema),
+    abcMelody?: string,
+    abcLyrics?: string
   ) {
     this.id = id;
     this.name = name;
     this.content = content;
     this.language = language;
     this.index = index;
+    this.abcMelody = abcMelody;
+    this.abcLyrics = abcLyrics;
   }
 
   static toObject(verse: VerseProps): VerseProps {
@@ -36,7 +44,9 @@ export class Verse implements VerseProps {
       name: verse.name,
       content: verse.content,
       language: verse.language,
-      index: verse.index
+      index: verse.index,
+      abcMelody: verse.abcMelody,
+      abcLyrics: verse.abcLyrics
     } as VerseProps;
   }
 }
@@ -51,6 +61,7 @@ export class Song {
   verses: Array<Verse>;
   createdAt: Date;
   modifiedAt: Date;
+  abcMelody?: string;
 
   constructor(
     name: string,
@@ -62,6 +73,7 @@ export class Song {
     verses: Array<Verse> = [],
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
     number?: number,
+    abcMelody?: string,
   ) {
     this.id = id;
     this.name = name;
@@ -72,6 +84,7 @@ export class Song {
     this.verses = verses;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.abcMelody = abcMelody;
   }
 }
 

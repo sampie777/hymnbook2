@@ -156,7 +156,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
       <ContentVerse verse={item}
                     opacity={animatedOpacity}
                     scale={animatedScale}
-                    selectedVerses={route.params.selectedVerses} />
+                    selectedVerses={route.params.selectedVerses}
+                    abcBackupMelody={song?.abcMelody} />
     );
   };
 

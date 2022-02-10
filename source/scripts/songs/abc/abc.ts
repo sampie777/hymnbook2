@@ -1,6 +1,7 @@
 import * as ABCJS from "abcjs";
 import { AbcClef, KeySignature, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
 import { validate } from "../../utils";
+import { Verse } from "../../../models/Songs";
 
 // See also https://abcnotation.com/examples
 
@@ -176,5 +177,12 @@ export namespace ABC {
         )
       )
     );
+  };
+
+  export const generateAbcForVerse = (verse: Verse, backupMelody?: string): string => {
+    const melody = verse.abcMelody || backupMelody;
+    return "X:1\n" +
+      melody?.replace(/\n/g, " ") + "\n" +
+      "w: " + verse.abcLyrics?.replace(/\n/g, " ");
   };
 }

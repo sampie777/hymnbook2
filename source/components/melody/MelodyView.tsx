@@ -7,24 +7,11 @@ import { ABC } from "../../scripts/songs/abc/abc";
 
 interface Props {
   scale: number;
+  abc: string;
 }
 
-const MelodyView: React.FC<Props> = ({ scale }) => {
-  const data = "X:1\n" +
-    "T: this is the title\n" +
-    "K: A\n" +
-    "C3 _D=E F3 c2 | z8 | F^G G5 A B | z1 z2 z3 z4 z8 | G8 |]\n" +
-    // "w: ik ben_ ge-test of niet waar~ik dan ook end_\n" +
-    // "C3 _D=E F3 c2 | z8 | F^G G5 A B | z1 z2 z3 z4 z8 | G8 |]\n" +
-    // "w: ik ben_ ge-test of niet waar~ik dan ook end_\n" +
-    // "C3 _D=E F3 c2 | z8 | F^G G5 A B | z1 z2 z3 z4 z8 | G8 |]\n" +
-    // "w: ik ben_ ge-test of niet waar~ik dan ook end_\n" +
-    // "C3 _D=E F3 c2 | z8 | F^G G5 A B | z1 z2 z3 z4 z8 | G8 |]\n" +
-    // "w: ik ben_ ge-test of niet waar~ik dan ook end_\n" +
-    // "C3 _D=E F3 c2 | z8 | F^G G5 A B | z1 z2 z3 z4 z8 | G8 |]\n" +
-    "w: ik ben_ ge-test of niet waar~ik dan ook end_\n";
-
-  const song = ABC.parse(data);
+const MelodyView: React.FC<Props> = ({ scale, abc }) => {
+  const song = ABC.parse(abc);
 
   if (song === undefined) {
     return null;
@@ -44,8 +31,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",
-    paddingHorizontal: 0,
-    paddingBottom: 100
   }
 });
 

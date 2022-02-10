@@ -123,10 +123,13 @@ export namespace SongProcessor {
               verse.name,
               verse.content,
               verse.language,
-              verseId++
+              verseId++,
+              verse.abcMelody,
+              verse.abcLyrics
             )),
           songId++,
-          song.number
+          song.number,
+          song.abcMelody
         )
       );
 
