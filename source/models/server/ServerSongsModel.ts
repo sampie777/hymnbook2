@@ -1,11 +1,12 @@
-
 export class SongVerse {
-  id: number
-  name: string
-  content: string
-  language: string
-  index: number
-  song: Song | null
+  id: number;
+  name: string;
+  content: string;
+  language: string;
+  index: number;
+  song: Song | null;
+  abcMelody?: string;
+  abcLyrics?: string;
 
   constructor(
     id: number,
@@ -14,6 +15,8 @@ export class SongVerse {
     language: string,
     index: number,
     song: Song | null,
+    abcMelody?: string,
+    abcLyrics?: string,
   ) {
     this.id = id;
     this.name = name;
@@ -21,6 +24,8 @@ export class SongVerse {
     this.language = language;
     this.index = index;
     this.song = song;
+    this.abcMelody = abcMelody;
+    this.abcLyrics = abcLyrics;
   }
 }
 
@@ -35,6 +40,7 @@ export class Song {
   songBundle: SongBundle | null;
   createdAt: string;
   modifiedAt: string;
+  abcMelody?: string;
 
   constructor(
     id: number,
@@ -47,6 +53,7 @@ export class Song {
     createdAt: string,
     modifiedAt: string,
     number?: number,
+    abcMelody?: string,
   ) {
     this.id = id;
     this.name = name;
@@ -58,6 +65,7 @@ export class Song {
     this.songBundle = songBundle;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.abcMelody = abcMelody;
   }
 }
 
@@ -78,7 +86,7 @@ export class SongBundle {
               songs: Array<Song> | null,
               createdAt: string,
               modifiedAt: string,
-              size?: number,
+              size?: number
   ) {
     this.id = id;
     this.abbreviation = abbreviation;

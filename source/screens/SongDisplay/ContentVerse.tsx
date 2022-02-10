@@ -1,20 +1,23 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import Animated from "react-native-reanimated";
-import { getVerseType, VerseType } from "../../scripts/songs/utils";
 import { Verse } from "../../models/Songs";
 import Settings from "../../settings";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ABC } from "../../scripts/songs/abc/abc";
 import { isVerseInList } from "../../scripts/songs/versePicker";
+import { getVerseType, VerseType } from "../../scripts/songs/utils";
+import Animated from "react-native-reanimated";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import MelodyView from "../../components/melody/MelodyView";
 
 interface ContentVerseProps {
   verse: Verse;
   scale: Animated.Value<number>;
   opacity: Animated.Value<number>;
   selectedVerses: Array<Verse>;
+  abcBackupMelody?: string;
 }
 
-const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, selectedVerses }) => {
+const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, selectedVerses, abcBackupMelody }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
 
   const styles = createStyles(useTheme());
@@ -35,7 +38,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
     text: {
       fontSize: Animated.multiply(scale, 20),
       lineHeight: Animated.multiply(scale, 30)
-    }
+    },
   };
 
   const styleForVerseType = (type: VerseType) => {
@@ -56,6 +59,14 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
+  const displayMelody = (
+    (
+      !(verse.abcMelody == null || verse.abcMelody.length === 0)
+      || !(abcBackupMelody == null || abcBackupMelody.length === 0)
+    )
+    && !(verse.abcLyrics == null || verse.abcLyrics.length === 0)
+  );
+
   // Shorten name
   const displayName = verse.name.trim()
     .replace(/verse */gi, "");
@@ -72,9 +83,17 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
           {displayName}
         </Animated.Text>
       }
-      <Animated.Text style={[styles.text, animatedStyle.text]}>
-        {verse.content}
-      </Animated.Text>
+
+      {displayMelody ? undefined :
+        <Animated.Text style={[styles.text, animatedStyle.text]}>
+          {verse.content}
+        </Animated.Text>
+      }
+
+      {!displayMelody ? undefined :
+        <MelodyView scale={Settings.songScale}
+                    abc={ABC.generateAbcForVerse(verse, abcBackupMelody)} />
+      }
     </Animated.View>
   );
 };
