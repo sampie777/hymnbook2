@@ -53,12 +53,14 @@ export default MelodyTest2;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    paddingHorizontal: 0,
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",
+    paddingHorizontal: 0,
+    paddingBottom: 100
   }
 });

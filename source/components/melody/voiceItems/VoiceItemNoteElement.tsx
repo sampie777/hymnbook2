@@ -4,7 +4,8 @@ import Note from "./Note";
 import Rest from "./Rest";
 import Lines from "./Lines";
 import { AbcGui } from "../../../scripts/songs/abc/gui";
-import Svg, { G, Text } from "react-native-svg";
+import Svg, { Color, G, Text } from "react-native-svg";
+import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 import { StyleSheet, View } from "react-native";
 import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
 
@@ -15,6 +16,7 @@ interface Props {
 
 const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
   const [screenWidth, setScreenWidth] = useState(0);
+  const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
     ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + " " + it.divider)
@@ -45,7 +47,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
         <Text fontSize={AbcConfig.textSize}
               x={width / 2}
               y={textHeight}
-              fill={"#000"}
+              fill={styles.text.color as Color}
               textAnchor={"middle"}>
           {lyrics}
         </Text>
@@ -54,9 +56,12 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
   </View>;
 };
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+  },
+  text: {
+    color: colors.text
   }
 });
 

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { AbcConfig } from "../voiceItems/config";
 import { KeySignature } from "../../../scripts/songs/abc/abcjsTypes";
-import { StyleSheet, View } from "react-native";
-import Svg, { G, Text } from "react-native-svg";
+import { View } from "react-native";
+import Svg, { Color, G, Text } from "react-native-svg";
+import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 import Lines from "../voiceItems/Lines";
 
 interface Props {
@@ -16,6 +17,7 @@ const Key: React.FC<Props> = ({ scale, keySignature }) => {
   }
 
   const [screenWidth, setScreenWidth] = useState(0);
+  const styles = createStyles(useTheme());
   const charWidth = 10;
   const width = keySignature.accidentals.length * charWidth + charWidth / 2;
 
@@ -34,14 +36,14 @@ const Key: React.FC<Props> = ({ scale, keySignature }) => {
             return <Text fontSize={22}
                          key={it.note + it.verticalPos}
                          x={charWidth * (xOffset++)} y={y}
-                         fill={"#000"}
+                         fill={styles.color}
                          textAnchor={"start"}>♯</Text>;
           }
           if (it.acc === "flat") {
             return <Text fontSize={34}
                          key={it.note + it.verticalPos}
                          x={charWidth * (xOffset++)} y={y}
-                         fill={"#000"}
+                         fill={styles.color}
                          textAnchor={"start"}>♭</Text>;
           }
           return undefined;
@@ -51,8 +53,9 @@ const Key: React.FC<Props> = ({ scale, keySignature }) => {
   </View>;
 };
 
-const styles = StyleSheet.create({
-  container: {}
+const createStyles = ({ colors }: ThemeContextProps) => ({
+  container: {},
+  color: colors.notesColor as Color,
 });
 
 export default Key;

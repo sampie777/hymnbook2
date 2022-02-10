@@ -1,8 +1,8 @@
 import React from "react";
 import { AbcConfig } from "./config";
 import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import { StyleSheet } from "react-native";
-import { Circle, G, Path, Rect } from "react-native-svg";
+import { Circle, Color, G, Path, Rect } from "react-native-svg";
+import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 
 interface Props {
   note: VoiceItemNote;
@@ -12,6 +12,8 @@ const Rest: React.FC<Props> = ({ note }) => {
   if (note.rest === undefined) {
     return null;
   }
+
+  const styles = createStyles(useTheme());
 
   // Convert strange rests to normal rests
   if (note.rest.type === "multimeasure" && note.rest.text !== undefined) {
@@ -27,13 +29,13 @@ const Rest: React.FC<Props> = ({ note }) => {
               y={AbcConfig.lineSpacing}>
       <Rect x={0} y={yOffset}
             width={width} height={4}
-            fill={"#000"} />
+            fill={styles.color} />
 
       {!(note.duration === 0.625 || note.duration === 0.75 || note.duration === 0.875) ? undefined :
         <Circle cx={width + 5.5}
                 cy={yOffset}
                 r={2}
-                fill={"#000"} />
+                fill={styles.color} />
       }
     </G>;
   }
@@ -46,10 +48,10 @@ const Rest: React.FC<Props> = ({ note }) => {
       <Circle cx={0}
               cy={yOffset - 0.2}
               r={2.8}
-              fill={"#000"} />
+              fill={styles.color} />
 
       <Path d={"M-2 5 S4 9 6.8 2 L2 17"}
-            stroke={"#000"}
+            stroke={styles.color}
             strokeWidth={1.5}
       />
     </G>;
@@ -64,8 +66,8 @@ const Rest: React.FC<Props> = ({ note }) => {
        scale={0.08}>
       <Path
         d={"m414.37 453.28c0 18.812-37.624 47.03-37.624 84.655 0 14.109 28.218 56.436 47.03 79.952-9.4061-4.703-18.812-9.4061-32.921-9.4061-28.218 0-37.624 23.515-37.624 37.624 0 9.4061 9.4061 18.812 14.109 28.218-28.218-18.812-47.03-37.624-47.03-56.436 0-47.03 32.122-30.57 55.637-39.976-23.515-23.515-46.231-58.788-46.231-72.897 0-9.4061 28.218-42.327 37.624-65.842v-14.109c0-14.109-9.4061-32.921-14.109-47.03 18.812 23.515 61.139 65.843 61.139 75.249z"}
-        fill={"#000"}
-        stroke={"#000"}
+        fill={styles.color}
+        stroke={styles.color}
         strokeWidth={1.5}
       />
     </G>
@@ -74,14 +76,12 @@ const Rest: React.FC<Props> = ({ note }) => {
       <Circle cx={width}
               cy={yOffset}
               r={2}
-              fill={"#000"} />}
+              fill={styles.color} />}
   </G>;
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
+const createStyles = ({ colors }: ThemeContextProps) => ({
+  color: colors.notesColor as Color,
+})
 
 export default Rest;
