@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { AbcConfig } from "./config";
 import Lines from "./Lines";
-import Svg, { G, Line } from "react-native-svg";
+import Svg, { Color, G, Line } from "react-native-svg";
+import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 import { StyleSheet, View } from "react-native";
 import { VoiceItemBar } from "../../../scripts/songs/abc/abcjsTypes";
 
@@ -12,6 +13,7 @@ interface Props {
 
 const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
   const [screenWidth, setScreenWidth] = useState(0);
+  const styles = createStyles(useTheme());
 
   if (item.type === "bar_thin_thick") {
     const paddingRight = 11;
@@ -27,12 +29,12 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
           <G x={screenWidth / scale - paddingRight}>
             <Line x1={0} y1={0}
                   x2={0} y2={4 * AbcConfig.lineSpacing}
-                  stroke="#333"
+                  stroke={styles.bar.color as Color}
                   strokeWidth={1.5} />
 
             <Line x1={8} y1={0}
                   x2={8} y2={4 * AbcConfig.lineSpacing}
-                  stroke="#333"
+                  stroke={styles.bar.color as Color}
                   strokeWidth={8} />
           </G>
         </G>
@@ -52,7 +54,7 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
 
           <Line x1={width / 2} y1={0}
                 x2={width / 2} y2={4 * AbcConfig.lineSpacing}
-                stroke="#333"
+                stroke={styles.bar.color as Color}
                 strokeWidth={1.5} />
         </G>
       </Svg>
@@ -62,8 +64,12 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
   return null;
 };
 
-const styles = StyleSheet.create({
-  container: {},
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+  container: {
+  },
+  bar: {
+    color: colors.notesColor,
+  },
   endBar: {
     flex: 1,
     flexDirection: "row",

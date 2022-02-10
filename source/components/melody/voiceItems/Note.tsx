@@ -1,8 +1,8 @@
 import React from "react";
 import { AbcConfig } from "./config";
 import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import { StyleSheet } from "react-native";
-import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
+import { Circle, Color, Ellipse, G, Line, Path, Text } from "react-native-svg";
+import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 
 interface Props {
   pitch: AbcPitch,
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const Note: React.FC<Props> = ({ pitch, note }) => {
+  const styles = createStyles(useTheme());
   const y = (10 - pitch.pitch) * (AbcConfig.lineSpacing / 2);
   const width = AbcConfig.noteWidth;
 
@@ -43,12 +44,12 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
     {stem !== "up" ? undefined :
       <Line x1={stemX} y1={-1.5}
             x2={stemX} y2={-1 * AbcConfig.stemHeight}
-            stroke="#000"
+            stroke={styles.color}
             strokeWidth={AbcConfig.stemWidth} />}
     {stem !== "down" ? undefined :
       <Line x1={stemX} y1={2.5}
             x2={stemX} y2={AbcConfig.stemHeight}
-            stroke="#000"
+            stroke={styles.color}
             strokeWidth={AbcConfig.stemWidth} />}
 
     {note.duration !== 0.125 ? undefined :
@@ -56,9 +57,9 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
          transform={stem === "up" ? undefined : "scale(1, -1)"}>
         <Path
           d={"M0 0 C 1 8 8 13 6 20 S 8 12 0 10 z"}
-          fill={"#000"}
+          fill={styles.color}
           fillRule={"evenodd"}
-          stroke={"#000"}
+          stroke={styles.color}
           strokeWidth={0.7} />
       </G>}
 
@@ -66,22 +67,22 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
       <Line key={it}
             x1={-1 * width - 5} y1={it * AbcConfig.lineSpacing}
             x2={width + 5} y2={it * AbcConfig.lineSpacing}
-            stroke="#000"
+            stroke={styles.color}
             strokeWidth={AbcConfig.lineWidth} />)}
 
     <Ellipse rotation={note.duration === 1 ? 0 : -30}
              rx={width}
              ry={note.duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
              strokeWidth={2.5}
-             stroke={"#000"}
-             fill={fill  ? "#000" : "none"} />
+             stroke={styles.color}
+             fill={fill  ? styles.color : "none"} />
 
     {note.duration !== 1 ? undefined :
       <Ellipse rotation={note.duration === 1 ? 0 : -30}
                rx={width + 2.3}
                ry={note.duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
                strokeWidth={2.0}
-               stroke={"#000"}
+               stroke={styles.color}
                fill={"none"} />}
 
 
@@ -89,33 +90,31 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
       <Circle cx={width + 6.5}
               cy={pitch.pitch % 2 === 0 ? -1 * (AbcConfig.lineSpacing / 2) : 0}
               r={2}
-              fill={"#000"} />
+              fill={styles.color} />
     }
 
     {pitch.accidental !== "sharp" ? undefined :
       <Text fontSize={22}
             x={-7} y={6}
-            fill={"#000"}
+            fill={styles.color}
             textAnchor={"end"}>♯</Text>}
 
     {pitch.accidental !== "flat" ? undefined :
       <Text fontSize={34}
             x={-7} y={4}
-            fill={"#000"}
+            fill={styles.color}
             textAnchor={"end"}>♭</Text>}
 
     {pitch.accidental !== "natural" ? undefined :
       <Text fontSize={28}
             x={-7} y={4}
-            fill={"#000"}
+            fill={styles.color}
             textAnchor={"end"}>♮</Text>}
   </G>;
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
+const createStyles = ({ colors }: ThemeContextProps) => ({
+  color: colors.notesColor as Color,
+})
 
 export default Note;

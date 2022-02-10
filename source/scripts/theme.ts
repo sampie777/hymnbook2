@@ -20,6 +20,8 @@ export interface ThemeColors {
   border: ColorValue,
   borderLight: ColorValue,
   borderVariant: ColorValue,
+  notesColor: ColorValue,
+  notesLines: ColorValue,
 }
 
 export const lightColors: ThemeColors = {
@@ -41,7 +43,9 @@ export const lightColors: ThemeColors = {
   buttonVariant: "#f5f5f5",
   border: "#ddd",
   borderLight: "#eee",
-  borderVariant: "#ccc"
+  borderVariant: "#ccc",
+  notesColor: "#222",
+  notesLines: "#444",
 };
 
 export const darkColors: ThemeColors = {
@@ -63,6 +67,8 @@ export const darkColors: ThemeColors = {
   buttonVariant: "#303030",
   border: "#202020",
   borderLight: "#202020",
-  borderVariant: "#aaa"
+  borderVariant: "#aaa",
+  notesColor: "#d0d0d0",
+  notesLines: "#888",
 };
 
