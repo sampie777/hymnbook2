@@ -15,17 +15,18 @@ const DocumentItem: React.FC<ScreenProps> = ({ document, onPress, searchText }) 
 
   return (<TouchableOpacity onPress={() => onPress?.(document)}
                             style={styles.container}>
-    {searchText === undefined || searchText.length === 0 ? undefined :
-      <Text style={styles.parentName}>
-        {Document.getParent(document)?.name}
-      </Text>
-    }
     <Text style={[
       styles.itemName,
       (!(searchText === undefined || searchText.length === 0) ? {} : styles.itemExtraPadding)
     ]}>
       {document.name}
     </Text>
+
+    {searchText === undefined || searchText.length === 0 ? undefined :
+      <Text style={styles.parentName}>
+        {Document.getParent(document)?.name}
+      </Text>
+    }
   </TouchableOpacity>);
 };
 
@@ -38,11 +39,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border,
     borderBottomWidth: 1,
     flexDirection: "column",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    paddingVertical: 8,
   },
 
   parentName: {
-    paddingTop: 8,
     paddingHorizontal: 15,
     fontSize: 14,
     color: colors.textLighter,
@@ -51,13 +52,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   itemName: {
-    paddingBottom: 15,
+    paddingTop: 2,
     paddingHorizontal: 15,
     fontSize: 20,
     flex: 1,
     color: colors.text
   },
   itemExtraPadding: {
-    padding: 15
+    paddingTop: 5,
+    paddingBottom: 7
   }
 });
