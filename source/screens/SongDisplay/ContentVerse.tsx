@@ -38,7 +38,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
     text: {
       fontSize: Animated.multiply(scale, 20),
       lineHeight: Animated.multiply(scale, 30)
-    },
+    }
   };
 
   const styleForVerseType = (type: VerseType) => {
@@ -60,11 +60,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
   };
 
   const displayMelody = (
+    Settings.showMelody &&
     (
-      !(verse.abcMelody == null || verse.abcMelody.length === 0)
-      || !(abcBackupMelody == null || abcBackupMelody.length === 0)
-    )
-    && !(verse.abcLyrics == null || verse.abcLyrics.length === 0)
+      !(verse.abcMelody == null || verse.abcMelody.length === 0) ||
+      !(abcBackupMelody == null || abcBackupMelody.length === 0)
+    ) &&
+    !(verse.abcLyrics == null || verse.abcLyrics.length === 0)
   );
 
   // Shorten name

@@ -178,6 +178,10 @@ const SettingsScreen: React.FC = () => {
           <SettingSwitchComponent title={"Display song list size badge"}
                                   keyName={"showSongListCountBadge"}
                                   isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Show melody (experimental)"}
+                                  description={"Show song melody above lyrics. This is a work in progress and might not function as it should."}
+                                  keyName={"showMelody"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Other"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}

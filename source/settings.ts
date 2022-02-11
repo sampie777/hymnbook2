@@ -21,6 +21,7 @@ class SettingsClass extends SettingsBaseClass {
   useNativeFlatList = false;
   coloredVerseTitles = Math.random() > 0.5;
   highlightSelectedVerses = true;
+  showMelody = false;
 
   // Documents
   enableDocumentsFeatureSwitch = false;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
@@ -11,17 +11,21 @@ interface Props {
 }
 
 const MelodyView: React.FC<Props> = ({ scale, abc }) => {
-  const song = ABC.parse(abc);
+  const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
-  if (song === undefined) {
+  useEffect(() => {
+    setAbcSong(ABC.parse(abc));
+  }, [abc])
+
+  if (abcSong === undefined) {
     return null;
   }
 
   return <View style={styles.container}>
-    <Clef scale={scale} clef={song.clef} />
-    <Key scale={scale} keySignature={song.keySignature} />
+    <Clef scale={scale} clef={abcSong.clef} />
+    <Key scale={scale} keySignature={abcSong.keySignature} />
 
-    {song?.melody.map((it, index) =>
+    {abcSong.melody.map((it, index) =>
       <VoiceItemElement key={index} item={it} verticalSpacing={scale} />)}
   </View>;
 };
