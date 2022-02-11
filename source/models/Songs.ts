@@ -62,6 +62,7 @@ export class Song {
   createdAt: Date;
   modifiedAt: Date;
   abcMelody?: string;
+  _songBundles?: SongBundle[];
 
   constructor(
     name: string,
@@ -74,6 +75,7 @@ export class Song {
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
     number?: number,
     abcMelody?: string,
+    songBundle?: SongBundle
   ) {
     this.id = id;
     this.name = name;
@@ -85,6 +87,19 @@ export class Song {
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.abcMelody = abcMelody;
+    this._songBundles = songBundle === undefined ? [] : [songBundle];
+  }
+
+  static getSongBundle(song?: Song): SongBundle | undefined {
+    if (song === undefined) {
+      return undefined;
+    }
+
+    if (song._songBundles === undefined || song._songBundles.length === 0) {
+      return undefined;
+    }
+
+    return song._songBundles[0];
   }
 }
 

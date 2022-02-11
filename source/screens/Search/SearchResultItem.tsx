@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Song } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../scripts/songs/songList";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
@@ -10,8 +10,9 @@ export const SearchResultItem: React.FC<{
   song: Song,
   onPress: (song: Song) => void,
   onAddedToSongList?: () => void,
+  showSongBundle?: boolean,
 }> =
-  ({ song, onPress, onAddedToSongList }) => {
+  ({ song, onPress, onAddedToSongList, showSongBundle }) => {
     const [songAddedToSongList, setSongAddedToSongList] = useState(false);
     const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
     const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>();
@@ -43,15 +44,23 @@ export const SearchResultItem: React.FC<{
     };
 
     return (<TouchableOpacity onPress={() => onPress(song)} style={styles.searchListItem}>
-      <Text style={styles.searchListItemText}>{song.name}</Text>
+      <View style={styles.infoContainer}>
+        {!showSongBundle ? undefined :
+          <Text style={styles.songBundleName}>
+            {Song.getSongBundle(song)?.name}
+          </Text>
+        }
+
+        <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
+      </View>
 
       <TouchableOpacity onPress={addSongToSongList}
-                        style={styles.searchListItemButton}>
+                        style={styles.button}>
         <Icon name={songAddedToSongList ? "check" : "plus"}
-              size={styles.searchListItemButton.fontSize}
+              size={styles.button.fontSize}
               color={songAddedToSongList
-                ? styles.searchListItemButtonHighlight.color
-                : styles.searchListItemButton.color} />
+                ? styles.buttonHighlight.color
+                : styles.button.color} />
       </TouchableOpacity>
     </TouchableOpacity>);
   };
@@ -65,18 +74,38 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  searchListItemText: {
-    padding: 15,
-    fontSize: 24,
+
+  infoContainer: {
     flex: 1,
-    color: colors.text,
+    flexDirection: "column",
+    alignItems: "flex-start"
   },
-  searchListItemButton: {
+
+  songBundleName: {
+    paddingTop: 8,
+    paddingHorizontal: 15,
+    fontSize: 14,
+    color: colors.textLighter,
+    fontFamily: "sans-serif-light",
+    fontStyle: "italic"
+  },
+
+  itemName: {
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+    fontSize: 24,
+    color: colors.text
+  },
+  itemExtraPadding: {
+    padding: 12
+  },
+
+  button: {
     padding: 15,
     fontSize: 24,
     color: "#9fec9f"
   },
-  searchListItemButtonHighlight: {
+  buttonHighlight: {
     color: "#2fd32f"
   }
 });

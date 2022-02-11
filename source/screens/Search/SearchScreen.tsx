@@ -127,10 +127,16 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       setInputValue("");
     };
 
+    const isTitleSimilarToOtherResults = (item: Song): boolean => {
+      const firstWord = item.name.split(" ")[0];
+      return results.some(it => it.id !== item.id && it.name.startsWith(firstWord));
+    };
+
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem song={item}
                         onPress={onSearchResultItemPress}
-                        onAddedToSongList={onAddedToSongList} />
+                        onAddedToSongList={onAddedToSongList}
+                        showSongBundle={isTitleSimilarToOtherResults(item)} />
     );
 
     return (
