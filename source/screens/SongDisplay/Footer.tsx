@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Footer: React.FC<Props> =
-  ({ opacity }) => {
+  ({ opacity, song }) => {
     const styles = createStyles(useTheme());
     const animatedStyle = {
       container: {
@@ -18,7 +18,24 @@ const Footer: React.FC<Props> =
       }
     };
 
-    return (<Animated.View style={[styles.container, animatedStyle.container]} />);
+    function createCopyright() {
+      if (song === undefined) {
+        return "";
+      }
+
+      let copyright = "";
+      const songBundle = Song.getSongBundle(song);
+      if (songBundle !== undefined) {
+        copyright += songBundle.name + "\n";
+      }
+
+      copyright += song.language || songBundle?.language || "";
+      return copyright.trim();
+    }
+
+    return (<Animated.View style={[styles.container, animatedStyle.container]}>
+      <Animated.Text style={[styles.copyright]}>{createCopyright()}</Animated.Text>
+    </Animated.View>);
   };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
@@ -29,6 +46,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginTop: 70,
     marginBottom: 100,
     alignSelf: "center"
+  },
+  copyright: {
+    textAlign: "center",
+    color: colors.textLighter,
+    fontFamily: "sans-serif-light",
+    marginTop: 20,
+    lineHeight: 25
   }
 });
 
