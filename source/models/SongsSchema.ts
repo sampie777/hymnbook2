@@ -8,6 +8,11 @@ export const VerseSchema = {
     index: "int",
     abcMelody: "string?",
     abcLyrics: "string?",
+    _songs: {
+      type: "linkingObjects",
+      objectType: "Song",    // SongSchema.name
+      property: "verses"
+    }
   },
   primaryKey: "id"
 };
