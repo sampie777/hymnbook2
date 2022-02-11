@@ -37,6 +37,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
+  const [showMelodies, setShowMelodies] = useState(false);
   const animatedScale = new Animated.Value(Settings.songScale);
   const animatedOpacity = new Animated.Value<number>(1);
   const styles = createStyles(useTheme());
@@ -87,11 +88,37 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     navigation.setOptions({
       title: title,
       headerRight: () => (
-        <HeaderIconButton icon={"list-ol"}
-                          onPress={() => openVersePicker(song)} />
+        <>
+          {!hasMelodyToShow() ? undefined :
+            <HeaderIconButton icon={"music"}
+                              iconOverlay={showMelodies ? "slash" : undefined}
+                              onPress={() => setShowMelodies(!showMelodies)} />}
+          <HeaderIconButton icon={"list-ol"}
+                            onPress={() => openVersePicker(song)} />
+        </>
       )
     });
-  }, [song?.name, route.params.selectedVerses]);
+  }, [song?.name, route.params.selectedVerses, showMelodies]);
+
+  const hasMelodyToShow = () => {
+    if (!Settings.showMelody) {
+      return false;
+    }
+
+    if (song === undefined) {
+      return false;
+    }
+
+    if (!song.verses.some(it => it.abcLyrics)) {
+      return false;
+    }
+
+    if (song.abcMelody) {
+      return true;
+    }
+
+    return song.verses.some(it => it.abcLyrics && it.abcMelody);
+  };
 
   const loadSong = () => {
     if (!Db.songs.isConnected()) {
@@ -147,7 +174,8 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
                     opacity={animatedOpacity}
                     scale={animatedScale}
                     selectedVerses={route.params.selectedVerses}
-                    abcBackupMelody={song?.abcMelody} />
+                    abcBackupMelody={song?.abcMelody}
+                    showMelody={showMelodies} />
     );
   };
 
@@ -260,5 +288,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingTop: 5,
     paddingRight: 20,
     paddingBottom: 200
-  },
+  }
 });
