@@ -15,9 +15,17 @@ interface ContentVerseProps {
   opacity: Animated.Value<number>;
   selectedVerses: Array<Verse>;
   abcBackupMelody?: string;
+  showMelody?: boolean;
 }
 
-const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, selectedVerses, abcBackupMelody }) => {
+const ContentVerse: React.FC<ContentVerseProps> = ({
+                                                     verse,
+                                                     scale,
+                                                     opacity,
+                                                     selectedVerses,
+                                                     abcBackupMelody,
+                                                     showMelody
+                                                   }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
 
   const styles = createStyles(useTheme());
@@ -61,11 +69,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({ verse, scale, opacity, sele
 
   const displayMelody = (
     Settings.showMelody &&
-    (
-      !(verse.abcMelody == null || verse.abcMelody.length === 0) ||
-      !(abcBackupMelody == null || abcBackupMelody.length === 0)
-    ) &&
-    !(verse.abcLyrics == null || verse.abcLyrics.length === 0)
+    showMelody &&
+    (verse.abcMelody || abcBackupMelody) &&
+    verse.abcLyrics
   );
 
   // Shorten name
