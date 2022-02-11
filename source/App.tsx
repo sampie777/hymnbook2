@@ -226,7 +226,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontSize: 12,
     height: 18,
     minWidth: 18,
-    backgroundColor: colors.primary
+    backgroundColor: colors.primary,
+    lineHeight: 17
   }
 });
-;
