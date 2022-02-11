@@ -20,12 +20,12 @@ const Footer: React.FC<{ opacity: Animated.Value<number> }> =
   ({ opacity }) => {
     const styles = createStyles(useTheme());
     const animatedStyle = {
-      footer: {
+      container: {
         opacity: opacity
       }
     };
 
-    return (<Animated.View style={[styles.footer, animatedStyle.footer]} />);
+    return (<Animated.View style={[styles.container, animatedStyle.container]} />);
   };
 
 interface DocumentDisplayScreenProps {

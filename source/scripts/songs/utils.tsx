@@ -152,3 +152,13 @@ export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) =>
   const nextVerse = verses[currentVerseIndex + 1];
   return nextVerse.index;
 };
+
+export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean => {
+  const firstWord = item.name.split(" ")[0];
+  const songBundle = Song.getSongBundle(item);
+  return songs.some(it =>
+    it.id !== item.id
+    && Song.getSongBundle(it)?.id !== songBundle?.id
+    && it.name.startsWith(firstWord)
+  );
+};

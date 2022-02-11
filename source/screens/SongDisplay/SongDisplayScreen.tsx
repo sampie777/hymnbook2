@@ -24,18 +24,8 @@ import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
 import HeaderIconButton from "../../components/HeaderIconButton";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import Footer from "./Footer";
 
-const Footer: React.FC<{ opacity: Animated.Value<number> }> =
-  ({ opacity }) => {
-    const styles = createStyles(useTheme());
-    const animatedStyle = {
-      footer: {
-        opacity: opacity
-      }
-    };
-
-    return (<Animated.View style={[styles.footer, animatedStyle.footer]} />);
-  };
 
 interface SongDisplayScreenProps {
   route: any;
@@ -242,7 +232,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
                 animated: Settings.animateScrolling
               });
             }}
-            ListFooterComponent={<Footer opacity={animatedOpacity} />} />
+            ListFooterComponent={<Footer opacity={animatedOpacity} song={song} />} />
 
           <LoadingOverlay text={null}
                           isVisible={
@@ -271,13 +261,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingRight: 20,
     paddingBottom: 200
   },
-
-  footer: {
-    borderTopColor: colors.border,
-    borderTopWidth: 1,
-    width: "50%",
-    marginTop: 70,
-    marginBottom: 100,
-    alignSelf: "center"
-  }
 });
