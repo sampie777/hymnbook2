@@ -45,13 +45,13 @@ export const SearchResultItem: React.FC<{
 
     return (<TouchableOpacity onPress={() => onPress(song)} style={styles.searchListItem}>
       <View style={styles.infoContainer}>
+        <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
+
         {!showSongBundle ? undefined :
           <Text style={styles.songBundleName}>
             {Song.getSongBundle(song)?.name}
           </Text>
         }
-
-        <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
       </View>
 
       <TouchableOpacity onPress={addSongToSongList}
@@ -78,11 +78,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoContainer: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    paddingVertical: 8,
   },
 
   songBundleName: {
-    paddingTop: 8,
     paddingHorizontal: 15,
     fontSize: 14,
     color: colors.textLighter,
@@ -91,13 +91,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   itemName: {
-    paddingBottom: 15,
+    paddingTop: 2,
     paddingHorizontal: 15,
     fontSize: 24,
     color: colors.text
   },
   itemExtraPadding: {
-    padding: 12
+    paddingTop: 5,
+    paddingBottom: 7
   },
 
   button: {
