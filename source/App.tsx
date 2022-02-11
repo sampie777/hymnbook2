@@ -28,7 +28,7 @@ import SongDisplayScreen from "./screens/SongDisplay/SongDisplayScreen";
 import DownloadSongsScreen from "./screens/downloads/DownloadSongsScreen";
 import DownloadDocumentsScreen from "./screens/downloads/DownloadDocumentsScreen";
 import SettingsScreen from "./screens/Settings/SettingsScreen";
-import SongListScreen from "./screens/SongListScreen";
+import SongListScreen from "./screens/songlist/SongListScreen";
 import AboutScreen from "./screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./screens/about/PrivacyPolicyScreen";
 import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";

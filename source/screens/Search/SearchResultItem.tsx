@@ -43,7 +43,8 @@ export const SearchResultItem: React.FC<{
       }
     };
 
-    return (<TouchableOpacity onPress={() => onPress(song)} style={styles.searchListItem}>
+    return (<TouchableOpacity onPress={() => onPress(song)}
+                              style={styles.container}>
       <View style={styles.infoContainer}>
         <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
 
@@ -66,7 +67,7 @@ export const SearchResultItem: React.FC<{
   };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
-  searchListItem: {
+  container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
     borderColor: colors.border,
@@ -79,7 +80,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "flex-start",
-    paddingVertical: 8,
+    paddingVertical: 8
   },
 
   songBundleName: {

@@ -8,6 +8,7 @@ import Db from "../../scripts/db/db";
 import { Song } from "../../models/Songs";
 import { SongSchema } from "../../models/SongsSchema";
 import { isPortraitMode } from "../../scripts/utils";
+import { isTitleSimilarToOtherSongs } from "../../scripts/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -127,16 +128,11 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       setInputValue("");
     };
 
-    const isTitleSimilarToOtherResults = (item: Song): boolean => {
-      const firstWord = item.name.split(" ")[0];
-      return results.some(it => it.id !== item.id && it.name.startsWith(firstWord));
-    };
-
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem song={item}
                         onPress={onSearchResultItemPress}
                         onAddedToSongList={onAddedToSongList}
-                        showSongBundle={isTitleSimilarToOtherResults(item)} />
+                        showSongBundle={isTitleSimilarToOtherSongs(item, results)} />
     );
 
     return (

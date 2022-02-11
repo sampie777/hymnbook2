@@ -13,7 +13,7 @@ interface ScreenProps {
 const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress }) => {
   const styles = createStyles(useTheme());
 
-  return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.searchListItem}>
+  return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>
     <Icon name={"folder-open"} style={styles.searchListItemIcon} />
     <Text style={styles.itemName}>{group.name}</Text>
 
@@ -28,7 +28,7 @@ const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress }) => {
 export default DocumentGroupItem;
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
-  searchListItem: {
+  container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
     borderColor: colors.border,

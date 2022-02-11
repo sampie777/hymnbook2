@@ -1,60 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { BackHandler, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Db from "../scripts/db/db";
-import { Verse } from "../models/Songs";
-import { SongRouteParams, routes } from "../navigation";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import Db from "../../scripts/db/db";
+import { Verse } from "../../models/Songs";
+import { SongRouteParams, routes } from "../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
-import SongList from "../scripts/songs/songList";
-import { SongListSongModel } from "../models/SongListModel";
+import SongList from "../../scripts/songs/songList";
+import { SongListSongModel } from "../../models/SongListModel";
 import { CollectionChangeCallback } from "realm";
-import { SongListModelSchema } from "../models/SongListModelSchema";
-import { generateSongTitle } from "../scripts/songs/utils";
+import { SongListModelSchema } from "../../models/SongListModelSchema";
+import { isTitleSimilarToOtherSongs } from "../../scripts/songs/utils";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ThemeContextProps, useTheme } from "../components/ThemeProvider";
-
-const DeleteModeButton: React.FC<{
-  onPress: () => void,
-  onLongPress: () => void,
-  isActivated: boolean
-}> = ({
-        onPress,
-        onLongPress,
-        isActivated = false
-      }) => {
-  const styles = createStyles(useTheme());
-  return <TouchableOpacity onPress={onPress}
-                           onLongPress={onLongPress}
-                           style={styles.deleteModeButton}>
-    <Icon name={"trash-alt"}
-          solid={isActivated}
-          size={styles.deleteModeButton.fontSize}
-          color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
-  </TouchableOpacity>;
-};
-
-const SongItem: React.FC<{
-  index: number,
-  songListSong: SongListSongModel,
-  onPress: (index: number, songListSong: SongListSongModel) => void,
-  showDeleteButton: boolean,
-}> =
-  ({ index, songListSong, onPress, showDeleteButton }) => {
-    const styles = createStyles(useTheme());
-    return <TouchableOpacity onPress={() => onPress(index, songListSong)} style={styles.songListItem}>
-      <Text style={styles.songListItemText}>
-        {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
-      </Text>
-
-      {!showDeleteButton ? undefined :
-        <View style={styles.songListItemButton}>
-          <Icon name={"times"}
-                size={styles.songListItemButton.fontSize}
-                color={styles.songListItemButton.color} />
-        </View>
-      }
-    </TouchableOpacity>;
-  };
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import DeleteModeButton from "./DeleteModeButton";
+import SongItem from "./SongItem";
 
 const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
   ({ navigation }) => {
@@ -134,7 +92,8 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
       <SongItem index={item.index}
                 songListSong={item}
                 onPress={onSearchResultItemPress}
-                showDeleteButton={isDeleteMode} />
+                showDeleteButton={isDeleteMode}
+                showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
     );
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
@@ -162,7 +121,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "stretch",
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
 
   songList: {
@@ -171,34 +130,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10
   },
-  songListItem: {
-    marginBottom: 1,
-    backgroundColor: colors.surface1,
-    borderColor: colors.border,
-    borderBottomWidth: 1,
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  songListItemText: {
-    padding: 15,
-    fontSize: 24,
-    flex: 1,
-    color: colors.text,
-  },
-  songListItemButton: {
-    padding: 15,
-    right: 7,
-    fontSize: 21,
-    color: "#f17c7c"
-  },
-
-  deleteModeButton: {
-    padding: 15,
-    right: 5,
-    fontSize: 21,
-    color: "#ffb8b8"
-  },
-  deleteModeButtonActive: {
-    color: "#f17c7c"
-  }
 });
