@@ -15,7 +15,7 @@ const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress }) => {
 
   return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.searchListItem}>
     <Icon name={"folder-open"} style={styles.searchListItemIcon} />
-    <Text style={styles.searchListItemText}>{group.name}</Text>
+    <Text style={styles.itemName}>{group.name}</Text>
 
     <View style={styles.infoContainer}>
       <Text style={styles.infoText}>
@@ -36,7 +36,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  searchListItemText: {
+  itemName: {
     padding: 15,
     fontSize: 20,
     flex: 1,

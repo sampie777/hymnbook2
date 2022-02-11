@@ -25,6 +25,11 @@ export const SongSchema = {
     modifiedAt: "date",
     verses: VerseSchema.name + "[]",
     abcMelody: "string?",
+    _songBundles: {
+      type: "linkingObjects",
+      objectType: "SongBundle",    // SongBundleSchema.name
+      property: "songs"
+    }
   },
   primaryKey: "id"
 };
