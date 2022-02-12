@@ -182,7 +182,7 @@ export namespace ABC {
   export const generateAbcForVerse = (verse: Verse, backupMelody?: string): string => {
     const melody = verse.abcMelody || backupMelody;
     return "X:1\n" +
-      melody?.replace(/\n/g, " ") + "\n" +
+      melody + "\n" +
       "w: " + verse.abcLyrics?.replace(/\n/g, " ");
   };
 }
