@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { AbcConfig } from "./config";
+import Settings from "../../../settings";
+import { AbcGui } from "../../../scripts/songs/abc/gui";
+import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
+import { ThemeContextProps, useTheme } from "../../ThemeProvider";
+import { StyleSheet, View, Text } from "react-native";
+import Svg, { G } from "react-native-svg";
 import Note from "./Note";
 import Rest from "./Rest";
 import Lines from "./Lines";
-import { AbcGui } from "../../../scripts/songs/abc/gui";
-import Svg, { G } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../ThemeProvider";
-import { StyleSheet, View, Text } from "react-native";
-import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
 
 interface Props {
   note: VoiceItemNote;
@@ -19,8 +20,8 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
   const styles = createStyles(useTheme());
   const animatedStyle = {
     text: {
-      fontSize: scale * AbcConfig.textSize,
-      lineHeight: scale * AbcConfig.textLineHeight,
+      fontSize: Settings.songScale * AbcConfig.textSize,
+      lineHeight: Settings.songScale * AbcConfig.textLineHeight
     }
   };
 
@@ -29,13 +30,12 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
     .join(" ") || "";
 
   const noteWidth = AbcGui.calculateNoteWidth(note);
-  const textWidth = lyrics.length * 10 * (24 / AbcConfig.textSize) + 2 * AbcConfig.textPadding;
+  const textWidth = AbcGui.calculateTextWidth(lyrics);
   const width = Math.max(noteWidth, textWidth);
 
   return <View style={[styles.container, { minWidth: width * scale }]}
                onLayout={(e) => setScreenWidth(e.nativeEvent.layout.width)}>
-    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}
-         viewBox={`0 0 ${screenWidth} ${AbcConfig.totalLineHeight * scale}`}>
+    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
       <G scale={scale} y={AbcConfig.topSpacing * scale}>
         <Lines />
 
@@ -56,11 +56,12 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   text: {
     color: colors.text,
     textAlign: "center",
+    fontFamily: "Roboto"
   }
 });
 

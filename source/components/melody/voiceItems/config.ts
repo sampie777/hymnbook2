@@ -1,4 +1,6 @@
 export const AbcConfig = {
+  baseScale: 0.83,
+
   topSpacing: 20,
   lineSpacing: 8,
   textSpacing: 13,
@@ -8,7 +10,7 @@ export const AbcConfig = {
   notePadding: 13,
   noteWidth: 4.8,
   noteHeight: 2.8,
-  stemHeight: 30,
+  stemHeight: 28,
   stemWidth: 2,
   accidentalWidth: 8,
 

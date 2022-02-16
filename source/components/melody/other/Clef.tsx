@@ -18,8 +18,7 @@ const Clef: React.FC<Props> = ({ scale, clef }) => {
 
   return <View style={[styles.container, { minWidth: width * scale }]}
                onLayout={(e) => setScreenWidth(e.nativeEvent.layout.width)}>
-    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}
-         viewBox={`0 0 ${screenWidth} ${AbcConfig.totalLineHeight * scale}`}>
+    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
       <G scale={scale} y={AbcConfig.topSpacing * scale}>
         <Lines />
 
