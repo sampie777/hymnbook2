@@ -200,7 +200,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
     });
 
   const listViewabilityConfig = React.useRef({
-    itemVisiblePercentThreshold: 20
+    itemVisiblePercentThreshold: 10
   });
 
   const scrollToTop = () => {
