@@ -5,16 +5,16 @@ import VoiceItemBarElement from "./VoiceItemBarElement";
 
 interface Props {
   item: VoiceItem;
-  verticalSpacing: number;
+  scale: number;
 }
 
-const VoiceItemElement: React.FC<Props> = ({ item, verticalSpacing }) => {
+const VoiceItemElement: React.FC<Props> = ({ item, scale }) => {
 
   switch (item.el_type) {
     case "note":
-      return <VoiceItemNoteElement note={item} scale={verticalSpacing} />;
+      return <VoiceItemNoteElement note={item} scale={scale} />;
     case "bar":
-      return <VoiceItemBarElement item={item} scale={verticalSpacing} />;
+      return <VoiceItemBarElement item={item} scale={scale} />;
     default:
       return null;
   }

@@ -4,7 +4,7 @@ import Settings from "../../settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { useFocusEffect } from "@react-navigation/native";
-import { SettingComponent, SettingSwitchComponent } from "./SettingComponent";
+import { SettingComponent, SettingsSliderComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../scripts/server/models";
 import { rollbar } from "../../scripts/rollbar";
 import { capitalize, isAndroid } from "../../scripts/utils";
@@ -124,7 +124,7 @@ const SettingsScreen: React.FC = () => {
 
         {isReloading ? null : <>
           <Header title={"Display"} />
-          <SettingComponent title={"Songs scale"}
+          <SettingComponent title={"Song letter size"}
                             keyName={"songScale"}
                             onPress={(setValue) => setValue(1)}
                             valueRender={(it) => {
@@ -133,6 +133,16 @@ const SettingsScreen: React.FC = () => {
                               }
                               return Math.round(it * 100) + " % (press to reset)";
                             }} />
+          <SettingsSliderComponent title={"Song melody size"}
+                                   keyName={"songMelodyScale"}
+                                   description={"The size of the melody notes. Not the size of the song text."}
+                                   isVisible={showAdvancedSettings}
+                                   valueRender={(it) => {
+                                     if (it === 1.0) {
+                                       return "100 %";
+                                     }
+                                     return Math.round(it * 100) + " %";
+                                   }} />
           <SettingComponent title={"Theme"}
                             keyName={"theme"}
                             onPress={(setValue) => {

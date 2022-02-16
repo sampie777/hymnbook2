@@ -4,6 +4,8 @@ import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
 import { ABC } from "../../scripts/songs/abc/abc";
+import Settings from "../../settings";
+import { AbcConfig } from "./voiceItems/config";
 
 interface Props {
   scale: number;
@@ -21,12 +23,13 @@ const MelodyView: React.FC<Props> = ({ scale, abc }) => {
     return null;
   }
 
+  const totalScale = AbcConfig.baseScale * Settings.songMelodyScale * scale;
   return <View style={styles.container}>
-    <Clef scale={scale} clef={abcSong.clef} />
-    <Key scale={scale} keySignature={abcSong.keySignature} />
+    <Clef scale={totalScale} clef={abcSong.clef} />
+    <Key scale={totalScale} keySignature={abcSong.keySignature} />
 
     {abcSong.melody.map((it, index) =>
-      <VoiceItemElement key={index} item={it} verticalSpacing={scale} />)}
+      <VoiceItemElement key={index} item={it} scale={totalScale} />)}
   </View>;
 };
 

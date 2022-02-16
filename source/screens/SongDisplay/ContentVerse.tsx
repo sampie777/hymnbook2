@@ -136,6 +136,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   text: {
-    color: colors.text
+    color: colors.text,
+    fontFamily: "Roboto"
   }
 });

@@ -14,6 +14,7 @@ class SettingsClass extends SettingsBaseClass {
 
   // Songs
   songScale = 1.0;
+  songMelodyScale = 1.0;
   animateScrolling = true;
   songFadeIn = true;
   showJumpToNextVerseButton = true;
