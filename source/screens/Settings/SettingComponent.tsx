@@ -3,6 +3,7 @@ import Settings from "../../settings";
 import { capitalize } from "../../scripts/utils";
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import SliderComponent from "../../components/Popups/SliderComponent";
 
 interface SettingProps {
   title: string;
@@ -123,6 +124,67 @@ export const SettingSwitchComponent: React.FC<SettingProps> =
       </View>
     );
   };
+
+export const SettingsSliderComponent: React.FC<SettingProps> = ({
+                                                                  title,
+                                                                  description,
+                                                                  keyName,
+                                                                  value,
+                                                                  onPress,
+                                                                  valueRender,
+                                                                  isVisible = true,
+                                                                  lessObviousStyling = false
+                                                                }) => {
+  if (!isVisible) {
+    return null;
+  }
+
+  const [showSlider, setShowSlider] = useState(false);
+
+  if (value === undefined && keyName !== undefined) {
+    value = Settings.get(keyName);
+  }
+
+  // Keep new value in memory over state changes
+  const [_value, _setValue] = useState(value);
+  const setValue = (newValue: any) => {
+    if (keyName !== undefined) {
+      // @ts-ignore
+      Settings[keyName] = newValue;
+      // @ts-ignore
+      _setValue(Settings[keyName]);
+    } else {
+      _setValue(newValue);
+    }
+  };
+
+  const defaultOnPress = () => {
+    setShowSlider(true);
+  };
+
+  return (<>
+      {!showSlider ? undefined :
+        <SliderComponent title={title}
+                         description={description}
+                         initialValue={_value * 100}
+                         onCompleted={value => {
+                           setValue(value / 100);
+                           setShowSlider(false);
+                           if (keyName !== undefined) {
+                             _setValue(Settings.get(keyName));
+                           }
+                         }}
+                         onDenied={() => setShowSlider(false)} />
+      }
+    <SettingComponent title={title}
+                      keyName={keyName}
+                      value={_value}
+                      isVisible={isVisible}
+                      onPress={onPress === undefined ? defaultOnPress : onPress}
+                      valueRender={valueRender === undefined ? undefined : () => valueRender?.(_value)}
+                      lessObviousStyling={lessObviousStyling} />
+  </>);
+};
 
 
 const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
