@@ -26,9 +26,9 @@ export namespace AbcGui {
     }
 
     // Scaling factor
-    letterWidth *= 0.27 * Settings.songScale;
+    letterWidth *= 0.21 * Settings.songScale;
     letterWidth += AbcConfig.textPadding;
-    if (text.endsWith("-")) {
+    if (!text.endsWith("-")) {
       letterWidth += AbcConfig.textPadding;
     }
 

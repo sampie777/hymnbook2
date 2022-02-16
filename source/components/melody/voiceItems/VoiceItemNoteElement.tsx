@@ -30,10 +30,10 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
     .join(" ") || "";
 
   const noteWidth = AbcGui.calculateNoteWidth(note);
-  const textWidth = AbcGui.calculateTextWidth(lyrics);
+  const textWidth = AbcGui.calculateTextWidth(lyrics) / scale;
   const width = Math.max(noteWidth, textWidth);
 
-  return <View style={[styles.container, { minWidth: width * scale }]}
+  return <View style={[styles.container, { minWidth: width * scale, flex: lyrics.endsWith("-") ? 1 : 4 }]}
                onLayout={(e) => setScreenWidth(e.nativeEvent.layout.width)}>
     <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
       <G scale={scale} y={AbcConfig.topSpacing * scale}>

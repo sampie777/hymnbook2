@@ -136,7 +136,7 @@ const SettingsScreen: React.FC = () => {
           <SettingsSliderComponent title={"Song melody size"}
                                    keyName={"songMelodyScale"}
                                    description={"The size of the melody notes. Not the size of the song text."}
-                                   isVisible={showAdvancedSettings}
+                                   isVisible={showAdvancedSettings && Settings.showMelody}
                                    valueRender={(it) => {
                                      if (it === 1.0) {
                                        return "100 %";

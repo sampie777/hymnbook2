@@ -69,7 +69,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.notesColor,
   },
   endBar: {
-    flex: 1,
+    flex: 4,
     flexDirection: "row",
     justifyContent: "flex-end"
   }
