@@ -13,6 +13,7 @@
     "device-install": "adb -d install \"$(ls -t ./android/app/build/outputs/apk/release/*.apk | head -1)\""
   },
   "dependencies": {
+    "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "abcjs": "git+https://github.com/MatthewDorner/abcjs.git",
     "react": "17.0.2",
     "react-native": "0.63.4",
