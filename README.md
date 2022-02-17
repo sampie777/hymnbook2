@@ -99,3 +99,15 @@ Upload the .aab file from `android/app/build/outputs/bundle/release/`.
 
 If package name changes, create a new QR code at: https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder
 
+# Other stuff
+
+## Song melody
+
+The song melodies are en-/decoded using the ABC notation. The decoded notes are displayed by creating SVG images for each note. Each note/word forms its own 'block'/image and can scale horizontally independently. This way, the melody can be displayed and scaled across multiple lines without the need of horizontal scrolling. 
+
+- Online ABC editor: https://editor.drawthedots.com/
+- ABC standard: https://abcnotation.com/wiki/abc:standard:v2.1#special_symbols
+- ABC examples: https://abcnotation.com/examples
+- ABCjs types (incomplete): https://github.com/paulrosen/abcjs/blob/2616d88ddf0222e255c508f944df3089960c13dc/types/index.d.ts
+- SVG library: https://github.com/react-native-svg/react-native-svg
+- 
