@@ -1,6 +1,6 @@
 import Settings from "../../settings";
 import { authApi, throwErrorsIfNotOk } from "./authApi";
-import { getUniqueId } from "react-native-device-info";
+import { getUniqueId, isEmulator } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
 
@@ -28,6 +28,21 @@ export class ServerAuth {
   }
 
   static authenticate(): Promise<string> {
+    // Don't authenticate (create JWT etc.) when device is emulator
+    return isEmulator()
+      .then(isEmulator => {
+        if (isEmulator) {
+          return new Promise<string>(() => "");
+        }
+        return this.forceAuthenticate();
+      })
+      .catch(e => {
+        rollbar.error(`Failed to check if device is emulator: ${e}`, e);
+        return this.forceAuthenticate();
+      });
+  }
+
+  static forceAuthenticate(): Promise<string> {
     if (Settings.authRequestId === "") {
       return this._requestAccess();
     } else if (Settings.authJwt === "") {

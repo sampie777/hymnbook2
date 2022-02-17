@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { displayName, homepage } from "../../../app.json";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { getVersion } from "react-native-device-info";
+import { getVersion, isEmulator } from "react-native-device-info";
 import UrlLink from "../../components/UrlLink";
 import { routes } from "../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -10,7 +10,11 @@ import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 
 const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({ navigation }) => {
+  const [hideDonation, setHideDonation] = useState(true);
   const styles = createStyles(useTheme());
+
+  isEmulator().then(isEmulator => setHideDonation(isEmulator));
+
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>
@@ -45,31 +49,32 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
         </Text>
       </View>
 
-      <View style={styles.donationContainer}>
-        <Text style={[styles.contentText, styles.contributionText]}>
-          This app is made free in order to make the access to Christian songs available for everyone with a digital
-          device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
-          thanks,
-          please consider donating using the following option:
-        </Text>
-
-        <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
-          <Text style={[styles.contentText, styles.donationLinkText]}>
-            Buy me a coffee
+      {hideDonation ? undefined :
+        <View style={styles.donationContainer}>
+          <Text style={[styles.contentText, styles.contributionText]}>
+            This app is made free in order to make the access to Christian songs available for everyone with a digital
+            device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
+            thanks, please consider donating using the following option:
           </Text>
-        </UrlLink>
-        {/*<View style={styles.donationLink}>*/}
-        {/*  <Text style={[styles.contentText, styles.donationLinkText]}>*/}
-        {/*    Directly using PayPal*/}
-        {/*  </Text>*/}
-        {/*</View>*/}
-      </View>
+
+          <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
+            <Text style={[styles.contentText, styles.donationLinkText]}>
+              Buy me a coffee
+            </Text>
+          </UrlLink>
+          {/*<View style={styles.donationLink}>*/}
+          {/*  <Text style={[styles.contentText, styles.donationLinkText]}>*/}
+          {/*    Directly using PayPal*/}
+          {/*  </Text>*/}
+          {/*</View>*/}
+        </View>
+      }
 
       <View style={styles.footerContainer}>
         <Text style={[styles.contentText, styles.footerText]}>
           Made with passion by S. Jansen
         </Text>
-        <UrlLink url={homepage}>
+        <UrlLink url={homepage} workWithEmulator={false}>
           <Text style={[styles.contentText, styles.webpageLink]}>{homepage}</Text>
         </UrlLink>
 
@@ -127,7 +132,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     lineHeight: 25,
     marginBottom: 25,
     paddingHorizontal: 30,
-    color: colors.text,
+    color: colors.text
   },
 
   scriptureContainer: {
@@ -135,7 +140,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginBottom: 45,
     paddingHorizontal: 20,
     backgroundColor: colors.surface1,
-    paddingVertical: 30,
+    paddingVertical: 30
   },
   scriptureText: {
     fontFamily: "serif",
@@ -162,10 +167,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     paddingTop: 60,
     paddingBottom: 45,
-    backgroundColor: colors.surface1,
+    backgroundColor: colors.surface1
   },
   contributionText: {
-    marginBottom: 40,
+    marginBottom: 40
   },
   donationLink: {
     marginBottom: 20
