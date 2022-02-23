@@ -49,7 +49,7 @@ function pushAndRelease {
   echo "Release version: ${RELEASE_VERSION}"
 
   git add package.json || exit 1
-  git commit -m "version release" || exit 1
+  git commit -m "version release: ${RELEASE_VERSION}" || exit 1
   git tag "v${RELEASE_VERSION}" || exit 1
   git push -u origin master --tags || exit 1
 

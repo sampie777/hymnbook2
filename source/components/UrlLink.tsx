@@ -1,32 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { Alert, View, TouchableOpacity } from "react-native";
 import { openLink } from "../scripts/utils";
-import { isEmulator } from "react-native-device-info";
 
 const UrlLink: React.FC<{
   url: string,
   style?: Array<Object> | Object,
-  onOpened?: () => void,
-  workWithEmulator?: boolean
+  onOpened?: () => void
 }> =
   ({
      children,
      url,
      style = [],
-     onOpened,
-     workWithEmulator = true
+     onOpened
    }) => {
-    const [_isEmulator, setIsEmulator] = useState(true);
-    isEmulator().then(isEmulator => setIsEmulator(isEmulator));
-
     const open = () => {
-      if (!workWithEmulator && _isEmulator) {
-        return;
-      }
-
       openLink(url)
         .then(onOpened)
-        .catch(e => Alert.alert("Error opening link", e.message));
+        .catch(e => Alert.alert("Error opening link", e.message))
     };
 
     return (
