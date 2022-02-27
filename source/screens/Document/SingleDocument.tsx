@@ -1,13 +1,14 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View, Platform, Text } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Db from "../../scripts/db/db";
 import Settings from "../../settings";
+import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
 import { DocumentSchema } from "../../models/DocumentsSchema";
 import { Document } from "../../models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { keepScreenAwake } from "../../scripts/utils";
+import { ParamList } from "../../navigation";
 import {
   GestureHandlerRootView
 } from "react-native-gesture-handler";
@@ -28,9 +29,7 @@ const Footer: React.FC<{ opacity: Animated.Value<number> }> =
     return (<Animated.View style={[styles.container, animatedStyle.container]} />);
   };
 
-interface DocumentDisplayScreenProps {
-  route: any;
-  navigation: NativeStackNavigationProp<any>;
+interface DocumentDisplayScreenProps extends NativeStackScreenProps<ParamList, "Document"> {
 }
 
 const SingleDocument: React.FC<DocumentDisplayScreenProps> = ({ route, navigation }) => {

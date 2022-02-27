@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, View, Text, Dimensions, ScaledSize } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
-import { SongRouteParams, routes } from "../../../navigation";
+import { routes, ParamList } from "../../../navigation";
 import { Verse, VerseProps } from "../../../models/Songs";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import SongList from "../../../scripts/songs/songList";
@@ -12,12 +14,8 @@ import {
   isVerseInList,
   toggleVerseInList
 } from "../../../scripts/songs/versePicker";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 
-interface ComponentProps {
-  route: any;
-  navigation: NativeStackNavigationProp<any>;
+interface ComponentProps extends NativeStackScreenProps<ParamList, 'VersePicker'> {
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
@@ -82,7 +80,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       name: routes.Song,
       params: {
         selectedVerses: versesToSubmit
-      } as SongRouteParams,
+      },
       merge: true // Navigate 'back'
     });
   };

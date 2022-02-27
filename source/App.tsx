@@ -9,12 +9,13 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import { CollectionChangeCallback } from "realm";
 import Db from "./scripts/db/db";
 import Settings from "./settings";
-import { routes } from "./navigation";
+import { ParamList, routes } from "./navigation";
 import { SongListModelSchema } from "./models/SongListModelSchema";
 import { closeDatabases, initDatabases } from "./scripts/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./components/ThemeProvider";
@@ -82,13 +83,13 @@ const RootNavigation = () => {
                     }} />
 
     <RootNav.Screen name={routes.SongImport} component={DownloadSongsScreen}
-                    options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
+                    options={({ navigation }: { navigation: NativeStackNavigationProp<ParamList, "SongImport"> }) => ({
                       headerRight: () => !Settings.enableDocumentsFeatureSwitch ? undefined :
                         (<HeaderIconButton icon={"file-alt"}
                                            onPress={() => navigation.navigate(routes.DocumentImport)} />)
                     })} />
     <RootNav.Screen name={routes.DocumentImport} component={DownloadDocumentsScreen}
-                    options={({ navigation }: { navigation: NativeStackNavigationProp<any> }) => ({
+                    options={({ navigation }: { navigation: NativeStackNavigationProp<ParamList, "DocumentImport"> }) => ({
                       headerRight: () => (<HeaderIconButton icon={"music"}
                                                             onPress={() => navigation.navigate(routes.SongImport)} />)
                     })} />

@@ -1,9 +1,10 @@
 import React from "react";
-import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity } from "react-native";
+import { ParamList } from "../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity } from "react-native";
 
 interface MenuItemProps {
-  name: string;
+  name: keyof ParamList;
   icon?: (style?: StyleProp<TextStyle> | undefined) => React.ReactNode
   onPress?: () => void;
 }

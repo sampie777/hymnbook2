@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import Db from "../../scripts/db/db";
+import { ParamList } from "../../navigation";
+import { SongSchema } from "../../models/SongsSchema";
+import { Survey } from "../../scripts/survey";
+import { StyleSheet, View } from "react-native";
 import InitDatabaseComponent from "./InitDatabaseComponent";
 import SurveyComponent from "./SurveyComponent";
-import { Survey } from "../../scripts/survey";
-import Db from "../../scripts/db/db";
-import { SongSchema } from "../../models/SongsSchema";
-import { StyleSheet, View } from "react-native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 interface ComponentProps {
-  navigation: BottomTabNavigationProp<any>,
+  navigation: BottomTabNavigationProp<ParamList, keyof ParamList>,
 }
 
 const PopupsComponent: React.FC<ComponentProps> = ({ navigation }) => {

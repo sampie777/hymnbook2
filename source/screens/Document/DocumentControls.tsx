@@ -1,15 +1,15 @@
 import React from "react";
 import Db from "../../scripts/db/db";
+import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import { DocumentSchema } from "../../models/DocumentsSchema";
-import { DocumentRouteParams, routes } from "../../navigation";
+import { ParamList, routes } from "../../navigation";
 import { Document } from "../../models/Documents";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
-  navigation: NativeStackNavigationProp<any>;
+  navigation: NativeStackNavigationProp<ParamList, any>
   document?: Document;
 }
 
@@ -53,7 +53,7 @@ const DocumentControls: React.FC<Props> =
     const goToDocument = (doc: Document) => {
       navigation.navigate(routes.Document, {
         id: doc.id
-      } as DocumentRouteParams);
+      });
     };
 
     return (<View style={styles.container}>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import { useFocusEffect } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CollectionChangeCallback } from "realm";
 import Db from "../../../scripts/db/db";
 import { DocumentGroup, Document } from "../../../models/Documents";
-import { DocumentRouteParams, routes } from "../../../navigation";
+import { ParamList, routes } from "../../../navigation";
 import { DocumentSearch } from "../../../scripts/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../scripts/documents/utils";
@@ -18,7 +18,7 @@ import SearchInput from "./SearchInput";
 
 
 interface ScreenProps {
-  navigation: NativeStackNavigationProp<any>;
+  navigation: NativeStackNavigationProp<ParamList, "DocumentSearch">
 }
 
 const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
@@ -94,7 +94,7 @@ const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
   };
 
   const onDocumentPress = (document: Document) => {
-    navigation.navigate(routes.Document, { id: document.id } as DocumentRouteParams);
+    navigation.navigate(routes.Document, { id: document.id });
   };
 
   const groups = (): Array<DocumentGroup> => {

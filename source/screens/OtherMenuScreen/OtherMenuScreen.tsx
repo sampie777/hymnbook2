@@ -1,13 +1,13 @@
 import React from "react";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { routes } from "../../navigation";
+import { ParamList, routes } from "../../navigation";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import MenuItem from "./MenuItem";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
-const OtherMenuScreen: React.FC<{ route: any, navigation: BottomTabNavigationProp<any> }> =
+const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
   ({ navigation }) => {
     const styles = createStyles(useTheme());
 
@@ -26,7 +26,7 @@ const OtherMenuScreen: React.FC<{ route: any, navigation: BottomTabNavigationPro
       }
     ];
 
-    const onPress = (route: string) => {
+    const onPress = (route: keyof ParamList) => {
       navigation.navigate(route);
     };
 

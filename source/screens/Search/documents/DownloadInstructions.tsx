@@ -1,15 +1,15 @@
 import React from "react";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { routes } from "../../../navigation";
+import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
+import { ParamList, routes } from "../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
 
 
 interface ScreenProps {
-    navigation: NativeStackNavigationProp<any>;
+    navigation: NativeStackNavigationProp<ParamList, keyof ParamList>
 }
 
-const DocumentItem: React.FC<ScreenProps> = ({ navigation }) => {
+const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
     const styles = createStyles(useTheme());
 
     const onPress = () => {
@@ -25,7 +25,7 @@ const DocumentItem: React.FC<ScreenProps> = ({ navigation }) => {
     </View>);
 };
 
-export default DocumentItem;
+export default DownloadInstructions;
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     container: {

@@ -1,10 +1,10 @@
 import React from "react";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import { ParamList, routes } from "../../navigation";
 import ConfirmationModal from "../ConfirmationModal";
-import { routes } from "../../navigation";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 const InitDatabaseComponent: React.FC<{
-  navigation: BottomTabNavigationProp<any>,
+  navigation: BottomTabNavigationProp<ParamList, keyof ParamList>,
   onCompleted?: () => void
 }> = ({
         navigation,
