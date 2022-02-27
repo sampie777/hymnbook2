@@ -219,7 +219,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     const languages = SongProcessor.getAllLanguagesFromBundles(bundles);
 
     if (languages.length > 0 && filterLanguage === "") {
-      setFilterLanguage(languages[0]);
+      if (languages.includes("AF")) {
+        setFilterLanguage("AF");
+      } else {
+        setFilterLanguage(languages[0]);
+      }
     }
 
     return languages;

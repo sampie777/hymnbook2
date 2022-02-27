@@ -219,7 +219,11 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     const languages = DocumentProcessor.getAllLanguagesFromDocumentGroups(groups);
 
     if (languages.length > 0 && filterLanguage === "") {
-      setFilterLanguage(languages[0]);
+      if (languages.includes("AF")) {
+        setFilterLanguage("AF");
+      } else {
+        setFilterLanguage(languages[0]);
+      }
     }
 
     return languages;
