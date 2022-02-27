@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, View } from "react-native";
+import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import Db from "../../scripts/db/db";
 import { Verse } from "../../models/Songs";
-import { SongRouteParams, routes } from "../../navigation";
+import { routes, ParamList } from "../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../scripts/songs/songList";
 import { SongListSongModel } from "../../models/SongListModel";
 import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../../models/SongListModelSchema";
 import { isTitleSimilarToOtherSongs } from "../../scripts/songs/utils";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import DeleteModeButton from "./DeleteModeButton";
 import SongItem from "./SongItem";
 
-const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
+const SongListScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, "SongList"> }> =
   ({ navigation }) => {
     const [list, setList] = useState<Array<SongListSongModel>>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
@@ -85,7 +85,7 @@ const SongListScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
         id: songListSong.song.id,
         songListIndex: index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
-      } as SongRouteParams);
+      });
     };
 
     const renderSongListItem = ({ item }: { item: SongListSongModel }) => (

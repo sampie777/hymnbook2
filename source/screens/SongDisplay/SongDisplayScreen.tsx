@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, View, ViewToken } from "react-native";
-import { FlatList as NativeFlatList } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   FlatList,
@@ -14,25 +12,25 @@ import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/sr
 import Animated, { Easing } from "react-native-reanimated";
 import Db from "../../scripts/db/db";
 import Settings from "../../settings";
-import { routes, VersePickerRouteParams } from "../../navigation";
+import { ParamList, routes } from "../../navigation";
 import { SongSchema } from "../../models/SongsSchema";
 import { Song, Verse } from "../../models/Songs";
 import { generateSongTitle } from "../../scripts/songs/utils";
 import { keepScreenAwake } from "../../scripts/utils";
+import { FlatList as NativeFlatList } from "react-native";
+import { StyleSheet, View, ViewToken } from "react-native";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
 import HeaderIconButton from "../../components/HeaderIconButton";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import Footer from "./Footer";
 
 
-interface SongDisplayScreenProps {
-  route: any;
-  navigation: NativeStackNavigationProp<any>;
+interface ComponentProps extends NativeStackScreenProps<ParamList, 'Song'> {
 }
 
-const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation }) => {
+const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
@@ -153,9 +151,9 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
 
     navigation.navigate(routes.VersePicker, {
       verses: verseParams,
-      selectedVerses: route.params.selectedVerses,
+      selectedVerses: route.params.selectedVerses || [],
       songListIndex: route.params.songListIndex
-    } as VersePickerRouteParams);
+    });
   };
 
   const animate = () => {
@@ -173,7 +171,7 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
       <ContentVerse verse={item}
                     opacity={animatedOpacity}
                     scale={animatedScale}
-                    selectedVerses={route.params.selectedVerses}
+                    selectedVerses={route.params.selectedVerses || []}
                     abcBackupMelody={song?.abcMelody}
                     showMelody={showMelodies} />
     );
@@ -211,9 +209,9 @@ const SongDisplayScreen: React.FC<SongDisplayScreenProps> = ({ route, navigation
         offset: 0,
         animated: Settings.animateScrolling
       });
-    } else {
+    } else if (route.params.selectedVerses !== undefined) {
       flatListComponentRef.current?.scrollToIndex({
-        index: song?.verses.findIndex(it => it.id === route.params.selectedVerses[0].id) || 0,
+        index: song?.verses.findIndex(it => it.id === route.params.selectedVerses!![0].id) || 0,
         animated: Settings.animateScrolling
       });
     }

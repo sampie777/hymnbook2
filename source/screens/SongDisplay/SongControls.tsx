@@ -1,18 +1,18 @@
 import React from "react";
+import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import { SongListSongModel } from "../../models/SongListModel";
 import SongList from "../../scripts/songs/songList";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { SongRouteParams, routes } from "../../navigation";
+import { routes, ParamList } from "../../navigation";
 import Settings from "../../settings";
 import { Song, Verse } from "../../models/Songs";
 import { getNextVerseIndex } from "../../scripts/songs/utils";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { FlatList } from "react-native-gesture-handler";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { FlatList } from "react-native-gesture-handler";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-interface SongControlsProps {
-  navigation: NativeStackNavigationProp<any>;
+interface ComponentProps {
+  navigation: NativeStackNavigationProp<ParamList, any>
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;
@@ -20,7 +20,7 @@ interface SongControlsProps {
   selectedVerses?: Array<Verse>;
 }
 
-const SongControls: React.FC<SongControlsProps> =
+const SongControls: React.FC<ComponentProps> =
   ({
      navigation,
      songListIndex,
@@ -39,7 +39,7 @@ const SongControls: React.FC<SongControlsProps> =
         id: songListSong.song.id,
         songListIndex: songListSong.index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
-      } as SongRouteParams);
+      });
     };
 
     const canJumpToNextVerse = () => {

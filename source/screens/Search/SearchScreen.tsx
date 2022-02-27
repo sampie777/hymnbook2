@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { SongRouteParams, routes } from "../../navigation";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
+import { routes, ParamList } from "../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { getFontScale } from "react-native-device-info";
 import Settings from "../../settings";
@@ -17,7 +17,7 @@ import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 
 
-const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
+const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
   ({ navigation }) => {
     const [isPortrait, setIsPortrait] = useState(isPortraitMode(Dimensions.get("window")));
     const [inputValue, setInputValue] = useState("");
@@ -112,7 +112,7 @@ const SearchScreen: React.FC<{ navigation: BottomTabNavigationProp<any> }> =
     };
 
     const onSearchResultItemPress = (song: Song) => {
-      navigation.navigate(routes.Song, { id: song.id } as SongRouteParams);
+      navigation.navigate(routes.Song, { id: song.id });
     };
 
     const onDocumentPress = () => {
