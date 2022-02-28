@@ -10,6 +10,7 @@ import {
 } from "react-native-gesture-handler";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
 import Animated, { Easing } from "react-native-reanimated";
+import { rollbar } from "../../scripts/rollbar";
 import Db from "../../scripts/db/db";
 import Settings from "../../settings";
 import { ParamList, routes } from "../../navigation";
@@ -143,7 +144,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const openVersePicker = (useSong?: Song) => {
     if (useSong === undefined) {
-      console.warn("Can't open versepicker for undefined song");
+      rollbar.warning("Can't open versepicker for undefined song. route.params.id="+route.params.id);
       return;
     }
 

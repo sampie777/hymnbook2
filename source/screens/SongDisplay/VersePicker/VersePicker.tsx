@@ -15,7 +15,7 @@ import {
   toggleVerseInList
 } from "../../../scripts/songs/versePicker";
 
-interface ComponentProps extends NativeStackScreenProps<ParamList, 'VersePicker'> {
+interface ComponentProps extends NativeStackScreenProps<ParamList, "VersePicker"> {
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
@@ -74,6 +74,11 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     if (songListIndex !== undefined) {
       SongList.saveSelectedVersesForSong(songListIndex, versesToSubmit);
+    }
+
+    if (route.params.navigateToOnSubmit !== undefined) {
+      navigation.navigate(route.params.navigateToOnSubmit);
+      return;
     }
 
     navigation.navigate({

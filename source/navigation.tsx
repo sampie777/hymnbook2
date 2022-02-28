@@ -20,6 +20,7 @@ export type ParamList = {
     verses: Verse[],
     selectedVerses: VerseProps[],
     songListIndex?: number,
+    navigateToOnSubmit?: keyof ParamList
   },
 
   DocumentImport: undefined,
