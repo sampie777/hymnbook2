@@ -9,7 +9,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
-  navigation: NativeStackNavigationProp<ParamList, any>
+  navigation: NativeStackNavigationProp<ParamList>
   document?: Document;
 }
 

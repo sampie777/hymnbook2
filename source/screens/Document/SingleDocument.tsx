@@ -29,10 +29,7 @@ const Footer: React.FC<{ opacity: Animated.Value<number> }> =
     return (<Animated.View style={[styles.container, animatedStyle.container]} />);
   };
 
-interface DocumentDisplayScreenProps extends NativeStackScreenProps<ParamList, "Document"> {
-}
-
-const SingleDocument: React.FC<DocumentDisplayScreenProps> = ({ route, navigation }) => {
+const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = ({ route, navigation }) => {
   const scrollViewComponent = useRef<ScrollView>();
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const animatedOpacity = new Animated.Value<number>(1);

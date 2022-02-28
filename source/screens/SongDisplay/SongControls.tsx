@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ComponentProps {
-  navigation: NativeStackNavigationProp<ParamList, any>
+  navigation: NativeStackNavigationProp<ParamList>
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;

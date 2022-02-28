@@ -9,7 +9,7 @@ import InitDatabaseComponent from "./InitDatabaseComponent";
 import SurveyComponent from "./SurveyComponent";
 
 interface ComponentProps {
-  navigation: BottomTabNavigationProp<ParamList, keyof ParamList>,
+  navigation: BottomTabNavigationProp<ParamList>,
 }
 
 const PopupsComponent: React.FC<ComponentProps> = ({ navigation }) => {

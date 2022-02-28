@@ -6,7 +6,7 @@ import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
 
 
 interface ScreenProps {
-    navigation: NativeStackNavigationProp<ParamList, keyof ParamList>
+    navigation: NativeStackNavigationProp<ParamList>
 }
 
 const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {

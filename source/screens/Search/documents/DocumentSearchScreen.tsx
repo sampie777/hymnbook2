@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
 import Db from "../../../scripts/db/db";
@@ -17,11 +17,7 @@ import DownloadInstructions from "./DownloadInstructions";
 import SearchInput from "./SearchInput";
 
 
-interface ScreenProps {
-  navigation: NativeStackNavigationProp<ParamList, "DocumentSearch">
-}
-
-const DocumentSearchScreen: React.FC<ScreenProps> = ({ navigation }) => {
+const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ navigation }) => {
   let isMounted = true;
   const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentGroup>>([]);

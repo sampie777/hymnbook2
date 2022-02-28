@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BackHandler, FlatList, StyleSheet, View } from "react-native";
-import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
 import Db from "../../scripts/db/db";
 import { Verse } from "../../models/Songs";
 import { routes, ParamList } from "../../navigation";
@@ -14,7 +14,7 @@ import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import DeleteModeButton from "./DeleteModeButton";
 import SongItem from "./SongItem";
 
-const SongListScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, "SongList"> }> =
+const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
   ({ navigation }) => {
     const [list, setList] = useState<Array<SongListSongModel>>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
