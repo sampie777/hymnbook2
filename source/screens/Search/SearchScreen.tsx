@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
-import { routes, ParamList } from "../../navigation";
+import { routes, ParamList, VersePickerMethod } from "../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { getFontScale } from "react-native-device-info";
 import Settings from "../../settings";
 import Db from "../../scripts/db/db";
-import { Song } from "../../models/Songs";
+import { Song, Verse } from "../../models/Songs";
 import { SongSchema } from "../../models/SongsSchema";
 import { isPortraitMode } from "../../scripts/utils";
 import { isTitleSimilarToOtherSongs } from "../../scripts/songs/utils";
@@ -115,6 +115,15 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
       navigation.navigate(routes.Song, { id: song.id });
     };
 
+    const onSearchResultItemLongPress = (song: Song) => {
+      navigation.navigate(routes.VersePicker, {
+        verses: song.verses?.map(it => Verse.toObject(it)),
+        selectedVerses: [],
+        songId: song.id,
+        method: VersePickerMethod.ShowSong
+      });
+    };
+
     const onDocumentPress = () => {
       if (!Settings.enableDocumentsFeatureSwitch) {
         return;
@@ -132,6 +141,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
       <SearchResultItem navigation={navigation}
                         song={item}
                         onPress={onSearchResultItemPress}
+                        onLongPress={onSearchResultItemLongPress}
                         onAddedToSongList={onAddedToSongList}
                         showSongBundle={isTitleSimilarToOtherSongs(item, results)} />
     );

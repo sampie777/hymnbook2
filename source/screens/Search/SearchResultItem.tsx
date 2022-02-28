@@ -1,22 +1,22 @@
 import React, { useRef, useState } from "react";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList, routes } from "../../navigation";
+import { ParamList, routes, VersePickerMethod } from "../../navigation";
 import { Song, Verse } from "../../models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../scripts/songs/songList";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { rollbar } from "../../scripts/rollbar";
 
 export const SearchResultItem: React.FC<{
   navigation: BottomTabNavigationProp<ParamList>,
   song: Song,
   onPress: (song: Song) => void,
+  onLongPress?: (song: Song) => void,
   onAddedToSongList?: () => void,
   showSongBundle?: boolean,
 }> =
-  ({ navigation, song, onPress, onAddedToSongList, showSongBundle }) => {
+  ({ navigation, song, onPress, onLongPress, onAddedToSongList, showSongBundle }) => {
     const [songAddedToSongList, setSongAddedToSongList] = useState(false);
     const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
     const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>();
@@ -48,28 +48,16 @@ export const SearchResultItem: React.FC<{
     };
 
     const selectVersesAndAddToSongList = () => {
-      let addedSongListSongModel;
-      try {
-        addedSongListSongModel = SongList.addSong(song);
-      } catch (e: any) {
-        rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${e}`, e);
-        alert("Could not add song to songlist: " + e);
-        return;
-      }
-
-      if (addedSongListSongModel === undefined) {
-        return;
-      }
-
       navigation.navigate(routes.VersePicker, {
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
-        songListIndex: addedSongListSongModel?.index,
-        navigateToOnSubmit: routes.SongSearch
+        songId: song.id,
+        method: VersePickerMethod.AddToSongListAndShowSearch
       });
     };
 
     return <TouchableOpacity onPress={() => onPress(song)}
+                             onLongPress={() => onLongPress?.(song)}
                              style={styles.container}>
       <View style={styles.infoContainer}>
         <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
