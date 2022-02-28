@@ -41,18 +41,20 @@ export default class SongList {
     });
   }
 
-  static addSong(song: Song) {
+  static addSong(song: Song): SongListSongModel | undefined {
     this.createSongListIfNotExists("Default");
     const songList = this.getFirstSongList();
-    if (songList === undefined) return;
+    if (songList === undefined) return undefined;
 
     const index = songList.songs.length;
 
+    const songListSongModel = new SongListSongModel(index, song);
     Db.songs.realm().write(() => {
-      songList.songs.push(new SongListSongModel(index, song));
+      songList.songs.push(songListSongModel);
     });
 
     this.cleanUpSongListFromNullsAndCorrectIndices(songList);
+    return songListSongModel;
   }
 
   static deleteSongAtIndex(index: number) {

@@ -129,7 +129,8 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
     };
 
     const renderSearchResultItem = ({ item }: { item: Song }) => (
-      <SearchResultItem song={item}
+      <SearchResultItem navigation={navigation}
+                        song={item}
                         onPress={onSearchResultItemPress}
                         onAddedToSongList={onAddedToSongList}
                         showSongBundle={isTitleSimilarToOtherSongs(item, results)} />
