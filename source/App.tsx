@@ -49,7 +49,7 @@ const RootNavigation = () => {
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
                             }}>
-    <RootNav.Screen name={"Home"} component={HomeNavigation}
+    <RootNav.Screen name={routes.Home} component={HomeNavigation}
                     options={{ headerShown: false }} />
     <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
     <RootNav.Screen name={routes.About} component={AboutScreen} />

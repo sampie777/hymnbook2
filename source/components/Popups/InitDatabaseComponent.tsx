@@ -4,7 +4,7 @@ import { ParamList, routes } from "../../navigation";
 import ConfirmationModal from "../ConfirmationModal";
 
 const InitDatabaseComponent: React.FC<{
-  navigation: BottomTabNavigationProp<ParamList, keyof ParamList>,
+  navigation: BottomTabNavigationProp<ParamList>,
   onCompleted?: () => void
 }> = ({
         navigation,
