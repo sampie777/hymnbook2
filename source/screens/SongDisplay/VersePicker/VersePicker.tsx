@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { StyleSheet, View, Text, Dimensions, ScaledSize } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
-import { routes, ParamList } from "../../../navigation";
-import { Verse, VerseProps } from "../../../models/Songs";
-import HeaderIconButton from "../../../components/HeaderIconButton";
+import Db from "../../../scripts/db/db";
+import { SongSchema } from "../../../models/SongsSchema";
+import { rollbar } from "../../../scripts/rollbar";
+import { routes, ParamList, VersePickerMethod } from "../../../navigation";
+import { Song, Verse, VerseProps } from "../../../models/Songs";
 import SongList from "../../../scripts/songs/songList";
 import {
   clearOrSelectAll,
@@ -14,6 +12,11 @@ import {
   isVerseInList,
   toggleVerseInList
 } from "../../../scripts/songs/versePicker";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { StyleSheet, View, Text, Dimensions, ScaledSize } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import HeaderIconButton from "../../../components/HeaderIconButton";
+import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, "VersePicker"> {
 }
@@ -72,22 +75,67 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       versesToSubmit = [];
     }
 
-    if (songListIndex !== undefined) {
-      SongList.saveSelectedVersesForSong(songListIndex, versesToSubmit);
+    switch (route.params.method) {
+      case VersePickerMethod.UpdatePossibleSongListAndGoBackToSong:
+        updatePossibleSongListAndGoBackToSong(versesToSubmit);
+        break;
+      case VersePickerMethod.ShowSong:
+        showSong(versesToSubmit);
+        break;
+      case VersePickerMethod.AddToSongListAndShowSearch:
+        addToSongListAndShowSearch(versesToSubmit);
+        break;
     }
+  };
 
-    if (route.params.navigateToOnSubmit !== undefined) {
-      navigation.navigate(route.params.navigateToOnSubmit);
-      return;
+  const updatePossibleSongListAndGoBackToSong = (verses: Verse[]) => {
+    if (songListIndex !== undefined) {
+      SongList.saveSelectedVersesForSong(songListIndex, verses);
     }
 
     navigation.navigate({
       name: routes.Song,
       params: {
-        selectedVerses: versesToSubmit
+        selectedVerses: verses
       },
       merge: true // Navigate 'back'
     });
+  }
+
+  const showSong = (verses: Verse[]) => {
+    navigation.replace(routes.Song, {
+      id: route.params.songId,
+      selectedVerses: verses
+    });
+  }
+
+  const addToSongListAndShowSearch = (verses: Verse[]) => {
+    if (route.params.songId === undefined) {
+      return;
+    }
+
+    const song = Db.songs.realm()
+      .objectForPrimaryKey(SongSchema.name, route.params.songId) as (Song & Realm.Object | undefined);
+
+    if (song === undefined) {
+      return;
+    }
+
+    let addedSongListSongModel;
+    try {
+      addedSongListSongModel = SongList.addSong(song);
+    } catch (e: any) {
+      rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${e}`, e);
+      alert("Could not add song to songlist: " + e);
+      return;
+    }
+    if (addedSongListSongModel === undefined) {
+      return;
+    }
+
+    SongList.saveSelectedVersesForSong(addedSongListSongModel.index, verses);
+
+    navigation.navigate(routes.SongSearch);
   };
 
   return (<View style={styles.container}>

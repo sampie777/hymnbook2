@@ -1,5 +1,10 @@
 import { Verse, VerseProps } from "./models/Songs";
 
+export enum VersePickerMethod {
+  UpdatePossibleSongListAndGoBackToSong,
+  ShowSong,
+  AddToSongListAndShowSearch,
+}
 
 export type ParamList = {
   Home: undefined,
@@ -19,8 +24,9 @@ export type ParamList = {
   VersePicker: {
     verses: Verse[],
     selectedVerses: VerseProps[],
-    songListIndex?: number,
-    navigateToOnSubmit?: keyof ParamList
+    method: VersePickerMethod
+    songListIndex?: number, // Not used when method=ShowSong|AddToSongListAndShowSearch, otherwise still optional
+    songId?: number;  // Required when method=ShowSong|AddToSongListAndShowSearch
   },
 
   DocumentImport: undefined,
@@ -45,5 +51,5 @@ export const routes = {
 
   DocumentImport: "Document databases" as keyof ParamList,
   DocumentSearch: "Documents" as keyof ParamList,
-  Document: "Document" as keyof ParamList,
+  Document: "Document" as keyof ParamList
 };

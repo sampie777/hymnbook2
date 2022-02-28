@@ -13,7 +13,7 @@ import Animated, { Easing } from "react-native-reanimated";
 import { rollbar } from "../../scripts/rollbar";
 import Db from "../../scripts/db/db";
 import Settings from "../../settings";
-import { ParamList, routes } from "../../navigation";
+import { ParamList, routes, VersePickerMethod } from "../../navigation";
 import { SongSchema } from "../../models/SongsSchema";
 import { Song, Verse } from "../../models/Songs";
 import { generateSongTitle } from "../../scripts/songs/utils";
@@ -70,7 +70,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
 
     // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-    setTimeout(() => scrollToTop(), 150);
+    setTimeout(() => scrollToTop(), 250);
   }, [song?.id]);
 
   useEffect(() => {
@@ -153,7 +153,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.navigate(routes.VersePicker, {
       verses: verseParams,
       selectedVerses: route.params.selectedVerses || [],
-      songListIndex: route.params.songListIndex
+      songListIndex: route.params.songListIndex,
+      method: VersePickerMethod.UpdatePossibleSongListAndGoBackToSong,
     });
   };
 
