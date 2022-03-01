@@ -25,17 +25,19 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, scale }) => {
         <G scale={scale} y={AbcConfig.topSpacing * scale}>
           <Lines />
 
-          <G x={screenWidth / scale - paddingRight}>
-            <Line x1={0} y1={0}
-                  x2={0} y2={4 * AbcConfig.lineSpacing}
-                  stroke={styles.bar.color as Color}
-                  strokeWidth={1.5} />
+          {screenWidth === 0 ? undefined :
+            <G x={screenWidth / scale - paddingRight}>
+              <Line x1={0} y1={0}
+                    x2={0} y2={4 * AbcConfig.lineSpacing}
+                    stroke={styles.bar.color as Color}
+                    strokeWidth={1.5} />
 
-            <Line x1={8} y1={0}
-                  x2={8} y2={4 * AbcConfig.lineSpacing}
-                  stroke={styles.bar.color as Color}
-                  strokeWidth={8} />
-          </G>
+              <Line x1={8} y1={0}
+                    x2={8} y2={4 * AbcConfig.lineSpacing}
+                    stroke={styles.bar.color as Color}
+                    strokeWidth={8} />
+            </G>
+          }
         </G>
       </Svg>
     </View>;

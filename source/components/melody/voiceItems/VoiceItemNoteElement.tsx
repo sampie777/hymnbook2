@@ -39,15 +39,17 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale }) => {
       <G scale={scale} y={AbcConfig.topSpacing * scale}>
         <Lines />
 
-        <G x={screenWidth / 2 / scale}>
-          {note.pitches?.map((it, index) =>
-            <Note key={index + "_" + it.pitch}
-                  pitch={it}
-                  note={note} />
-          )}
-          {note.rest === undefined ? undefined :
-            <Rest note={note} />}
-        </G>
+        {screenWidth === 0 ? undefined :
+          <G x={screenWidth / 2 / scale}>
+            {note.pitches?.map((it, index) =>
+              <Note key={index + "_" + it.pitch}
+                    pitch={it}
+                    note={note} />
+            )}
+            {note.rest === undefined ? undefined :
+              <Rest note={note} />}
+          </G>
+        }
       </G>
     </Svg>
     <Text style={[styles.text, animatedStyle.text]}>{lyrics}</Text>
