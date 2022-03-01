@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { AbcConfig } from "../voiceItems/config";
 import { AbcClef } from "../../../scripts/songs/abc/abcjsTypes";
 import { View } from "react-native";
@@ -12,12 +12,10 @@ interface Props {
 }
 
 const Clef: React.FC<Props> = ({ scale, clef }) => {
-  const [screenWidth, setScreenWidth] = useState(0);
   const styles = createStyles(useTheme());
   const width = 34;
 
-  return <View style={[styles.container, { minWidth: width * scale }]}
-               onLayout={(e) => setScreenWidth(e.nativeEvent.layout.width)}>
+  return <View style={[styles.container, { minWidth: width * scale }]}>
     <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
       <G scale={scale} y={AbcConfig.topSpacing * scale}>
         <Lines />
@@ -61,7 +59,7 @@ const Clef: React.FC<Props> = ({ scale, clef }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notesColor as Color,
+  color: colors.notesColor as Color
 });
 
 export default Clef;
