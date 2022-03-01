@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { AbcConfig } from "../voiceItems/config";
 import { KeySignature } from "../../../scripts/songs/abc/abcjsTypes";
 import { View } from "react-native";
@@ -16,14 +16,12 @@ const Key: React.FC<Props> = ({ scale, keySignature }) => {
     return null;
   }
 
-  const [screenWidth, setScreenWidth] = useState(0);
   const styles = createStyles(useTheme());
   const charWidth = 10;
   const width = keySignature.accidentals.length * charWidth + charWidth / 2;
 
   let xOffset = 0;
-  return <View style={[styles.container, { minWidth: width * scale }]}
-               onLayout={(e) => setScreenWidth(e.nativeEvent.layout.width)}>
+  return <View style={[styles.container, { minWidth: width * scale }]}>
     <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
       <G scale={scale} y={AbcConfig.topSpacing * scale}>
         <Lines />
@@ -54,7 +52,7 @@ const Key: React.FC<Props> = ({ scale, keySignature }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notesColor as Color,
+  color: colors.notesColor as Color
 });
 
 export default Key;
