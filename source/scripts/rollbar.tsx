@@ -1,8 +1,9 @@
 import { Client, Configuration } from "rollbar-react-native";
 import { getUniqueId, getVersion } from "react-native-device-info";
+import Config from "react-native-config";
 
 const configuration = new Configuration(
-  "abf5a622224c49b9956d9daae28affbb",
+  Config.ROLLBAR_API_KEY,
   {
     captureUncaught: true,
     captureUnhandledRejections: true,

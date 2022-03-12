@@ -16,6 +16,8 @@ target 'hymnbook2' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
   target 'hymnbook2Tests' do
     inherit! :complete
     # Pods for testing

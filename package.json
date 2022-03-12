@@ -17,6 +17,7 @@
     "abcjs": "git+https://github.com/MatthewDorner/abcjs.git",
     "react": "17.0.2",
     "react-native": "0.63.4",
+    "react-native-config": "^1.4.5",
     "react-native-device-info": "^8.3.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-get-random-values": "^1.7.0",
