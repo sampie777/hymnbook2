@@ -51,7 +51,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    RollbarReactNative.init(this, "POST_CLIENT_ITEM_ACCESS_TOKEN", "production");
+    RollbarReactNative.init(this, "abf5a622224c49b9956d9daae28affbb", "production");
   }
 
   /**
