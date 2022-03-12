@@ -64,18 +64,17 @@ No idea.
 
 ### Production build
 
-Create keystore in `android/`.
+Create keystore in `<projectroot>/android/app/`.
 ```bash
-keytool -genkey -v -storetype PKCS12 -keystore hymnbook.keystore -alias hymnbookKey -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -storetype PKCS12 -keystore bloomablelogistics.keystore -alias bloomablelogistics -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 Make sure keystore is correctly defined in:
-`android/gradle.properties`.
+`~/gradle/gradle.properties`.
 
 ## To do
 
 - Match Android font families with IOS families.
-- Fix default sorting mechanism for song titles (102 is displayed before 2 but should be the other way around)
 - Add Hermes (https://reactnative.dev/docs/hermes) for decreased binary size and increased performance
 
 ### Known issues

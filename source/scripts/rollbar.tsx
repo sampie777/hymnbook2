@@ -1,5 +1,5 @@
 import { Client, Configuration } from "rollbar-react-native";
-import { getVersion } from "react-native-device-info";
+import { getUniqueId, getVersion } from "react-native-device-info";
 
 const configuration = new Configuration(
   "abf5a622224c49b9956d9daae28affbb",
@@ -17,7 +17,7 @@ const configuration = new Configuration(
         }
       },
       person: {
-        id: null,
+        id: getUniqueId(),
       }
     },
   });
