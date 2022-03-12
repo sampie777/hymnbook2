@@ -77,7 +77,7 @@ export function openLink(url: string): Promise<any> {
       }
     })
     .catch(error => {
-      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Can't open Url '")) {
+      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Can't open URL '")) {
         rollbar.info(error);
       } else {
         rollbar.warning(error);
