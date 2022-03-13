@@ -28,7 +28,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
   const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
-  const [requestDeleteAll, setRequestDeleteAll] = useState(false);
   const [filterLanguage, setFilterLanguage] = useState("");
   const styles = createStyles(useTheme());
 
@@ -70,7 +69,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const isPopupOpen = () => requestDeleteAll || requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
+  const isPopupOpen = () => requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
 
   const onDocumentGroupPress = (group: ServerDocumentGroup) => {
     if (isLoading || isPopupOpen()) {
@@ -93,14 +92,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     }
 
     setRequestDeleteForGroup(group);
-  };
-
-  const onDeleteAllPress = () => {
-    if (isLoading || isPopupOpen()) {
-      return;
-    }
-
-    setRequestDeleteAll(true);
   };
 
   const onConfirmDownloadDocumentGroup = () => {
@@ -199,22 +190,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     return serverDate > localDate;
   };
 
-  const onConfirmDeleteAll = () => {
-    setRequestDeleteAll(false);
-    setIsLoading(true);
-    setLocalGroups([]);
-
-    DocumentProcessor.deleteDocumentDatabase()
-      .then(result => {
-        result.alert();
-        result.throwIfException();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        loadLocalDocumentGroups();
-      });
-  };
-
   const getAllLanguagesFromGroups = (groups: Array<ServerDocumentGroup>) => {
     const languages = DocumentProcessor.getAllLanguagesFromDocumentGroups(groups);
 
@@ -247,11 +222,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
                          onClose={() => setRequestDeleteForGroup(undefined)}
                          onConfirm={onConfirmDeleteDocumentGroup}
                          message={`Delete all documents for ${requestDeleteForGroup?.name}?`} />
-
-      <ConfirmationModal isOpen={requestDeleteAll}
-                         onClose={() => setRequestDeleteAll(false)}
-                         onConfirm={onConfirmDeleteAll}
-                         message={`Delete ALL documents?`} />
 
       <Text style={styles.informationText}>Select documents to download or delete:</Text>
 
@@ -288,11 +258,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
           </Text>
         }
       </ScrollView>
-
-      <TouchableHighlight style={styles.deleteAllButton}
-                          onPress={onDeleteAllPress}>
-        <Text style={styles.deleteAllButtonText}>Delete all</Text>
-      </TouchableHighlight>
     </View>
   );
 };
@@ -321,29 +286,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 20,
     textAlign: "center",
     color: colors.text
-  },
-
-  deleteAllButton: {
-    padding: 10,
-    margin: 25,
-    marginBottom: 8,
-    borderRadius: 8,
-    alignItems: "center",
-    backgroundColor: "#e00",
-    borderColor: "#b00",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-
-    elevation: 3
-  },
-  deleteAllButtonText: {
-    color: "#fff",
-    fontSize: 16
   }
 });
