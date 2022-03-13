@@ -28,7 +28,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
-  const [requestDeleteAll, setRequestDeleteAll] = useState(false);
   const [filterLanguage, setFilterLanguage] = useState("");
   const styles = createStyles(useTheme());
 
@@ -70,7 +69,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const isPopupOpen = () => requestDeleteAll || requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
+  const isPopupOpen = () => requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
 
   const onSongBundlePress = (bundle: ServerSongBundle) => {
     if (isLoading || isPopupOpen()) {
@@ -95,13 +94,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     setRequestDeleteForBundle(bundle);
   };
 
-  const onDeleteAllPress = () => {
-    if (isLoading || isPopupOpen()) {
-      return;
-    }
-
-    setRequestDeleteAll(true);
-  };
 
   const onConfirmDownloadSongBundle = () => {
     const songBundle = requestDownloadForBundle;
@@ -199,22 +191,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     return serverDate > localDate;
   };
 
-  const onConfirmDeleteAll = () => {
-    setRequestDeleteAll(false);
-    setIsLoading(true);
-    setLocalBundles([]);
-
-    SongProcessor.deleteSongDatabase()
-      .then(result => {
-        result.alert();
-        result.throwIfException();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        loadLocalSongBundles();
-      });
-  };
-
   const getAllLanguagesFromBundles = (bundles: Array<ServerSongBundle>) => {
     const languages = SongProcessor.getAllLanguagesFromBundles(bundles);
 
@@ -247,11 +223,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
                          onClose={() => setRequestDeleteForBundle(undefined)}
                          onConfirm={onConfirmDeleteSongBundle}
                          message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
-
-      <ConfirmationModal isOpen={requestDeleteAll}
-                         onClose={() => setRequestDeleteAll(false)}
-                         onConfirm={onConfirmDeleteAll}
-                         message={`Delete ALL songs?`} />
 
       <Text style={styles.informationText}>Select a bundle to download or delete:</Text>
 
@@ -288,11 +259,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
           </Text>
         }
       </ScrollView>
-
-      <TouchableHighlight style={styles.deleteAllButton}
-                          onPress={onDeleteAllPress}>
-        <Text style={styles.deleteAllButtonText}>Delete all</Text>
-      </TouchableHighlight>
     </View>
   );
 };
@@ -322,28 +288,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     textAlign: "center",
     color: colors.text
   },
-
-  deleteAllButton: {
-    padding: 10,
-    margin: 25,
-    marginBottom: 8,
-    borderRadius: 8,
-    alignItems: "center",
-    backgroundColor: "#e00",
-    borderColor: "#b00",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-
-    elevation: 3
-  },
-  deleteAllButtonText: {
-    color: "#fff",
-    fontSize: 16
-  }
 });
