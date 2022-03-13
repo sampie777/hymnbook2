@@ -6,6 +6,12 @@ Play store: [https://play.google.com/store/apps/details?id=nl.sajansen.hymnbook2
 
 ## Develop
 
+Create a file in the project root called `.env` and add these content and values:
+```
+ROLLBAR_API_KEY=
+DEVELOPER_EMAIL=
+```
+
 ### Environment
 
 Start development server:

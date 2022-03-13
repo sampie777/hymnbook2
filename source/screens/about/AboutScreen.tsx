@@ -1,12 +1,14 @@
 import React from "react";
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { displayName, homepage } from "../../../app.json";
+import Config from "react-native-config";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { getVersion } from "react-native-device-info";
 import UrlLink from "../../components/UrlLink";
 import { routes } from "../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
 
 const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({ navigation }) => {
@@ -69,12 +71,25 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
         <Text style={[styles.contentText, styles.footerText]}>
           Made with passion by S. Jansen
         </Text>
-        <UrlLink url={homepage}>
-          <Text style={[styles.contentText, styles.webpageLink]}>{homepage}</Text>
-        </UrlLink>
+
+        <View style={[styles.row, styles.contactLinks]}>
+          <UrlLink url={homepage}>
+            <View style={styles.row}>
+              <FontAwesome5Icon name={"globe"} style={styles.webpageLink} />
+              <Text style={styles.webpageLink}>My projects</Text>
+            </View>
+          </UrlLink>
+
+          <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}`}>
+            <View style={styles.row}>
+              <FontAwesome5Icon name={"envelope"} style={styles.webpageLink} />
+              <Text style={styles.webpageLink}>Mail me</Text>
+            </View>
+          </UrlLink>
+        </View>
 
         <TouchableOpacity onPress={() => navigation.navigate(routes.PrivacyPolicy)}>
-          <Text style={[styles.contentText, styles.webpageLink]}>
+          <Text style={styles.webpageLink}>
             Privacy Policy
           </Text>
         </TouchableOpacity>
@@ -89,6 +104,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center"
   },
 
   headerContainer: {
@@ -198,6 +218,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   webpageLink: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.url
+    color: colors.url,
+    fontFamily: "sans-serif-light",
+    lineHeight: 25,
+    paddingHorizontal: 3,
+    paddingVertical: 10
+  },
+  contactLinks: {
+    marginBottom: 20,
+    justifyContent: "space-evenly"
   }
 });
