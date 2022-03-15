@@ -99,7 +99,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
       {!displayMelody ? undefined :
         <MelodyView scale={Settings.songScale}
-                    abc={ABC.generateAbcForVerse(verse, abcBackupMelody)} />
+                    abc={ABC.generateAbcForVerse(verse, abcBackupMelody)}
+                    animatedScale={scale} />
       }
     </Animated.View>
   );

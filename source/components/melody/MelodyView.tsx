@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import Animated from "react-native-reanimated";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
@@ -10,14 +11,15 @@ import { AbcConfig } from "./voiceItems/config";
 interface Props {
   scale: number;
   abc: string;
+  animatedScale: Animated.Value<number>;
 }
 
-const MelodyView: React.FC<Props> = ({ scale, abc }) => {
+const MelodyView: React.FC<Props> = ({ scale, abc, animatedScale }) => {
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
   useEffect(() => {
     setAbcSong(ABC.parse(abc));
-  }, [abc])
+  }, [abc]);
 
   if (abcSong === undefined) {
     return null;
@@ -29,7 +31,10 @@ const MelodyView: React.FC<Props> = ({ scale, abc }) => {
     <Key scale={totalScale} keySignature={abcSong.keySignature} />
 
     {abcSong.melody.map((it, index) =>
-      <VoiceItemElement key={index} item={it} scale={totalScale} />)}
+      <VoiceItemElement key={index}
+                        item={it}
+                        scale={totalScale}
+                        animatedScale={animatedScale} />)}
   </View>;
 };
 

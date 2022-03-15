@@ -198,6 +198,10 @@ const SettingsScreen: React.FC = () => {
                                       Alert.alert("Melody enabled", "You should probably update your song database to download the melodies.");
                                     }
                                   })} />
+          <SettingSwitchComponent title={"Animate melody zoom"}
+                                  description={"When using pinch-to-zoom, melody text will also scale accordingly. This effect might still be glitchy."}
+                                  keyName={"animateMelodyScale"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Other"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
