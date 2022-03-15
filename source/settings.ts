@@ -23,6 +23,7 @@ class SettingsClass extends SettingsBaseClass {
   coloredVerseTitles = Math.random() > 0.5;
   highlightSelectedVerses = true;
   showMelody = false;
+  animateMelodyScale = false;
 
   // Documents
   enableDocumentsFeatureSwitch = false;
