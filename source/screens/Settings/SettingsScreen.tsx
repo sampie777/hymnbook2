@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import Settings from "../../settings";
 import { ServerAuth } from "../../scripts/server/auth";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -191,7 +191,13 @@ const SettingsScreen: React.FC = () => {
           <SettingSwitchComponent title={"Show melody (experimental)"}
                                   description={"Show song melody above lyrics. This is a work in progress and might not function as it should."}
                                   keyName={"showMelody"}
-                                  isVisible={showAdvancedSettings} />
+                                  isVisible={showAdvancedSettings}
+                                  onPress={((setValue, key, newValue) => {
+                                    setValue(newValue);
+                                    if (newValue) {
+                                      Alert.alert("Melody enabled", "You should probably update your song database to download the melodies.");
+                                    }
+                                  })} />
 
           <Header title={"Other"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
@@ -199,7 +205,7 @@ const SettingsScreen: React.FC = () => {
           {!Settings.enableDocumentsFeatureSwitch ? undefined :
             <SettingSwitchComponent title={"Multi keyword search for documents"}
                                     description={"When enabled, each keyword will be matched individually instead of " +
-                                    "the whole search phrase. This will yield more results."}
+                                      "the whole search phrase. This will yield more results."}
                                     keyName={"documentsMultiKeywordSearch"}
                                     isVisible={showAdvancedSettings} />
           }
