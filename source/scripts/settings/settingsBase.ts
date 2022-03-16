@@ -64,8 +64,6 @@ class SettingsProvider {
 export class SettingsBaseClass {
 
   load() {
-    console.log("Loading settings");
-
     Object.entries(this).forEach(([key, value]) => {
       const dbValue = this.loadValueFor(key, value);
       if (dbValue !== undefined) {
@@ -89,7 +87,6 @@ export class SettingsBaseClass {
   }
 
   store() {
-    console.log("Storing settings");
     Object.entries(this).forEach(([key, value]) => {
       switch (typeof value) {
         case "string":

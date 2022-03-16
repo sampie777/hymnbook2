@@ -80,7 +80,7 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
             </View>
           </UrlLink>
 
-          <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}`}>
+          <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`}>
             <View style={styles.row}>
               <FontAwesome5Icon name={"envelope"} style={styles.webpageLink} />
               <Text style={styles.webpageLink}>Mail me</Text>
