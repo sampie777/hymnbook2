@@ -70,7 +70,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
 
     // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-    setTimeout(() => scrollToTop(), 250);
+    setTimeout(() => scrollToTop(), 500);
   }, [song?.id]);
 
   useEffect(() => {
