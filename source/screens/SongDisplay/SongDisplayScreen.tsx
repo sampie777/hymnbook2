@@ -211,12 +211,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         offset: 0,
         animated: Settings.animateScrolling
       });
-    } else if (route.params.selectedVerses !== undefined) {
-      flatListComponentRef.current?.scrollToIndex({
-        index: song?.verses.findIndex(it => it.id === route.params.selectedVerses!![0].id) || 0,
-        animated: Settings.animateScrolling
-      });
+      return;
     }
+
+    const scrollIndex = song.verses.findIndex(it => it.id === route.params.selectedVerses!![0].id);
+    if (scrollIndex == null || scrollIndex < 0) {
+      return;
+    }
+
+    flatListComponentRef.current?.scrollToIndex({
+      index: scrollIndex || 0,
+      animated: Settings.animateScrolling
+    });
   };
 
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
