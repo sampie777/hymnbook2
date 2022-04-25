@@ -129,6 +129,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
       return <View key={index}>
         {defaultRenderer(node.children, node)}
       </View>;
+    } else if (node.name === "span") {
+      return defaultRenderer(node.children, node);
     }
     return undefined;
   };

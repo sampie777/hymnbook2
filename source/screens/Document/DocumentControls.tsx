@@ -20,9 +20,14 @@ const DocumentControls: React.FC<Props> =
    }) => {
     const styles = createStyles(useTheme());
 
-    const getDocumentAtIndex = (index: number) => {
+    const getPreviousDocument = () => {
+      if (document === undefined || document.index <= 0) {
+        return undefined;
+      }
+
       const documents = Db.documents.realm().objects<Document>(DocumentSchema.name)
-        .filtered(`index = ${index} AND _parent.id = ${Document.getParent(document)?.id || 0}`);
+        .filtered(`index < ${document.index} AND _parent.id = ${Document.getParent(document)?.id || 0}`)
+        .sorted("index", true);
 
       if (documents === undefined || documents === null || documents.length === 0) {
         return undefined;
@@ -31,20 +36,20 @@ const DocumentControls: React.FC<Props> =
       return documents[0];
     };
 
-    const getPreviousDocument = () => {
-      if (document === undefined || document.index <= 0) {
-        return undefined;
-      }
-
-      return getDocumentAtIndex(document.index - 1);
-    };
-
     const getNextDocument = () => {
       if (document === undefined || document.index < 0) {
         return undefined;
       }
 
-      return getDocumentAtIndex(document.index + 1);
+      const documents = Db.documents.realm().objects<Document>(DocumentSchema.name)
+        .filtered(`index > ${document.index} AND _parent.id = ${Document.getParent(document)?.id || 0}`)
+        .sorted("index");
+
+      if (documents === undefined || documents === null || documents.length === 0) {
+        return undefined;
+      }
+
+      return documents[0];
     };
 
     const previousDocument = getPreviousDocument();
