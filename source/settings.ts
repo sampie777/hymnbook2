@@ -8,8 +8,6 @@ class SettingsClass extends SettingsBaseClass {
   theme = "";
 
   // Song search
-  maxSearchInputLength = 3;
-  maxSearchResultsLength = 40;
   clearSearchAfterAddedToSongList = true;
 
   // Songs

@@ -15,6 +15,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import PopupsComponent from "../../components/Popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
+import config from "../../config";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
@@ -26,8 +27,8 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
 
     const theme = useTheme();
     const styles = createStyles(theme);
-    const maxInputLength = Settings.maxSearchInputLength;
-    const maxResultsLength = Settings.maxSearchResultsLength;
+    const maxInputLength = config.maxSearchInputLength;
+    const maxResultsLength = config.maxSearchResultsLength;
 
     useEffect(() => {
       onLaunch();
