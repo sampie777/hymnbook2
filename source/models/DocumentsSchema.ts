@@ -28,13 +28,12 @@ export const DocumentGroupSchema: Realm.ObjectSchema = {
     size: "int",
     createdAt: "date",
     modifiedAt: "date",
-    isRoot: "bool"
-    // parent: {
-    //     type: "linkingObjects?",
-    //     objectType: "DocumentGroup",    // DocumentGroupSchema.name
-    //     property: "groups",
-    //     default: null,
-    // }
+    isRoot: "bool",
+    _parent: {
+      type: "linkingObjects",
+      objectType: "DocumentGroup",    // DocumentGroupSchema.name
+      property: "groups"
+    }
   },
   primaryKey: "id"
 };

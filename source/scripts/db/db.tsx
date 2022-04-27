@@ -22,7 +22,7 @@ const Db = {
     schemas: [
       DocumentSchema, DocumentGroupSchema
     ],
-    schemaVersion: 1
+    schemaVersion: 2
   }),
   settings: new DatabaseProvider({
     path: "hymnbook_settings",

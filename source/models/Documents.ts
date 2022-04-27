@@ -54,6 +54,7 @@ export class DocumentGroup {
   modifiedAt: Date;
   size: number;
   isRoot: boolean;
+  _parent?: Array<DocumentGroup>;
 
   constructor(
     name: string,
@@ -64,7 +65,8 @@ export class DocumentGroup {
     modifiedAt: Date,
     size: number = 0,
     isRoot: boolean = false,
-    id = Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema)
+    id = Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema),
+    parent?: DocumentGroup
   ) {
     this.id = id;
     this.name = name;
@@ -75,5 +77,18 @@ export class DocumentGroup {
     this.modifiedAt = modifiedAt;
     this.size = size || 0;
     this.isRoot = isRoot;
+    this._parent = parent === undefined ? [] : [parent];
+  }
+
+  static getParent(group?: DocumentGroup): DocumentGroup | undefined {
+    if (group === undefined) {
+      return undefined;
+    }
+
+    if (group._parent === undefined || group._parent.length === 0) {
+      return undefined;
+    }
+
+    return group._parent[0];
   }
 }
