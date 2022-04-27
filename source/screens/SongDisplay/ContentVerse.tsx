@@ -67,11 +67,19 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
+  const isMelodyEnabled = () => Settings.showMelody && showMelody;
+
+  const isMelodyAvailable = () => (verse.abcMelody || abcBackupMelody) && verse.abcLyrics;
+
+  const shouldMelodyBeShownForVerse = () =>
+    Settings.showMelodyForAllVerses ||
+    (selectedVerses.length > 0 && selectedVerses[0].id == verse.id) ||  // Show melody because it's first selected verse
+    (selectedVerses.length === 0 && verse.index === 0); // Show melody because it's first verse of song
+
   const displayMelody = (
-    Settings.showMelody &&
-    showMelody &&
-    (verse.abcMelody || abcBackupMelody) &&
-    verse.abcLyrics
+    isMelodyEnabled() &&
+    isMelodyAvailable() &&
+    shouldMelodyBeShownForVerse()
   );
 
   // Shorten name
