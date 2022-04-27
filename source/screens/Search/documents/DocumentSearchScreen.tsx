@@ -87,6 +87,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
 
   const onGroupPress = (group: DocumentGroup) => {
     setGroup(group);
+    setSearchText("");
   };
 
   const onDocumentPress = (document: Document) => {
@@ -103,6 +104,20 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
     }
 
     return group.groups;
+  };
+
+  const groupsForSearch = () => {
+    if (group === undefined) {
+      return DocumentSearch.searchForGroups(groups(), searchText);
+    }
+    return DocumentSearch.searchForGroups([group], searchText);
+  };
+
+  const groupsWithSearchResult = (): Array<DocumentGroup> => {
+    if (searchText.length > 0) {
+      return groupsForSearch();
+    }
+    return groups();
   };
 
   const items = (): Array<Document> => {
@@ -145,13 +160,13 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
     {rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
     <ScrollView>
-      {searchText.length > 0 ? undefined :
-        groups().map(it => it as DocumentGroup)
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map(it => <DocumentGroupItem
-            key={it.id}
-            group={it}
-            onPress={onGroupPress} />)}
+      {groupsWithSearchResult().map(it => it as DocumentGroup)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(it => <DocumentGroupItem
+          key={it.id}
+          group={it}
+          searchText={searchText}
+          onPress={onGroupPress} />)}
 
       {items().map(it => it as Document)
         .sort((a, b) => a.name.localeCompare(b.name))

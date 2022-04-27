@@ -40,15 +40,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: "column",
     alignItems: "flex-start",
-    paddingVertical: 8,
-  },
-
-  parentName: {
-    paddingHorizontal: 15,
-    fontSize: 14,
-    color: colors.textLighter,
-    fontFamily: "sans-serif-light",
-    fontStyle: "italic"
+    paddingVertical: 8
   },
 
   itemName: {
@@ -61,5 +53,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   itemExtraPadding: {
     paddingTop: 5,
     paddingBottom: 7
+  },
+
+  parentName: {
+    paddingHorizontal: 15,
+    fontSize: 14,
+    color: colors.textLighter,
+    fontFamily: "sans-serif-light",
+    fontStyle: "italic"
   }
 });

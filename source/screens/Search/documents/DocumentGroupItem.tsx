@@ -6,16 +6,30 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 
 
 interface ScreenProps {
-  group: DocumentGroup
-  onPress?: (group: DocumentGroup) => void,
+  group: DocumentGroup;
+  onPress?: (group: DocumentGroup) => void;
+  searchText?: string;
 }
 
-const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress }) => {
+const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress, searchText }) => {
   const styles = createStyles(useTheme());
 
   return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>
-    <Icon name={"folder-open"} style={styles.searchListItemIcon} />
-    <Text style={styles.itemName}>{group.name}</Text>
+    <Icon name={"folder"} style={styles.searchListItemIcon} />
+    <View style={styles.nameContainer}>
+      <Text style={[
+        styles.itemName,
+        (!(searchText === undefined || searchText.length === 0) ? {} : styles.itemExtraPadding)
+      ]}>
+        {group.name}
+      </Text>
+
+      {searchText === undefined || searchText.length === 0 ? undefined :
+        <Text style={styles.parentName}>
+          {DocumentGroup.getParent(group)?.name}
+        </Text>
+      }
+    </View>
 
     <View style={styles.infoContainer}>
       <Text style={styles.infoText}>
@@ -36,12 +50,28 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
+
+  nameContainer: {
+    paddingVertical: 8,
+    flex: 1
+  },
   itemName: {
-    padding: 15,
+    paddingHorizontal: 15,
     fontSize: 20,
-    flex: 1,
     color: colors.text
   },
+  itemExtraPadding: {
+    paddingTop: 5,
+    paddingBottom: 7
+  },
+  parentName: {
+    paddingHorizontal: 15,
+    fontSize: 14,
+    color: colors.textLighter,
+    fontFamily: "sans-serif-light",
+    fontStyle: "italic"
+  },
+
   searchListItemIcon: {
     paddingLeft: 15,
     fontSize: 20,
