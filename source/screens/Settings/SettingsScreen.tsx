@@ -198,7 +198,11 @@ const SettingsScreen: React.FC = () => {
                                       Alert.alert("Melody enabled", "You should probably update your song database to download the melodies.");
                                     }
                                   })} />
-          <SettingSwitchComponent title={"Animate melody zoom"}
+          <SettingSwitchComponent title={"Show melody for all verses (experimental)"}
+                                  description={"Show melody for all verses instead of the first (selected) verse."}
+                                  keyName={"showMelodyForAllVerses"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Animate melody zoom (experimental)"}
                                   description={"When using pinch-to-zoom, melody text will also scale accordingly. This effect might still be glitchy."}
                                   keyName={"animateMelodyScale"}
                                   isVisible={showAdvancedSettings} />
