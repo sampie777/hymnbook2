@@ -75,8 +75,8 @@ export const SearchResultItem: React.FC<{
         <Icon name={songAddedToSongList ? "check" : "plus"}
               size={styles.button.fontSize}
               color={songAddedToSongList
-                ? styles.buttonHighlight.color
-                : styles.button.color} />
+                ? styles.buttonHighlight.color as string
+                : styles.button.color as string} />
       </TouchableOpacity>
     </TouchableOpacity>;
   };
@@ -118,11 +118,20 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   button: {
-    padding: 15,
-    fontSize: 24,
-    color: "#9fec9f"
+    marginRight: 8,
+    height: 45,
+    width: 45,
+    borderRadius: 45,
+    fontSize: 22,
+    color: colors.primaryLight,
+    backgroundColor: colors.surface2,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: "#eaeaea",
+    alignItems: "center",
+    justifyContent: "center"
   },
   buttonHighlight: {
-    color: "#2fd32f"
+    color: colors.primary
   }
 });
