@@ -10,8 +10,7 @@ import { SongSchema } from "../../models/SongsSchema";
 import { isPortraitMode } from "../../scripts/utils";
 import { isTitleSimilarToOtherSongs } from "../../scripts/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
 import PopupsComponent from "../../components/Popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
@@ -125,14 +124,6 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
       });
     };
 
-    const onDocumentPress = () => {
-      if (!Settings.enableDocumentsFeatureSwitch) {
-        return;
-      }
-
-      navigation.navigate(routes.DocumentSearch);
-    };
-
     const onAddedToSongList = () => {
       if (!Settings.clearSearchAfterAddedToSongList) return;
       setInputValue("");
@@ -157,20 +148,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
               number:</Text>
 
             <View style={styles.inputTextView}>
-              <View style={styles.documentIconContainer} />
-
               <View style={styles.inputTextViewContainer}>
                 <Text
                   style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>{inputValue}</Text>
               </View>
-
-              <TouchableOpacity style={styles.documentIconContainer}
-                                onPress={onDocumentPress}>
-                {!Settings.enableDocumentsFeatureSwitch ? undefined : <>
-                  <Icon name={"arrow-right"} style={styles.documentIconArrow} />
-                  <Icon name={"file-alt"} style={styles.documentIcon} />
-                </>}
-              </TouchableOpacity>
             </View>
           </View>
 
@@ -257,24 +238,6 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   },
   inputTextFieldSmaller: {
     fontSize: 40
-  },
-
-  documentIconContainer: {
-    width: 80,
-    paddingRight: 40,
-    paddingTop: 10,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center"
-  },
-  documentIconArrow: {
-    fontSize: 15,
-    color: colors.textLighter,
-    paddingRight: 2
-  },
-  documentIcon: {
-    fontSize: 30,
-    color: colors.textLighter
   },
 
   searchList: {
