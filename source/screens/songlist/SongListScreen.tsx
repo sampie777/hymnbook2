@@ -128,6 +128,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
     paddingBottom: 10,
-    paddingTop: 10
+    paddingTop: 6
   },
 });
