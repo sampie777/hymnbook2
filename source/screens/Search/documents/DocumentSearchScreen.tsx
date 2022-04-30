@@ -19,6 +19,7 @@ import SearchInput from "./SearchInput";
 
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ navigation }) => {
   let isMounted = true;
+  const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentGroup>>([]);
   const [searchText, setSearchText] = useState("");
@@ -31,13 +32,13 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
 
   const onLaunch = () => {
     isMounted = true;
-    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange);
   };
 
   const onExit = () => {
     // This is needed, as the removeListener doesn't seem to correctly work.
     isMounted = false;
-    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange);
+    setGroup(undefined);  // Throw away these in case of live reload of the app
+    setRootGroups([]);
   };
 
   useFocusEffect(
@@ -46,6 +47,27 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
       return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [group, searchText])
   );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      onFocus();
+      return onBlur;
+    }, [])
+  );
+
+  const onFocus = () => {
+    isMounted = true;
+    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange);
+  };
+
+  const onBlur = () => {
+    isMounted = false;
+    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange);
+    setGroup(undefined);
+    setRootGroups([]);
+    setSearchText("");
+    setIsLoading(true);
+  };
 
   const onBackPress = (): boolean => {
     if (searchText.length > 0) {
@@ -73,6 +95,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
       .filtered(`isRoot = true`)
       .map(it => it as unknown as DocumentGroup);
     setRootGroups(groups);
+    setIsLoading(false);
   };
 
   const previousLevel = () => {
@@ -144,20 +167,18 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
   };
 
   return (<View style={styles.container}>
-    {rootGroups.length === 0 ? undefined :
-      <View style={styles.pageHeader}>
-        {group === undefined ? undefined :
-          <HeaderIconButton onPress={previousLevel} icon={"arrow-left"} />}
+    <View style={styles.pageHeader}>
+      {group === undefined ? undefined :
+        <HeaderIconButton onPress={previousLevel} icon={"arrow-left"} />}
 
-        <Text style={styles.pageTitle}>
-          {group?.name || "Browse"}
-        </Text>
-      </View>
-    }
+      <Text style={styles.pageTitle}>
+        {group?.name || "Browse"}
+      </Text>
+    </View>
 
     <SearchInput value={searchText} onChange={setSearchText} />
 
-    {rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
+    {isLoading || rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
     <ScrollView>
       {groupsWithSearchResult().map(it => it as DocumentGroup)

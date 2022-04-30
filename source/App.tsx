@@ -54,7 +54,6 @@ const RootNavigation = () => {
     <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
     <RootNav.Screen name={routes.About} component={AboutScreen} />
     <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
-    <RootNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen} />
 
     <RootNav.Screen name={routes.Song} component={SongDisplayScreen}
                     options={{
@@ -129,11 +128,17 @@ const HomeNavigation: React.FC = () => {
                     options={{
                       headerShown: false,
                       tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="search" size={size} color={color} style={styles.tabIcon} />
+                        <Icon name="music" size={size} color={color} style={styles.tabIcon} />
                     }} />
+    {!Settings.enableDocumentsFeatureSwitch ? undefined :
+      <HomeNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen}
+                      options={{
+                        tabBarIcon: ({ focused, color, size }) =>
+                          <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
+                      }} />
+    }
     <HomeNav.Screen name={routes.SongList} component={SongListScreen}
                     options={{
-                      title: "Song list",
                       tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
                       tabBarBadgeStyle: styles.tabBarBadgeStyle,
                       tabBarIcon: ({ focused, color, size }) =>

@@ -44,8 +44,8 @@ export const routes = {
   OtherMenu: "More" as keyof ParamList,
 
   SongImport: "Databases" as keyof ParamList,
-  SongSearch: "Search songs" as keyof ParamList,
-  SongList: "SongList" as keyof ParamList,
+  SongSearch: "Songs" as keyof ParamList,
+  SongList: "Song list" as keyof ParamList,
   Song: "Song" as keyof ParamList,
   VersePicker: "VersePicker" as keyof ParamList,
 
