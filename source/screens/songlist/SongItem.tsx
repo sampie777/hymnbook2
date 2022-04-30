@@ -68,7 +68,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   itemName: {
     paddingTop: 2,
     paddingHorizontal: 15,
-    fontSize: 24,
+    fontSize: 20,
     color: colors.text
   },
   itemExtraPadding: {
