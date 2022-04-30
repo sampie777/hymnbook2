@@ -127,7 +127,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.surface2,
     borderRightWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#eaeaea",
+    borderColor: colors.shadow1,
     alignItems: "center",
     justifyContent: "center"
   },
