@@ -135,7 +135,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     height: 25
   },
   label: {
-    width: 55,
+    width: 60,
     minHeight: 70,
     textAlign: "center",
     fontSize: 16,
