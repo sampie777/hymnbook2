@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import MultiSlider, { LabelProps } from "@ptomasroos/react-native-multi-slider";
 import ConfirmationModal from "../ConfirmationModal";
@@ -17,6 +17,9 @@ interface Props {
   initialValue: number,
   onCompleted?: (value: number) => void,
   onDenied?: () => void,
+  defaultValue?: number,
+  minValue?: number,
+  maxValue?: number,
 }
 
 const SliderComponent: React.FC<Props> = ({
@@ -24,7 +27,10 @@ const SliderComponent: React.FC<Props> = ({
                                             description,
                                             initialValue,
                                             onCompleted,
-                                            onDenied
+                                            onDenied,
+                                            defaultValue,
+                                            minValue= 50,
+                                            maxValue= 200,
                                           }) => {
   const [screenWidth, setScreenWidth] = useState(0);
   const [sliderValue, setSliderValue] = useState(initialValue);
@@ -32,6 +38,13 @@ const SliderComponent: React.FC<Props> = ({
 
   const onConfirm = () => {
     onCompleted?.(sliderValue);
+  };
+
+  const onReset = () => {
+    if (defaultValue === undefined) {
+      return;
+    }
+    setSliderValue(defaultValue);
   };
 
   return <ConfirmationModal isOpen={true}
@@ -50,8 +63,8 @@ const SliderComponent: React.FC<Props> = ({
       <View>
         {screenWidth === 0 ? <View style={{ height: styles.label.minHeight }} /> :
           <MultiSlider values={[sliderValue]}
-                       min={50}
-                       max={200}
+                       min={minValue}
+                       max={maxValue}
                        sliderLength={screenWidth}
                        enableLabel={true}
                        customLabel={SliderLabel}
@@ -65,6 +78,13 @@ const SliderComponent: React.FC<Props> = ({
                        }} />
         }
       </View>
+
+      {defaultValue === undefined ? undefined :
+        <TouchableOpacity style={styles.resetContainer}
+                          onPress={onReset}>
+          <Text style={styles.resetText}>Reset value</Text>
+        </TouchableOpacity>
+      }
     </View>
   </ConfirmationModal>;
 };
@@ -74,7 +94,8 @@ export default SliderComponent;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   popupContent: {
     alignSelf: "stretch",
-    minWidth: "80%"
+    minWidth: "80%",
+    marginBottom: -15,
   },
   contentText: {
     paddingTop: 10,
@@ -119,5 +140,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     color: colors.text
+  },
+
+  resetContainer: {
+    marginTop: 10,
+  },
+  resetText: {
+    color: colors.url
   }
 });
