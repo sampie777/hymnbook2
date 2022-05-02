@@ -136,7 +136,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     position: "absolute",
     width: "100%",
     bottom: 30,
-    paddingHorizontal: 20
+    paddingHorizontal: 3
   },
 
   buttonBase: {
