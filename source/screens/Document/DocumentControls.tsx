@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Db from "../../scripts/db/db";
 import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import { DocumentSchema } from "../../models/DocumentsSchema";
@@ -6,19 +6,65 @@ import { ParamList, routes } from "../../navigation";
 import { Document } from "../../models/Documents";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Animated, { Easing } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
-  navigation: NativeStackNavigationProp<ParamList>
+  navigation: NativeStackNavigationProp<ParamList>;
   document?: Document;
+  scrollOffset?: number;
 }
 
 const DocumentControls: React.FC<Props> =
   ({
      navigation,
-     document
+     document,
+     scrollOffset
    }) => {
+    // Persist this value between renders due to receiving new props (scrollOffset)
+    const animatedVerticalOffset = useRef(new Animated.Value<number>(0));
+    const [previousScrollOffset, setPreviousScrollOffset] = useState(0);
+    const [scrollDirection, setScrollDirection] = useState(0);
+
     const styles = createStyles(useTheme());
+    const animatedStyle = {
+      container: {
+        bottom: Animated.add(30, animatedVerticalOffset.current)
+      }
+    };
+
+    useEffect(() => {
+      if (scrollOffset === undefined) {
+        return;
+      }
+
+      if (scrollOffset === previousScrollOffset) {
+        return;
+      }
+
+      const newScrollDirection = scrollOffset > previousScrollOffset ? -1 : 1;
+      if (newScrollDirection > 0 && previousScrollOffset - scrollOffset < 10) {
+        // Don't show buttons when screen was just scrolled a little bit up
+        setPreviousScrollOffset(scrollOffset);
+        return;
+      }
+
+      const newAnimatedVerticalOffset = newScrollDirection > 0 ? 0 : -100;
+      setPreviousScrollOffset(scrollOffset);
+
+      if (scrollDirection !== 0) {
+        // Wait for previous animation to finish
+        return;
+      }
+      setScrollDirection(newScrollDirection);
+
+      Animated.timing(animatedVerticalOffset.current, {
+        toValue: newAnimatedVerticalOffset,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease)
+      })
+        .start(() => setScrollDirection(0));
+    }, [scrollOffset]);
 
     const getPreviousDocument = () => {
       if (document === undefined || document.index <= 0) {
@@ -61,7 +107,7 @@ const DocumentControls: React.FC<Props> =
       });
     };
 
-    return (<View style={styles.container}>
+    return <Animated.View style={[styles.container, animatedStyle.container]}>
 
       {previousDocument === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
@@ -85,7 +131,7 @@ const DocumentControls: React.FC<Props> =
                 style={styles.buttonText} />
         </TouchableOpacity>
       }
-    </View>);
+    </Animated.View>;
   };
 
 export default DocumentControls;
@@ -95,8 +141,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     position: "absolute",
-    width: "100%",
-    bottom: 30,
     paddingHorizontal: 3
   },
 

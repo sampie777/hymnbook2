@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View, Platform, Text } from "react-native";
+import { ScrollView, StyleSheet, View, Platform, Text, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import Db from "../../scripts/db/db";
 import Settings from "../../settings";
 import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
@@ -32,6 +32,7 @@ const Footer: React.FC<{ opacity: Animated.Value<number> }> =
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = ({ route, navigation }) => {
   const scrollViewComponent = useRef<ScrollView>();
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
+  const [scrollOffset, setScrollOffset] = useState(0);
   const animatedOpacity = new Animated.Value<number>(1);
   const styles = createStyles(useTheme());
 
@@ -135,16 +136,18 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
     return undefined;
   };
 
+  const onScrollViewScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setScrollOffset(e.nativeEvent.contentOffset.y);
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <DocumentControls navigation={navigation}
-                          document={document} />
-
         {document === undefined ? undefined :
           <ScrollView
             // @ts-ignore
             ref={scrollViewComponent}
+            onScroll={onScrollViewScroll}
             contentContainerStyle={styles.contentSectionList}>
 
             <HTMLView value={document.html.replace(/\n/gi, "")}
@@ -155,6 +158,10 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
             <Footer opacity={animatedOpacity} />
           </ScrollView>
         }
+
+        <DocumentControls navigation={navigation}
+                          document={document}
+                          scrollOffset={scrollOffset} />
 
         <LoadingOverlay text={null}
                         isVisible={
