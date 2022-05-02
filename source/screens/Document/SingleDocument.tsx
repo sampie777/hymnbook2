@@ -184,9 +184,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   contentSectionList: {
-    paddingLeft: 30,
+    paddingLeft: 15,
     paddingTop: 15,
-    paddingRight: 20,
+    paddingRight: 10,
     paddingBottom: 200
   },
   footer: {
