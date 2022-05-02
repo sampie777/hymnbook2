@@ -143,6 +143,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
+
+        <DocumentControls navigation={navigation}
+                          document={document}
+                          scrollOffset={scrollOffset} />
+
         {document === undefined ? undefined :
           <ScrollView
             // @ts-ignore
@@ -158,10 +163,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
             <Footer opacity={animatedOpacity} />
           </ScrollView>
         }
-
-        <DocumentControls navigation={navigation}
-                          document={document}
-                          scrollOffset={scrollOffset} />
 
         <LoadingOverlay text={null}
                         isVisible={

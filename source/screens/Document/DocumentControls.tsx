@@ -28,8 +28,10 @@ const DocumentControls: React.FC<Props> =
 
     const styles = createStyles(useTheme());
     const animatedStyle = {
-      container: {
-        bottom: Animated.add(30, animatedVerticalOffset.current)
+      buttonBase: {
+        transform: [
+          { translateY: animatedVerticalOffset.current }
+        ]
       }
     };
 
@@ -49,7 +51,7 @@ const DocumentControls: React.FC<Props> =
         return;
       }
 
-      const newAnimatedVerticalOffset = newScrollDirection > 0 ? 0 : -100;
+      const newAnimatedVerticalOffset = newScrollDirection > 0 ? 0 : 100;
       setPreviousScrollOffset(scrollOffset);
 
       if (scrollDirection !== 0) {
@@ -107,31 +109,34 @@ const DocumentControls: React.FC<Props> =
       });
     };
 
-    return <Animated.View style={[styles.container, animatedStyle.container]}>
+    const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
+    return <View style={styles.container}>
       {previousDocument === undefined ? undefined :
-        <TouchableOpacity style={[styles.buttonBase, styles.button]}
-                          onPress={() => goToDocument(previousDocument)}>
+        <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyle.buttonBase]}
+                                  onPress={() => goToDocument(previousDocument)}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
                 style={styles.buttonText} />
-        </TouchableOpacity>
+        </AnimatedTouchableOpacity>
       }
 
       <View style={styles.horizontalGap} />
 
       {nextDocument === undefined ?
-        (document === undefined ? undefined : <View style={styles.buttonBase} />) :
-        <TouchableOpacity style={[styles.buttonBase, styles.button]}
-                          onPress={() => goToDocument(nextDocument)}>
+        (document === undefined ? undefined :
+            <View style={styles.buttonBase} />
+        ) :
+        <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyle.buttonBase]}
+                                  onPress={() => goToDocument(nextDocument)}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
                 style={styles.buttonText} />
-        </TouchableOpacity>
+        </AnimatedTouchableOpacity>
       }
-    </Animated.View>;
+    </View>;
   };
 
 export default DocumentControls;
@@ -141,7 +146,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     position: "absolute",
-    paddingHorizontal: 3
+    paddingHorizontal: 3,
+    bottom: 30
   },
 
   buttonBase: {
