@@ -130,13 +130,6 @@ const HomeNavigation: React.FC = () => {
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="music" size={size} color={color} style={styles.tabIcon} />
                     }} />
-    {!Settings.enableDocumentsFeatureSwitch ? undefined :
-      <HomeNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen}
-                      options={{
-                        tabBarIcon: ({ focused, color, size }) =>
-                          <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
-                      }} />
-    }
     <HomeNav.Screen name={routes.SongList} component={SongListScreen}
                     options={{
                       tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
@@ -144,6 +137,13 @@ const HomeNavigation: React.FC = () => {
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="list-ul" size={size} color={color} style={styles.tabIcon} />
                     }} />
+    {!Settings.enableDocumentsFeatureSwitch ? undefined :
+      <HomeNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen}
+                      options={{
+                        tabBarIcon: ({ focused, color, size }) =>
+                          <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
+                      }} />
+    }
     <HomeNav.Screen name={routes.OtherMenu} component={OtherMenuScreen}
                     options={{
                       tabBarIcon: ({ focused, color, size }) =>
