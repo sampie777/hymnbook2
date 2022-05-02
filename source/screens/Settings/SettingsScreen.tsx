@@ -124,25 +124,16 @@ const SettingsScreen: React.FC = () => {
 
         {isReloading ? null : <>
           <Header title={"Display"} />
-          <SettingComponent title={"Song letter size"}
-                            keyName={"songScale"}
-                            onPress={(setValue) => setValue(1)}
-                            valueRender={(it) => {
-                              if (it === 1.0) {
-                                return "100 %";
-                              }
-                              return Math.round(it * 100) + " % (press to reset)";
-                            }} />
+          <SettingsSliderComponent title={"Song text size"}
+                                   keyName={"songScale"}
+                                   valueRender={(it) => Math.round(it * 100) + " %"}
+                                   defaultValue={1.0} />
           <SettingsSliderComponent title={"Song melody size"}
                                    keyName={"songMelodyScale"}
-                                   description={"The size of the melody notes. Not the size of the song text."}
+                                   description={"The size of the melody notes relative to the size of the text."}
                                    isVisible={showAdvancedSettings && Settings.showMelody}
-                                   valueRender={(it) => {
-                                     if (it === 1.0) {
-                                       return "100 %";
-                                     }
-                                     return Math.round(it * 100) + " %";
-                                   }} />
+                                   valueRender={(it) => Math.round(it * 100) + " %"}
+                                   defaultValue={1.0} />
           <SettingComponent title={"Theme"}
                             keyName={"theme"}
                             onPress={(setValue) => {
