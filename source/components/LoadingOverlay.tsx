@@ -4,11 +4,13 @@ import Animated, { Easing } from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
 
-const LoadingOverlay: React.FC<{
+interface Props {
   isVisible: boolean,
   text?: string | null,
-  animate?: boolean
-}> =
+  animate?: boolean,
+}
+
+const LoadingOverlay: React.FC<Props> =
   ({ isVisible, text, animate = false }) => {
     if (!isVisible) {
       return null;
