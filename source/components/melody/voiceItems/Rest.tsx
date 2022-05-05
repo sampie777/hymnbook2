@@ -13,6 +13,10 @@ const Rest: React.FC<Props> = ({ note }) => {
     return null;
   }
 
+  if (note.rest.type === "spacer") {
+    return null;
+  }
+
   const styles = createStyles(useTheme());
 
   // Convert strange rests to normal rests

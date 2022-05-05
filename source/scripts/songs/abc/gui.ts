@@ -1,6 +1,5 @@
 import { AbcConfig } from "../../../components/melody/voiceItems/config";
 import { VoiceItemNote } from "./abcjsTypes";
-import Settings from "../../../settings";
 
 export namespace AbcGui {
   // Maps for Roboto font, see https://chrishewett.com/blog/calculating-text-width-programmatically/?
@@ -36,6 +35,10 @@ export namespace AbcGui {
   };
 
   export const calculateNoteWidth = (note: VoiceItemNote): number => {
+    if (note.rest !== undefined && note.rest.type === "spacer") {
+      return note.duration * 8 * AbcConfig.spacerWidth;
+    }
+
     let result = AbcConfig.noteWidth + 2 * AbcConfig.notePadding;
     if (note.pitches?.some(it => it.accidental !== undefined)) {
       result += AbcConfig.accidentalWidth;
