@@ -54,7 +54,7 @@ export namespace ABC {
 
   export const parse = (abc: string): Song | undefined => {
     // Remove comments
-    abc = abc.replace(/%.*/, "");
+    abc = abc.replace(/%.*/g, "");
 
     const song = new Song();
     abc = extractInfoFields(abc, song);
@@ -66,8 +66,7 @@ export namespace ABC {
       notes + "\n" +
       "w: " + lyrics;
 
-    const tuneObject = ABC.convertStringToAbcTune(
-      convertedAbc);
+    const tuneObject = ABC.convertStringToAbcTune(convertedAbc);
     if (tuneObject === undefined) {
       return undefined;
     }
