@@ -96,4 +96,36 @@ describe("test abc parse", () => {
     expect(song.melody[0].lyric[0].syllable).toBe("ik");
     expect(song.melody[8].lyric[0].syllable).toBe("waar ik");
   })
+
+  it("parses abc with comments to song object", () => {
+    const data = "%%vocalfont Arial 14\n" +
+      "X:1\n" +
+      "T:Psalm 15\n" +
+      "C:Wie styg so hoog in heil en eer, ...(5)\n" +
+      "L:1/4\n" +
+      "M:C|\n" +
+      "K:F\n" +
+      "Q:1/2=100\n" +
+      "yy F2 F F G2 B2 A A G2 z2\n" +
+      "%w:words come here\n" +
+      "yyyy G2 A B c2 G2 B B A2 G2 z2\n" +
+      "%w:words come here\n" +
+      "yyyy G2 G G F2 F2 G A B2 z2\n" +
+      "%w:words come here\n" +
+      "yyyy d2 c B A2 G2 B B A2 z2\n" +
+      "%w:words come here\n" +
+      "yyyy c2 B G A2 G2 A B G2 F3 yy |]\n" +
+      "%w:words come here\n" +
+      "w: Wie styg so hoog in heil en eer, dat hy met U, die gro-te Ko-ning, met U, die al-ler-hoog-ste HEER, kan op u heil'-ge berg ver-keer en in-trek in u heil'-ge wo-ning?\n";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("Psalm 15");
+    expect(song.melody.length).toBe(67);
+    expect(song.melody[2].lyric[0].syllable).toBe("Wie");
+    expect(song.melody[8].lyric[0].syllable).toBe("en");
+    expect(song.keySignature.root).toBe("F");
+    expect(song.keySignature.acc).toBe("");
+    expect(song.clef.type).toBe("treble");
+  })
 })
