@@ -74,7 +74,7 @@ export interface AbcPitch {
 }
 
 export interface AbcRest {
-  type: "rest" | "whole" | "multimeasure";
+  type: "rest" | "whole" | "multimeasure" | "spacer";
   text?: number;
 }
 
