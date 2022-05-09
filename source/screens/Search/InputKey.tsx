@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { objectToArrayIfNotAlready } from "../../scripts/utils";
 
 interface KeyProps {
   onPress: () => void;
@@ -10,14 +11,7 @@ interface KeyProps {
 
 export const Key: React.FC<KeyProps> = ({ children, onPress, extraStyle }) => {
   const styles = createStyles(useTheme());
-  const keyTextStyle: Array<Object> = [styles.keyText];
-  if (extraStyle !== undefined) {
-    if (extraStyle instanceof Array) {
-      keyTextStyle.push(...extraStyle);
-    } else {
-      keyTextStyle.push(extraStyle);
-    }
-  }
+  const keyTextStyle: Array<Object> = [styles.keyText, ...objectToArrayIfNotAlready(extraStyle)];
 
   return (
     <TouchableOpacity style={styles.key}

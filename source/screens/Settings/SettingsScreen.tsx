@@ -168,7 +168,7 @@ const SettingsScreen: React.FC = () => {
                                   description={"Use fade-in effect when showing a song"}
                                   keyName={"songFadeIn"}
                                   isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"\"Jump to next verse\" button"}
+          <SettingSwitchComponent title={"'Jump to next verse' button"}
                                   description={"Show this button in the bottom right corner"}
                                   keyName={"showJumpToNextVerseButton"}
                                   isVisible={showAdvancedSettings} />
@@ -178,6 +178,10 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Display song list size badge"}
                                   keyName={"showSongListCountBadge"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"'Added to song list' animation"}
+                                  description={"Show a small animation when a song is added to the song list"}
+                                  keyName={"animateAddedToSongList"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Show melody (experimental)"}
                                   description={"Show song melody above lyrics. This is a work in progress and might not function as it should."}

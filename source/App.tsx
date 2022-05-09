@@ -36,6 +36,7 @@ import VersePicker from "./screens/SongDisplay/VersePicker/VersePicker";
 import OtherMenuScreen from "./screens/OtherMenuScreen/OtherMenuScreen";
 import DocumentSearchScreen from "./screens/Search/documents/DocumentSearchScreen";
 import SingleDocument from "./screens/Document/SingleDocument";
+import SongListMenuIcon from "./screens/songlist/SongListMenuIcon";
 
 
 const RootNav = createNativeStackNavigator();
@@ -135,7 +136,7 @@ const HomeNavigation: React.FC = () => {
                       tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
                       tabBarBadgeStyle: styles.tabBarBadgeStyle,
                       tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="list-ul" size={size} color={color} style={styles.tabIcon} />
+                        <SongListMenuIcon size={size} color={color} style={styles.tabIcon} />
                     }} />
     {!Settings.enableDocumentsFeatureSwitch ? undefined :
       <HomeNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen}

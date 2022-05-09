@@ -23,6 +23,7 @@ class SettingsClass extends SettingsBaseClass {
   showMelody = false;
   showMelodyForAllVerses = false;
   animateMelodyScale = false;
+  animateAddedToSongList = true;
 
   // Documents
   enableDocumentsFeatureSwitch = false;
