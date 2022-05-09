@@ -1,3 +1,5 @@
+import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
+
 jest.mock("rollbar-react-native", () => {
   return {
     Configuration: () => undefined,
@@ -32,3 +34,5 @@ jest.mock("react-native-device-info", () => {
     getVersion: () => 1,
   };
 });
+
+jest.mock('@react-native-clipboard/clipboard', () => mockClipboard);

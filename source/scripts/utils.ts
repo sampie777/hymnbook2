@@ -106,3 +106,13 @@ export function validate(result: boolean, message?: string) {
   }
   throw new ValidationError(message || "Value is not true");
 }
+
+export const objectToArrayIfNotAlready = (obj: any) => {
+  if (obj === undefined) {
+    return [];
+  }
+  if (obj instanceof Array) {
+    return obj;
+  }
+  return [obj];
+}
