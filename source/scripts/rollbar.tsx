@@ -1,13 +1,14 @@
 import { Client, Configuration } from "rollbar-react-native";
 import { getUniqueId, getVersion } from "react-native-device-info";
 import Config from "react-native-config";
+import config from "../config";
 
 const configuration = new Configuration(
   Config.ROLLBAR_API_KEY,
   {
     captureUncaught: true,
     captureUnhandledRejections: true,
-    enabled: process.env.NODE_ENV === "production",
+    enabled: !config.debugEmulators.includes(getUniqueId()),
     verbose: true,
     payload: {
       environment: process.env.NODE_ENV,
