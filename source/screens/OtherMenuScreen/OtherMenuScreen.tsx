@@ -1,6 +1,8 @@
 import React from "react";
+import config from "../../config";
+import { openLink } from "../../scripts/utils";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
-import { StyleProp, StyleSheet, TextStyle } from "react-native";
+import { Alert, StyleProp, StyleSheet, TextStyle } from "react-native";
 import { ParamList, routes } from "../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { ScrollView } from "react-native-gesture-handler";
@@ -21,6 +23,12 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="database" style={style} />
       },
       {
+        name: "Give feedback" as keyof ParamList,
+        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="comment" style={style} />,
+        onPress: () => openLink(config.feedbackUrl)
+          .catch(e => Alert.alert("Error opening link", e.message))
+      },
+      {
         name: routes.About,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="info" style={style} />
       }
@@ -35,7 +43,7 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
         key={it.name}
         name={it.name}
         icon={it.icon}
-        onPress={() => onPress(it.name)} />)}
+        onPress={it.onPress ? it.onPress : () => onPress(it.name)} />)}
     </ScrollView>);
   };
 

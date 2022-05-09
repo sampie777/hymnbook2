@@ -1,5 +1,6 @@
 import { Alert, Linking, Platform, ScaledSize } from "react-native";
 import KeepAwake from "react-native-keep-awake";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { rollbar } from "./rollbar";
 
 export function dateFrom(date: Date | string): Date {
@@ -68,16 +69,24 @@ export function isPortraitMode(window: ScaledSize) {
 }
 
 export function openLink(url: string): Promise<any> {
+  if (!url) {
+    rollbar.critical("Trying to open link with empty url: '" + url + "'.");
+    return new Promise(_ => {
+      throw new Error("This URL doesn't exists. Please contact the developer.");
+    })
+  }
+
   return Linking.canOpenURL(url)
     .then(isSupported => {
       if (isSupported) {
         return Linking.openURL(url);
       } else {
-        throw new Error("Can't open URL '" + url + "': your device can't open these type of URLs.");
+        Clipboard.setString(url);
+        throw new Error("Your device can't open these type of URLs. The URL is copied to your clipboard so you can open it on your own.");
       }
     })
     .catch(error => {
-      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Can't open URL '")) {
+      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Your device can't open these type of URLs.")) {
         rollbar.info(error);
       } else {
         rollbar.warning(error);
