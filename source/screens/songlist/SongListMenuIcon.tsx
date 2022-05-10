@@ -31,7 +31,7 @@ const SongListMenuIcon: React.FC<Props> = ({ size, color, style }) => {
       zIndex: Animated.interpolate(animatedValue.current,
         {
           inputRange: [0, 100],
-          outputRange: [0, 10]
+          outputRange: [0, 100]
         }),
       opacity: Animated.interpolate(animatedValue.current,
         {

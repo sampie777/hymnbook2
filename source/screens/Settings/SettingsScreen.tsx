@@ -20,9 +20,12 @@ const SettingsScreen: React.FC = () => {
     useRef(undefined);
   const [confirmModalMessage, setConfirmModalMessage] = useState<string | undefined>(undefined);
   const [isReloading, setReloading] = useState(false);
+  const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
-  const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
+  const [showDocumentsSettings, setShowDocumentsSettings] = useState(Settings.enableDocumentsFeatureSwitch);
+  const [showSongMelodySettings, setShowSongMelodySettings] = useState(Settings.showMelody);
+
   const theme = useTheme();
   const styles = createStyles(theme);
 
@@ -93,7 +96,11 @@ const SettingsScreen: React.FC = () => {
   const developerSettings = <>
     <Header title={"Developer"} />
     <SettingSwitchComponent title={"Enable documents"}
-                            keyName={"enableDocumentsFeatureSwitch"} />
+                            keyName={"enableDocumentsFeatureSwitch"}
+                            onPress={(setValue, key, newValue) => {
+                              setValue(newValue);
+                              setShowDocumentsSettings(newValue);
+                            }} />
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
     <SettingComponent title={"App opened times"}
@@ -124,18 +131,9 @@ const SettingsScreen: React.FC = () => {
 
         {isReloading ? null : <>
           <Header title={"Display"} />
-          <SettingsSliderComponent title={"Song text size"}
-                                   keyName={"songScale"}
-                                   valueRender={(it) => Math.round(it * 100) + " %"}
-                                   defaultValue={1.0} />
-          <SettingsSliderComponent title={"Song melody size"}
-                                   keyName={"songMelodyScale"}
-                                   description={"The size of the melody notes relative to the size of the text."}
-                                   isVisible={showAdvancedSettings && Settings.showMelody}
-                                   valueRender={(it) => Math.round(it * 100) + " %"}
-                                   defaultValue={1.0} />
           <SettingComponent title={"Theme"}
                             keyName={"theme"}
+                            description={"Tap here to switch between dark en light mode."}
                             onPress={(setValue) => {
                               let newValue = "";
                               if (Settings.theme === "")
@@ -154,68 +152,85 @@ const SettingsScreen: React.FC = () => {
                             }} />
           <SettingSwitchComponent title={"Keep screen on"}
                                   keyName={"keepScreenAwake"} />
-          <SettingSwitchComponent title={"Use colored verse numbers"}
+
+          <Header title={"Songs"} />
+          <SettingsSliderComponent title={"Song text size"}
+                                   keyName={"songScale"}
+                                   valueRender={(it) => Math.round(it * 100) + " %"}
+                                   defaultValue={1.0} />
+          <SettingSwitchComponent title={"Use colored verse numbers."}
                                   keyName={"coloredVerseTitles"} />
           <SettingSwitchComponent title={"Highlight selected verses"}
-                                  description={"Give verse titles an accent when selected"}
+                                  description={"Give verse titles an accent when selected."}
                                   keyName={"highlightSelectedVerses"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Animate scrolling"}
-                                  description={"Disable this if scrolling isn't performing smooth"}
+                                  description={"Disable this if scrolling isn't performing smooth."}
                                   keyName={"animateScrolling"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Animate song loading"}
-                                  description={"Use fade-in effect when showing a song"}
+                                  description={"Use fade-in effect when showing a song."}
                                   keyName={"songFadeIn"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"'Jump to next verse' button"}
-                                  description={"Show this button in the bottom right corner"}
+                                  description={"Show this button in the bottom right corner."}
                                   keyName={"showJumpToNextVerseButton"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use native list component for song verses"}
-                                  description={"Try to enable this if pinch-to-zoom or scrolling glitches"}
+                                  description={"Try to enable this if pinch-to-zoom or scrolling glitches."}
                                   keyName={"useNativeFlatList"}
                                   isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Display song list size badge"}
-                                  keyName={"showSongListCountBadge"}
-                                  isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"'Added to song list' animation"}
-                                  description={"Show a small animation when a song is added to the song list"}
-                                  keyName={"animateAddedToSongList"}
-                                  isVisible={showAdvancedSettings} />
+
+          <Header title={"Song melody"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Show melody (experimental)"}
                                   description={"Show song melody above lyrics. This is a work in progress and might not function as it should."}
                                   keyName={"showMelody"}
                                   isVisible={showAdvancedSettings}
                                   onPress={((setValue, key, newValue) => {
                                     setValue(newValue);
+                                    setShowSongMelodySettings(newValue);
                                     if (newValue) {
-                                      Alert.alert("Melody enabled", "You should probably update your song database to download the melodies.");
+                                      Alert.alert("Update database", "You should probably update your song database to download the melodies.");
                                     }
                                   })} />
+          <SettingsSliderComponent title={"Song melody size"}
+                                   keyName={"songMelodyScale"}
+                                   description={"The size of the melody notes relative to the size of the text."}
+                                   isVisible={showAdvancedSettings && showSongMelodySettings}
+                                   valueRender={(it) => Math.round(it * 100) + " %"}
+                                   defaultValue={1.0} />
           <SettingSwitchComponent title={"Show melody for all verses (experimental)"}
                                   description={"Show melody for all verses instead of the first (selected) verse."}
                                   keyName={"showMelodyForAllVerses"}
-                                  isVisible={showAdvancedSettings} />
+                                  isVisible={showAdvancedSettings && showSongMelodySettings} />
           <SettingSwitchComponent title={"Animate melody zoom (experimental)"}
                                   description={"When using pinch-to-zoom, melody text will also scale accordingly. This effect might still be glitchy."}
                                   keyName={"animateMelodyScale"}
-                                  isVisible={showAdvancedSettings} />
+                                  isVisible={showAdvancedSettings && showSongMelodySettings} />
 
-          <Header title={"Other"} />
+          <Header title={"Song list"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
                                   keyName={"clearSearchAfterAddedToSongList"} />
-          {!Settings.enableDocumentsFeatureSwitch ? undefined :
+          <SettingSwitchComponent title={"'Added to song list' animation"}
+                                  description={"Show a small animation when a song is added to the song list."}
+                                  keyName={"animateAddedToSongList"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Display song list size badge"}
+                                  keyName={"showSongListCountBadge"}
+                                  isVisible={showAdvancedSettings} />
+
+          {!showDocumentsSettings ? undefined : <>
+            <Header title={"Documents"} isVisible={showAdvancedSettings} />
             <SettingSwitchComponent title={"Multi keyword search for documents"}
                                     description={"When enabled, each keyword will be matched individually instead of " +
                                       "the whole search phrase. This will yield more results."}
                                     keyName={"documentsMultiKeywordSearch"}
-                                    isVisible={showAdvancedSettings} />
-          }
+                                    isVisible={showAdvancedSettings}/>
+          </>}
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use authentication with backend"}
-                                  description={"Disabling this probably won't help you"}
+                                  description={"Disabling this probably won't help you."}
                                   keyName={"useAuthentication"}
                                   isVisible={showAdvancedSettings} />
           <SettingComponent title={"Authentication status with backend"}
@@ -225,7 +240,7 @@ const SettingsScreen: React.FC = () => {
                               if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
                                 return it;
                               }
-                              return it + " (press to reset)";
+                              return it + " (tap to reset)";
                             }}
                             onPress={(setValue) =>
                               setConfirmModalCallback(
