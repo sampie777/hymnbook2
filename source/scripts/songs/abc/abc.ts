@@ -60,12 +60,9 @@ export namespace ABC {
     abc = extractInfoFields(abc, song);
 
     const { notes, lyrics } = extractNotesAndLyrics(abc);
-    const convertedAbc =
-      (song.voice === undefined ? "" : "V:" + song.voice + "\n") +
-      (song.key === undefined ? "" : "K:" + song.key + "\n") +
-      notes + "\n" +
-      "w: " + lyrics;
+    const abcMelodyOneLiner = notes + "\n" + "w: " + lyrics;
 
+    const convertedAbc = addInfoFieldsToMelody(song, abcMelodyOneLiner);
     const tuneObject = ABC.convertStringToAbcTune(convertedAbc);
     if (tuneObject === undefined) {
       return undefined;
@@ -78,10 +75,10 @@ export namespace ABC {
     return song;
   };
 
-  export const getField = (abc: string, field: string): (string | undefined) => {
+  export const getField = (abc: string, field: string, _default?: string): (string | undefined) => {
     const result = abc.match(new RegExp(field + ":(.*)?"));
     if (result == null || result.length !== 2) {
-      return undefined;
+      return _default;
     }
     return result[1].trim();
   };
@@ -110,7 +107,7 @@ export namespace ABC {
     song.title = getField(abc, "T");
     song.userDefined = getField(abc, "U");
     song.voice = getField(abc, "V");
-    song.referenceNumber = getField(abc, "X");
+    song.referenceNumber = getField(abc, "X", "1");
     song.transcription = getField(abc, "Z");
     return abc
       .replace(/[ABCDFGHIKLMmNOPQRrSsTUVXZ]:.*/g, "")
@@ -136,6 +133,37 @@ export namespace ABC {
       notes: notes.join(" "),
       lyrics: lyrics.join(" ")
     } as NoteGroupInterface;
+  };
+
+  export const addInfoFieldsToMelody = (song: Song, abc: string): string => {
+    let result = "";
+    // See for following order of fields: https://abcnotation.com/wiki/abc:standard:v2.1#description_of_information_fields
+    result += song.referenceNumber === undefined ? "" : "X:" + song.referenceNumber + "\n";
+    result += song.title === undefined ? "" : "T:" + song.title + "\n";
+    result += song.area === undefined ? "" : "A:" + song.area + "\n";
+    result += song.book === undefined ? "" : "B:" + song.book + "\n";
+    result += song.composer === undefined ? "" : "C:" + song.composer + "\n";
+    result += song.discography === undefined ? "" : "D:" + song.discography + "\n";
+    result += song.fileUrl === undefined ? "" : "F:" + song.fileUrl + "\n";
+    result += song.group === undefined ? "" : "G:" + song.group + "\n";
+    result += song.history === undefined ? "" : "H:" + song.history + "\n";
+    result += song.instruction === undefined ? "" : "I:" + song.instruction + "\n";
+    result += song.key === undefined ? "" : "K:" + song.key + "\n";
+    result += song.unitNoteLength === undefined ? "" : "L:" + song.unitNoteLength + "\n";
+    result += song.meter === undefined ? "" : "M:" + song.meter + "\n";
+    result += song.macro === undefined ? "" : "m:" + song.macro + "\n";
+    result += song.notes === undefined ? "" : "N:" + song.notes + "\n";
+    result += song.origin === undefined ? "" : "O:" + song.origin + "\n";
+    result += song.parts === undefined ? "" : "P:" + song.parts + "\n";
+    result += song.tempo === undefined ? "" : "Q:" + song.tempo + "\n";
+    result += song.rhythm === undefined ? "" : "R:" + song.rhythm + "\n";
+    result += song.remark === undefined ? "" : "r:" + song.remark + "\n";
+    result += song.source === undefined ? "" : "S:" + song.source + "\n";
+    result += song.symbolLine === undefined ? "" : "s:" + song.symbolLine + "\n";
+    result += song.userDefined === undefined ? "" : "U:" + song.userDefined + "\n";
+    result += song.voice === undefined ? "" : "V:" + song.voice + "\n";
+    result += song.transcription === undefined ? "" : "Z:" + song.transcription + "\n";
+    return result + abc;
   };
 
   export const convertStringToAbcTune = (abc: string): TuneObject | undefined => {
@@ -180,8 +208,6 @@ export namespace ABC {
 
   export const generateAbcForVerse = (verse: Verse, backupMelody?: string): string => {
     const melody = verse.abcMelody || backupMelody;
-    return "X:1\n" +
-      melody + "\n" +
-      "w: " + verse.abcLyrics?.replace(/\n/g, " ");
+    return melody + "\n" + "w: " + verse.abcLyrics?.replace(/\n/g, " ");
   };
 }
