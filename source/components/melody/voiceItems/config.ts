@@ -13,7 +13,7 @@ export const AbcConfig = {
   stemHeight: 28,
   stemWidth: 2,
   accidentalWidth: 8,
-  spacerWidth: 10,
+  spacerWidth: 7,
 
   textPadding: 3,
   textSize: 20,
