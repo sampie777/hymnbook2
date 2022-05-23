@@ -6,6 +6,8 @@ export const AbcConfig = {
   textSpacing: 13,
 
   lineWidth: 1,
+  lineBarThinWidth: 1.5,
+  lineBarThickWidth: 8,
 
   notePadding: 13,
   noteWidth: 4.8,
