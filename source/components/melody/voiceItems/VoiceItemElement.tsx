@@ -1,8 +1,8 @@
 import React from "react";
 import Animated from "react-native-reanimated";
 import { VoiceItem } from "../../../scripts/songs/abc/abcjsTypes";
-import VoiceItemNoteElement from "./VoiceItemNoteElement";
-import VoiceItemBarElement from "./VoiceItemBarElement";
+import VoiceItemNoteElement from "./NoteElement/VoiceItemNoteElement";
+import VoiceItemBarElement from "./BarElement/VoiceItemBarElement";
 
 interface Props {
   item: VoiceItem;
@@ -11,7 +11,6 @@ interface Props {
 }
 
 const VoiceItemElement: React.FC<Props> = ({ item, scale, animatedScale }) => {
-
   switch (item.el_type) {
     case "note":
       return <VoiceItemNoteElement note={item}

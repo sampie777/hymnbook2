@@ -1,15 +1,12 @@
 import React from "react";
-import { AbcConfig } from "./config";
-import Settings from "../../../settings";
-import { AbcGui } from "../../../scripts/songs/abc/gui";
-import { VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
-import { ThemeContextProps, useTheme } from "../../ThemeProvider";
-import { StyleSheet, View } from "react-native";
+import { AbcConfig } from "../config";
+import Settings from "../../../../settings";
+import { AbcGui } from "../../../../scripts/songs/abc/gui";
+import { VoiceItemNote } from "../../../../scripts/songs/abc/abcjsTypes";
+import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import { StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
-import Svg, { G } from "react-native-svg";
-import Note from "./Note";
-import Rest from "./Rest";
-import Lines from "./Lines";
+import NoteElement from "./NoteElement";
 
 interface Props {
   note: VoiceItemNote;
@@ -46,32 +43,9 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale, animatedScale }) =
     }
   };
 
-  const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
-    <View style={styles.noteContainer}>
-      <AnimatedSvg width={"100%"}
-                   height={AbcConfig.totalLineHeight * scale}>
-        <G scale={scale} y={AbcConfig.topSpacing * scale}>
-          <Lines />
-        </G>
-      </AnimatedSvg>
-
-      <AnimatedSvg width={animatedStyle.note.width}
-                   height={animatedStyle.note.height}
-                   style={{ position: "absolute" }}>
-        <G scale={scale} x={noteWidth / 2} y={AbcConfig.topSpacing * scale}>
-          {note.pitches?.map((it, index) =>
-            <Note key={index + "_" + it.pitch}
-                  pitch={it}
-                  note={note} />
-          )}
-          {note.rest === undefined ? undefined :
-            <Rest note={note} />}
-        </G>
-      </AnimatedSvg>
-    </View>
-
+    <NoteElement note={note} scale={scale} animatedScale={animatedScale} />
     <Animated.Text style={[styles.text, animatedStyle.text]}>{lyrics}</Animated.Text>
   </Animated.View>;
 };
@@ -80,7 +54,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "stretch",
+    alignItems: "stretch"
   },
   noteContainer: {
     flexDirection: "row",
