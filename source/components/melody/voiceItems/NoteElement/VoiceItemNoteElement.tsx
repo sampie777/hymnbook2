@@ -12,9 +12,15 @@ interface Props {
   note: VoiceItemNote;
   scale: number;
   animatedScale: Animated.Value<number>;
+  showMelodyLines: boolean;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ note, scale, animatedScale }) => {
+const VoiceItemNoteElement: React.FC<Props> = ({
+                                                 note,
+                                                 scale,
+                                                 animatedScale,
+                                                 showMelodyLines
+                                               }) => {
   const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
@@ -26,8 +32,9 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale, animatedScale }) =
   const width = Math.max(noteWidth, textWidth) * scale;
   const animatedStyle = {
     container: {
-      minWidth: Settings.animateMelodyScale ?
-        Animated.multiply(width, animatedScale) : width,
+      minWidth: Settings.animateMelodyScale
+        ? Animated.multiply(width, animatedScale)
+        : width,
       flex: lyrics.endsWith("-") ? 1 : 4
     },
     text: {
@@ -45,7 +52,9 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, scale, animatedScale }) =
 
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
-    <NoteElement note={note} scale={scale} animatedScale={animatedScale} />
+    <NoteElement showMelodyLines={showMelodyLines}
+                 note={note}
+                 scale={scale} />
     <Animated.Text style={[styles.text, animatedStyle.text]}>{lyrics}</Animated.Text>
   </Animated.View>;
 };

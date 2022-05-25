@@ -9,6 +9,7 @@ interface Props {
 
 const LinesSvg: React.FC<Props> = ({ scale }) => {
   return <Svg width={"100%"}
+              style={{position: "absolute"}}
               height={AbcConfig.totalLineHeight * scale}>
     <G scale={scale} y={AbcConfig.topSpacing * scale}>
       <Lines />
