@@ -8,16 +8,19 @@ interface Props {
   item: VoiceItem;
   scale: number;
   animatedScale: Animated.Value<number>;
+  showMelodyLines: boolean;
 }
 
-const VoiceItemElement: React.FC<Props> = ({ item, scale, animatedScale }) => {
+const VoiceItemElement: React.FC<Props> = ({ item, scale, animatedScale, showMelodyLines }) => {
   switch (item.el_type) {
     case "note":
       return <VoiceItemNoteElement note={item}
                                    scale={scale}
+                                   showMelodyLines={showMelodyLines}
                                    animatedScale={animatedScale} />;
     case "bar":
-      return <VoiceItemBarElement item={item} scale={scale} />;
+      return <VoiceItemBarElement item={item}
+                                  scale={scale} />;
     default:
       return null;
   }

@@ -25,4 +25,4 @@ export const AbcConfig = {
   introEmptyGapWidth: 10
 };
 
-AbcConfig.totalLineHeight = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
+AbcConfig.totalLineHeight = AbcConfig.topSpacing + 4 * AbcConfig.lineSpacing + AbcConfig.textSpacing;

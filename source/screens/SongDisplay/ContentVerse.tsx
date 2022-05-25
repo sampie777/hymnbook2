@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Verse } from "../../models/Songs";
 import Settings from "../../settings";
@@ -15,7 +15,8 @@ interface ContentVerseProps {
   opacity: Animated.Value<number>;
   selectedVerses: Array<Verse>;
   abcBackupMelody?: string;
-  showMelody?: boolean;
+  showMelody: boolean;
+  setIsMelodyLoading: (value: boolean) => void;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -24,9 +25,11 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      opacity,
                                                      selectedVerses,
                                                      abcBackupMelody,
-                                                     showMelody
+                                                     showMelody,
+                                                     setIsMelodyLoading
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
+  const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
 
   const styles = createStyles(useTheme());
   const animatedStyle = {
@@ -69,7 +72,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const isMelodyEnabled = () => Settings.showMelody && showMelody;
 
-  const isMelodyAvailable = () => (verse.abcMelody || abcBackupMelody) && verse.abcLyrics;
+  const isMelodyAvailable = () => Boolean((verse.abcMelody || abcBackupMelody) && verse.abcLyrics);
 
   const shouldMelodyBeShownForVerse = () =>
     Settings.showMelodyForAllVerses ||
@@ -81,6 +84,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     isMelodyAvailable() &&
     shouldMelodyBeShownForVerse()
   );
+
+  useEffect(() => {
+    setIsMelodyLoaded(false);
+    if (shouldMelodyBeShownForVerse()) {
+      setIsMelodyLoading(displayMelody);
+    }
+  }, [showMelody]);
+
+  const onMelodyLoaded = () => {
+    setIsMelodyLoading(false);
+    setIsMelodyLoaded(true);
+  };
 
   // Shorten name
   const displayName = verse.name.trim()
@@ -99,7 +114,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         </Animated.Text>
       }
 
-      {displayMelody ? undefined :
+      {isMelodyLoaded && displayMelody ? undefined :
         <Animated.Text style={[styles.text, animatedStyle.text]}>
           {verse.content}
         </Animated.Text>
@@ -107,6 +122,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
       {!displayMelody ? undefined :
         <MelodyView scale={Settings.songScale}
+                    onLoaded={onMelodyLoaded}
                     abc={ABC.generateAbcForVerse(verse, abcBackupMelody)}
                     animatedScale={scale} />
       }
