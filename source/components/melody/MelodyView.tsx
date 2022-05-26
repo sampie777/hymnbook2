@@ -6,7 +6,7 @@ import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
 import { ABC } from "../../scripts/songs/abc/abc";
 import Settings from "../../settings";
-import { AbcConfig } from "./voiceItems/config";
+import { AbcConfig } from "./config";
 
 interface Props {
   scale: number;

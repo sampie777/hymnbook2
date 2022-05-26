@@ -2,12 +2,12 @@ import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 import { AbcGui } from "../../../../scripts/songs/abc/gui";
-import { AbcConfig } from "../config";
+import { AbcConfig } from "../../config";
 import Svg, { G } from "react-native-svg";
 import Note from "./Note";
 import { VoiceItemNote } from "../../../../scripts/songs/abc/abcjsTypes";
 import Rest from "./Rest";
-import LinesSvg from "../LinesSvg";
+import LinesSvg from "../../other/LinesSvg";
 
 interface Props {
   note: VoiceItemNote;

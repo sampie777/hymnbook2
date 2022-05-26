@@ -1,4 +1,4 @@
-import { AbcConfig } from "../../../components/melody/voiceItems/config";
+import { AbcConfig } from "../../../components/melody/config";
 import { VoiceItemNote } from "./abcjsTypes";
 
 export namespace AbcGui {

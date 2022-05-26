@@ -1,5 +1,5 @@
 import React from "react";
-import { AbcConfig } from "../config";
+import { AbcConfig } from "../../config";
 import Settings from "../../../../settings";
 import { AbcGui } from "../../../../scripts/songs/abc/gui";
 import { VoiceItemNote } from "../../../../scripts/songs/abc/abcjsTypes";

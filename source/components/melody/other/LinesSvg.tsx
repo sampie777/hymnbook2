@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Svg, { G } from "react-native-svg";
-import { AbcConfig } from "./config";
+import { AbcConfig } from "../config";
 import Lines from "./Lines";
 
 interface Props {
