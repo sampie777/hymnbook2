@@ -203,10 +203,6 @@ const SettingsScreen: React.FC = () => {
                                   description={"Show melody for all verses instead of the first (selected) verse."}
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings && showSongMelodySettings} />
-          <SettingSwitchComponent title={"Animate melody zoom (experimental)"}
-                                  description={"When using pinch-to-zoom, melody text will also scale accordingly. This effect might still be glitchy."}
-                                  keyName={"animateMelodyScale"}
-                                  isVisible={showAdvancedSettings && showSongMelodySettings} />
 
           <Header title={"Song list"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}

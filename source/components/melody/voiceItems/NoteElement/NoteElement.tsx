@@ -1,47 +1,49 @@
 import React, { memo } from "react";
-import { StyleSheet, View } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 import { AbcGui } from "../../../../scripts/songs/abc/gui";
 import { AbcConfig } from "../../config";
-import Svg, { G } from "react-native-svg";
 import Note from "./Note";
 import { VoiceItemNote } from "../../../../scripts/songs/abc/abcjsTypes";
 import Rest from "./Rest";
 import LinesSvg from "../../other/LinesSvg";
+import { AnimatedG, AnimatedSvg } from "../../../utils";
 
 interface Props {
   note: VoiceItemNote;
-  scale: number;
   showMelodyLines: boolean;
+  animatedScale: Animated.Value;
 }
 
 const NoteElement: React.FC<Props> = ({
                                         note,
-                                        scale,
-                                        showMelodyLines
+                                        showMelodyLines,
+                                        animatedScale
                                       }) => {
   const styles = createStyles(useTheme());
-
   const noteWidth = AbcGui.calculateNoteWidth(note);
+
   const animatedStyle = {
     container: {
-      height: AbcConfig.totalLineHeight * scale
+      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
     },
     note: {
-      width: noteWidth * scale,
-      height: AbcConfig.totalLineHeight * scale
+      width: Animated.multiply(animatedScale, noteWidth),
+      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
     }
   };
 
   // Only render melody components after the parent container has rendered,
   // otherwise it will slow the render dramatically and freeze the UI
   const melodyComponents = <>
-    <LinesSvg scale={scale} />
+    <LinesSvg animatedScale={animatedScale} />
 
-    <Svg width={animatedStyle.note.width}
-         height={animatedStyle.note.height}
-         style={styles.note}>
-      <G scale={scale} x={noteWidth / 2} y={AbcConfig.topSpacing * scale}>
+    <AnimatedSvg width={animatedStyle.note.width}
+                 height={animatedStyle.note.height}
+                 style={styles.note}>
+      <AnimatedG scale={animatedScale}
+                 x={Animated.divide(animatedStyle.note.width, 2)}
+                 y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
         {note.pitches === undefined ? undefined :
           note.pitches?.map((it, index) =>
             <Note key={index + "_" + it.pitch}
@@ -52,13 +54,13 @@ const NoteElement: React.FC<Props> = ({
         {note.rest === undefined ? undefined :
           <Rest note={note} />
         }
-      </G>
-    </Svg>
+      </AnimatedG>
+    </AnimatedSvg>
   </>;
 
-  return <View style={[styles.container, animatedStyle.container]}>
+  return <Animated.View style={[styles.container, animatedStyle.container]}>
     {!showMelodyLines ? undefined : melodyComponents}
-  </View>;
+  </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
@@ -73,7 +75,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
 const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
   prevProps.showMelodyLines === nextProps.showMelodyLines &&
-  prevProps.scale === nextProps.scale &&
+  prevProps.animatedScale === nextProps.animatedScale &&
   prevProps.note.rest?.type === nextProps.note.rest?.type &&
   prevProps.note.duration === nextProps.note.duration &&
   prevProps.note.pitches?.length === nextProps.note.pitches?.length &&

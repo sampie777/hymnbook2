@@ -1,36 +1,41 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { AbcConfig } from "../../config";
-import Svg, { Color, G, Line } from "react-native-svg";
-import Lines from "../../other/Lines";
+import { Color, Line } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import LinesSvg from "../../other/LinesSvg";
+import { AnimatedG, AnimatedSvg } from "../../../utils";
 
 interface Props {
-  scale: number;
+  animatedScale: Animated.Value;
 }
 
-const BarThin: React.FC<Props> = ({ scale }) => {
+const BarThin: React.FC<Props> = ({ animatedScale }) => {
   const styles = createStyles(useTheme());
   const width = 2 * AbcConfig.notePadding;
 
-  return <View style={[styles.container, { minWidth: width * scale }]}>
-    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
-      <G scale={scale} y={AbcConfig.topSpacing * scale}>
-        <Lines />
-      </G>
-    </Svg>
+  const animatedStyles = {
+    container: {
+      minWidth: Animated.multiply(animatedScale, width)
+    },
+    svg: {
+      width: Animated.multiply(animatedScale, width),
+      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
+    }
+  };
 
-    <Svg width={AbcConfig.lineBarThinWidth * scale}
-         height={AbcConfig.totalLineHeight * scale}
-         style={{ position: "absolute" }}>
-      <G scale={scale} y={AbcConfig.topSpacing * scale}>
+  return <Animated.View style={[styles.container, animatedStyles.container]}>
+    <LinesSvg animatedScale={animatedScale} />
+
+    <AnimatedSvg width={animatedStyles.svg.width} height={animatedStyles.svg.height}>
+      <AnimatedG scale={animatedScale} y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
         <Line x1={AbcConfig.lineBarThinWidth / 2} y1={0}
               x2={AbcConfig.lineBarThinWidth / 2} y2={4 * AbcConfig.lineSpacing}
               stroke={styles.bar.color as Color}
               strokeWidth={AbcConfig.lineBarThinWidth} />
-      </G>
-    </Svg>
-  </View>;
+      </AnimatedG>
+    </AnimatedSvg>
+  </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
@@ -40,11 +45,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   bar: {
     color: colors.notesColor
-  },
-  endBar: {
-    flex: 4,
-    flexDirection: "row",
-    justifyContent: "flex-end"
   }
 });
 
