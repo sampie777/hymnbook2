@@ -28,8 +28,7 @@ const NoteElement: React.FC<Props> = ({
       height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
     },
     note: {
-      width: Animated.multiply(animatedScale, noteWidth),
-      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
+      width: Animated.multiply(animatedScale, noteWidth)
     }
   };
 
@@ -39,7 +38,7 @@ const NoteElement: React.FC<Props> = ({
     <LinesSvg animatedScale={animatedScale} />
 
     <AnimatedSvg width={animatedStyle.note.width}
-                 height={animatedStyle.note.height}
+                 height={styles.note.height}
                  style={styles.note}>
       <AnimatedG scale={animatedScale}
                  x={Animated.divide(animatedStyle.note.width, 2)}
@@ -69,7 +68,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "center"
   },
   note: {
-    position: "absolute"
+    position: "absolute",
+    height: "125%"
   }
 });
 
