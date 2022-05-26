@@ -8,11 +8,12 @@ import NoteElement from "./NoteElement";
 
 interface Props {
   note: VoiceItemNote;
-  animatedScale: Animated.Value;
+  animatedScaleText: Animated.Value;
+  animatedScaleMelody: Animated.Value;
   showMelodyLines: boolean;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScale, showMelodyLines }) => {
+const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animatedScaleMelody, showMelodyLines }) => {
   const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
@@ -22,13 +23,13 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScale, showMelody
   const noteWidth = AbcGui.calculateNoteWidth(note);
   const animatedStyle = {
     container: {
-      minWidth: Animated.multiply(noteWidth, animatedScale)
+      minWidth: Animated.multiply(noteWidth, animatedScaleMelody)
     },
     text: {
-      fontSize: Animated.multiply(animatedScale, AbcConfig.textSize),
-      lineHeight: Animated.multiply(animatedScale, AbcConfig.textLineHeight),
-      paddingHorizontal: Animated.multiply(animatedScale, lyrics.endsWith("-") ? 1 : 5),
-      right: Animated.multiply(animatedScale, lyrics.endsWith("-") ? -3: 0)
+      fontSize: Animated.multiply(animatedScaleText, AbcConfig.textSize),
+      lineHeight: Animated.multiply(animatedScaleText, AbcConfig.textLineHeight),
+      paddingHorizontal: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? 1 : 5),
+      right: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? -3: 0)
     }
   };
 
@@ -36,7 +37,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScale, showMelody
   return <Animated.View style={[styles.container, animatedStyle.container]}>
     <NoteElement showMelodyLines={showMelodyLines}
                  note={note}
-                 animatedScale={animatedScale} />
+                 animatedScale={animatedScaleMelody} />
     <Animated.Text style={[styles.text, animatedStyle.text]}>{lyrics}</Animated.Text>
   </Animated.View>;
 };
