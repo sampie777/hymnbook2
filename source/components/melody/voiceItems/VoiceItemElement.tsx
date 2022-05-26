@@ -6,19 +6,21 @@ import VoiceItemBarElement from "./BarElement/VoiceItemBarElement";
 
 interface Props {
   item: VoiceItem;
-  animatedScale: Animated.Value;
+  animatedScaleText: Animated.Value;
+  animatedScaleMelody: Animated.Value;
   showMelodyLines: boolean;
 }
 
-const VoiceItemElement: React.FC<Props> = ({ item, animatedScale, showMelodyLines }) => {
+const VoiceItemElement: React.FC<Props> = ({ item, animatedScaleText, animatedScaleMelody, showMelodyLines }) => {
   switch (item.el_type) {
     case "note":
       return <VoiceItemNoteElement note={item}
                                    showMelodyLines={showMelodyLines}
-                                   animatedScale={animatedScale} />;
+                                   animatedScaleText={animatedScaleText}
+                                   animatedScaleMelody={animatedScaleMelody} />;
     case "bar":
       return <VoiceItemBarElement item={item}
-                                  animatedScale={animatedScale} />;
+                                  animatedScale={animatedScaleMelody} />;
     default:
       return null;
   }

@@ -18,7 +18,7 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, onLoaded }) => {
   const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
-  const animatedTotalScale = Animated.multiply(animatedScale,
+  const animatedScaleMelody = Animated.multiply(animatedScale,
     AbcConfig.baseScale * Settings.songMelodyScale) as unknown as Animated.Value;
 
   useEffect(() => {
@@ -44,16 +44,17 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, onLoaded }) => {
     }
   ]}
                onLayout={onLayoutLoaded}>
-    <Clef animatedScale={animatedTotalScale}
+    <Clef animatedScale={animatedScaleMelody}
           clef={abcSong.clef} />
-    <Key animatedScale={animatedTotalScale}
+    <Key animatedScale={animatedScaleMelody}
          keySignature={abcSong.keySignature} />
 
     {abcSong.melody.map((it, index) =>
       <VoiceItemElement key={index}
                         item={it}
                         showMelodyLines={showMelodyLines}
-                        animatedScale={animatedTotalScale} />)}
+                        animatedScaleText={animatedScale}
+                        animatedScaleMelody={animatedScaleMelody} />)}
   </View>;
 };
 
