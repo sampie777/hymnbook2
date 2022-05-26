@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { Verse } from "../../models/Songs";
 import Settings from "../../settings";
 import { ABC } from "../../scripts/songs/abc/abc";
 import { isVerseInList } from "../../scripts/songs/versePicker";
 import { getVerseType, VerseType } from "../../scripts/songs/utils";
-import Animated from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import MelodyView from "../../components/melody/MelodyView";
 
 interface ContentVerseProps {
   verse: Verse;
-  scale: Animated.Value<number>;
-  opacity: Animated.Value<number>;
+  scale: Animated.Value;
   selectedVerses: Array<Verse>;
   abcBackupMelody?: string;
   showMelody: boolean;
@@ -22,7 +20,6 @@ interface ContentVerseProps {
 const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      verse,
                                                      scale,
-                                                     opacity,
                                                      selectedVerses,
                                                      abcBackupMelody,
                                                      showMelody,
@@ -34,17 +31,16 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: {
-      marginTop: Animated.multiply(scale, 10),
-      marginBottom: Animated.multiply(scale, 35),
-      opacity: opacity
+      paddingTop: Animated.multiply(scale, 10),
+      paddingBottom: Animated.multiply(scale, 35)
     },
     title: {
       fontSize: Animated.multiply(scale, 19),
-      marginBottom: Animated.multiply(scale, 5)
+      paddingBottom: Animated.multiply(scale, 5)
     },
     titleLarge: {
       fontSize: Animated.multiply(scale, 30),
-      marginBottom: Animated.multiply(scale, 5)
+      paddingBottom: Animated.multiply(scale, 5)
     },
     text: {
       fontSize: Animated.multiply(scale, 20),
@@ -121,8 +117,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       }
 
       {!displayMelody ? undefined :
-        <MelodyView scale={Settings.songScale}
-                    onLoaded={onMelodyLoaded}
+        <MelodyView onLoaded={onMelodyLoaded}
                     abc={ABC.generateAbcForVerse(verse, abcBackupMelody)}
                     animatedScale={scale} />
       }

@@ -1,20 +1,21 @@
 import React, { memo } from "react";
-import Svg, { G } from "react-native-svg";
+import { Animated } from "react-native";
 import { AbcConfig } from "../config";
 import Lines from "./Lines";
+import { AnimatedG, AnimatedSvg } from "../../utils";
 
 interface Props {
-  scale: number;
+  animatedScale: Animated.Value;
 }
 
-const LinesSvg: React.FC<Props> = ({ scale }) => {
-  return <Svg width={"100%"}
-              style={{position: "absolute"}}
-              height={AbcConfig.totalLineHeight * scale}>
-    <G scale={scale} y={AbcConfig.topSpacing * scale}>
+const LinesSvg: React.FC<Props> = ({ animatedScale }) => {
+  return <AnimatedSvg width={"100%"}
+                      style={{ position: "absolute" }}
+                      height={Animated.multiply(animatedScale, AbcConfig.totalLineHeight)}>
+    <AnimatedG scale={animatedScale} y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
       <Lines />
-    </G>
-  </Svg>;
+    </AnimatedG>
+  </AnimatedSvg>;
 };
 
 export default memo(LinesSvg);

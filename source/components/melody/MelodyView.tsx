@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { Animated, StyleSheet, View } from "react-native";
+import { AbcConfig } from "./config";
+import Settings from "../../settings";
+import { ABC } from "../../scripts/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
-import { ABC } from "../../scripts/songs/abc/abc";
-import Settings from "../../settings";
-import { AbcConfig } from "./config";
 
 interface Props {
-  scale: number;
   abc: string;
-  animatedScale: Animated.Value<number>;
+  animatedScale: Animated.Value;
   onLoaded: () => void;
 }
 
-const MelodyView: React.FC<Props> = ({ scale, abc, animatedScale, onLoaded }) => {
+const MelodyView: React.FC<Props> = ({ abc, animatedScale, onLoaded }) => {
   const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
   const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
-  const totalScale = AbcConfig.baseScale * Settings.songMelodyScale * scale;
+  const animatedTotalScale = Animated.multiply(animatedScale,
+    AbcConfig.baseScale * Settings.songMelodyScale) as unknown as Animated.Value;
 
   useEffect(() => {
     setAbcSong(ABC.parse(abc));
@@ -45,17 +44,16 @@ const MelodyView: React.FC<Props> = ({ scale, abc, animatedScale, onLoaded }) =>
     }
   ]}
                onLayout={onLayoutLoaded}>
-    <Clef scale={totalScale}
+    <Clef animatedScale={animatedTotalScale}
           clef={abcSong.clef} />
-    <Key scale={totalScale}
+    <Key animatedScale={animatedTotalScale}
          keySignature={abcSong.keySignature} />
 
     {abcSong.melody.map((it, index) =>
       <VoiceItemElement key={index}
                         item={it}
                         showMelodyLines={showMelodyLines}
-                        scale={totalScale}
-                        animatedScale={animatedScale} />)}
+                        animatedScale={animatedTotalScale} />)}
   </View>;
 };
 

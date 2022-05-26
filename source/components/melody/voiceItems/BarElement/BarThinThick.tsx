@@ -1,32 +1,34 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { AbcConfig } from "../../config";
-import Svg, { Color, G, Line } from "react-native-svg";
-import Lines from "../../other/Lines";
+import { Color, Line } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import LinesSvg from "../../other/LinesSvg";
+import { AnimatedG, AnimatedSvg } from "../../../utils";
 
 interface Props {
-  scale: number;
+  animatedScale: Animated.Value;
 }
 
-const BarThinThick: React.FC<Props> = ({ scale }) => {
+const BarThinThick: React.FC<Props> = ({ animatedScale }) => {
   const styles = createStyles(useTheme());
   const width = AbcConfig.lineBarThickWidth + AbcConfig.lineBarThinWidth;
 
-  return <View style={[styles.container, styles.endBar, { minWidth: width * scale }]}>
-    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
-      <G scale={scale} y={AbcConfig.topSpacing * scale}>
-        <Lines />
-      </G>
-    </Svg>
+  const animatedStyles = {
+    container: {
+      minWidth: Animated.multiply(animatedScale, width)
+    },
+    svg: {
+      width: Animated.multiply(animatedScale, width),
+      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
+    }
+  };
 
-    <Svg width={width * scale}
-         height={AbcConfig.totalLineHeight * scale}
-         style={{
-           position: "absolute",
-           alignSelf: "flex-end"
-         }}>
-      <G scale={scale} y={AbcConfig.topSpacing * scale}>
+  return <Animated.View style={[styles.container, animatedStyles.container, styles.endBar]}>
+    <LinesSvg animatedScale={animatedScale} />
+
+    <AnimatedSvg width={animatedStyles.svg.width} height={animatedStyles.svg.height}>
+      <AnimatedG scale={animatedScale} y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
         <Line x1={0} y1={0}
               x2={0} y2={4 * AbcConfig.lineSpacing}
               stroke={styles.bar.color as Color}
@@ -36,9 +38,9 @@ const BarThinThick: React.FC<Props> = ({ scale }) => {
               x2={AbcConfig.lineBarThickWidth} y2={4 * AbcConfig.lineSpacing}
               stroke={styles.bar.color as Color}
               strokeWidth={AbcConfig.lineBarThickWidth} />
-      </G>
-    </Svg>
-  </View>;
+      </AnimatedG>
+    </AnimatedSvg>
+  </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({

@@ -1,26 +1,18 @@
 import React from "react";
+import { Animated, StyleSheet } from "react-native";
 import { AbcConfig } from "../../config";
-import Settings from "../../../../settings";
 import { AbcGui } from "../../../../scripts/songs/abc/gui";
 import { VoiceItemNote } from "../../../../scripts/songs/abc/abcjsTypes";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
-import { StyleSheet } from "react-native";
-import Animated from "react-native-reanimated";
 import NoteElement from "./NoteElement";
 
 interface Props {
   note: VoiceItemNote;
-  scale: number;
-  animatedScale: Animated.Value<number>;
+  animatedScale: Animated.Value;
   showMelodyLines: boolean;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({
-                                                 note,
-                                                 scale,
-                                                 animatedScale,
-                                                 showMelodyLines
-                                               }) => {
+const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScale, showMelodyLines }) => {
   const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
@@ -28,25 +20,14 @@ const VoiceItemNoteElement: React.FC<Props> = ({
     .join(" ") || "";
 
   const noteWidth = AbcGui.calculateNoteWidth(note);
-  const textWidth = AbcGui.calculateTextWidth(lyrics, Settings.songScale) / scale;
-  const width = Math.max(noteWidth, textWidth) * scale;
   const animatedStyle = {
     container: {
-      minWidth: Settings.animateMelodyScale
-        ? Animated.multiply(width, animatedScale)
-        : width,
-      flex: lyrics.endsWith("-") ? 1 : 4
+      minWidth: Animated.multiply(noteWidth, animatedScale)
     },
     text: {
-      fontSize: Settings.animateMelodyScale ?
-        Animated.multiply(animatedScale, AbcConfig.textSize) :
-        Settings.songScale * AbcConfig.textSize,
-      lineHeight: Settings.animateMelodyScale ?
-        Animated.multiply(animatedScale, AbcConfig.textLineHeight) : Settings.songScale * AbcConfig.textLineHeight
-    },
-    note: {
-      width: Animated.multiply(animatedScale, noteWidth),
-      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
+      fontSize: Animated.multiply(animatedScale, AbcConfig.textSize),
+      lineHeight: Animated.multiply(animatedScale, AbcConfig.textLineHeight),
+      paddingHorizontal: Animated.multiply(animatedScale, lyrics.endsWith("-") ? 1 : 6)
     }
   };
 
@@ -54,20 +35,16 @@ const VoiceItemNoteElement: React.FC<Props> = ({
   return <Animated.View style={[styles.container, animatedStyle.container]}>
     <NoteElement showMelodyLines={showMelodyLines}
                  note={note}
-                 scale={scale} />
+                 animatedScale={animatedScale} />
     <Animated.Text style={[styles.text, animatedStyle.text]}>{lyrics}</Animated.Text>
   </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
-    alignItems: "stretch"
-  },
-  noteContainer: {
-    flexDirection: "row",
-    justifyContent: "center"
+    flexGrow: 1,
+    flexShrink: 1
   },
   text: {
     color: colors.text,
