@@ -20,6 +20,7 @@ const ScreenHeader: React.FC<Props> = ({ song, showMelody, isMelodyLoading, open
   return <>
     {!songHasMelodyToShow || !isMelodyLoading ? undefined :
       <ActivityIndicator size={styles.loadIcon.fontSize}
+                         style={styles.loadIcon}
                          color={styles.loadIcon.color} />
     }
     {!songHasMelodyToShow || isMelodyLoading ? undefined :
@@ -38,8 +39,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   loadIcon: {
     fontSize: 26,
     color: colors.text,
-    paddingHorizontal: 10,
-    paddingVertical: 10
+    paddingHorizontal: 7,
   }
 });
 
