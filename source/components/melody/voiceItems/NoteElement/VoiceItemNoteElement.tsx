@@ -27,7 +27,8 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScale, showMelody
     text: {
       fontSize: Animated.multiply(animatedScale, AbcConfig.textSize),
       lineHeight: Animated.multiply(animatedScale, AbcConfig.textLineHeight),
-      paddingHorizontal: Animated.multiply(animatedScale, lyrics.endsWith("-") ? 1 : 6)
+      paddingHorizontal: Animated.multiply(animatedScale, lyrics.endsWith("-") ? 1 : 5),
+      right: Animated.multiply(animatedScale, lyrics.endsWith("-") ? -3: 0)
     }
   };
 
