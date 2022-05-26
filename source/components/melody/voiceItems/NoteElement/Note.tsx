@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { AbcConfig } from "../config";
+import { AbcConfig } from "../../config";
 import { AbcPitch, StemDirection } from "../../../../scripts/songs/abc/abcjsTypes";
 import { Circle, Color, Ellipse, G, Line, Path, Text } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";

@@ -1,10 +1,10 @@
 import React from "react";
-import { AbcConfig } from "../voiceItems/config";
+import { AbcConfig } from "../config";
 import { AbcClef } from "../../../scripts/songs/abc/abcjsTypes";
 import { View } from "react-native";
 import Svg, { Color, G, Path } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../ThemeProvider";
-import Lines from "../voiceItems/Lines";
+import Lines from "./Lines";
 
 interface Props {
   scale: number;

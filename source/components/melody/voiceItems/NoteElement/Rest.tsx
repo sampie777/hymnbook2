@@ -1,5 +1,5 @@
 import React from "react";
-import { AbcConfig } from "../config";
+import { AbcConfig } from "../../config";
 import { VoiceItemNote } from "../../../../scripts/songs/abc/abcjsTypes";
 import { Circle, Color, G, Path, Rect } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";

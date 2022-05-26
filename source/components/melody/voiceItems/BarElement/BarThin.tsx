@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { AbcConfig } from "../config";
+import { AbcConfig } from "../../config";
 import Svg, { Color, G, Line } from "react-native-svg";
-import Lines from "../Lines";
+import Lines from "../../other/Lines";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 
 interface Props {

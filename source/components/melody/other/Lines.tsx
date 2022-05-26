@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { AbcConfig } from "./config";
+import { AbcConfig } from "../config";
 import { Color, Line } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 
