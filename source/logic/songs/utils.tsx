@@ -1,6 +1,6 @@
 import Db from "../db/db";
 import Settings from "../../settings";
-import { Song, Verse, VerseProps } from "../db/models/Songs";
+import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 
 export enum VerseType {
@@ -197,4 +197,14 @@ export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => 
 
   return Db.songs.realm()
     .objectForPrimaryKey(SongSchema.name, id) as (Song & Realm.Object | undefined);
+};
+
+export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: SongBundle): boolean => {
+  if (song === undefined || bundle === undefined) {
+    return false;
+  }
+  if (song.language.length === 0 || bundle.language.length === 0) {
+    return false;
+  }
+  return song.language !== bundle.language;
 };
