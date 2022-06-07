@@ -2,6 +2,7 @@ import React from "react";
 import { Song } from "../../../logic/db/models/Songs";
 import { Animated, StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 
 interface Props {
   song?: Song;
@@ -21,7 +22,7 @@ const Footer: React.FC<Props> = ({ song }) => {
       copyright += songBundle.name + "\n";
     }
 
-    copyright += song.language || songBundle?.language || "";
+    copyright += languageAbbreviationToFullName(song.language || songBundle?.language || "");
     return copyright.trim();
   }
 

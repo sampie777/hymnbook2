@@ -1,6 +1,7 @@
 import React from "react";
 import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
@@ -25,7 +26,7 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
       <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
           <Text style={styles.infoText}>
-            {bundle.language}
+            {languageAbbreviationToFullName(bundle.language)}
           </Text>
         }
         {bundle.size === undefined ? undefined :
@@ -61,7 +62,7 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
       <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
           <Text style={styles.infoText}>
-            {bundle.language}
+            {languageAbbreviationToFullName(bundle.language)}
           </Text>
         }
         <Text style={styles.infoText}>
@@ -100,5 +101,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.textLighter
-  },
+  }
 });

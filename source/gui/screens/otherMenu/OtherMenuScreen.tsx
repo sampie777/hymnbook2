@@ -19,7 +19,7 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="cogs" style={style} />
       },
       {
-        name: routes.SongImport,
+        name: routes.Databases,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="database" style={style} />
       },
       {
