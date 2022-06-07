@@ -1,5 +1,5 @@
-import { Song, Verse } from "../../../../source/models/Songs";
-import { generateSongTitle } from "../../../../source/scripts/songs/utils";
+import { Song, Verse } from "../../../../source/logic/db/models/Songs";
+import { generateSongTitle } from "../../../../source/logic/songs/utils";
 
 describe("test generating song title", () => {
   const song = new Song("Psalm 1", "", "", "", new Date(), new Date(), [], 0, 1, "", "");
