@@ -73,7 +73,7 @@ export function openLink(url: string): Promise<any> {
     rollbar.critical("Trying to open link with empty url: '" + url + "'.");
     return new Promise(_ => {
       throw new Error("This URL doesn't exists. Please contact the developer.");
-    })
+    });
   }
 
   return Linking.canOpenURL(url)
@@ -115,4 +115,16 @@ export const objectToArrayIfNotAlready = (obj: any) => {
     return obj;
   }
   return [obj];
-}
+};
+
+const languageAbbreviationMap = {
+  "AF": "Afrikaans",
+  "NL": "Nederlands",
+  "EN": "English",
+  "DE": "Deutsch",
+  "FA": "Français"
+};
+export const languageAbbreviationToFullName = (abbreviation: string) => {
+  // @ts-ignore
+  return languageAbbreviationMap[abbreviation.toUpperCase()] || abbreviation;
+};

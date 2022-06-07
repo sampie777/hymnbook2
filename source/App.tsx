@@ -11,23 +11,20 @@ import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
 import { CollectionChangeCallback } from "realm";
 import Db from "./logic/db/db";
 import Settings from "./settings";
-import { ParamList, routes } from "./navigation";
+import { routes } from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
 import { closeDatabases, initDatabases } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/ThemeProvider";
+import { Types } from "./gui/screens/downloads/TypeSelectBar";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";
-import HeaderIconButton from "./gui/components/HeaderIconButton";
 import LoadingOverlay from "./gui/components/LoadingOverlay";
 import SearchScreen from "./gui/screens/search/SearchScreen";
 import SongDisplayScreen from "./gui/screens/songDisplay/SongDisplayScreen";
-import DownloadSongsScreen from "./gui/screens/downloads/DownloadSongsScreen";
-import DownloadDocumentsScreen from "./gui/screens/downloads/DownloadDocumentsScreen";
 import SettingsScreen from "./gui/screens/settings/SettingsScreen";
 import SongListScreen from "./gui/screens/songlist/SongListScreen";
 import AboutScreen from "./gui/screens/about/AboutScreen";
@@ -37,6 +34,7 @@ import OtherMenuScreen from "./gui/screens/otherMenu/OtherMenuScreen";
 import DocumentSearchScreen from "./gui/screens/search/documents/DocumentSearchScreen";
 import SingleDocument from "./gui/screens/documentDisplay/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
+import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 
 
 const RootNav = createNativeStackNavigator();
@@ -82,17 +80,10 @@ const RootNavigation = () => {
                       id: undefined
                     }} />
 
-    <RootNav.Screen name={routes.SongImport} component={DownloadSongsScreen}
-                    options={({ navigation }: { navigation: NativeStackNavigationProp<ParamList, "SongImport"> }) => ({
-                      headerRight: () => !Settings.enableDocumentsFeatureSwitch ? undefined :
-                        (<HeaderIconButton icon={"file-alt"}
-                                           onPress={() => navigation.navigate(routes.DocumentImport)} />)
-                    })} />
-    <RootNav.Screen name={routes.DocumentImport} component={DownloadDocumentsScreen}
-                    options={({ navigation }: { navigation: NativeStackNavigationProp<ParamList, "DocumentImport"> }) => ({
-                      headerRight: () => (<HeaderIconButton icon={"music"}
-                                                            onPress={() => navigation.navigate(routes.SongImport)} />)
-                    })} />
+    <RootNav.Screen name={routes.Databases} component={DownloadsScreen}
+                    initialParams={{
+                      type: Types.Songs
+                    }} />
   </RootNav.Navigator>;
 };
 
