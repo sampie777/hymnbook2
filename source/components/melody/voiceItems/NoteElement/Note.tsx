@@ -1,22 +1,22 @@
-import React from "react";
-import { AbcConfig } from "./config";
-import { AbcPitch, StemDirection, VoiceItemNote } from "../../../scripts/songs/abc/abcjsTypes";
+import React, { memo } from "react";
+import { AbcConfig } from "../../config";
+import { AbcPitch, StemDirection } from "../../../../scripts/songs/abc/abcjsTypes";
 import { Circle, Color, Ellipse, G, Line, Path, Text } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 
 interface Props {
   pitch: AbcPitch,
-  note: VoiceItemNote,
+  duration: number,
 }
 
-const Note: React.FC<Props> = ({ pitch, note }) => {
+const Note: React.FC<Props> = ({ pitch, duration }) => {
   const styles = createStyles(useTheme());
   const y = (10 - pitch.pitch) * (AbcConfig.lineSpacing / 2);
   const width = AbcConfig.noteWidth;
 
-  const fill = note.duration < 0.5;
+  const fill = duration < 0.5;
   let stem: StemDirection = "none";
-  if (note.duration < 1) {
+  if (duration < 1) {
     if (pitch.pitch < 6) {
       stem = "up";
     } else {
@@ -52,7 +52,7 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
             stroke={styles.color}
             strokeWidth={AbcConfig.stemWidth} />}
 
-    {note.duration !== 0.125 ? undefined :
+    {duration !== 0.125 ? undefined :
       <G x={stemX} y={(stem === "up" ? -1 : 1) * AbcConfig.stemHeight}
          transform={stem === "up" ? undefined : "scale(1, -1)"}>
         <Path
@@ -70,23 +70,23 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
             stroke={styles.color}
             strokeWidth={AbcConfig.lineWidth} />)}
 
-    <Ellipse rotation={note.duration === 1 ? 0 : -30}
+    <Ellipse rotation={duration === 1 ? 0 : -30}
              rx={width}
-             ry={note.duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
+             ry={duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
              strokeWidth={2.5}
              stroke={styles.color}
-             fill={fill  ? styles.color : "none"} />
+             fill={fill ? styles.color : "none"} />
 
-    {note.duration !== 1 ? undefined :
-      <Ellipse rotation={note.duration === 1 ? 0 : -30}
+    {duration !== 1 ? undefined :
+      <Ellipse rotation={duration === 1 ? 0 : -30}
                rx={width + 2.3}
-               ry={note.duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
+               ry={duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
                strokeWidth={2.0}
                stroke={styles.color}
                fill={"none"} />}
 
 
-    {!(note.duration === 0.375 || note.duration === 0.625) ? undefined :
+    {!(duration === 0.375 || duration === 0.625) ? undefined :
       <Circle cx={width + 6.5}
               cy={pitch.pitch % 2 === 0 ? -1 * (AbcConfig.lineSpacing / 2) : 0}
               r={2}
@@ -114,7 +114,12 @@ const Note: React.FC<Props> = ({ pitch, note }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesColor as Color,
-})
+  color: colors.notesColor as Color
+});
 
-export default Note;
+const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
+  prevProps.pitch.pitch === nextProps.pitch.pitch &&
+  prevProps.pitch.accidental === nextProps.pitch.accidental &&
+  prevProps.duration === nextProps.duration;
+
+export default memo(Note, propsAreEqual);

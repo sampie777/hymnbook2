@@ -6,6 +6,8 @@ export const AbcConfig = {
   textSpacing: 13,
 
   lineWidth: 1,
+  lineBarThinWidth: 1.5,
+  lineBarThickWidth: 8,
 
   notePadding: 13,
   noteWidth: 4.8,
@@ -23,4 +25,4 @@ export const AbcConfig = {
   introEmptyGapWidth: 10
 };
 
-AbcConfig.totalLineHeight = AbcConfig.topSpacing + 5 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
+AbcConfig.totalLineHeight = AbcConfig.topSpacing + 4 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
