@@ -3,6 +3,7 @@ import { Song } from "../../../logic/db/models/Songs";
 import { Animated, StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { languageAbbreviationToFullName } from "../../../logic/utils";
+import { isSongLanguageDifferentFromSongBundle } from "../../../logic/songs/utils";
 
 interface Props {
   song?: Song;
@@ -22,7 +23,9 @@ const Footer: React.FC<Props> = ({ song }) => {
       copyright += songBundle.name + "\n";
     }
 
-    copyright += languageAbbreviationToFullName(song.language || songBundle?.language || "");
+    if (isSongLanguageDifferentFromSongBundle(song, songBundle)) {
+      copyright += languageAbbreviationToFullName(song.language);
+    }
     return copyright.trim();
   }
 

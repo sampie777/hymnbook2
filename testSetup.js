@@ -16,7 +16,7 @@ jest.mock("rollbar-react-native", () => {
   };
 });
 
-jest.mock("./source/scripts/rollbar", () => {
+jest.mock("./source/logic/rollbar", () => {
   return {
     rollbar: {
       log: () => undefined,
