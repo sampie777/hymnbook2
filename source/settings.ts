@@ -22,7 +22,6 @@ class SettingsClass extends SettingsBaseClass {
   highlightSelectedVerses = true;
   showMelody = false;
   showMelodyForAllVerses = false;
-  animateMelodyScale = false;
   animateAddedToSongList = true;
 
   // Documents

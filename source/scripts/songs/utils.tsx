@@ -1,4 +1,7 @@
+import Db from "../db/db";
+import Settings from "../../settings";
 import { Song, Verse, VerseProps } from "../../models/Songs";
+import { SongSchema } from "../../models/SongsSchema";
 
 export enum VerseType {
   Verse,
@@ -161,4 +164,37 @@ export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean =
     && Song.getSongBundle(it)?.id !== songBundle?.id
     && it.name.startsWith(firstWord)
   );
+};
+
+export const hasMelodyToShow = (song?: Song) => {
+  if (!Settings.showMelody) {
+    return false;
+  }
+
+  if (song === undefined) {
+    return false;
+  }
+
+  if (!song.verses.some(it => it.abcLyrics)) {
+    return false;
+  }
+
+  if (song.abcMelody) {
+    return true;
+  }
+
+  return song.verses.some(it => it.abcLyrics && it.abcMelody);
+};
+
+export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => {
+  if (!Db.songs.isConnected()) {
+    return;
+  }
+
+  if (id === undefined) {
+    return undefined;
+  }
+
+  return Db.songs.realm()
+    .objectForPrimaryKey(SongSchema.name, id) as (Song & Realm.Object | undefined);
 };

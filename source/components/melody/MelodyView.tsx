@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { Animated, StyleSheet, View } from "react-native";
+import { AbcConfig } from "./config";
+import Settings from "../../settings";
+import { ABC } from "../../scripts/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
-import { ABC } from "../../scripts/songs/abc/abc";
-import Settings from "../../settings";
-import { AbcConfig } from "./voiceItems/config";
 
 interface Props {
-  scale: number;
   abc: string;
-  animatedScale: Animated.Value<number>;
+  animatedScale: Animated.Value;
+  onLoaded: () => void;
 }
 
-const MelodyView: React.FC<Props> = ({ scale, abc, animatedScale }) => {
+const MelodyView: React.FC<Props> = ({ abc, animatedScale, onLoaded }) => {
+  const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
+  const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
+
+  const animatedScaleMelody = Animated.multiply(animatedScale,
+    AbcConfig.baseScale * Settings.songMelodyScale) as unknown as Animated.Value;
 
   useEffect(() => {
     setAbcSong(ABC.parse(abc));
@@ -25,16 +29,32 @@ const MelodyView: React.FC<Props> = ({ scale, abc, animatedScale }) => {
     return null;
   }
 
-  const totalScale = AbcConfig.baseScale * Settings.songMelodyScale * scale;
-  return <View style={styles.container}>
-    <Clef scale={totalScale} clef={abcSong.clef} />
-    <Key scale={totalScale} keySignature={abcSong.keySignature} />
+  const onLayoutLoaded = () => {
+    onLoaded();
+    setIsLayoutLoaded(true);
+    setShowMelodyLines(true);
+  };
+
+  return <View style={[
+    styles.container,
+    {
+      // Hide view while melody is loading
+      position: isLayoutLoaded ? "relative" : "absolute",
+      opacity: isLayoutLoaded ? 1 : 0
+    }
+  ]}
+               onLayout={onLayoutLoaded}>
+    <Clef animatedScale={animatedScaleMelody}
+          clef={abcSong.clef} />
+    <Key animatedScale={animatedScaleMelody}
+         keySignature={abcSong.keySignature} />
 
     {abcSong.melody.map((it, index) =>
       <VoiceItemElement key={index}
                         item={it}
-                        scale={totalScale}
-                        animatedScale={animatedScale} />)}
+                        showMelodyLines={showMelodyLines}
+                        animatedScaleText={animatedScale}
+                        animatedScaleMelody={animatedScaleMelody} />)}
   </View>;
 };
 

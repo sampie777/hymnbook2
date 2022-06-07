@@ -1,47 +1,46 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Animated, StyleSheet } from "react-native";
 import { Verse } from "../../models/Songs";
 import Settings from "../../settings";
 import { ABC } from "../../scripts/songs/abc/abc";
 import { isVerseInList } from "../../scripts/songs/versePicker";
 import { getVerseType, VerseType } from "../../scripts/songs/utils";
-import Animated from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import MelodyView from "../../components/melody/MelodyView";
 
 interface ContentVerseProps {
   verse: Verse;
-  scale: Animated.Value<number>;
-  opacity: Animated.Value<number>;
+  scale: Animated.Value;
   selectedVerses: Array<Verse>;
   abcBackupMelody?: string;
-  showMelody?: boolean;
+  showMelody: boolean;
+  setIsMelodyLoading: (value: boolean) => void;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      verse,
                                                      scale,
-                                                     opacity,
                                                      selectedVerses,
                                                      abcBackupMelody,
-                                                     showMelody
+                                                     showMelody,
+                                                     setIsMelodyLoading
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
+  const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
 
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: {
-      marginTop: Animated.multiply(scale, 10),
-      marginBottom: Animated.multiply(scale, 35),
-      opacity: opacity
+      paddingTop: Animated.multiply(scale, 10),
+      paddingBottom: Animated.multiply(scale, 35)
     },
     title: {
       fontSize: Animated.multiply(scale, 19),
-      marginBottom: Animated.multiply(scale, 5)
+      paddingBottom: Animated.multiply(scale, 5)
     },
     titleLarge: {
       fontSize: Animated.multiply(scale, 30),
-      marginBottom: Animated.multiply(scale, 5)
+      paddingBottom: Animated.multiply(scale, 5)
     },
     text: {
       fontSize: Animated.multiply(scale, 20),
@@ -69,7 +68,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const isMelodyEnabled = () => Settings.showMelody && showMelody;
 
-  const isMelodyAvailable = () => (verse.abcMelody || abcBackupMelody) && verse.abcLyrics;
+  const isMelodyAvailable = () => Boolean((verse.abcMelody || abcBackupMelody) && verse.abcLyrics);
 
   const shouldMelodyBeShownForVerse = () =>
     Settings.showMelodyForAllVerses ||
@@ -81,6 +80,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     isMelodyAvailable() &&
     shouldMelodyBeShownForVerse()
   );
+
+  useEffect(() => {
+    setIsMelodyLoaded(false);
+    if (shouldMelodyBeShownForVerse()) {
+      setIsMelodyLoading(displayMelody);
+    }
+  }, [showMelody]);
+
+  const onMelodyLoaded = () => {
+    setIsMelodyLoading(false);
+    setIsMelodyLoaded(true);
+  };
 
   // Shorten name
   const displayName = verse.name.trim()
@@ -99,14 +110,14 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         </Animated.Text>
       }
 
-      {displayMelody ? undefined :
+      {isMelodyLoaded && displayMelody ? undefined :
         <Animated.Text style={[styles.text, animatedStyle.text]}>
           {verse.content}
         </Animated.Text>
       }
 
       {!displayMelody ? undefined :
-        <MelodyView scale={Settings.songScale}
+        <MelodyView onLoaded={onMelodyLoaded}
                     abc={ABC.generateAbcForVerse(verse, abcBackupMelody)}
                     animatedScale={scale} />
       }

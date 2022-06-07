@@ -1,42 +1,34 @@
 import React from "react";
 import { Song } from "../../models/Songs";
-import { StyleSheet } from "react-native";
-import Animated from "react-native-reanimated";
+import { Animated, StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 
 interface Props {
-  opacity: Animated.Value<number>,
-  song?: Song
+  song?: Song;
 }
 
-const Footer: React.FC<Props> =
-  ({ opacity, song }) => {
-    const styles = createStyles(useTheme());
-    const animatedStyle = {
-      container: {
-        opacity: opacity
-      }
-    };
+const Footer: React.FC<Props> = ({ song }) => {
+  const styles = createStyles(useTheme());
 
-    function createCopyright() {
-      if (song === undefined) {
-        return "";
-      }
-
-      let copyright = "";
-      const songBundle = Song.getSongBundle(song);
-      if (songBundle !== undefined) {
-        copyright += songBundle.name + "\n";
-      }
-
-      copyright += song.language || songBundle?.language || "";
-      return copyright.trim();
+  function createCopyright() {
+    if (song === undefined) {
+      return "";
     }
 
-    return (<Animated.View style={[styles.container, animatedStyle.container]}>
-      <Animated.Text style={[styles.copyright]}>{createCopyright()}</Animated.Text>
-    </Animated.View>);
-  };
+    let copyright = "";
+    const songBundle = Song.getSongBundle(song);
+    if (songBundle !== undefined) {
+      copyright += songBundle.name + "\n";
+    }
+
+    copyright += song.language || songBundle?.language || "";
+    return copyright.trim();
+  }
+
+  return (<Animated.View style={styles.container}>
+    <Animated.Text style={[styles.copyright]}>{createCopyright()}</Animated.Text>
+  </Animated.View>);
+};
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {

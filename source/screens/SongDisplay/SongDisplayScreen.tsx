@@ -9,36 +9,39 @@ import {
   State
 } from "react-native-gesture-handler";
 import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
-import Animated, { Easing } from "react-native-reanimated";
+import ReAnimated, { Easing as ReAnimatedEasing } from "react-native-reanimated";
 import { rollbar } from "../../scripts/rollbar";
-import Db from "../../scripts/db/db";
 import Settings from "../../settings";
 import { ParamList, routes, VersePickerMethod } from "../../navigation";
-import { SongSchema } from "../../models/SongsSchema";
 import { Song, Verse } from "../../models/Songs";
-import { generateSongTitle } from "../../scripts/songs/utils";
+import { generateSongTitle, loadSongWithId } from "../../scripts/songs/utils";
 import { keepScreenAwake } from "../../scripts/utils";
-import { FlatList as NativeFlatList } from "react-native";
+import { Animated, FlatList as NativeFlatList } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
-import HeaderIconButton from "../../components/HeaderIconButton";
 import Footer from "./Footer";
+import ScreenHeader from "./ScreenHeader";
 
 
-interface ComponentProps extends NativeStackScreenProps<ParamList, 'Song'> {
+interface ComponentProps extends NativeStackScreenProps<ParamList, "Song"> {
 }
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
+
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
-  const [showMelodies, setShowMelodies] = useState(false);
+  const [showMelody, setShowMelody] = useState(false);
+  const [isMelodyLoading, setIsMelodyLoading] = useState(false);
+
+  // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const animatedScale = new Animated.Value(Settings.songScale);
-  const animatedOpacity = new Animated.Value<number>(1);
+  // Use Reanimated library, because built in Animated is buggy (animations don't always start)
+  const reAnimatedOpacity = new ReAnimated.Value<number>(1);
   const styles = createStyles(useTheme());
 
   useFocusEffect(
@@ -66,7 +69,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (Settings.songFadeIn) {
       animate();
     } else {
-      animatedOpacity.setValue(1);
+      reAnimatedOpacity.setValue(1);
     }
 
     // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
@@ -86,65 +89,26 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     navigation.setOptions({
       title: title,
-      headerRight: () => (
-        <>
-          {!hasMelodyToShow() ? undefined :
-            <HeaderIconButton icon={"music"}
-                              iconOverlay={showMelodies ? "slash" : undefined}
-                              onPress={() => setShowMelodies(!showMelodies)} />}
-          <HeaderIconButton icon={"list-ol"}
-                            onPress={() => openVersePicker(song)} />
-        </>
-      )
+      headerRight: () => <ScreenHeader song={song}
+                                       showMelody={showMelody}
+                                       setShowMelody={setShowMelody}
+                                       isMelodyLoading={isMelodyLoading}
+                                       openVersePicker={() => openVersePicker(song)} />
     });
-  }, [song?.name, route.params.selectedVerses, showMelodies]);
-
-  const hasMelodyToShow = () => {
-    if (!Settings.showMelody) {
-      return false;
-    }
-
-    if (song === undefined) {
-      return false;
-    }
-
-    if (!song.verses.some(it => it.abcLyrics)) {
-      return false;
-    }
-
-    if (song.abcMelody) {
-      return true;
-    }
-
-    return song.verses.some(it => it.abcLyrics && it.abcMelody);
-  };
+  }, [song?.name, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const loadSong = () => {
-    if (!Db.songs.isConnected()) {
-      return;
-    }
-
-    if (route.params.id === undefined) {
-      setSong(undefined);
-      return;
-    }
-
-    const newSong = Db.songs.realm()
-      .objectForPrimaryKey(SongSchema.name, route.params.id) as (Song & Realm.Object | undefined);
-
-    if (newSong === undefined) {
-      // Song not found
-    }
-
+    const newSong = loadSongWithId(route.params.id);
     setSong(newSong);
-    navigation.setOptions({
-      title: newSong?.name
-    });
+
+    if (newSong !== undefined) {
+      navigation.setOptions({ title: newSong?.name });
+    }
   };
 
   const openVersePicker = (useSong?: Song) => {
     if (useSong === undefined) {
-      rollbar.warning("Can't open versepicker for undefined song. route.params.id="+route.params.id);
+      rollbar.warning("Can't open versepicker for undefined song. route.params.id=" + route.params.id);
       return;
     }
 
@@ -154,29 +118,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       verses: verseParams,
       selectedVerses: route.params.selectedVerses || [],
       songListIndex: route.params.songListIndex,
-      method: VersePickerMethod.UpdatePossibleSongListAndGoBackToSong,
+      method: VersePickerMethod.UpdatePossibleSongListAndGoBackToSong
     });
   };
 
   const animate = () => {
-    animatedOpacity.setValue(0);
-    Animated.timing(animatedOpacity, {
+    reAnimatedOpacity.setValue(0);
+    ReAnimated.timing(reAnimatedOpacity, {
       toValue: 1,
       duration: 180,
-      easing: Easing.inOut(Easing.ease)
+      easing: ReAnimatedEasing.inOut(ReAnimatedEasing.ease)
     })
       .start();
-  };
-
-  const renderContentItem = ({ item }: { item: Verse }) => {
-    return (
-      <ContentVerse verse={item}
-                    opacity={animatedOpacity}
-                    scale={animatedScale}
-                    selectedVerses={route.params.selectedVerses || []}
-                    abcBackupMelody={song?.abcMelody}
-                    showMelody={showMelodies} />
-    );
   };
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
@@ -198,10 +151,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         setViewIndex(viewableItems[0].index);
       }
     });
-
-  const listViewabilityConfig = React.useRef({
-    itemVisiblePercentThreshold: 10
-  });
 
   const scrollToTop = () => {
     if (song === undefined
@@ -225,6 +174,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
+  const renderContentItem = ({ item }: { item: Verse }) => {
+    return (
+      <ContentVerse verse={item}
+                    scale={animatedScale}
+                    selectedVerses={route.params.selectedVerses || []}
+                    abcBackupMelody={song?.abcMelody}
+                    showMelody={showMelody}
+                    setIsMelodyLoading={setIsMelodyLoading} />
+    );
+  };
+
+  const listViewabilityConfig = React.useRef({
+    itemVisiblePercentThreshold: 10
+  });
+
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
   return (
@@ -241,32 +205,34 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         flatListComponentRef={flatListComponentRef.current}
                         selectedVerses={route.params.selectedVerses} />
 
-          <VerseList
-            // @ts-ignore
-            ref={flatListComponentRef}
-            waitFor={pinchGestureHandlerRef}
-            data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
-            renderItem={renderContentItem}
-            initialNumToRender={20}
-            keyExtractor={item => item.id.toString()}
-            contentContainerStyle={styles.contentSectionList}
-            onViewableItemsChanged={onListViewableItemsChanged.current}
-            viewabilityConfig={listViewabilityConfig.current}
-            onScrollToIndexFailed={(error) => {
-              if (song === undefined || error.index < song.verses.length - 1) {
-                // todo: Temp fix
-                flatListComponentRef.current?.scrollToIndex({
-                  index: error.index / 2,
+          <ReAnimated.View style={[styles.contentSectionListContainer, { opacity: reAnimatedOpacity }]}>
+            <VerseList
+              // @ts-ignore
+              ref={flatListComponentRef}
+              waitFor={pinchGestureHandlerRef}
+              data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+              renderItem={renderContentItem}
+              initialNumToRender={20}
+              keyExtractor={(item: Verse) => item.id.toString()}
+              contentContainerStyle={styles.contentSectionList}
+              onViewableItemsChanged={onListViewableItemsChanged.current}
+              viewabilityConfig={listViewabilityConfig.current}
+              onScrollToIndexFailed={(error) => {
+                if (song === undefined || error.index < song.verses.length - 1) {
+                  // todo: Temp fix
+                  flatListComponentRef.current?.scrollToIndex({
+                    index: error.index / 2,
+                    animated: Settings.animateScrolling
+                  });
+                  return;
+                }
+
+                flatListComponentRef.current?.scrollToEnd({
                   animated: Settings.animateScrolling
                 });
-                return;
-              }
-
-              flatListComponentRef.current?.scrollToEnd({
-                animated: Settings.animateScrolling
-              });
-            }}
-            ListFooterComponent={<Footer opacity={animatedOpacity} song={song} />} />
+              }}
+              ListFooterComponent={<Footer song={song} />} />
+          </ReAnimated.View>
 
           <LoadingOverlay text={null}
                           isVisible={
@@ -289,6 +255,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.background
   },
 
+  contentSectionListContainer: {
+    flex: 1
+  },
   contentSectionList: {
     paddingLeft: 30,
     paddingTop: 5,

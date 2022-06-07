@@ -1,23 +1,34 @@
 import React from "react";
-import { AbcConfig } from "../voiceItems/config";
+import { AbcConfig } from "../config";
 import { AbcClef } from "../../../scripts/songs/abc/abcjsTypes";
-import { View } from "react-native";
-import Svg, { Color, G, Path } from "react-native-svg";
+import { Animated } from "react-native";
+import { Color, G, Path } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../ThemeProvider";
-import Lines from "../voiceItems/Lines";
+import Lines from "./Lines";
+import { AnimatedG, AnimatedSvg } from "../../utils";
 
 interface Props {
-  scale: number;
+  animatedScale: Animated.Value;
   clef: AbcClef;
 }
 
-const Clef: React.FC<Props> = ({ scale, clef }) => {
+const Clef: React.FC<Props> = ({ animatedScale, clef }) => {
   const styles = createStyles(useTheme());
   const width = 34;
 
-  return <View style={[styles.container, { minWidth: width * scale }]}>
-    <Svg width={"100%"} height={AbcConfig.totalLineHeight * scale}>
-      <G scale={scale} y={AbcConfig.topSpacing * scale}>
+  const animatedStyles = {
+    container: {
+      minWidth: Animated.multiply(animatedScale, width)
+    },
+    svg: {
+      width: "100%",
+      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
+    }
+  };
+
+  return <Animated.View style={[styles.container, animatedStyles.container]}>
+    <AnimatedSvg width={animatedStyles.svg.width} height={animatedStyles.svg.height}>
+      <AnimatedG scale={animatedScale} y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
         <Lines />
 
         {clef.type !== "bass"
@@ -52,9 +63,9 @@ const Clef: React.FC<Props> = ({ scale, clef }) => {
             </G>
           </G>
         }
-      </G>
-    </Svg>
-  </View>;
+      </AnimatedG>
+    </AnimatedSvg>
+  </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
