@@ -3,7 +3,7 @@ import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
-import { dateFrom } from "../../../logic/utils";
+import { dateFrom, languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -11,7 +11,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View
 } from "react-native";
 import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
@@ -53,11 +52,18 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
 
     if (result.data !== undefined) {
       setLocalBundles(result.data);
-      setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(result.data));
     } else {
       setLocalBundles([]);
-      setFilterLanguage("");
     }
+
+    if (filterLanguage === "") {
+      if (result.data !== undefined) {
+        setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(result.data));
+      } else {
+        setFilterLanguage("");
+      }
+    }
+
     setIsLoading(false);
   };
 
@@ -224,7 +230,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
                          onConfirm={onConfirmDeleteSongBundle}
                          message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
 
-      <Text style={styles.informationText}>Select a bundle to download or delete:</Text>
+
+      <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
 
       <LanguageSelectBar languages={getAllLanguagesFromBundles(bundles)}
                          selectedLanguage={filterLanguage}
@@ -255,7 +262,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
         }
         {isLoading || bundles.length === 0 || bundles.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
           <Text style={styles.emptyListText}>
-            No bundles found for language "{filterLanguage}"...
+            No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
           </Text>
         }
       </ScrollView>
@@ -276,8 +283,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   informationText: {
     fontSize: 15,
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 15,
+    paddingTop: 15,
+    paddingBottom: 3,
     color: colors.text
   },
 
@@ -287,5 +294,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 20,
     textAlign: "center",
     color: colors.text
-  },
+  }
 });

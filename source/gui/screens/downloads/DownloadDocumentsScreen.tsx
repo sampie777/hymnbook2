@@ -3,7 +3,7 @@ import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Do
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
-import { dateFrom } from "../../../logic/utils";
+import { dateFrom, languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -11,7 +11,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View
 } from "react-native";
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
@@ -53,11 +52,18 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
 
     if (result.data !== undefined) {
       setLocalGroups(result.data);
-      setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(result.data));
     } else {
       setLocalGroups([]);
-      setFilterLanguage("");
     }
+
+    if (filterLanguage === "") {
+      if (result.data !== undefined) {
+        setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(result.data));
+      } else {
+        setFilterLanguage("");
+      }
+    }
+
     setIsLoading(false);
   };
 
@@ -254,7 +260,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
         }
         {isLoading || serverGroups.length === 0 || serverGroups.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
           <Text style={styles.emptyListText}>
-            No documents found for language "{filterLanguage}"...
+            No documents found for language "{languageAbbreviationToFullName(filterLanguage)}"...
           </Text>
         }
       </ScrollView>
@@ -275,8 +281,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   informationText: {
     fontSize: 15,
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 15,
+    paddingTop: 15,
+    paddingBottom: 3,
     color: colors.text
   },
 
