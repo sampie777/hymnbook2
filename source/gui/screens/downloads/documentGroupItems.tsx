@@ -1,6 +1,7 @@
 import React from "react";
-import { DocumentGroup as LocalDocumentGroup} from "../../../logic/db/models/Documents";
+import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
@@ -25,7 +26,7 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
           <Text style={styles.infoText}>
-            {group.language}
+            {languageAbbreviationToFullName(group.language)}
           </Text>
         }
         {group.size === undefined ? undefined :
@@ -49,7 +50,7 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
   = ({
        group,
        onPress,
-       hasUpdate = false,
+       hasUpdate = false
      }) => {
   const styles = createStyles(useTheme());
   return (
@@ -61,7 +62,7 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
           <Text style={styles.infoText}>
-            {group.language}
+            {languageAbbreviationToFullName(group.language)}
           </Text>
         }
         <Text style={styles.infoText}>
@@ -100,5 +101,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.textLighter
-  },
+  }
 });

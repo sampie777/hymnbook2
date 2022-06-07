@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import PickerComponent from "../../components/popups/PickerComponent";
 
 interface ComponentProps {
   languages: Array<string>;
@@ -9,15 +12,46 @@ interface ComponentProps {
 }
 
 const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLanguage, onLanguageClick }) => {
+  const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
-  return (<View style={styles.container}>
-    {languages.map(it => <TouchableOpacity key={it}
-                                           onPress={() => onLanguageClick?.(it)}>
-      <Text style={[styles.language, (it !== selectedLanguage ? [] : styles.selectedLanguage)]}>
-        {it}
+
+  const openPicker = () => {
+    setShowPicker(true);
+  };
+
+  const closePicker = () => {
+    setShowPicker(false);
+  };
+
+  const setLanguage = (language: string) => {
+    closePicker();
+    onLanguageClick?.(language);
+  };
+
+  return <View style={styles.container}>
+    {!showPicker ? undefined :
+      <PickerComponent selectedValue={selectedLanguage}
+                       values={languages.sort()}
+                       keyExtractor={item => item}
+                       onDenied={closePicker}
+                       onCompleted={it => setLanguage(it)}
+                       rowContentRenderer={(item, isSelected) =>
+                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
+                           {languageAbbreviationToFullName(item)}
+                         </Text>
+                       } />
+    }
+
+    <Text style={styles.label}>Language:</Text>
+
+    <TouchableOpacity style={styles.button}
+                      onPress={openPicker}>
+      <Text style={styles.selectedLanguage}>
+        {languageAbbreviationToFullName(selectedLanguage)}
       </Text>
-    </TouchableOpacity>)}
-  </View>);
+      <Icon name={"caret-down"} style={styles.arrow} />
+    </TouchableOpacity>
+  </View>;
 };
 
 export default LanguageSelectBar;
@@ -27,25 +61,39 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
     paddingHorizontal: 20,
-    marginBottom: 5,
-    flexWrap: "wrap",
-    justifyContent: "center"
+    paddingBottom: 5,
+    alignItems: "center"
   },
 
-  language: {
-    borderWidth: 1,
-    borderColor: colors.border,
+  label: {
+    flex: 1,
+    color: colors.text,
+    fontSize: 15
+  },
+
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    right: -5,
     paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 5,
-    backgroundColor: colors.button,
-    marginBottom: 5,
-    marginLeft: 2,
-    marginRight: 2,
+    paddingVertical: 10
+  },
+
+  selectedLanguage: {
+    color: colors.text,
+    fontSize: 15
+  },
+  arrow: {
+    fontSize: 16,
+    marginLeft: 7,
     color: colors.text
   },
-  selectedLanguage: {
-    backgroundColor: colors.buttonVariant,
-    borderColor: colors.borderVariant
+
+  pickerRowText: {
+    color: colors.text,
+    fontSize: 15
+  },
+  pickerRowTextSelected: {
+    fontWeight: "bold"
   }
 });

@@ -1,4 +1,5 @@
 import { Verse, VerseProps } from "./logic/db/models/Songs";
+import { Types } from "./gui/screens/downloads/TypeSelectBar";
 
 export enum VersePickerMethod {
   UpdatePossibleSongListAndGoBackToSong,
@@ -12,8 +13,10 @@ export type ParamList = {
   About: undefined,
   PrivacyPolicy: undefined,
   OtherMenu: undefined,
+  Databases: {
+    type?: Types
+  },
 
-  SongImport: undefined,
   SongSearch: undefined,
   SongList: undefined,
   Song: {
@@ -29,7 +32,6 @@ export type ParamList = {
     songId?: number;  // Required when method=ShowSong|AddToSongListAndShowSearch
   },
 
-  DocumentImport: undefined,
   DocumentSearch: undefined,
   Document: {
     id: number;
@@ -42,14 +44,13 @@ export const routes = {
   About: "About" as keyof ParamList,
   PrivacyPolicy: "Privacy policy" as keyof ParamList,
   OtherMenu: "More" as keyof ParamList,
+  Databases: "Databases" as keyof ParamList,
 
-  SongImport: "Databases" as keyof ParamList,
   SongSearch: "Songs" as keyof ParamList,
   SongList: "Song list" as keyof ParamList,
   Song: "Song" as keyof ParamList,
   VersePicker: "VersePicker" as keyof ParamList,
 
-  DocumentImport: "Document databases" as keyof ParamList,
   DocumentSearch: "Documents" as keyof ParamList,
   Document: "Document" as keyof ParamList
 };
