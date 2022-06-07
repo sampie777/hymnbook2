@@ -1,4 +1,4 @@
-import { Verse, VerseProps } from "./models/Songs";
+import { Verse, VerseProps } from "./logic/db/models/Songs";
 
 export enum VersePickerMethod {
   UpdatePossibleSongListAndGoBackToSong,

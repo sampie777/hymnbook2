@@ -1,5 +1,5 @@
-import { Verse } from "../../../../source/models/Songs";
-import { getNextVerseIndex } from "../../../../source/scripts/songs/utils";
+import { Verse } from "../../../../source/logic/db/models/Songs";
+import { getNextVerseIndex } from "../../../../source/logic/songs/utils";
 
 describe("test get next verse index", () => {
   it("returns -1 when current is < 0 aka end of list", () => {

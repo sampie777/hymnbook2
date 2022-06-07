@@ -1,5 +1,5 @@
-import { clearOrSelectAll } from "../../../../source/scripts/songs/versePicker";
-import { Verse } from "../../../../source/models/Songs";
+import { clearOrSelectAll } from "../../../../source/logic/songs/versePicker";
+import { Verse } from "../../../../source/logic/db/models/Songs";
 
 describe("test de-/selecting all", () => {
   it("deselects all when some are selected", () => {
