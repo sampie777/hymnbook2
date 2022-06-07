@@ -1,4 +1,4 @@
-import { objectToArrayIfNotAlready } from "../../source/scripts/utils";
+import { objectToArrayIfNotAlready } from "../../source/logic/utils";
 
 describe("test utils", () => {
   it("converts any object to an array type", () => {

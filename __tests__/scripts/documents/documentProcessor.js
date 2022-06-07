@@ -1,11 +1,11 @@
-import { DocumentProcessor } from "../../../source/scripts/documents/documentProcessor";
-import Db from "../../../source/scripts/db/db";
-import { DocumentGroupSchema, DocumentSchema } from "../../../source/models/DocumentsSchema";
-import { Document, DocumentGroup } from "../../../source/models/Documents";
+import { DocumentProcessor } from "../../../source/logic/documents/documentProcessor";
+import Db from "../../../source/logic/db/db";
+import { DocumentGroupSchema, DocumentSchema } from "../../../source/logic/db/models/DocumentsSchema";
+import { Document, DocumentGroup } from "../../../source/logic/db/models/Documents";
 import {
   Document as ServerDocument,
   DocumentGroup as ServerDocumentGroup,
-} from "../../../source/models/server/Documents";
+} from "../../../source/logic/server/models/Documents";
 
 describe("test document processor", () => {
   const group = (name = "group 1", id = undefined, isRoot = false) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), 0, isRoot, id);
