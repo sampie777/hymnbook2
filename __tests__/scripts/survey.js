@@ -1,5 +1,5 @@
 import Settings from "../../source/settings";
-import { Survey } from "../../source/scripts/survey";
+import { Survey } from "../../source/logic/survey";
 import config from "../../source/config";
 
 describe("test survey", () => {

@@ -1,4 +1,4 @@
-import { ABC } from "../../../../source/scripts/songs/abc/abc";
+import { ABC } from "../../../../source/logic/songs/abc/abc";
 
 
 describe("test abc parse", () => {

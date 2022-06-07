@@ -1,5 +1,5 @@
-import { AccessRequestStatus } from "./scripts/server/models";
-import { SettingsBaseClass } from "./scripts/settings/settingsBase";
+import { AccessRequestStatus } from "./logic/server/models";
+import { SettingsBaseClass } from "./logic/settings/settingsBase";
 
 class SettingsClass extends SettingsBaseClass {
   // System
