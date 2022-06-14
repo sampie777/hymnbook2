@@ -2,6 +2,7 @@ import * as ABCJS from "abcjs";
 import { AbcClef, KeySignature, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
 import { validate } from "../../utils";
 import { Verse } from "../../db/models/Songs";
+import { AbcMelody, AbcSubMelody } from "../../db/models/AbcMelodies";
 
 // See also https://abcnotation.com/examples
 
@@ -206,8 +207,11 @@ export namespace ABC {
     );
   };
 
-  export const generateAbcForVerse = (verse: Verse, backupMelody?: string): string => {
-    const melody = verse.abcMelody || backupMelody;
+  export const generateAbcForVerse = (verse: Verse, activeMelody?: AbcMelody): string => {
+    if (activeMelody === undefined) {
+      return "";
+    }
+    const melody = AbcSubMelody.getForVerse(activeMelody, verse)?.melody || activeMelody.melody;
     return melody + "\n" + "w: " + verse.abcLyrics?.replace(/\n/g, " ");
   };
 }

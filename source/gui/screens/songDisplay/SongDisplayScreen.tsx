@@ -174,13 +174,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
+  const activeMelody = !showMelody || song === undefined
+  || !song.abcMelodies || song.abcMelodies.length === 0 ? undefined : song.abcMelodies[0];
+
   const renderContentItem = ({ item }: { item: Verse }) => {
     return (
       <ContentVerse verse={item}
                     scale={animatedScale}
                     selectedVerses={route.params.selectedVerses || []}
-                    abcBackupMelody={song?.abcMelody}
-                    showMelody={showMelody}
+                    activeMelody={activeMelody}
                     setIsMelodyLoading={setIsMelodyLoading} />
     );
   };

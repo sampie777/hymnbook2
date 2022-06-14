@@ -7,15 +7,17 @@ import {
 } from "./models/SongListModelSchema";
 import { SettingSchema } from "./models/SettingsSchema";
 import { DocumentGroupSchema, DocumentSchema } from "./models/DocumentsSchema";
+import { AbcMelodySchema, AbcSubMelodySchema } from "./models/AbcMelodiesSchema";
 
 const Db = {
   songs: new DatabaseProvider({
     path: "hymnbook_songs",
     schemas: [
+      AbcSubMelodySchema, AbcMelodySchema,
       VerseSchema, SongSchema, SongBundleSchema,
       SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema
     ],
-    schemaVersion: 4
+    schemaVersion: 5
   }),
   documents: new DatabaseProvider({
     path: "hymnbook_documents",
