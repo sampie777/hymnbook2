@@ -2,8 +2,15 @@ import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import { dateFrom, Result } from "../utils";
 import { Song, SongBundle, Verse } from "../db/models/Songs";
-import { SongBundle as ServerSongBundle } from "../server/models/ServerSongsModel";
+import {
+  SongBundle as ServerSongBundle,
+  Song as ServerSong,
+  SongVerse as ServerVerse,
+  AbcMelody as ServerAbcMelody
+} from "../server/models/ServerSongsModel";
 import { SongBundleSchema, SongSchema, VerseSchema } from "../db/models/SongsSchema";
+import { AbcMelody, AbcSubMelody } from "../db/models/AbcMelodies";
+import { AbcMelodySchema, AbcSubMelodySchema } from "../db/models/AbcMelodiesSchema";
 import SongList from "./songList";
 import { Server } from "../server/server";
 
@@ -53,7 +60,7 @@ export namespace SongProcessor {
       return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
     }
 
-    return new Result({ success: true, message: `${bundle.songs.length} songs added!` });
+    return new Result({ success: true, message: `${bundle.name} added!` });
   };
 
   export const fetchAndUpdateSongBundle = (bundle: ServerSongBundle): Promise<Result> => {
@@ -106,32 +113,64 @@ export namespace SongProcessor {
   const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle) => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
+    let melodyId = Db.songs.getIncrementedPrimaryKey(AbcMelodySchema);
+    let subMelodyId = Db.songs.getIncrementedPrimaryKey(AbcSubMelodySchema);
+
+    const getSubMelodiesFromVerses = (verses: ServerVerse[], parentMelody: ServerAbcMelody): AbcSubMelody[] => {
+      return verses.map(verse => {
+        const subMelody = verse.abcMelodies?.find(it => it.parentId === parentMelody.id);
+        if (subMelody == null) {
+          return null;
+        }
+        return new AbcSubMelody(subMelody.melody, verse, subMelodyId++);
+      })
+        .filter(it => it != null) as AbcSubMelody[];
+    };
+
+    const convertServerSongToLocalSong = (song: ServerSong): Song => {
+      const newSong = new Song(
+        song.name,
+        song.author,
+        song.copyright,
+        song.language,
+        dateFrom(song.createdAt),
+        dateFrom(song.modifiedAt),
+        song.verses
+          ?.sort((a, b) => a.index - b.index)
+          ?.map(verse => new Verse(
+            verse.index,
+            verse.name,
+            verse.content,
+            verse.language,
+            verseId++,
+            verse.abcLyrics
+          )),
+        [],
+        songId++,
+        song.number
+      );
+
+      // Convert melodies. Also convert sub melodies by getting these from the verses and assigning them
+      // to the melody as sub melodies (each with a reference to its verse)
+      try {
+        newSong.abcMelodies = (song.abcMelodies || [])
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(melody => new AbcMelody(
+            melody.name,
+            melody.melody,
+            getSubMelodiesFromVerses(song.verses || [], melody),
+            melodyId++
+          ));
+      } catch (e: any) {
+        rollbar.error(`Failed to convert abc melodies to local objects: ${e}`, e);
+      }
+
+      return newSong;
+    };
+
     let songs = (bundle.songs || [])
       .sort((a, b) => a.id - b.id)
-      .map(song =>
-        new Song(
-          song.name,
-          song.author,
-          song.copyright,
-          song.language,
-          dateFrom(song.createdAt),
-          dateFrom(song.modifiedAt),
-          song.verses
-            ?.sort((a, b) => a.index - b.index)
-            ?.map(verse => new Verse(
-              verse.index,
-              verse.name,
-              verse.content,
-              verse.language,
-              verseId++,
-              verse.abcMelody,
-              verse.abcLyrics
-            )),
-          songId++,
-          song.number,
-          song.abcMelody
-        )
-      );
+      .map(convertServerSongToLocalSong);
 
     return new SongBundle(
       bundle.abbreviation,
