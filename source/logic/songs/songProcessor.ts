@@ -176,6 +176,8 @@ export namespace SongProcessor {
       bundle.abbreviation,
       bundle.name,
       bundle.language,
+      bundle.author,
+      bundle.copyright,
       dateFrom(bundle.createdAt),
       dateFrom(bundle.modifiedAt),
       songs

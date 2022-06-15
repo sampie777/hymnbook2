@@ -3,6 +3,7 @@ import Settings from "../../settings";
 import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
+import { languageAbbreviationToFullName } from "../utils";
 
 export enum VerseType {
   Verse,
@@ -212,4 +213,30 @@ export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: Song
     return false;
   }
   return song.language !== bundle.language;
+};
+
+export const createCopyright = (song?: Song) => {
+  if (song === undefined) {
+    return "";
+  }
+
+  let result = "";
+  let author = song.author;
+  let copyright = song.copyright;
+
+  const songBundle = Song.getSongBundle(song);
+  if (songBundle !== undefined) {
+    result += songBundle.name + "\n";
+    if (author.length === 0) author = songBundle.author;
+    if (copyright.length === 0) copyright = songBundle.copyright;
+  }
+
+  result += author.length === 0 ? "" : author + "\n";
+  result += copyright.length === 0 ? "" : copyright + "\n";
+
+  if (isSongLanguageDifferentFromSongBundle(song, songBundle)) {
+    result += languageAbbreviationToFullName(song.language);
+  }
+
+  return result.trim();
 };

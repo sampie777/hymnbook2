@@ -1,9 +1,8 @@
 import React from "react";
 import { Song } from "../../../logic/db/models/Songs";
+import { createCopyright } from "../../../logic/songs/utils";
 import { Animated, StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import { languageAbbreviationToFullName } from "../../../logic/utils";
-import { isSongLanguageDifferentFromSongBundle } from "../../../logic/songs/utils";
 
 interface Props {
   song?: Song;
@@ -12,25 +11,8 @@ interface Props {
 const Footer: React.FC<Props> = ({ song }) => {
   const styles = createStyles(useTheme());
 
-  function createCopyright() {
-    if (song === undefined) {
-      return "";
-    }
-
-    let copyright = "";
-    const songBundle = Song.getSongBundle(song);
-    if (songBundle !== undefined) {
-      copyright += songBundle.name + "\n";
-    }
-
-    if (isSongLanguageDifferentFromSongBundle(song, songBundle)) {
-      copyright += languageAbbreviationToFullName(song.language);
-    }
-    return copyright.trim();
-  }
-
   return (<Animated.View style={styles.container}>
-    <Animated.Text style={[styles.copyright]}>{createCopyright()}</Animated.Text>
+    <Animated.Text style={[styles.copyright]}>{createCopyright(song)}</Animated.Text>
   </Animated.View>);
 };
 
