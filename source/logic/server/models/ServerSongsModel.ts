@@ -112,6 +112,8 @@ export class SongBundle {
   abbreviation: string;
   name: string;
   language: string;
+  author: string;
+  copyright: string;
   songs: Array<Song> | null;
   size?: number;
   createdAt: string;
@@ -121,6 +123,8 @@ export class SongBundle {
               abbreviation: string,
               name: string,
               language: string,
+              author: string,
+              copyright: string,
               songs: Array<Song> | null,
               createdAt: string,
               modifiedAt: string,
@@ -130,6 +134,8 @@ export class SongBundle {
     this.abbreviation = abbreviation;
     this.name = name;
     this.language = language;
+    this.author = author;
+    this.copyright = copyright;
     this.songs = songs;
     this.size = size;
     this.createdAt = createdAt;
