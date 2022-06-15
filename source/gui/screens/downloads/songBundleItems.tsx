@@ -9,17 +9,20 @@ import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
 interface SongBundleItemComponentProps {
   bundle: ServerSongBundle;
   onPress: (bundle: ServerSongBundle) => void;
+  disabled: boolean;
 }
 
 export const SongBundleItem: React.FC<SongBundleItemComponentProps>
   = ({
        bundle,
-       onPress
+       onPress,
+       disabled
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
-                      style={styles.container}>
+                      style={styles.container}
+                      disabled={disabled}>
       <Text style={styles.titleText}>
         {bundle.name}
       </Text>
@@ -44,18 +47,21 @@ interface LocalSongBundleItemComponentProps {
   bundle: LocalSongBundle;
   onPress: (bundle: LocalSongBundle) => void;
   hasUpdate?: boolean;
+  disabled: boolean;
 }
 
 export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
   = ({
        bundle,
        onPress,
-       hasUpdate = false
+       hasUpdate = false,
+       disabled
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
-                      style={styles.container}>
+                      style={styles.container}
+                      disabled={disabled}>
       <Text style={styles.titleText}>
         {bundle.name}
       </Text>

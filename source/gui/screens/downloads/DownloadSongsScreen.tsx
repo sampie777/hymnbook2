@@ -18,9 +18,11 @@ import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar from "./LanguageSelectBar";
 
 interface ComponentProps {
+  setIsProcessing?: (value: boolean) => void;
 }
 
-const DownloadSongsScreen: React.FC<ComponentProps> = () => {
+const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
+  let isMounted = true;
   const [isLoading, setIsLoading] = useState(false);
   const [bundles, setBundles] = useState<Array<ServerSongBundle>>([]);
   const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle>>([]);
@@ -36,12 +38,16 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   }, []);
 
   const onOpen = () => {
+    isMounted = true;
     loadLocalSongBundles();
     fetchSongBundles();
   };
 
   const onClose = () => {
+    isMounted = false;
   };
+
+  useEffect(() => setIsProcessing?.(isLoading), [isLoading]);
 
   const loadLocalSongBundles = () => {
     setIsLoading(true);
@@ -49,6 +55,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     const result = SongProcessor.loadLocalSongBundles();
     result.alert();
     result.throwIfException();
+
+    if (!isMounted) return;
 
     if (result.data !== undefined) {
       setLocalBundles(result.data);
@@ -70,9 +78,15 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
   const fetchSongBundles = () => {
     setIsLoading(true);
     Server.fetchSongBundles()
-      .then(result => setBundles(result.data))
+      .then(result => {
+        if (!isMounted) return;
+        setBundles(result.data);
+      })
       .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (!isMounted) return;
+        setIsLoading(false);
+      });
   };
 
   const isPopupOpen = () => requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
@@ -127,10 +141,16 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     setIsLoading(true);
 
     Server.fetchSongBundleWithSongsAndVerses(bundle)
-      .then(result => saveSongBundle(result.data))
+      .then(result => {
+        if (!isMounted) return;
+        saveSongBundle(result.data);
+      })
       .catch(error =>
         Alert.alert("Error", `Error downloading songs for song bundle ${bundle.name}: ${error}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (!isMounted) return;
+        setIsLoading(false);
+      });
   };
 
   const saveSongBundle = (bundle: ServerSongBundle) => {
@@ -139,6 +159,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     const result = SongProcessor.saveSongBundleToDatabase(bundle);
     result.alert();
     result.throwIfException();
+
+    if (!isMounted) return;
 
     setIsLoading(false);
     loadLocalSongBundles();
@@ -155,6 +177,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
       .catch(error =>
         Alert.alert("Error", `Error updating song bundle ${bundle.name}: ${error}`))
       .finally(() => {
+        if (!isMounted) return;
         setLocalBundles([]);
         setIsLoading(false);
         loadLocalSongBundles();
@@ -178,6 +201,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
     const result = SongProcessor.deleteSongBundle(bundle);
     result.alert();
     result.throwIfException();
+
+    if (!isMounted) return;
 
     loadLocalSongBundles();
   };
@@ -235,7 +260,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
 
       <LanguageSelectBar languages={getAllLanguagesFromBundles(bundles)}
                          selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage} />
+                         onLanguageClick={setFilterLanguage}
+                         disabled={isLoading}/>
 
       <ScrollView
         style={styles.listContainer}
@@ -246,14 +272,16 @@ const DownloadSongsScreen: React.FC<ComponentProps> = () => {
           <LocalSongBundleItem key={bundle.name}
                                bundle={bundle}
                                onPress={onLocalSongBundlePress}
-                               hasUpdate={hasUpdate(bundle)} />)}
+                               hasUpdate={hasUpdate(bundle)}
+                               disabled={isLoading} />)}
 
         {bundles.filter(it => !isBundleLocal(it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((bundle: ServerSongBundle) =>
             <SongBundleItem key={bundle.name}
                             bundle={bundle}
-                            onPress={onSongBundlePress} />)}
+                            onPress={onSongBundlePress}
+                            disabled={isLoading} />)}
 
         {bundles.length > 0 ? undefined :
           <Text style={styles.emptyListText}>

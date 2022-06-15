@@ -12,13 +12,15 @@ export enum Types {
 interface ComponentProps {
   selectedType: Types;
   onTypeClick?: (type: Types) => void;
+  isProcessing: boolean;
 }
 
-const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick }) => {
+const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick, isProcessing }) => {
   const styles = createStyles(useTheme());
   return (<View style={styles.container}>
     <TouchableOpacity style={[styles.typeContainer, (Types.Songs !== selectedType ? {} : styles.selectedContainer)]}
-                      onPress={() => onTypeClick?.(Types.Songs)}>
+                      onPress={() => onTypeClick?.(Types.Songs)}
+                      disabled={isProcessing}>
       <Icon name={"music"}
             style={[
               styles.icon,
@@ -30,7 +32,8 @@ const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick }) 
     {!Settings.enableDocumentsFeatureSwitch ? undefined :
       <TouchableOpacity
         style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
-        onPress={() => onTypeClick?.(Types.Documents)}>
+        onPress={() => onTypeClick?.(Types.Documents)}
+        disabled={isProcessing}>
         <Icon name={"file-alt"}
               style={[
                 styles.icon,
@@ -64,7 +67,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     width: 60,
     height: 60,
     borderRadius: 50,
-    backgroundColor: colors.button,
+    backgroundColor: colors.button
   },
   selectedContainer: {
     borderColor: isDark ? colors.border : colors.primary
