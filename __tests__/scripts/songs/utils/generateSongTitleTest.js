@@ -2,7 +2,7 @@ import { Song, Verse } from "../../../../source/logic/db/models/Songs";
 import { generateSongTitle } from "../../../../source/logic/songs/utils";
 
 describe("test generating song title", () => {
-  const song = new Song("Psalm 1", "", "", "", new Date(), new Date(), [], 0, 1, "", "");
+  const song = new Song("Psalm 1", "", "", "", new Date(), new Date(), [], [], 0, 1);
 
   it("with non following verses generates all verses", () => {
     const selectedVerses = [

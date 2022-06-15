@@ -1,5 +1,6 @@
 import Db from "../db";
 import { SongBundleSchema, SongSchema, VerseSchema } from "./SongsSchema";
+import { AbcMelody } from "./AbcMelodies";
 
 export interface VerseProps {
   id: number;
@@ -7,7 +8,6 @@ export interface VerseProps {
   content: string;
   language: string;
   index: number;
-  abcMelody?: string;
   abcLyrics?: string;
 }
 
@@ -17,7 +17,6 @@ export class Verse implements VerseProps {
   content: string;
   language: string;
   index: number;
-  abcMelody?: string;
   abcLyrics?: string;
 
   constructor(
@@ -26,7 +25,6 @@ export class Verse implements VerseProps {
     content: string,
     language: string,
     id = Db.songs.getIncrementedPrimaryKey(VerseSchema),
-    abcMelody?: string,
     abcLyrics?: string
   ) {
     this.id = id;
@@ -34,7 +32,6 @@ export class Verse implements VerseProps {
     this.content = content;
     this.language = language;
     this.index = index;
-    this.abcMelody = abcMelody;
     this.abcLyrics = abcLyrics;
   }
 
@@ -45,7 +42,6 @@ export class Verse implements VerseProps {
       content: verse.content,
       language: verse.language,
       index: verse.index,
-      abcMelody: verse.abcMelody,
       abcLyrics: verse.abcLyrics
     } as VerseProps;
   }
@@ -61,7 +57,7 @@ export class Song {
   verses: Array<Verse>;
   createdAt: Date;
   modifiedAt: Date;
-  abcMelody?: string;
+  abcMelodies: AbcMelody[];
   _songBundles?: SongBundle[];
 
   constructor(
@@ -72,9 +68,9 @@ export class Song {
     createdAt: Date,
     modifiedAt: Date,
     verses: Array<Verse> = [],
+    abcMelodies: AbcMelody[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
     number?: number,
-    abcMelody?: string,
     songBundle?: SongBundle
   ) {
     this.id = id;
@@ -86,7 +82,7 @@ export class Song {
     this.verses = verses;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
-    this.abcMelody = abcMelody;
+    this.abcMelodies = abcMelodies;
     this._songBundles = songBundle === undefined ? [] : [songBundle];
   }
 

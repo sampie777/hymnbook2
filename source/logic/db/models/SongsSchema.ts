@@ -1,3 +1,5 @@
+import { AbcMelodySchema, AbcSubMelodySchema } from "./AbcMelodiesSchema";
+
 export const VerseSchema = {
   name: "Verse",
   properties: {
@@ -6,12 +8,16 @@ export const VerseSchema = {
     content: "string",
     language: "string",
     index: "int",
-    abcMelody: "string?",
     abcLyrics: "string?",
     _songs: {
       type: "linkingObjects",
       objectType: "Song",    // SongSchema.name
       property: "verses"
+    },
+    _abcMelodies: {
+      type: "linkingObjects",
+      objectType: AbcSubMelodySchema.name,
+      property: "verse"
     }
   },
   primaryKey: "id"
@@ -29,7 +35,7 @@ export const SongSchema = {
     createdAt: "date",
     modifiedAt: "date",
     verses: VerseSchema.name + "[]",
-    abcMelody: "string?",
+    abcMelodies: AbcMelodySchema.name + "[]",
     _songBundles: {
       type: "linkingObjects",
       objectType: "SongBundle",    // SongBundleSchema.name

@@ -89,7 +89,7 @@ describe("test document processor", () => {
 
     const result = DocumentProcessor.saveDocumentGroupToDatabase(group2);
 
-    expect(result.message).toBe("4 documents added!");
+    expect(result.message).toBe("group 2 added!");
     expect(result.success).toBe(true);
     expect(Db.documents.realm().objects(DocumentGroupSchema.name).length).toBe(4);
     expect(Db.documents.realm().objects(DocumentSchema.name).length).toBe(4);

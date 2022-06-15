@@ -1,3 +1,41 @@
+export class AbcSubMelody {
+  id: number;
+  melody: string = "";
+  parentId: number;
+
+  constructor(
+    id: number,
+    melody: string = "",
+    parentId: number
+  ) {
+    this.id = id;
+    this.melody = melody;
+    this.parentId = parentId;
+  }
+}
+
+export class AbcMelody {
+  id: number;
+  name: string = "Default";
+  melody: string = "";
+  song: Song | null;
+  subMelodies: AbcSubMelody[] | null;
+
+  constructor(
+    id: number,
+    name: string = "Default",
+    melody: string = "",
+    song: Song | null,
+    subMelodies: AbcSubMelody[] | null
+  ) {
+    this.id = id;
+    this.name = name;
+    this.melody = melody;
+    this.song = song;
+    this.subMelodies = subMelodies;
+  }
+}
+
 export class SongVerse {
   id: number;
   name: string;
@@ -5,7 +43,7 @@ export class SongVerse {
   language: string;
   index: number;
   song: Song | null;
-  abcMelody?: string;
+  abcMelodies?: AbcSubMelody[] | null;
   abcLyrics?: string;
 
   constructor(
@@ -15,8 +53,8 @@ export class SongVerse {
     language: string,
     index: number,
     song: Song | null,
-    abcMelody?: string,
-    abcLyrics?: string,
+    abcMelodies?: AbcSubMelody[] | null,
+    abcLyrics?: string
   ) {
     this.id = id;
     this.name = name;
@@ -24,7 +62,7 @@ export class SongVerse {
     this.language = language;
     this.index = index;
     this.song = song;
-    this.abcMelody = abcMelody;
+    this.abcMelodies = abcMelodies;
     this.abcLyrics = abcLyrics;
   }
 }
@@ -40,7 +78,7 @@ export class Song {
   songBundle: SongBundle | null;
   createdAt: string;
   modifiedAt: string;
-  abcMelody?: string;
+  abcMelodies?: AbcMelody[] | null;
 
   constructor(
     id: number,
@@ -53,7 +91,7 @@ export class Song {
     createdAt: string,
     modifiedAt: string,
     number?: number,
-    abcMelody?: string,
+    abcMelodies?: AbcMelody[] | null
   ) {
     this.id = id;
     this.name = name;
@@ -65,7 +103,7 @@ export class Song {
     this.songBundle = songBundle;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
-    this.abcMelody = abcMelody;
+    this.abcMelodies = abcMelodies;
   }
 }
 

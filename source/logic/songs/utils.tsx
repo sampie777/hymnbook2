@@ -2,6 +2,7 @@ import Db from "../db/db";
 import Settings from "../../settings";
 import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
+import { rollbar } from "../rollbar";
 
 export enum VerseType {
   Verse,
@@ -175,15 +176,19 @@ export const hasMelodyToShow = (song?: Song) => {
     return false;
   }
 
-  if (!song.verses.some(it => it.abcLyrics)) {
+  try {
+    if (song.abcMelodies.length === 0) {
+      return false;
+    }
+
+    if (!song.verses.some(it => it.abcLyrics)) {
+      return false;
+    }
+  } catch (e: any) {
+    rollbar.error(`Failed to determine if song (${song.name}) has displayable melody: ${e}`, e);
     return false;
   }
-
-  if (song.abcMelody) {
-    return true;
-  }
-
-  return song.verses.some(it => it.abcLyrics && it.abcMelody);
+  return true;
 };
 
 export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => {
