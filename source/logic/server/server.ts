@@ -3,6 +3,8 @@ import { Result } from "../utils";
 import { SongBundle } from "./models/ServerSongsModel";
 import { rollbar } from "../rollbar";
 import { JsonResponse, JsonResponseType } from "./models";
+import Settings from "../../settings";
+import { ServerAuth } from "./auth";
 
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<Result> => {
@@ -27,8 +29,8 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<Result> => {
-    return api.songBundles.getWithSongs(bundle.id, true)
+  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle, resetAuthOn403: boolean = true): Promise<Result> => {
+    return api.songBundles.getWithSongs(bundle.id, true, Settings.showMelody)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
       .then((data: JsonResponse) => {
@@ -39,6 +41,13 @@ export namespace Server {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
+        if (resetAuthOn403 && error.message.includes("Could not retrieve the requested data: (403) Not authorized.")) {
+          // Reset authentication to regain new rights
+          ServerAuth.forgetCredentials();
+          rollbar.info(`Resetting credentials due to HTTP 403 error when fetching song bundle (${bundle.name})`);
+          return fetchSongBundleWithSongsAndVerses(bundle, false);
+        }
+
         rollbar.error(`Error fetching songs for song bundle ${bundle.name}`, error);
         throw error;
       });

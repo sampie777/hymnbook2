@@ -110,24 +110,40 @@ export const api = {
   },
 
   songBundles: {
-    list: (loadSongs?: boolean, loadVerses?: boolean) =>
-      get(`${apiBaseUrl}/songs/bundles?loadSongs=${loadSongs ? "true" : "false"}&loadVerses=${loadVerses ? "true" : "false"}`),
-    get: (id: number, loadSongs?: boolean, loadVerses?: boolean) =>
-      get(`${apiBaseUrl}/songs/bundles/${id}?loadSongs=${loadSongs ? "true" : "false"}&loadVerses=${loadVerses ? "true" : "false"}`),
-    getWithSongs: (id: number, loadVerses?: boolean) =>
-      get(`${apiBaseUrl}/songs/bundles/${id}?loadSongs=true&loadVerses=${loadVerses ? "true" : "false"}`),
-    search: (query: string, page = 0, page_size = 50,
+    list: (loadSongs = false,
+           loadVerses = false,
+           loadAbcMelodies = false) =>
+      get(`${apiBaseUrl}/songs/bundles?loadSongs=${loadSongs ? "true" : "false"}` +
+        `&loadVerses=${loadVerses ? "true" : "false"}` +
+        `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
+    get: (id: number,
+          loadSongs = false,
+          loadVerses = false,
+          loadAbcMelodies = false) =>
+      get(`${apiBaseUrl}/songs/bundles/${id}?loadSongs=${loadSongs ? "true" : "false"}` +
+        `&loadVerses=${loadVerses ? "true" : "false"}` +
+        `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
+    getWithSongs: (id: number,
+                   loadVerses = true,
+                   loadAbcMelodies = false) =>
+      api.songBundles.get(id, true, loadVerses, loadAbcMelodies),
+    search: (query: string,
+             page = 0,
+             page_size = 50,
              fieldLanguages: Array<string> = [],
-             loadSongs = false, loadVerses = false) =>
+             loadSongs = false,
+             loadVerses = false,
+             loadAbcMelodies = false) =>
       get(`${apiBaseUrl}/songs/bundles?query=${query}&page=${page}&page_size=${page_size}` +
         `&fieldLanguages=${fieldLanguages.join(",")}` +
         `&loadSongs=${loadSongs ? "true" : "false"}` +
-        `&loadVerses=${loadVerses ? "true" : "false"}`)
+        `&loadVerses=${loadVerses ? "true" : "false"}` +
+        `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`)
   },
 
   documents: {
     groups: {
-      root: (loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean, page = 0, page_size = 50,) =>
+      root: (loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean, page = 0, page_size = 50) =>
         get(`${apiBaseUrl}/documents/groups/root?loadGroups=${loadGroups ? "true" : "false"}` +
           `&loadItems=${loadItems ? "true" : "false"}` +
           `&loadContent=${loadContent ? "true" : "false"}` +
@@ -135,7 +151,7 @@ export const api = {
       get: (id: number, loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean) =>
         get(`${apiBaseUrl}/documents/groups/${id}?loadGroups=${loadGroups ? "true" : "false"}` +
           `&loadItems=${loadItems ? "true" : "false"}` +
-          `&loadContent=${loadContent ? "true" : "false"}`),
+          `&loadContent=${loadContent ? "true" : "false"}`)
     }
-  },
+  }
 };

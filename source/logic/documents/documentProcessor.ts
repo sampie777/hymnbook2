@@ -47,7 +47,7 @@ export namespace DocumentProcessor {
       return new Result({ success: false, message: `Failed to import documents: ${e}`, error: e as Error });
     }
 
-    return new Result({ success: true, message: `${documentGroup.size} documents added!` });
+    return new Result({ success: true, message: `${documentGroup.name} added!` });
   };
 
   export const convertServerDocumentGroupToLocalDocumentGroup = (group: ServerDocumentGroup, conversionState: ConversionState, isRoot: boolean = false): DocumentGroup => {
