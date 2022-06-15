@@ -52,6 +52,8 @@ export const SongBundleSchema = {
     abbreviation: "string",
     name: "string",
     language: "string",
+    author: "string",
+    copyright: "string",
     createdAt: "date",
     modifiedAt: "date",
     songs: SongSchema.name + "[]"
