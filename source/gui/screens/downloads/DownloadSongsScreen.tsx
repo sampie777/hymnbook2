@@ -47,7 +47,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
     isMounted = false;
   };
 
-  useEffect(() => setIsProcessing?.(isLoading), [isLoading]);
+  useEffect(() => {
+    // Let user navigate when the screen is still loading the data
+    if (bundles.length === 0) {
+      return
+    }
+    setIsProcessing?.(isLoading);
+  }, [isLoading]);
 
   const loadLocalSongBundles = () => {
     setIsLoading(true);
