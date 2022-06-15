@@ -3,13 +3,9 @@ import Db from "./db/db";
 import Settings from "../settings";
 import { ThemeContextProps } from "../gui/components/ThemeProvider";
 
-export const initDatabases = (theme?: ThemeContextProps) =>
-  initSettingsDatabase(theme)
-    .finally(initSongDatabase)
-    .finally(initDocumentDatabase);
-
 export const closeDatabases = () => {
   Settings.store();
+  Db.documents.disconnect();
   Db.songs.disconnect();
   Db.settings.disconnect();
 };
