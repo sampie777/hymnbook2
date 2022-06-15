@@ -21,7 +21,7 @@ export class DatabaseProvider {
 
   async connect() {
     if (this.isConnected()) {
-      console.info("Database is already connected.");
+      console.debug(`Database '${this.config.path}' is already connected. Will close current connection to reconnect.`);
       this.disconnect();
     }
 

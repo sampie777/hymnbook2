@@ -16,7 +16,12 @@ import Db from "./logic/db/db";
 import Settings from "./settings";
 import { routes } from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
-import { closeDatabases, initDatabases } from "./logic/app";
+import {
+  closeDatabases,
+  initDocumentDatabase,
+  initSettingsDatabase,
+  initSongDatabase
+} from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 import SongList from "./logic/songs/songList";
@@ -145,7 +150,9 @@ const HomeNavigation: React.FC = () => {
 };
 
 const AppRoot: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isSettingsDbLoading, setIsSettingsDbLoading] = useState(true);
+  const [isSongDbLoading, setIsSongDbLoading] = useState(true);
+  const [isDocumentDbLoading, setIsDocumentDbLoading] = useState(true);
   const theme = useTheme();
   const styles = createStyles(theme);
 
@@ -155,19 +162,25 @@ const AppRoot: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    initDatabases(theme)
-      .finally(() => {
-        setIsLoading(false);
-      });
+    initSettingsDatabase(theme).finally(() => setIsSettingsDbLoading(false));
+    initSongDatabase().finally(() => setIsSongDbLoading(false));
+    initDocumentDatabase().finally(() => setIsDocumentDbLoading(false));
   };
 
   const onExit = () => {
     closeDatabases();
   };
 
+  const loadingDatabaseNames =
+    (isSettingsDbLoading ? "Settings...\n" : "") +
+    (isSongDbLoading ? "Songs...\n" : "") +
+    (Settings.enableDocumentsFeatureSwitch && isDocumentDbLoading ? "Documents..." : "");
+
+  const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
+
   return <SafeAreaView style={styles.container}>
     <ErrorBoundary>
-      <LoadingOverlay isVisible={isLoading} />
+      <LoadingOverlay isVisible={isLoading} text={loadingDatabaseNames} />
 
       {isLoading ? undefined :
         <NavigationContainer>
