@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import Settings from "../../../settings";
 
 export enum Types {
   Songs = "Songs",
@@ -26,14 +27,17 @@ const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick }) 
             ]} />
     </TouchableOpacity>
 
-    <TouchableOpacity style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
-                      onPress={() => onTypeClick?.(Types.Documents)}>
-      <Icon name={"file-alt"}
-            style={[
-              styles.icon,
-              (Types.Documents !== selectedType ? {} : styles.selectedIcon)
-            ]} />
-    </TouchableOpacity>
+    {!Settings.enableDocumentsFeatureSwitch ? undefined :
+      <TouchableOpacity
+        style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
+        onPress={() => onTypeClick?.(Types.Documents)}>
+        <Icon name={"file-alt"}
+              style={[
+                styles.icon,
+                (Types.Documents !== selectedType ? {} : styles.selectedIcon)
+              ]} />
+      </TouchableOpacity>
+    }
   </View>);
 };
 
