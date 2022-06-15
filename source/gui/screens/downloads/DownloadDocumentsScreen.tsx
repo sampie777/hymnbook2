@@ -18,9 +18,11 @@ import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar from "./LanguageSelectBar";
 
 interface ComponentProps {
+  setIsProcessing?: (value: boolean) => void;
 }
 
-const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
+const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
+  let isMounted = true;
   const [isLoading, setIsLoading] = useState(false);
   const [serverGroups, setServerGroups] = useState<Array<ServerDocumentGroup>>([]);
   const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup>>([]);
@@ -36,12 +38,16 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
   }, []);
 
   const onOpen = () => {
+    isMounted = true;
     loadLocalDocumentGroups();
     fetchDocumentGroups();
   };
 
   const onClose = () => {
+    isMounted = false;
   };
+
+  useEffect(() => setIsProcessing?.(isLoading), [isLoading]);
 
   const loadLocalDocumentGroups = () => {
     setIsLoading(true);
@@ -49,6 +55,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     const result = DocumentProcessor.loadLocalDocumentRoot();
     result.alert();
     result.throwIfException();
+
+    if (!isMounted) return;
 
     if (result.data !== undefined) {
       setLocalGroups(result.data);
@@ -70,9 +78,15 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
   const fetchDocumentGroups = () => {
     setIsLoading(true);
     DocumentServer.fetchDocumentGroups()
-      .then(result => setServerGroups(result.data))
+      .then(result => {
+        if (!isMounted) return;
+        setServerGroups(result.data);
+      })
       .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (!isMounted) return;
+        setIsLoading(false);
+      });
   };
 
   const isPopupOpen = () => requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
@@ -126,10 +140,16 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     setIsLoading(true);
 
     DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then(result => saveDocumentGroup(result.data))
+      .then(result => {
+        if (!isMounted) return;
+        saveDocumentGroup(result.data);
+      })
       .catch(error =>
         Alert.alert("Error", `Error downloading documents for ${group.name}: ${error}`))
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (!isMounted) return;
+        setIsLoading(false);
+      });
   };
 
   const saveDocumentGroup = (group: ServerDocumentGroup) => {
@@ -138,6 +158,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     const result = DocumentProcessor.saveDocumentGroupToDatabase(group);
     result.alert();
     result.throwIfException();
+
+    if (!isMounted) return;
 
     setIsLoading(false);
     loadLocalDocumentGroups();
@@ -154,6 +176,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
       .catch(error =>
         Alert.alert("Error", `Error updating documents ${group.name}: ${error}`))
       .finally(() => {
+        if (!isMounted) return;
         setLocalGroups([]);
         setIsLoading(false);
         loadLocalDocumentGroups();
@@ -177,6 +200,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
     const result = DocumentProcessor.deleteDocumentGroup(group);
     result.alert();
     result.throwIfException();
+
+    if (!isMounted) return;
 
     loadLocalDocumentGroups();
   };
@@ -233,7 +258,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
 
       <LanguageSelectBar languages={getAllLanguagesFromGroups(serverGroups)}
                          selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage} />
+                         onLanguageClick={setFilterLanguage}
+                         disabled={isLoading} />
 
       <ScrollView
         style={styles.listContainer}
@@ -244,14 +270,16 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = () => {
           <LocalDocumentGroupItem key={group.name}
                                   group={group}
                                   onPress={onLocalDocumentGroupPress}
-                                  hasUpdate={hasUpdate(group)} />)}
+                                  hasUpdate={hasUpdate(group)}
+                                  disabled={isLoading} />)}
 
         {serverGroups.filter(it => !isGroupLocal(it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((group: ServerDocumentGroup) =>
             <ServerDocumentGroupItem key={group.name}
                                      group={group}
-                                     onPress={onDocumentGroupPress} />)}
+                                     onPress={onDocumentGroupPress}
+                                     disabled={isLoading} />)}
 
         {serverGroups.length > 0 ? undefined :
           <Text style={styles.emptyListText}>

@@ -12,18 +12,20 @@ interface Props extends NativeStackScreenProps<ParamList, "Databases"> {
 
 const DownloadsScreen: React.FC<Props> = ({ route }) => {
   const [selectedType, setSelectedType] = useState(route.params.type || Types.Songs);
+  const [isProcessing, setIsProcessing] = useState(false);
   const styles = createStyles(useTheme());
 
   const getSelectedContent = () => {
     if (selectedType === Types.Documents) {
-      return <DownloadDocumentsScreen />;
+      return <DownloadDocumentsScreen setIsProcessing={setIsProcessing} />;
     }
-    return <DownloadSongsScreen />;
+    return <DownloadSongsScreen setIsProcessing={setIsProcessing} />;
   };
 
   return <View style={styles.container}>
     <TypeSelectBar selectedType={selectedType}
-                   onTypeClick={setSelectedType} />
+                   onTypeClick={setSelectedType}
+                   isProcessing={isProcessing} />
 
     {getSelectedContent()}
   </View>;

@@ -9,9 +9,10 @@ interface ComponentProps {
   languages: Array<string>;
   selectedLanguage: string;
   onLanguageClick?: (language: string) => void;
+  disabled: boolean;
 }
 
-const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLanguage, onLanguageClick }) => {
+const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLanguage, onLanguageClick, disabled }) => {
   const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
 
@@ -45,7 +46,8 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLangua
     <Text style={styles.label}>Language:</Text>
 
     <TouchableOpacity style={styles.button}
-                      onPress={openPicker}>
+                      onPress={openPicker}
+                      disabled={disabled}>
       <Text style={styles.selectedLanguage}>
         {languageAbbreviationToFullName(selectedLanguage)}
       </Text>
