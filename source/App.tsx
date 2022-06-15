@@ -24,6 +24,7 @@ import {
 } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
+import { runAsync } from "./logic/utils";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";
@@ -162,25 +163,20 @@ const AppRoot: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    initSettingsDatabase(theme).finally(() => setIsSettingsDbLoading(false));
-    initSongDatabase().finally(() => setIsSongDbLoading(false));
-    initDocumentDatabase().finally(() => setIsDocumentDbLoading(false));
+    runAsync(() => initSettingsDatabase(theme).finally(() => setIsSettingsDbLoading(false)));
+    runAsync(() => initSongDatabase().finally(() => setIsSongDbLoading(false)));
+    runAsync(() => initDocumentDatabase().finally(() => setIsDocumentDbLoading(false)));
   };
 
   const onExit = () => {
     closeDatabases();
   };
 
-  const loadingDatabaseNames =
-    (isSettingsDbLoading ? "Settings...\n" : "") +
-    (isSongDbLoading ? "Songs...\n" : "") +
-    (Settings.enableDocumentsFeatureSwitch && isDocumentDbLoading ? "Documents..." : "");
-
   const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
 
   return <SafeAreaView style={styles.container}>
     <ErrorBoundary>
-      <LoadingOverlay isVisible={isLoading} text={loadingDatabaseNames} />
+      <LoadingOverlay isVisible={isLoading} />
 
       {isLoading ? undefined :
         <NavigationContainer>

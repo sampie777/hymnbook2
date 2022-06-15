@@ -128,3 +128,5 @@ export const languageAbbreviationToFullName = (abbreviation: string) => {
   // @ts-ignore
   return languageAbbreviationMap[abbreviation.toUpperCase()] || abbreviation;
 };
+
+export const runAsync = (f: () => any) => setTimeout(f, 0);

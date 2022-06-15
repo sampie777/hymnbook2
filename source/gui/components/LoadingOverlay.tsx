@@ -79,6 +79,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   text: {
     paddingTop: 10,
     fontSize: 16,
-    color: colors.textLighter
+    color: colors.textLighter,
+    textAlign: "center"
   }
 });
