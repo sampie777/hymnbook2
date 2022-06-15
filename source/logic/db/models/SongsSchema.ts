@@ -1,4 +1,4 @@
-import { AbcMelodySchema } from "./AbcMelodiesSchema";
+import { AbcMelodySchema, AbcSubMelodySchema } from "./AbcMelodiesSchema";
 
 export const VerseSchema = {
   name: "Verse",
@@ -16,7 +16,7 @@ export const VerseSchema = {
     },
     _abcMelodies: {
       type: "linkingObjects",
-      objectType: "AbcSubMelody",    // AbcSubMelodySchema.name
+      objectType: AbcSubMelodySchema.name,
       property: "verse"
     }
   },
