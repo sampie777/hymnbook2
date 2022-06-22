@@ -30,6 +30,7 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, "Song"> {
 }
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
+  const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
 
@@ -73,7 +74,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
 
     // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-    setTimeout(() => scrollToTop(), 500);
+    if (scrollTimeout.current != null) {
+      clearTimeout(scrollTimeout.current);
+      scrollTimeout.current = undefined;
+    }
+    scrollTimeout.current = setTimeout(() => scrollToTop(), 500);
   }, [song?.id]);
 
   useEffect(() => {
@@ -220,7 +225,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               onViewableItemsChanged={onListViewableItemsChanged.current}
               viewabilityConfig={listViewabilityConfig.current}
               onScrollToIndexFailed={(error) => {
-                if (song === undefined || error.index < song.verses.length - 1) {
+                if (song !== undefined && error.index < song.verses.length - 1) {
                   // todo: Temp fix
                   flatListComponentRef.current?.scrollToIndex({
                     index: error.index / 2,
