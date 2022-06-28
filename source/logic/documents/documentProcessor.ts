@@ -236,7 +236,7 @@ export namespace DocumentProcessor {
   };
 
   export const hasUpdate = (serverGroups: ServerDocumentGroup[], bundle: DocumentGroup): boolean => {
-    const serverGroup = serverGroups.find(it => it.name == bundle.name);
+    const serverGroup = serverGroups.find(it => it.uuid == bundle.uuid);
     if (serverGroup === undefined) {
       return false;
     }
@@ -247,10 +247,10 @@ export namespace DocumentProcessor {
   };
 
   export const getMatchingServerBundle = (serverGroups: ServerDocumentGroup[], bundle: DocumentGroup): ServerDocumentGroup | undefined => {
-    return serverGroups.find(it => it.name == bundle.name);
+    return serverGroups.find(it => it.uuid == bundle.uuid);
   };
 
   export const isGroupLocal = (localGroups: DocumentGroup[], group: ServerDocumentGroup) => {
-    return localGroups.some(it => it.name == group.name);
+    return localGroups.some(it => it.uuid == group.uuid);
   };
 }

@@ -247,7 +247,7 @@ export namespace SongProcessor {
   };
 
   export const hasUpdate = (serverBundles: ServerSongBundle[], bundle: SongBundle): boolean => {
-    const serverBundle = serverBundles.find(it => it.name == bundle.name);
+    const serverBundle = serverBundles.find(it => it.uuid == bundle.uuid);
     if (serverBundle === undefined) {
       return false;
     }
@@ -258,10 +258,10 @@ export namespace SongProcessor {
   };
 
   export const getMatchingServerBundle = (serverBundles: ServerSongBundle[], bundle: SongBundle): ServerSongBundle | undefined => {
-    return serverBundles.find(it => it.name == bundle.name);
+    return serverBundles.find(it => it.uuid == bundle.uuid);
   };
 
   export const isBundleLocal = (localBundles: SongBundle[], serverBundle: ServerSongBundle) => {
-    return localBundles.some(it => it.name == serverBundle.name);
+    return localBundles.some(it => it.uuid == serverBundle.uuid);
   };
 }
