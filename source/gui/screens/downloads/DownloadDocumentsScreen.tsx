@@ -3,7 +3,7 @@ import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Do
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
-import { dateFrom, languageAbbreviationToFullName } from "../../../logic/utils";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -110,8 +110,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
       return;
     }
 
-    if (hasUpdate(group)) {
-      const serverGroup = serverGroups.find(it => it.name == group.name);
+    if (DocumentProcessor.hasUpdate(serverGroups, group)) {
+      const serverGroup = DocumentProcessor.getMatchingServerBundle(serverGroups, group);
       if (serverGroup !== undefined) {
         return setRequestUpdateForGroup(serverGroup);
       }
@@ -212,21 +212,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     loadLocalDocumentGroups();
   };
 
-  const isGroupLocal = (group: ServerDocumentGroup) => {
-    return localGroups.some(it => it.name == group.name);
-  };
-
-  const hasUpdate = (localGroup: LocalDocumentGroup) => {
-    const serverGroup = serverGroups.find(it => it.name == localGroup.name);
-    if (serverGroup === undefined) {
-      return false;
-    }
-
-    const serverDate = dateFrom(serverGroup.modifiedAt);
-    const localDate = localGroup.modifiedAt;
-    return serverDate > localDate;
-  };
-
   const getAllLanguagesFromGroups = (groups: Array<ServerDocumentGroup>) => {
     const languages = DocumentProcessor.getAllLanguagesFromDocumentGroups(groups);
 
@@ -276,10 +261,10 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
           <LocalDocumentGroupItem key={group.name}
                                   group={group}
                                   onPress={onLocalDocumentGroupPress}
-                                  hasUpdate={hasUpdate(group)}
+                                  hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
                                   disabled={isLoading} />)}
 
-        {serverGroups.filter(it => !isGroupLocal(it))
+        {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((group: ServerDocumentGroup) =>
             <ServerDocumentGroupItem key={group.name}
