@@ -152,7 +152,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         saveSongBundle(result.data);
       })
       .catch(error =>
-        Alert.alert("Error", `Error downloading songs for song bundle ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error downloading ${bundle.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -181,7 +181,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         result.throwIfException();
       })
       .catch(error =>
-        Alert.alert("Error", `Error updating song bundle ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error updating ${bundle.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setLocalBundles([]);
@@ -260,7 +260,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
                                         refreshing={isLoading} />}>
 
         {localBundles.map((bundle: LocalSongBundle) =>
-          <LocalSongBundleItem key={bundle.name}
+          <LocalSongBundleItem key={bundle.uuid}
                                bundle={bundle}
                                onPress={onLocalSongBundlePress}
                                hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
@@ -269,7 +269,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((bundle: ServerSongBundle) =>
-            <SongBundleItem key={bundle.name}
+            <SongBundleItem key={bundle.uuid}
                             bundle={bundle}
                             onPress={onSongBundlePress}
                             disabled={isLoading} />)}

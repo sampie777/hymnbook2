@@ -151,7 +151,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         saveDocumentGroup(result.data);
       })
       .catch(error =>
-        Alert.alert("Error", `Error downloading documents for ${group.name}: ${error}`))
+        Alert.alert("Error", `Error downloading ${group.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -180,7 +180,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         result.throwIfException();
       })
       .catch(error =>
-        Alert.alert("Error", `Error updating documents ${group.name}: ${error}`))
+        Alert.alert("Error", `Error updating ${group.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setLocalGroups([]);
@@ -258,7 +258,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
                                         refreshing={isLoading} />}>
 
         {localGroups.map((group: LocalDocumentGroup) =>
-          <LocalDocumentGroupItem key={group.name}
+          <LocalDocumentGroupItem key={group.uuid}
                                   group={group}
                                   onPress={onLocalDocumentGroupPress}
                                   hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
@@ -267,7 +267,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((group: ServerDocumentGroup) =>
-            <ServerDocumentGroupItem key={group.name}
+            <ServerDocumentGroupItem key={group.uuid}
                                      group={group}
                                      onPress={onDocumentGroupPress}
                                      disabled={isLoading} />)}
