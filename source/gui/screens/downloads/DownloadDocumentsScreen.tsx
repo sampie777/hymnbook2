@@ -95,6 +95,11 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
       });
   };
 
+  const applyUuidUpdateForPullRequest8 = () => {
+    DocumentProcessor.updateLocalGroupsWithUuid(localGroups, serverGroups);
+  };
+  useEffect(applyUuidUpdateForPullRequest8, [serverGroups]);
+
   const isPopupOpen = () => requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
 
   const onDocumentGroupPress = (group: ServerDocumentGroup) => {
@@ -111,7 +116,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     }
 
     if (DocumentProcessor.hasUpdate(serverGroups, group)) {
-      const serverGroup = DocumentProcessor.getMatchingServerBundle(serverGroups, group);
+      const serverGroup = DocumentProcessor.getMatchingServerGroup(serverGroups, group);
       if (serverGroup !== undefined) {
         return setRequestUpdateForGroup(serverGroup);
       }
@@ -258,7 +263,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
                                         refreshing={isLoading} />}>
 
         {localGroups.map((group: LocalDocumentGroup) =>
-          <LocalDocumentGroupItem key={group.uuid}
+          <LocalDocumentGroupItem key={group.uuid + group.name}
                                   group={group}
                                   onPress={onLocalDocumentGroupPress}
                                   hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
@@ -267,7 +272,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((group: ServerDocumentGroup) =>
-            <ServerDocumentGroupItem key={group.uuid}
+            <ServerDocumentGroupItem key={group.uuid + group.name}
                                      group={group}
                                      onPress={onDocumentGroupPress}
                                      disabled={isLoading} />)}

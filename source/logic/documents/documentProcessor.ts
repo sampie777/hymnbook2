@@ -235,22 +235,45 @@ export namespace DocumentProcessor {
     return languageTopList[0][0];
   };
 
-  export const hasUpdate = (serverGroups: ServerDocumentGroup[], bundle: DocumentGroup): boolean => {
-    const serverGroup = serverGroups.find(it => it.uuid == bundle.uuid);
+  export const hasUpdate = (serverGroups: ServerDocumentGroup[], group: DocumentGroup): boolean => {
+    const serverGroup = serverGroups.find(it => it.uuid == group.uuid);
     if (serverGroup === undefined) {
       return false;
     }
 
     const serverDate = dateFrom(serverGroup.modifiedAt);
-    const localDate = bundle.modifiedAt;
+    const localDate = group.modifiedAt;
     return serverDate > localDate;
   };
 
-  export const getMatchingServerBundle = (serverGroups: ServerDocumentGroup[], bundle: DocumentGroup): ServerDocumentGroup | undefined => {
-    return serverGroups.find(it => it.uuid == bundle.uuid);
+  export const getMatchingServerGroup = (serverGroups: ServerDocumentGroup[], group: DocumentGroup): ServerDocumentGroup | undefined => {
+    return serverGroups.find(it => it.uuid == group.uuid);
   };
 
   export const isGroupLocal = (localGroups: DocumentGroup[], group: ServerDocumentGroup) => {
     return localGroups.some(it => it.uuid == group.uuid);
+  };
+
+  export const updateLocalGroupsWithUuid = (localGroups: DocumentGroup[], serverGroups: ServerDocumentGroup[]) => {
+    if (serverGroups.length === 0) {
+      return;
+    }
+
+    localGroups
+      .filter(it => it.uuid == "")
+      .forEach(it => {
+        const serverGroup = serverGroups.find(serverGroup => serverGroup.name == it.name);
+        if (serverGroup === undefined) {
+          return;
+        }
+
+        try {
+          Db.documents.realm().write(() => {
+            it.uuid = serverGroup.uuid;
+          });
+        } catch (e: any) {
+          rollbar.error(`Failed to update document group ${it.name} with new UUID: ${e}`, e);
+        }
+      });
   };
 }
