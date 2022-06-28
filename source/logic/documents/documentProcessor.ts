@@ -78,6 +78,7 @@ export namespace DocumentProcessor {
       items,
       dateFrom(group.createdAt),
       dateFrom(group.modifiedAt),
+      group.uuid,
       privateConversionState.totalDocuments,
       isRoot,
       conversionState.groupId++

@@ -118,6 +118,7 @@ export class SongBundle {
   size?: number;
   createdAt: string;
   modifiedAt: string;
+  uuid: string;
 
   constructor(id: number,
               abbreviation: string,
@@ -128,6 +129,7 @@ export class SongBundle {
               songs: Array<Song> | null,
               createdAt: string,
               modifiedAt: string,
+              uuid: string,
               size?: number
   ) {
     this.id = id;
@@ -140,5 +142,6 @@ export class SongBundle {
     this.size = size;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.uuid = uuid;
   }
 }

@@ -109,6 +109,7 @@ export class SongBundle {
   songs: Array<Song>;
   createdAt: Date;
   modifiedAt: Date;
+  uuid: string;
 
   constructor(
     abbreviation: string,
@@ -118,6 +119,7 @@ export class SongBundle {
     copyright: string,
     createdAt: Date,
     modifiedAt: Date,
+    uuid: string,
     songs: Array<Song> = [],
     id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema)
   ) {
@@ -130,5 +132,6 @@ export class SongBundle {
     this.songs = songs;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.uuid = uuid;
   }
 }
