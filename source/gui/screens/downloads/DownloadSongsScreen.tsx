@@ -95,6 +95,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
       });
   };
 
+  const applyUuidUpdateForPullRequest8 = () => {
+    SongProcessor.updateLocalBundlesWithUuid(localBundles, serverBundles);
+  };
+  useEffect(applyUuidUpdateForPullRequest8, [serverBundles]);
+
   const isPopupOpen = () => requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
 
   const onSongBundlePress = (bundle: ServerSongBundle) => {
@@ -260,7 +265,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
                                         refreshing={isLoading} />}>
 
         {localBundles.map((bundle: LocalSongBundle) =>
-          <LocalSongBundleItem key={bundle.uuid}
+          <LocalSongBundleItem key={bundle.uuid + bundle.name}
                                bundle={bundle}
                                onPress={onLocalSongBundlePress}
                                hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
@@ -269,7 +274,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((bundle: ServerSongBundle) =>
-            <SongBundleItem key={bundle.uuid}
+            <SongBundleItem key={bundle.uuid + bundle.name}
                             bundle={bundle}
                             onPress={onSongBundlePress}
                             disabled={isLoading} />)}

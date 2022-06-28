@@ -264,4 +264,27 @@ export namespace SongProcessor {
   export const isBundleLocal = (localBundles: SongBundle[], serverBundle: ServerSongBundle) => {
     return localBundles.some(it => it.uuid == serverBundle.uuid);
   };
+
+  export const updateLocalBundlesWithUuid = (localBundles: SongBundle[], serverBundles: ServerSongBundle[]) => {
+    if (serverBundles.length === 0) {
+      return;
+    }
+
+    localBundles
+      .filter(it => it.uuid == "")
+      .forEach(it => {
+        const serverBundle = serverBundles.find(serverBundle => serverBundle.name == it.name);
+        if (serverBundle === undefined) {
+          return;
+        }
+
+        try {
+          Db.songs.realm().write(() => {
+            it.uuid = serverBundle.uuid;
+          });
+        } catch (e: any) {
+          rollbar.error(`Failed to update songbundle ${it.name} with new UUID: ${e}`, e);
+        }
+      });
+  };
 }
