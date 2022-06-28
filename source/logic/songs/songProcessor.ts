@@ -180,6 +180,7 @@ export namespace SongProcessor {
       bundle.copyright,
       dateFrom(bundle.createdAt),
       dateFrom(bundle.modifiedAt),
+      bundle.uuid,
       songs
     );
   };
