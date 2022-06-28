@@ -245,4 +245,23 @@ export namespace SongProcessor {
       .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
     return languageTopList[0][0];
   };
+
+  export const hasUpdate = (serverBundles: ServerSongBundle[], bundle: SongBundle): boolean => {
+    const serverBundle = serverBundles.find(it => it.name == bundle.name);
+    if (serverBundle === undefined) {
+      return false;
+    }
+
+    const serverDate = dateFrom(serverBundle.modifiedAt);
+    const localDate = bundle.modifiedAt;
+    return serverDate > localDate;
+  };
+
+  export const getMatchingServerBundle = (serverBundles: ServerSongBundle[], bundle: SongBundle): ServerSongBundle | undefined => {
+    return serverBundles.find(it => it.name == bundle.name);
+  };
+
+  export const isBundleLocal = (localBundles: SongBundle[], serverBundle: ServerSongBundle) => {
+    return localBundles.some(it => it.name == serverBundle.name);
+  };
 }

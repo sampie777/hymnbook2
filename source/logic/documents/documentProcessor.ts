@@ -234,4 +234,23 @@ export namespace DocumentProcessor {
       .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
     return languageTopList[0][0];
   };
+
+  export const hasUpdate = (serverGroups: ServerDocumentGroup[], bundle: DocumentGroup): boolean => {
+    const serverGroup = serverGroups.find(it => it.name == bundle.name);
+    if (serverGroup === undefined) {
+      return false;
+    }
+
+    const serverDate = dateFrom(serverGroup.modifiedAt);
+    const localDate = bundle.modifiedAt;
+    return serverDate > localDate;
+  };
+
+  export const getMatchingServerBundle = (serverGroups: ServerDocumentGroup[], bundle: DocumentGroup): ServerDocumentGroup | undefined => {
+    return serverGroups.find(it => it.name == bundle.name);
+  };
+
+  export const isGroupLocal = (localGroups: DocumentGroup[], group: ServerDocumentGroup) => {
+    return localGroups.some(it => it.name == group.name);
+  };
 }
