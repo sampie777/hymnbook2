@@ -3,7 +3,7 @@ import { Song, SongBundle } from "../../../../source/logic/db/models/Songs";
 
 describe("test if song language is different from bundle", () => {
   const song = new Song("", "", "", "", new Date(), new Date(), [], [], 0, 1);
-  const songBundle = new SongBundle("", "", "", "", "", new Date(), new Date(), [], 0);
+  const songBundle = new SongBundle("", "", "", "", "", new Date(), new Date(), "000", [], 0);
 
   it("returns false if both languages are the same", () => {
     song.language = "AF";
