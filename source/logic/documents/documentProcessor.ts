@@ -26,7 +26,7 @@ export namespace DocumentProcessor {
 
     const existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`name = "${group.name}" AND isRoot = true`);
+      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
     if (existingGroup.length > 0) {
       return new Result({ success: false, message: `Document group ${group.name} already exists` });
     }

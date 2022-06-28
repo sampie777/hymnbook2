@@ -43,7 +43,7 @@ export namespace SongProcessor {
 
     const existingBundle = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
-      .filtered(`name = "${bundle.name}"`);
+      .filtered(`uuid = "${bundle.uuid}"`);
     if (existingBundle.length > 0) {
       rollbar.warning("New song bundle already exists locally: " + bundle.name, bundle);
       return new Result({ success: false, message: `Bundle ${bundle.name} already exists` });
