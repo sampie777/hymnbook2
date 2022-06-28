@@ -126,7 +126,7 @@ export namespace DocumentProcessor {
 
     const existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`name = "${group.name}" AND isRoot = true`);
+      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
     if (existingGroup.length === 0) {
       rollbar.warning("To-be-updated document group doesn't exists locally: " + group.name, group);
     }
