@@ -24,8 +24,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
     const [results, setSearchResult] = useState<Array<Song>>([]);
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
 
-    const theme = useTheme();
-    const styles = createStyles(theme);
+    const styles = createStyles(useTheme());
     const maxInputLength = config.maxSearchInputLength;
     const maxResultsLength = config.maxSearchResultsLength;
 
@@ -193,7 +192,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
 
 export default SearchScreen;
 
-const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
@@ -212,7 +211,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     fontSize: 18,
     color: colors.text,
     paddingTop: 20,
-    fontFamily: "sans-serif-light"
+    fontFamily: fontFamily.sansSerifLight
   },
   infoTextSmaller: {
     fontSize: 14
@@ -229,7 +228,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   inputTextField: {
     fontSize: 70,
     textAlign: "center",
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     color: colors.textLight,
     borderStyle: "dashed",
     borderBottomWidth: 2,
