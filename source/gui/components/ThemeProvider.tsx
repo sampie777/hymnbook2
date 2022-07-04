@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Appearance } from "react-native";
-import { darkColors, lightColors, ThemeColors } from "../../logic/theme";
+import { darkColors, lightColors, ThemeColors, ThemeFontFamilies, defaultFontFamilies } from "../../logic/theme";
 import Settings from "../../settings";
 
 export interface ThemeContextProps {
   isDark: boolean;
   colors: ThemeColors;
   reload: () => void;
+  fontFamily: ThemeFontFamilies;
 }
 
 export const ThemeContext = React.createContext<ThemeContextProps>({
   isDark: false,
   colors: lightColors,
-  reload: () => undefined
+  reload: () => undefined,
+  fontFamily: defaultFontFamilies,
 });
 
 const ThemeProvider: React.FC = ({ children }) => {
@@ -49,7 +51,8 @@ const ThemeProvider: React.FC = ({ children }) => {
   const defaultContext: ThemeContextProps = {
     isDark: isDark,
     colors: isDark ? darkColors : lightColors,
-    reload: () => loadTheme()
+    reload: () => loadTheme(),
+    fontFamily: defaultFontFamilies,
   };
 
   return (

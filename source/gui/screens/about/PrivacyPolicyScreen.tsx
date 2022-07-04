@@ -47,7 +47,7 @@ const PrivacyPolicyScreen: React.FC = () => {
 
 export default PrivacyPolicyScreen;
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background
@@ -58,7 +58,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 200
   },
   contentText: {
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     lineHeight: 25,
     marginBottom: 30,
     paddingHorizontal: 30,

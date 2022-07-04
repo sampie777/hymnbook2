@@ -42,7 +42,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animat
   </Animated.View>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "column",
     flexGrow: 1,
@@ -51,7 +51,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   text: {
     color: colors.text,
     textAlign: "center",
-    fontFamily: "Roboto"
+    fontFamily: fontFamily.sansSerif
   }
 });
 

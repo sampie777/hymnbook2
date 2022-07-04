@@ -16,7 +16,7 @@ const Footer: React.FC<Props> = ({ song }) => {
   </Animated.View>);
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     borderTopColor: colors.border,
     borderTopWidth: 1,
@@ -28,7 +28,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   copyright: {
     textAlign: "center",
     color: colors.textLighter,
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     marginTop: 20,
     lineHeight: 25
   }

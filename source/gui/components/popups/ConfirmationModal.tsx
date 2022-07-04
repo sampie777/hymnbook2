@@ -66,7 +66,7 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
 
 export default ConfirmationModal;
 
-const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -136,7 +136,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     color: colors.primary,
     borderBottomRightRadius: 8,
     fontWeight: "bold",
-    fontFamily: "sans-serif-light"
+    fontFamily: fontFamily.sansSerifLight
   },
   buttonConfirmTextInvert: {
     backgroundColor: colors.primaryVariant,

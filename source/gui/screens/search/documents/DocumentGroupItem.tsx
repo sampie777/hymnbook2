@@ -41,7 +41,7 @@ const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress, searchText }
 
 export default DocumentGroupItem;
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
@@ -68,7 +68,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 14,
     color: colors.textLighter,
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic"
   },
 
