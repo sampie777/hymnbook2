@@ -48,6 +48,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
   };
 
   useEffect(() => {
+    if (!isMounted) return;
+
     // Let user navigate when the screen is still loading the data
     if (serverBundles.length === 0) {
       return;
