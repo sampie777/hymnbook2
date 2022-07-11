@@ -47,7 +47,7 @@ export const BackspaceKey: React.FC<{ onPress: () => void, useSmallerFontSize?: 
   };
 
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   key: {
     flex: 1,
     justifyContent: "center",
@@ -58,7 +58,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   keyText: {
     fontSize: 40,
-    fontFamily: "sans-serif-thin",
+    fontFamily: fontFamily.sansSerifThin,
     color: colors.textLighter
   },
   keyTextSmaller: {
@@ -66,7 +66,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   specialKeyText: {
     fontSize: 20,
-    fontFamily: "sans-serif-light"
+    fontFamily: fontFamily.sansSerifLight
   },
   specialKeyTextSmaller: {
     fontSize: 18

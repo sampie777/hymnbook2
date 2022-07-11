@@ -124,12 +124,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
 export default ContentVerse;
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {},
   title: {
     color: colors.verseTitle,
     textTransform: "lowercase",
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic"
   },
 
@@ -154,6 +154,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   text: {
     color: colors.text,
-    fontFamily: "Roboto"
+    fontFamily: fontFamily.sansSerif,
+    fontWeight: "300"
   }
 });

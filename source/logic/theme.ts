@@ -75,3 +75,14 @@ export const darkColors: ThemeColors = {
   notesLines: "#888",
 };
 
+export interface ThemeFontFamilies {
+  sansSerif: string,
+  sansSerifLight: string,
+  sansSerifThin: string,
+}
+
+export const defaultFontFamilies: ThemeFontFamilies = {
+  sansSerif: "Roboto",
+  sansSerifLight: "Roboto-Light",
+  sansSerifThin: "Roboto-Thin",
+}
