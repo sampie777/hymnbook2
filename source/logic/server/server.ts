@@ -41,10 +41,10 @@ export namespace Server {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
-        if (resetAuthOn403 && error.message.includes("Could not retrieve the requested data: (403) Not authorized.")) {
+        if (resetAuthOn403 && error.message.includes("Not authorized.")) {
           // Reset authentication to regain new rights
           ServerAuth.forgetCredentials();
-          rollbar.info(`Resetting credentials due to HTTP 403 error when fetching song bundle (${bundle.name})`);
+          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching song bundle (${bundle.name})`);
           return fetchSongBundleWithSongsAndVerses(bundle, false);
         }
 
