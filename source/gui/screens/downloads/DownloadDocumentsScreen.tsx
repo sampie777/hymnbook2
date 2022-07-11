@@ -3,7 +3,7 @@ import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Do
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
-import { dateFrom, languageAbbreviationToFullName } from "../../../logic/utils";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -95,6 +95,11 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
       });
   };
 
+  const applyUuidUpdateForPullRequest8 = () => {
+    DocumentProcessor.updateLocalGroupsWithUuid(localGroups, serverGroups);
+  };
+  useEffect(applyUuidUpdateForPullRequest8, [serverGroups]);
+
   const isPopupOpen = () => requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
 
   const onDocumentGroupPress = (group: ServerDocumentGroup) => {
@@ -110,8 +115,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
       return;
     }
 
-    if (hasUpdate(group)) {
-      const serverGroup = serverGroups.find(it => it.name == group.name);
+    if (DocumentProcessor.hasUpdate(serverGroups, group)) {
+      const serverGroup = DocumentProcessor.getMatchingServerGroup(serverGroups, group);
       if (serverGroup !== undefined) {
         return setRequestUpdateForGroup(serverGroup);
       }
@@ -151,7 +156,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         saveDocumentGroup(result.data);
       })
       .catch(error =>
-        Alert.alert("Error", `Error downloading documents for ${group.name}: ${error}`))
+        Alert.alert("Error", `Error downloading ${group.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -180,7 +185,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         result.throwIfException();
       })
       .catch(error =>
-        Alert.alert("Error", `Error updating documents ${group.name}: ${error}`))
+        Alert.alert("Error", `Error updating ${group.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setLocalGroups([]);
@@ -210,21 +215,6 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     if (!isMounted) return;
 
     loadLocalDocumentGroups();
-  };
-
-  const isGroupLocal = (group: ServerDocumentGroup) => {
-    return localGroups.some(it => it.name == group.name);
-  };
-
-  const hasUpdate = (localGroup: LocalDocumentGroup) => {
-    const serverGroup = serverGroups.find(it => it.name == localGroup.name);
-    if (serverGroup === undefined) {
-      return false;
-    }
-
-    const serverDate = dateFrom(serverGroup.modifiedAt);
-    const localDate = localGroup.modifiedAt;
-    return serverDate > localDate;
   };
 
   const getAllLanguagesFromGroups = (groups: Array<ServerDocumentGroup>) => {
@@ -273,16 +263,16 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
                                         refreshing={isLoading} />}>
 
         {localGroups.map((group: LocalDocumentGroup) =>
-          <LocalDocumentGroupItem key={group.name}
+          <LocalDocumentGroupItem key={group.uuid + group.name}
                                   group={group}
                                   onPress={onLocalDocumentGroupPress}
-                                  hasUpdate={hasUpdate(group)}
+                                  hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
                                   disabled={isLoading} />)}
 
-        {serverGroups.filter(it => !isGroupLocal(it))
+        {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((group: ServerDocumentGroup) =>
-            <ServerDocumentGroupItem key={group.name}
+            <ServerDocumentGroupItem key={group.uuid + group.name}
                                      group={group}
                                      onPress={onDocumentGroupPress}
                                      disabled={isLoading} />)}

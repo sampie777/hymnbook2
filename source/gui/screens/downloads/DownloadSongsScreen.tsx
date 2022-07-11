@@ -3,7 +3,7 @@ import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
-import { dateFrom, languageAbbreviationToFullName } from "../../../logic/utils";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -24,7 +24,7 @@ interface ComponentProps {
 const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(false);
-  const [bundles, setBundles] = useState<Array<ServerSongBundle>>([]);
+  const [serverBundles, setServerBundles] = useState<Array<ServerSongBundle>>([]);
   const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle>>([]);
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
@@ -49,8 +49,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
 
   useEffect(() => {
     // Let user navigate when the screen is still loading the data
-    if (bundles.length === 0) {
-      return
+    if (serverBundles.length === 0) {
+      return;
     }
     setIsProcessing?.(isLoading);
   }, [isLoading]);
@@ -86,7 +86,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
     Server.fetchSongBundles()
       .then(result => {
         if (!isMounted) return;
-        setBundles(result.data);
+        setServerBundles(result.data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}`))
       .finally(() => {
@@ -94,6 +94,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         setIsLoading(false);
       });
   };
+
+  const applyUuidUpdateForPullRequest8 = () => {
+    SongProcessor.updateLocalBundlesWithUuid(localBundles, serverBundles);
+  };
+  useEffect(applyUuidUpdateForPullRequest8, [serverBundles]);
 
   const isPopupOpen = () => requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
 
@@ -110,8 +115,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
       return;
     }
 
-    if (hasUpdate(bundle)) {
-      const serverBundle = bundles.find(it => it.name == bundle.name);
+    if (SongProcessor.hasUpdate(serverBundles, bundle)) {
+      const serverBundle = SongProcessor.getMatchingServerBundle(serverBundles, bundle);
       if (serverBundle !== undefined) {
         return setRequestUpdateForBundle(serverBundle);
       }
@@ -152,7 +157,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         saveSongBundle(result.data);
       })
       .catch(error =>
-        Alert.alert("Error", `Error downloading songs for song bundle ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error downloading ${bundle.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -181,7 +186,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         result.throwIfException();
       })
       .catch(error =>
-        Alert.alert("Error", `Error updating song bundle ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error updating ${bundle.name}: ${error}`))
       .finally(() => {
         if (!isMounted) return;
         setLocalBundles([]);
@@ -211,21 +216,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
     if (!isMounted) return;
 
     loadLocalSongBundles();
-  };
-
-  const isBundleLocal = (serverBundle: ServerSongBundle) => {
-    return localBundles.some(it => it.name == serverBundle.name);
-  };
-
-  const hasUpdate = (localBundle: LocalSongBundle) => {
-    const serverBundle = bundles.find(it => it.name == localBundle.name);
-    if (serverBundle === undefined) {
-      return false;
-    }
-
-    const serverDate = dateFrom(serverBundle.modifiedAt);
-    const localDate = localBundle.modifiedAt;
-    return serverDate > localDate;
   };
 
   const getAllLanguagesFromBundles = (bundles: Array<ServerSongBundle>) => {
@@ -264,10 +254,10 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
 
       <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
 
-      <LanguageSelectBar languages={getAllLanguagesFromBundles(bundles)}
+      <LanguageSelectBar languages={getAllLanguagesFromBundles(serverBundles)}
                          selectedLanguage={filterLanguage}
                          onLanguageClick={setFilterLanguage}
-                         disabled={isLoading}/>
+                         disabled={isLoading} />
 
       <ScrollView
         style={styles.listContainer}
@@ -275,26 +265,26 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
                                         refreshing={isLoading} />}>
 
         {localBundles.map((bundle: LocalSongBundle) =>
-          <LocalSongBundleItem key={bundle.name}
+          <LocalSongBundleItem key={bundle.uuid + bundle.name}
                                bundle={bundle}
                                onPress={onLocalSongBundlePress}
-                               hasUpdate={hasUpdate(bundle)}
+                               hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
                                disabled={isLoading} />)}
 
-        {bundles.filter(it => !isBundleLocal(it))
+        {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
           .map((bundle: ServerSongBundle) =>
-            <SongBundleItem key={bundle.name}
+            <SongBundleItem key={bundle.uuid + bundle.name}
                             bundle={bundle}
                             onPress={onSongBundlePress}
                             disabled={isLoading} />)}
 
-        {bundles.length > 0 ? undefined :
+        {serverBundles.length > 0 ? undefined :
           <Text style={styles.emptyListText}>
             {isLoading ? "Loading..." : "No online data available..."}
           </Text>
         }
-        {isLoading || bundles.length === 0 || bundles.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
+        {isLoading || serverBundles.length === 0 || serverBundles.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
           <Text style={styles.emptyListText}>
             No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
           </Text>

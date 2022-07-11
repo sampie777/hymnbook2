@@ -36,6 +36,7 @@ export class DocumentGroup {
   createdAt: string;
   modifiedAt: string;
   size: number;
+  uuid: string;
 
   constructor(
     name: string,
@@ -45,7 +46,8 @@ export class DocumentGroup {
     createdAt: string,
     modifiedAt: string,
     size: number = 0,
-    id: number
+    id: number,
+    uuid: string,
   ) {
     this.id = id;
     this.name = name;
@@ -55,5 +57,6 @@ export class DocumentGroup {
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.size = size || 0;
+    this.uuid = uuid;
   }
 }

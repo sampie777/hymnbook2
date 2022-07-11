@@ -52,6 +52,7 @@ export class DocumentGroup {
   items: Array<Document> | null;
   createdAt: Date;
   modifiedAt: Date;
+  uuid: string;
   size: number;
   isRoot: boolean;
   _parent?: Array<DocumentGroup>;
@@ -63,6 +64,7 @@ export class DocumentGroup {
     items: Array<Document> | null,
     createdAt: Date,
     modifiedAt: Date,
+    uuid: string,
     size: number = 0,
     isRoot: boolean = false,
     id = Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema),
@@ -75,6 +77,7 @@ export class DocumentGroup {
     this.items = items || [];
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.uuid = uuid;
     this.size = size || 0;
     this.isRoot = isRoot;
     this._parent = parent === undefined ? [] : [parent];

@@ -43,7 +43,7 @@ export namespace SongProcessor {
 
     const existingBundle = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
-      .filtered(`name = "${bundle.name}"`);
+      .filtered(`uuid = "${bundle.uuid}"`);
     if (existingBundle.length > 0) {
       rollbar.warning("New song bundle already exists locally: " + bundle.name, bundle);
       return new Result({ success: false, message: `Bundle ${bundle.name} already exists` });
@@ -86,7 +86,7 @@ export namespace SongProcessor {
 
     const existingBundle = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
-      .filtered(`name = "${bundle.name}"`);
+      .filtered(`uuid = "${bundle.uuid}"`);
     if (existingBundle.length === 0) {
       rollbar.warning("To-be-updated song bundle doesn't exists locally: " + bundle.name, bundle);
     }
@@ -180,6 +180,7 @@ export namespace SongProcessor {
       bundle.copyright,
       dateFrom(bundle.createdAt),
       dateFrom(bundle.modifiedAt),
+      bundle.uuid,
       songs
     );
   };
@@ -243,5 +244,47 @@ export namespace SongProcessor {
     const languageTopList = Object.entries(languageCount)
       .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
     return languageTopList[0][0];
+  };
+
+  export const hasUpdate = (serverBundles: ServerSongBundle[], bundle: SongBundle): boolean => {
+    const serverBundle = serverBundles.find(it => it.uuid == bundle.uuid);
+    if (serverBundle === undefined) {
+      return false;
+    }
+
+    const serverDate = dateFrom(serverBundle.modifiedAt);
+    const localDate = bundle.modifiedAt;
+    return serverDate > localDate;
+  };
+
+  export const getMatchingServerBundle = (serverBundles: ServerSongBundle[], bundle: SongBundle): ServerSongBundle | undefined => {
+    return serverBundles.find(it => it.uuid == bundle.uuid);
+  };
+
+  export const isBundleLocal = (localBundles: SongBundle[], serverBundle: ServerSongBundle) => {
+    return localBundles.some(it => it.uuid == serverBundle.uuid);
+  };
+
+  export const updateLocalBundlesWithUuid = (localBundles: SongBundle[], serverBundles: ServerSongBundle[]) => {
+    if (serverBundles.length === 0) {
+      return;
+    }
+
+    localBundles
+      .filter(it => it.uuid == "")
+      .forEach(it => {
+        const serverBundle = serverBundles.find(serverBundle => serverBundle.name == it.name);
+        if (serverBundle === undefined) {
+          return;
+        }
+
+        try {
+          Db.songs.realm().write(() => {
+            it.uuid = serverBundle.uuid;
+          });
+        } catch (e: any) {
+          rollbar.error(`Failed to update songbundle ${it.name} with new UUID: ${e}`, e);
+        }
+      });
   };
 }
