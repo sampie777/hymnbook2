@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { Client, Configuration } from "rollbar-react-native";
 import { getUniqueId, getVersion } from "react-native-device-info";
 import Config from "react-native-config";
@@ -15,7 +16,7 @@ const configuration = new Configuration(
       client: {
         javascript: {
           source_map_enabled: true,
-          code_version: getVersion(),
+          code_version: getVersion() + "." + Platform.OS,
         }
       },
       person: {
