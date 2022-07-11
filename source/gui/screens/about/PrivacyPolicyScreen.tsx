@@ -9,6 +9,9 @@ const PrivacyPolicyScreen: React.FC = () => {
   return (<ScrollView style={styles.container}>
     <View style={styles.content}>
       <Text style={[styles.contentText]}>
+        Last updated: 16/10/2021.
+      </Text>
+      <Text style={[styles.contentText]}>
         INTRODUCTION. Privacy is important, and we value it. That's why we want you to know what you can expect
         regarding your privacy while using this app. In short: we won't know who you are and what we know (which is very
         little), we will keep to ourselves.
