@@ -81,7 +81,7 @@ const SongControls: React.FC<ComponentProps> =
       });
     };
 
-    return (<View style={styles.container}>
+    return (<View style={styles.container} pointerEvents={'box-none'} >
 
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
@@ -136,7 +136,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     position: "absolute",
     width: "100%",
     bottom: 30,
-    paddingHorizontal: 3
+    paddingHorizontal: 3,
+    zIndex: 1,
   },
 
   buttonBase: {

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { rollbar } from "../../logic/rollbar";
+import { defaultFontFamilies } from "../../logic/theme";
 
 interface ComponentProps {
 }
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     paddingVertical: 40,
     textAlign: "center",
-    fontFamily: "sans-serif-thin"
+    fontFamily: defaultFontFamilies.sansSerifThin
   },
   header: {
     fontSize: 30,
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   },
   errorName: {
     fontSize: 20,
-    fontFamily: "sans-serif-light",
+    fontFamily: defaultFontFamilies.sansSerifLight,
     marginBottom: 20,
     paddingHorizontal: 30
   },
@@ -116,6 +117,6 @@ const styles = StyleSheet.create({
   },
   lineText: {
     color: "#eee",
-    fontFamily: "sans-serif-light",
+    fontFamily: defaultFontFamilies.sansSerifLight,
   }
 });

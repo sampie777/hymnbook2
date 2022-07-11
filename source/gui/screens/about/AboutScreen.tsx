@@ -100,7 +100,7 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
 
 export default AboutScreen;
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background
@@ -133,17 +133,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingLeft: 18,
     color: colors.primary,
     fontSize: 28,
-    fontFamily: "sans-serif-light"
+    fontFamily: fontFamily.sansSerifLight
   },
   versionText: {
     color: colors.textLighter,
     fontSize: 12,
-    fontFamily: "sans-serif-light"
+    fontFamily: fontFamily.sansSerifLight
   },
 
   content: {},
   contentText: {
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     lineHeight: 25,
     marginBottom: 25,
     paddingHorizontal: 30,
@@ -158,7 +158,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingVertical: 30
   },
   scriptureText: {
-    fontFamily: "serif",
+    fontFamily: fontFamily.sansSerif,
     fontStyle: "italic",
     textAlign: "center",
     color: colors.textLight,
@@ -168,7 +168,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   scriptureSourceText: {
     textAlign: "center",
     fontStyle: "italic",
-    fontFamily: "serif",
+    fontFamily: fontFamily.sansSerif,
     color: colors.textLighter,
     fontSize: 10
   },
@@ -207,7 +207,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.surface3
   },
   footerText: {
-    fontFamily: "sans-serif",
+    fontFamily: fontFamily.sansSerif,
     textAlign: "center",
     fontStyle: "italic",
     marginBottom: 0,
@@ -219,7 +219,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     color: colors.url,
-    fontFamily: "sans-serif-light",
+    fontFamily: fontFamily.sansSerifLight,
     lineHeight: 25,
     paddingHorizontal: 3,
     paddingVertical: 10

@@ -122,3 +122,36 @@ The song melodies are en-/decoded using the ABC notation. The decoded notes are 
 - ABC examples: https://abcnotation.com/examples
 - ABCjs types (incomplete): https://github.com/paulrosen/abcjs/blob/2616d88ddf0222e255c508f944df3089960c13dc/types/index.d.ts
 - SVG library: https://github.com/react-native-svg/react-native-svg
+
+
+## iOS setup
+
+### Fonts
+
+For consistency purposes, we use the Roboto font. This is the default font on Android, but must be installed on iOS.
+
+Before you add new fonts, make sure the file './react-native.config.js' exists and contains the path to the custom font directory, something linke this:
+```
+module.exports = {
+  project: {
+    ios: {},
+    android: {},
+  },
+  assets: ['./assets/fonts/']
+};
+```
+
+#### Add new font
+
+- Download the font
+- Add it to ./assets/fonts/
+- (Maybe install them on your development system)
+- Run `npx react-native link`
+- (Maybe run `pod install` in .ios/ directory also, not sure)
+- Fonts are installed
+
+#### Use new font
+
+Use these fonts by using there 'Full name' as shown in iOS Font Book
+
+
