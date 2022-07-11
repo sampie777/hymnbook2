@@ -55,6 +55,8 @@ function pushAndRelease {
 
   yarn bundle || exit 1
   yarn build || exit 1
+
+  ./upload_source_map.sh
 }
 
 function setNextDevelopmentVersion {
