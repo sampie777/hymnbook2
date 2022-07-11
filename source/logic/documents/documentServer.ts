@@ -1,5 +1,6 @@
 import { rollbar } from "../rollbar";
-import { api, throwErrorsIfNotOk } from "../api";
+import { api } from "../api";
+import { throwErrorsIfNotOk } from "../apiUtils";
 import { Result } from "../utils";
 import { JsonResponse, JsonResponseType } from "../server/models";
 import { ServerAuth } from "../server/auth";

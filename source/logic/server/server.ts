@@ -1,4 +1,5 @@
-import { api, throwErrorsIfNotOk } from "../api";
+import { api } from "../api";
+import { throwErrorsIfNotOk } from "../apiUtils";
 import { Result } from "../utils";
 import { SongBundle } from "./models/ServerSongsModel";
 import { rollbar } from "../rollbar";
