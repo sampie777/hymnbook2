@@ -1,5 +1,6 @@
 import { ServerAuth } from "./server/auth";
 import { songBundlesApiUrl } from "../../app.json";
+import { rollbar } from "./rollbar";
 
 const apiHostUrl = songBundlesApiUrl;
 const apiBaseUrl = `${apiHostUrl}/api/v1`;
@@ -87,6 +88,8 @@ export const throwErrorsIfNotOk = (response: Response) => {
   if (response.ok) {
     return response;
   }
+
+  rollbar.error(`API request to '${response.url}' failed: (${response.status}) ${response.statusText}`);
   switch (response.status) {
     case 404:
       throw Error(`Could not find the requested data: (${response.status}) ${response.statusText}`);
@@ -102,13 +105,6 @@ export const throwErrorsIfNotOk = (response: Response) => {
 };
 
 export const api = {
-  auth: {
-    requestAccess: (clientName: string) =>
-      post(`${apiBaseUrl}/auth/application/request-access/hymnbook?clientName=${clientName}`, "", false),
-    retrieveAccess: (clientName: string, requestId: string) =>
-      post(`${apiBaseUrl}/auth/application/request-access/hymnbook?clientName=${clientName}&requestID=${requestId}`, "", false)
-  },
-
   songBundles: {
     list: (loadSongs = false,
            loadVerses = false,
