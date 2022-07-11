@@ -67,7 +67,9 @@ build (copy)/
 *.hprof
 
 sourcemap.android.js
+sourcemap.ios.js
 upload_source_map.sh
 index.android.bundle
+ios/assets
 
 .env
