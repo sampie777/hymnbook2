@@ -1,5 +1,6 @@
 import Settings from "../../settings";
-import { authApi, throwErrorsIfNotOk } from "./authApi";
+import { authApi } from "./authApi";
+import { throwErrorsIfNotOk } from "../api";
 import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
