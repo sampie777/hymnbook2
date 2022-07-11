@@ -23,10 +23,10 @@ export namespace DocumentServer {
         return new Result({ success: true, data: groups });
       })
       .catch((error: Error) => {
-        if (resetAuthOn403 && error.message.includes("Could not retrieve the requested data: (403) Not authorized.")) {
+        if (resetAuthOn403 && error.message.includes("Not authorized.")) {
           // Reset authentication to regain new rights
           ServerAuth.forgetCredentials();
-          rollbar.info("Resetting credentials due to HTTP 403 error when fetching documents");
+          rollbar.info("Resetting credentials due to HTTP 401/403 error when fetching documents");
           return fetchDocumentGroups(includeOther, false);
         }
 
