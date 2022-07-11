@@ -26,7 +26,7 @@ export namespace DocumentProcessor {
 
     const existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`name = "${group.name}" AND isRoot = true`);
+      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
     if (existingGroup.length > 0) {
       return new Result({ success: false, message: `Document group ${group.name} already exists` });
     }
@@ -78,6 +78,7 @@ export namespace DocumentProcessor {
       items,
       dateFrom(group.createdAt),
       dateFrom(group.modifiedAt),
+      group.uuid,
       privateConversionState.totalDocuments,
       isRoot,
       conversionState.groupId++
@@ -125,7 +126,7 @@ export namespace DocumentProcessor {
 
     const existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`name = "${group.name}" AND isRoot = true`);
+      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
     if (existingGroup.length === 0) {
       rollbar.warning("To-be-updated document group doesn't exists locally: " + group.name, group);
     }
@@ -232,5 +233,47 @@ export namespace DocumentProcessor {
     const languageTopList = Object.entries(languageCount)
       .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
     return languageTopList[0][0];
+  };
+
+  export const hasUpdate = (serverGroups: ServerDocumentGroup[], group: DocumentGroup): boolean => {
+    const serverGroup = serverGroups.find(it => it.uuid == group.uuid);
+    if (serverGroup === undefined) {
+      return false;
+    }
+
+    const serverDate = dateFrom(serverGroup.modifiedAt);
+    const localDate = group.modifiedAt;
+    return serverDate > localDate;
+  };
+
+  export const getMatchingServerGroup = (serverGroups: ServerDocumentGroup[], group: DocumentGroup): ServerDocumentGroup | undefined => {
+    return serverGroups.find(it => it.uuid == group.uuid);
+  };
+
+  export const isGroupLocal = (localGroups: DocumentGroup[], group: ServerDocumentGroup) => {
+    return localGroups.some(it => it.uuid == group.uuid);
+  };
+
+  export const updateLocalGroupsWithUuid = (localGroups: DocumentGroup[], serverGroups: ServerDocumentGroup[]) => {
+    if (serverGroups.length === 0) {
+      return;
+    }
+
+    localGroups
+      .filter(it => it.uuid == "")
+      .forEach(it => {
+        const serverGroup = serverGroups.find(serverGroup => serverGroup.name == it.name);
+        if (serverGroup === undefined) {
+          return;
+        }
+
+        try {
+          Db.documents.realm().write(() => {
+            it.uuid = serverGroup.uuid;
+          });
+        } catch (e: any) {
+          rollbar.error(`Failed to update document group ${it.name} with new UUID: ${e}`, e);
+        }
+      });
   };
 }
