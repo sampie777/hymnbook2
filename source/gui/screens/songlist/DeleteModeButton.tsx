@@ -23,7 +23,7 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   deleteModeButton: {
-    padding: 15,
+    paddingHorizontal: 15,
     right: 5,
     fontSize: 21,
     color: "#ffb8b8"
