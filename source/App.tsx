@@ -185,7 +185,7 @@ const AppRoot: React.FC = () => {
       }
     </ErrorBoundary>
 
-    <StatusBar barStyle={!theme.isDark ? "dark-content" : "default"}
+    <StatusBar barStyle={!theme.isDark ? "dark-content" : "light-content"}
                backgroundColor={theme.colors.background}
                hidden={false} />
   </SafeAreaView>;
