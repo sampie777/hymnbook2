@@ -207,7 +207,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     backgroundColor: colors.surface3
   },
   footerText: {
-    fontFamily: fontFamily.sansSerif,
+    fontWeight: "normal",
     textAlign: "center",
     fontStyle: "italic",
     marginBottom: 0,
