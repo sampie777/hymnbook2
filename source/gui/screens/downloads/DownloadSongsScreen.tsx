@@ -264,6 +264,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
       <ScrollView
         style={styles.listContainer}
         refreshControl={<RefreshControl onRefresh={fetchSongBundles}
+                                        tintColor={styles.refreshControl.color}
                                         refreshing={isLoading} />}>
 
         {localBundles.map((bundle: LocalSongBundle) =>
@@ -320,5 +321,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 20,
     textAlign: "center",
     color: colors.text
+  },
+
+  refreshControl: {
+    color: colors.textLighter
   }
 });
