@@ -199,7 +199,7 @@ export default function App() {
   );
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background
@@ -214,7 +214,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   tabBarHeader: {
-    backgroundColor: colors.surface1 as string
+    backgroundColor: colors.surface1 as string,
+    shadowOpacity: isDark ? 0 : 1,
+    elevation: isDark ? 2 : 4
   },
   tabBarHeaderTitle: {
     color: colors.textHeader as string
