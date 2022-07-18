@@ -262,6 +262,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
       <ScrollView
         style={styles.listContainer}
         refreshControl={<RefreshControl onRefresh={fetchDocumentGroups}
+                                        tintColor={styles.refreshControl.color}
                                         refreshing={isLoading} />}>
 
         {localGroups.map((group: LocalDocumentGroup) =>
@@ -318,5 +319,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 20,
     textAlign: "center",
     color: colors.text
+  },
+
+  refreshControl: {
+    color: colors.textLighter
   }
 });
