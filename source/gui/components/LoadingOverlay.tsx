@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, Text } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import { isIOS } from "../../logic/utils";
 
 
 interface Props {
@@ -48,7 +49,7 @@ const LoadingOverlay: React.FC<Props> =
     return (
       <Animated.View style={[styles.container, animatedStyle.container]}>
         <ActivityIndicator style={styles.icon}
-                           size={styles.icon.fontSize}
+                           size={isIOS ? "large" : styles.icon.fontSize}
                            color={styles.icon.color} />
         {text === "" || text === null ? null : <Text style={styles.text}>{text}</Text>}
       </Animated.View>
