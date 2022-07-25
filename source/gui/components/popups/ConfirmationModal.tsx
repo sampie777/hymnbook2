@@ -87,7 +87,8 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
+    overflow: "hidden"
   },
 
   modalTitle: {

@@ -188,12 +188,13 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     marginBottom: 40
   },
   donationLink: {
-    marginBottom: 20
+    marginBottom: 20,
+    overflow: 'hidden',
+    borderRadius: 80
   },
   donationLinkText: {
     backgroundColor: colors.primaryLight,
     alignItems: "center",
-    borderRadius: 80,
     marginBottom: 0,
     paddingVertical: 15,
     paddingHorizontal: 50,
@@ -207,7 +208,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     backgroundColor: colors.surface3
   },
   footerText: {
-    fontFamily: fontFamily.sansSerif,
+    fontWeight: "normal",
     textAlign: "center",
     fontStyle: "italic",
     marginBottom: 0,

@@ -50,9 +50,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   },
   text: {
     color: colors.text,
-    textAlign: "center",
-    fontFamily: fontFamily.sansSerif,
-    fontWeight: "300"
+    textAlign: "center"
   }
 });
 

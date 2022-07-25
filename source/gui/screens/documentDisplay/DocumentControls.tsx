@@ -111,7 +111,7 @@ const DocumentControls: React.FC<Props> =
 
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-    return <View style={styles.container}>
+    return <View style={styles.container} pointerEvents={'box-none'} >
       {previousDocument === undefined ? undefined :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyle.buttonBase]}
                                   onPress={() => goToDocument(previousDocument)}>
@@ -147,7 +147,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "row",
     position: "absolute",
     paddingHorizontal: 3,
-    bottom: 30
+    bottom: 30,
+    zIndex: 1
   },
 
   buttonBase: {

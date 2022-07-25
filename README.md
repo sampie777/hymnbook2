@@ -10,13 +10,37 @@ Hymnbook is an app developed for Christian believers who want to carry hymns wit
 
 ## Develop
 
+### Setup
+
 Create a file in the project root called `.env` and add these content and values:
 ```
 ROLLBAR_API_KEY=
 DEVELOPER_EMAIL=
 ```
 
-### Environment
+Run `yarn install`.
+
+#### Android
+
+Run `yarn android`.
+
+#### iOS
+
+1. Run `pod install` in `ios/`.
+1. Run `yarn ios` to fire up the simulator.
+
+##### Pod install on ARM
+
+When using a M1 Mac (with ARM instead of Intel), you'll probably get a Ruby error when running `pod install`. Solve this by installing the following:
+```
+gem install --user-install ffi -- --enable-libffi-alloc
+```
+[Source](https://stackoverflow.com/questions/68553842/error-installing-a-pod-bus-error-at-0x00000001045b8000?answertab=scoredesc#tab-top)
+
+You might also need to exclude simulator build for arm64 in xcode: [source](https://stackoverflow.com/questions/63607158/xcode-building-for-ios-simulator-but-linking-in-an-object-file-built-for-ios-f?answertab=scoredesc#tab-top). This is already done in de Podfile.
+
+
+### Development server
 
 Start development server:
 
@@ -123,12 +147,9 @@ The song melodies are en-/decoded using the ABC notation. The decoded notes are 
 - ABCjs types (incomplete): https://github.com/paulrosen/abcjs/blob/2616d88ddf0222e255c508f944df3089960c13dc/types/index.d.ts
 - SVG library: https://github.com/react-native-svg/react-native-svg
 
-
-## iOS setup
-
 ### Fonts
 
-For consistency purposes, we use the Roboto font. This is the default font on Android, but must be installed on iOS.
+For consistency purposes, we use the Roboto font. This is the default font on Android, but must be installed on iOS devices. Follow the following for installing fonts for iOS devices.
 
 Before you add new fonts, make sure the file './react-native.config.js' exists and contains the path to the custom font directory, something linke this:
 ```
@@ -153,5 +174,3 @@ module.exports = {
 #### Use new font
 
 Use these fonts by using there 'Full name' as shown in iOS Font Book
-
-

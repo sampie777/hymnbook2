@@ -154,7 +154,5 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
 
   text: {
     color: colors.text,
-    fontFamily: fontFamily.sansSerif,
-    fontWeight: "300"
   }
 });
