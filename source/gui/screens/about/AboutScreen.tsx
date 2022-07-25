@@ -188,12 +188,13 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     marginBottom: 40
   },
   donationLink: {
-    marginBottom: 20
+    marginBottom: 20,
+    overflow: 'hidden',
+    borderRadius: 80
   },
   donationLinkText: {
     backgroundColor: colors.primaryLight,
     alignItems: "center",
-    borderRadius: 80,
     marginBottom: 0,
     paddingVertical: 15,
     paddingHorizontal: 50,
