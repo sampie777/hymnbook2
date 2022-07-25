@@ -25,6 +25,9 @@ target 'hymnbook2' do
   # you should disable these next few lines.
 #  use_flipper!
   post_install do |installer|
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
     flipper_post_install(installer)
   end
 end
