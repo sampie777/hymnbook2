@@ -68,7 +68,6 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     paddingHorizontal: 15,
     fontSize: 14,
     color: colors.textLighter,
-    fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic"
   },
 
