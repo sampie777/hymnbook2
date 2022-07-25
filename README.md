@@ -105,7 +105,17 @@ Make sure keystore is correctly defined in:
 
 ### IOS
 
-No idea.
+Build the app for Release scheme (in xcode you should edit the scheme for release).
+```
+npx react-native run-ios --configuration Release
+```
+
+A possible error might be resolved according to this post: [source](https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported). 
+```
+export NODE_OPTIONS=--openssl-legacy-provider
+```
+
+... to be continued
 
 ## To do
 
