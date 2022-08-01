@@ -1,10 +1,9 @@
 import React from "react";
-import { ParamList } from "../../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity } from "react-native";
 
 interface MenuItemProps {
-  name: keyof ParamList;
+  name: string;
   icon?: (style?: StyleProp<TextStyle> | undefined) => React.ReactNode
   onPress?: () => void;
 }
@@ -30,6 +29,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border,
     borderBottomWidth: 1,
     alignItems: "center",
+    paddingLeft: 15,
   },
   title: {
     flex: 1,
@@ -40,7 +40,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text,
   },
   icon: {
-    marginLeft: 15,
     fontSize: 18,
     color: colors.textLight,
     textAlign: "center",

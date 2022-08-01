@@ -1,6 +1,7 @@
 import React from "react";
 import config from "../../../config";
 import { openLink } from "../../../logic/utils";
+import { Types } from "../downloads/TypeSelectBar";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
 import { Alert, StyleProp, StyleSheet, TextStyle } from "react-native";
 import { ParamList, routes } from "../../../navigation";
@@ -15,12 +16,18 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
 
     const routesToShow = [
       {
-        name: routes.Settings,
-        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="cogs" style={style} />
+        route: routes.Databases,
+        name: "Song databases",
+        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="music" style={style} />
       },
       {
-        name: routes.Databases,
-        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="database" style={style} />
+        name: "Document databases",
+        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="file-alt" style={style} />,
+        onPress: () => navigation.navigate(routes.Databases, { type: Types.Documents })
+      },
+      {
+        route: routes.Settings,
+        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="cog" style={style} />
       },
       {
         name: "Give feedback" as keyof ParamList,
@@ -29,21 +36,23 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
           .catch(e => Alert.alert("Error opening link", e.message))
       },
       {
-        name: routes.About,
+        route: routes.About,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="info" style={style} />
       }
     ];
 
-    const onPress = (route: keyof ParamList) => {
-      navigation.navigate(route);
+    const onPress = (route?: keyof ParamList) => {
+      if (route) {
+        navigation.navigate(route);
+      }
     };
 
     return (<ScrollView contentContainerStyle={styles.container}>
       {routesToShow.map(it => <MenuItem
-        key={it.name}
-        name={it.name}
+        key={it.name || it.route}
+        name={it.name || it.route || ""}
         icon={it.icon}
-        onPress={it.onPress ? it.onPress : () => onPress(it.name)} />)}
+        onPress={it.onPress ? it.onPress : () => onPress(it.route)} />)}
     </ScrollView>);
   };
 
@@ -53,6 +62,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 1,
+    paddingTop: 1
   }
 });
