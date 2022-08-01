@@ -29,18 +29,16 @@ const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick, is
             ]} />
     </TouchableOpacity>
 
-    {!Settings.enableDocumentsFeatureSwitch ? undefined :
-      <TouchableOpacity
-        style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
-        onPress={() => onTypeClick?.(Types.Documents)}
-        disabled={isProcessing}>
-        <Icon name={"file-alt"}
-              style={[
-                styles.icon,
-                (Types.Documents !== selectedType ? {} : styles.selectedIcon)
-              ]} />
-      </TouchableOpacity>
-    }
+    <TouchableOpacity
+      style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
+      onPress={() => onTypeClick?.(Types.Documents)}
+      disabled={isProcessing}>
+      <Icon name={"file-alt"}
+            style={[
+              styles.icon,
+              (Types.Documents !== selectedType ? {} : styles.selectedIcon)
+            ]} />
+    </TouchableOpacity>
   </View>);
 };
 

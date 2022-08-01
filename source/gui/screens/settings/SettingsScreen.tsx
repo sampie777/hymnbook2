@@ -23,7 +23,6 @@ const SettingsScreen: React.FC = () => {
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
-  const [showDocumentsSettings, setShowDocumentsSettings] = useState(Settings.enableDocumentsFeatureSwitch);
   const [showSongMelodySettings, setShowSongMelodySettings] = useState(Settings.showMelody);
 
   const theme = useTheme();
@@ -99,7 +98,6 @@ const SettingsScreen: React.FC = () => {
                             keyName={"enableDocumentsFeatureSwitch"}
                             onPress={(setValue, key, newValue) => {
                               setValue(newValue);
-                              setShowDocumentsSettings(newValue);
                             }} />
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
@@ -215,14 +213,12 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"showSongListCountBadge"}
                                   isVisible={showAdvancedSettings} />
 
-          {!showDocumentsSettings ? undefined : <>
             <Header title={"Documents"} isVisible={showAdvancedSettings} />
             <SettingSwitchComponent title={"Multi keyword search for documents"}
                                     description={"When enabled, each keyword will be matched individually instead of " +
                                       "the whole search phrase. This will yield more results."}
                                     keyName={"documentsMultiKeywordSearch"}
                                     isVisible={showAdvancedSettings}/>
-          </>}
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use authentication with backend"}
