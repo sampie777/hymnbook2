@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import "ReactNativeConfig.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
@@ -32,7 +33,8 @@ static void InitializeFlipper(UIApplication *application) {
   InitializeFlipper(application);
 #endif
 
-  [RollbarReactNative initWithAccessToken:@"abf5a622224c49b9956d9daae28affbb"];
+  NSString *rollbarKey = [ReactNativeConfig envFor:@"ROLLBAR_API_KEY"];
+  [RollbarReactNative initWithAccessToken:rollbarKey];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
