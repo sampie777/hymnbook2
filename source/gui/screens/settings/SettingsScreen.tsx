@@ -94,11 +94,6 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
-    <SettingSwitchComponent title={"Enable documents"}
-                            keyName={"enableDocumentsFeatureSwitch"}
-                            onPress={(setValue, key, newValue) => {
-                              setValue(newValue);
-                            }} />
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
     <SettingComponent title={"App opened times"}
