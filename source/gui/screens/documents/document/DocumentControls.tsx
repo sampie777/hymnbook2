@@ -13,13 +13,15 @@ interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
   document?: Document;
   scrollOffset?: number;
+  bottomOffset: number;
 }
 
 const DocumentControls: React.FC<Props> =
   ({
      navigation,
      document,
-     scrollOffset
+     scrollOffset,
+     bottomOffset
    }) => {
     // Persist this value between renders due to receiving new props (scrollOffset)
     const animatedVerticalOffset = useRef(new Animated.Value<number>(0));
@@ -44,8 +46,10 @@ const DocumentControls: React.FC<Props> =
         return;
       }
 
-      const newScrollDirection = scrollOffset > previousScrollOffset ? -1 : 1;
-      if (newScrollDirection > 0 && previousScrollOffset - scrollOffset < 10) {
+      let newScrollDirection = scrollOffset > previousScrollOffset ? -1 : 1;
+      if (bottomOffset < 150) {
+        newScrollDirection = 1;
+      } else if (newScrollDirection > 0 && previousScrollOffset - scrollOffset < 10) {
         // Don't show buttons when screen was just scrolled a little bit up
         setPreviousScrollOffset(scrollOffset);
         return;
@@ -54,7 +58,7 @@ const DocumentControls: React.FC<Props> =
       const newAnimatedVerticalOffset = newScrollDirection > 0 ? 0 : 100;
       setPreviousScrollOffset(scrollOffset);
 
-      if (scrollDirection !== 0) {
+      if (scrollDirection !== 0 && bottomOffset > 5) {
         // Wait for previous animation to finish
         return;
       }
@@ -111,7 +115,7 @@ const DocumentControls: React.FC<Props> =
 
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-    return <View style={styles.container} pointerEvents={'box-none'} >
+    return <View style={styles.container} pointerEvents={"box-none"}>
       {previousDocument === undefined ? undefined :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyle.buttonBase]}
                                   onPress={() => goToDocument(previousDocument)}>
