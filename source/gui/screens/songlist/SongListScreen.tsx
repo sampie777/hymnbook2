@@ -78,9 +78,6 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
     };
 
     const onSearchResultItemPress = (index: number, songListSong: SongListSongModel) => {
-      if (isDeleteMode) {
-        return SongList.deleteSongAtIndex(index);
-      }
       navigation.navigate(routes.Song, {
         id: songListSong.song.id,
         songListIndex: index,
@@ -88,10 +85,20 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
       });
     };
 
+    const onSearchResultItemLongPress = (index: number, songListSong: SongListSongModel) => {
+      setIsDeleteMode(true);
+    };
+
+    const onSearchResultItemDeleteButtonPress = (index: number) => {
+      SongList.deleteSongAtIndex(index);
+    };
+
     const renderSongListItem = ({ item }: { item: SongListSongModel }) => (
       <SongItem index={item.index}
                 songListSong={item}
                 onPress={onSearchResultItemPress}
+                onLongPress={onSearchResultItemLongPress}
+                onDeleteButtonPress={onSearchResultItemDeleteButtonPress}
                 showDeleteButton={isDeleteMode}
                 showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
     );
@@ -129,5 +136,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "flex-start",
     paddingBottom: 10,
     paddingTop: 6
-  },
+  }
 });
