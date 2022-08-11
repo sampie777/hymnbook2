@@ -1,5 +1,14 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View, Platform, Text, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Platform,
+  Text,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  GestureResponderEvent
+} from "react-native";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
 import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
@@ -34,6 +43,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
+  const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = new Animated.Value<number>(1);
   const styles = createStyles(useTheme());
 
@@ -121,6 +131,43 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
     });
   };
 
+  const onScrollViewScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setOnPressed(false);
+    setScrollOffset(e.nativeEvent.contentOffset.y);
+    setBottomOffset(e.nativeEvent.contentSize.height - e.nativeEvent.layoutMeasurement.height - e.nativeEvent.contentOffset.y);
+  };
+
+  /*
+   *  Register a single touch event on the scroll view
+   */
+  const staticTouchStarted = useRef(false);
+  const staticTouchStartX = useRef(0);
+  const staticTouchStartY = useRef(0);
+
+  const onScrollViewTouchStart = (event: GestureResponderEvent) => {
+    staticTouchStarted.current = true;
+    staticTouchStartX.current = event.nativeEvent.locationX;
+    staticTouchStartY.current = event.nativeEvent.locationY;
+  };
+
+  const onScrollViewTouchMove = (event: GestureResponderEvent) => {
+    const diffX = Math.abs(staticTouchStartX.current - event.nativeEvent.locationX);
+    const diffY = Math.abs(staticTouchStartY.current - event.nativeEvent.locationY);
+    if (diffX > 5 || diffY > 5) {
+      staticTouchStarted.current = false;
+    }
+  };
+
+  const onScrollViewTouchCancel = () => staticTouchStarted.current = false;
+
+  const onScrollViewTouchEnd = () => {
+    if (!staticTouchStarted.current) {
+      return;
+    }
+    staticTouchStarted.current = false;
+    setOnPressed(true);
+  };
+
   const renderNode = (
     node: HTMLViewNode & { children: any },
     index: number,
@@ -137,17 +184,13 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
     return undefined;
   };
 
-  const onScrollViewScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setScrollOffset(e.nativeEvent.contentOffset.y);
-    setBottomOffset(e.nativeEvent.contentSize.height - e.nativeEvent.layoutMeasurement.height - e.nativeEvent.contentOffset.y);
-  };
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
 
         <DocumentControls navigation={navigation}
                           document={document}
+                          forceShow={onPressed}
                           scrollOffset={scrollOffset}
                           bottomOffset={bottomOffset} />
 
@@ -156,6 +199,10 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
             // @ts-ignore
             ref={scrollViewComponent}
             onScroll={onScrollViewScroll}
+            onTouchStart={onScrollViewTouchStart}
+            onTouchMove={onScrollViewTouchMove}
+            onTouchCancel={onScrollViewTouchCancel}
+            onTouchEnd={onScrollViewTouchEnd}
             showsVerticalScrollIndicator={true}
             contentContainerStyle={styles.contentSectionList}>
 
