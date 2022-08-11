@@ -10,13 +10,24 @@ interface Props {
   index: number,
   songListSong: SongListSongModel,
   onPress: (index: number, songListSong: SongListSongModel) => void,
+  onLongPress?: (index: number, songListSong: SongListSongModel) => void,
+  onDeleteButtonPress: (index: number) => void,
   showDeleteButton: boolean,
   showSongBundle?: boolean,
 }
 
-const SongItem: React.FC<Props> = ({ index, songListSong, onPress, showDeleteButton, showSongBundle }) => {
+const SongItem: React.FC<Props> = ({
+                                     index,
+                                     songListSong,
+                                     onPress,
+                                     onDeleteButtonPress,
+                                     showDeleteButton,
+                                     showSongBundle,
+                                     onLongPress
+                                   }) => {
   const styles = createStyles(useTheme());
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
+                           onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={styles.container}>
     <View style={styles.infoContainer}>
       <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>
@@ -31,11 +42,12 @@ const SongItem: React.FC<Props> = ({ index, songListSong, onPress, showDeleteBut
     </View>
 
     {!showDeleteButton ? undefined :
-      <View style={styles.button}>
+      <TouchableOpacity style={styles.button}
+                        onPress={() => onDeleteButtonPress(index)}>
         <Icon name={"times"}
               size={styles.button.fontSize}
               color={styles.button.color} />
-      </View>
+      </TouchableOpacity>
     }
   </TouchableOpacity>;
 };
