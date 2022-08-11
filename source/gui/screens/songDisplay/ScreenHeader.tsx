@@ -1,9 +1,10 @@
 import React from "react";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { hasMelodyToShow } from "../../../logic/songs/utils";
-import HeaderIconButton from "../../components/HeaderIconButton";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { Song } from "../../../logic/db/models/Songs";
+import { hasMelodyToShow } from "../../../logic/songs/utils";
+import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import HeaderIconButton from "../../components/HeaderIconButton";
+import HeaderIconVersePicker from "./HeaderIconVersePicker";
 
 interface Props {
   song: Song & Realm.Object | undefined;
@@ -30,8 +31,8 @@ const ScreenHeader: React.FC<Props> = ({ song, showMelody, isMelodyLoading, open
                           setShowMelody(!showMelody);
                         }} />
     }
-    <HeaderIconButton icon={"list-ol"}
-                      onPress={openVersePicker} />
+
+    <HeaderIconVersePicker onPress={openVersePicker} />
   </>;
 };
 
@@ -39,7 +40,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   loadIcon: {
     fontSize: 26,
     color: colors.text,
-    paddingHorizontal: 7,
+    paddingHorizontal: 7
   }
 });
 
