@@ -33,6 +33,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
   const scrollViewComponent = useRef<ScrollView>();
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
+  const [bottomOffset, setBottomOffset] = useState(999);
   const animatedOpacity = new Animated.Value<number>(1);
   const styles = createStyles(useTheme());
 
@@ -138,6 +139,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
 
   const onScrollViewScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setScrollOffset(e.nativeEvent.contentOffset.y);
+    setBottomOffset(e.nativeEvent.contentSize.height - e.nativeEvent.layoutMeasurement.height - e.nativeEvent.contentOffset.y);
   };
 
   return (
@@ -146,13 +148,15 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
 
         <DocumentControls navigation={navigation}
                           document={document}
-                          scrollOffset={scrollOffset} />
+                          scrollOffset={scrollOffset}
+                          bottomOffset={bottomOffset} />
 
         {document === undefined ? undefined :
           <ScrollView
             // @ts-ignore
             ref={scrollViewComponent}
             onScroll={onScrollViewScroll}
+            showsVerticalScrollIndicator={true}
             contentContainerStyle={styles.contentSectionList}>
 
             <HTMLView value={document.html.replace(/\n/gi, "")}
