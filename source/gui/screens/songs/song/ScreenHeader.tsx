@@ -1,9 +1,9 @@
 import React from "react";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { Song } from "../../../logic/db/models/Songs";
-import { hasMelodyToShow } from "../../../logic/songs/utils";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import HeaderIconButton from "../../components/HeaderIconButton";
+import { Song } from "../../../../logic/db/models/Songs";
+import { hasMelodyToShow } from "../../../../logic/songs/utils";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import HeaderIconButton from "../../../components/HeaderIconButton";
 import HeaderIconVersePicker from "./HeaderIconVersePicker";
 
 interface Props {

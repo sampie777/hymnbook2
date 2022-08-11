@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import HeaderIconButton from "../../components/HeaderIconButton";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import HeaderIconButton from "../../../components/HeaderIconButton";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 
 interface Props {
   onPress: () => void;

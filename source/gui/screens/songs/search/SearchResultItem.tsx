@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList, routes, VersePickerMethod } from "../../../navigation";
-import { Song, Verse } from "../../../logic/db/models/Songs";
+import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
+import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
-import SongList from "../../../logic/songs/songList";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import SongList from "../../../../logic/songs/songList";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
