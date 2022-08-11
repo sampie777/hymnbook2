@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
   document?: Document;
+  forceShow?: boolean;
   scrollOffset?: number;
   bottomOffset: number;
 }
@@ -20,6 +21,7 @@ const DocumentControls: React.FC<Props> =
   ({
      navigation,
      document,
+     forceShow,
      scrollOffset,
      bottomOffset
    }) => {
@@ -64,13 +66,23 @@ const DocumentControls: React.FC<Props> =
       }
       setScrollDirection(newScrollDirection);
 
+      startShowAnimation(newScrollDirection > 0);
+    }, [scrollOffset]);
+
+    useEffect(() => {
+      if (!forceShow) return;
+
+      startShowAnimation(true);
+    }, [forceShow]);
+
+    const startShowAnimation = (show: boolean) => {
       Animated.timing(animatedVerticalOffset.current, {
-        toValue: newAnimatedVerticalOffset,
+        toValue: show ? 0 : 100,
         duration: 300,
         easing: Easing.inOut(Easing.ease)
       })
         .start(() => setScrollDirection(0));
-    }, [scrollOffset]);
+    }
 
     const getPreviousDocument = () => {
       if (document === undefined || document.index <= 0) {
