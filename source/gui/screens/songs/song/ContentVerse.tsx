@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
-import { Verse } from "../../../logic/db/models/Songs";
-import { AbcMelody } from "../../../logic/db/models/AbcMelodies";
-import Settings from "../../../settings";
-import { ABC } from "../../../logic/songs/abc/abc";
-import { isVerseInList } from "../../../logic/songs/versePicker";
-import { getVerseType, VerseType } from "../../../logic/songs/utils";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import MelodyView from "../../components/melody/MelodyView";
+import { Verse } from "../../../../logic/db/models/Songs";
+import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
+import Settings from "../../../../settings";
+import { ABC } from "../../../../logic/songs/abc/abc";
+import { isVerseInList } from "../../../../logic/songs/versePicker";
+import { getVerseType, VerseType } from "../../../../logic/songs/utils";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import MelodyView from "../../../components/melody/MelodyView";
 
 interface ContentVerseProps {
   verse: Verse;

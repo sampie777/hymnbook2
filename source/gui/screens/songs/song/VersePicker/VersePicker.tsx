@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
-import Db from "../../../../logic/db/db";
-import { SongSchema } from "../../../../logic/db/models/SongsSchema";
-import { rollbar } from "../../../../logic/rollbar";
-import { routes, ParamList, VersePickerMethod } from "../../../../navigation";
-import { Song, Verse, VerseProps } from "../../../../logic/db/models/Songs";
-import SongList from "../../../../logic/songs/songList";
+import Db from "../../../../../logic/db/db";
+import { SongSchema } from "../../../../../logic/db/models/SongsSchema";
+import { rollbar } from "../../../../../logic/rollbar";
+import { routes, ParamList, VersePickerMethod } from "../../../../../navigation";
+import { Song, Verse, VerseProps } from "../../../../../logic/db/models/Songs";
+import SongList from "../../../../../logic/songs/songList";
 import {
   clearOrSelectAll,
   getMarginForVerses,
   isVerseInList,
   toggleVerseInList
-} from "../../../../logic/songs/versePicker";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+} from "../../../../../logic/songs/versePicker";
+import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 import { StyleSheet, View, Text, Dimensions, ScaledSize, ScrollView } from "react-native";
-import HeaderIconButton from "../../../components/HeaderIconButton";
+import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, "VersePicker"> {

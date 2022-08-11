@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
-import { routes, ParamList, VersePickerMethod } from "../../../navigation";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { routes, ParamList, VersePickerMethod } from "../../../../navigation";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { getFontScale } from "react-native-device-info";
-import Settings from "../../../settings";
-import Db from "../../../logic/db/db";
-import { Song, Verse } from "../../../logic/db/models/Songs";
-import { SongSchema } from "../../../logic/db/models/SongsSchema";
-import { isPortraitMode } from "../../../logic/utils";
-import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
+import Settings from "../../../../settings";
+import Db from "../../../../logic/db/db";
+import config from "../../../../config";
+import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { SongSchema } from "../../../../logic/db/models/SongsSchema";
+import { isPortraitMode } from "../../../../logic/utils";
+import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
-import PopupsComponent from "../../components/popups/PopupsComponent";
+import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
-import config from "../../../config";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =

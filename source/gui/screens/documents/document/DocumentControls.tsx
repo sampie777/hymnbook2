@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import Db from "../../../logic/db/db";
+import Db from "../../../../logic/db/db";
 import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
-import { DocumentSchema } from "../../../logic/db/models/DocumentsSchema";
-import { ParamList, routes } from "../../../navigation";
-import { Document } from "../../../logic/db/models/Documents";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
+import { ParamList, routes } from "../../../../navigation";
+import { Document } from "../../../../logic/db/models/Documents";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";

@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import { objectToArrayIfNotAlready } from "../../../logic/utils";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { objectToArrayIfNotAlready } from "../../../../logic/utils";
 
 interface KeyProps {
   onPress: () => void;

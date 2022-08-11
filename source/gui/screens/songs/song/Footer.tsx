@@ -1,8 +1,8 @@
 import React from "react";
-import { Song } from "../../../logic/db/models/Songs";
-import { createCopyright } from "../../../logic/songs/utils";
+import { Song } from "../../../../logic/db/models/Songs";
+import { createCopyright } from "../../../../logic/songs/utils";
 import { Animated, StyleSheet } from "react-native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 
 interface Props {
   song?: Song;

@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { Verse } from "../../../../logic/db/models/Songs";
-import { getVerseType, VerseType } from "../../../../logic/songs/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { Verse } from "../../../../../logic/db/models/Songs";
+import { getVerseType, VerseType } from "../../../../../logic/songs/utils";
+import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 
 interface ComponentProps {
   verse: Verse;

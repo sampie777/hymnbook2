@@ -1,20 +1,20 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View, Platform, Text, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
-import Db from "../../../logic/db/db";
-import Settings from "../../../settings";
+import Db from "../../../../logic/db/db";
+import Settings from "../../../../settings";
 import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
-import { DocumentSchema } from "../../../logic/db/models/DocumentsSchema";
-import { Document } from "../../../logic/db/models/Documents";
+import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
+import { Document } from "../../../../logic/db/models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import { keepScreenAwake } from "../../../logic/utils";
-import { ParamList } from "../../../navigation";
+import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { keepScreenAwake } from "../../../../logic/utils";
+import { ParamList } from "../../../../navigation";
 import {
   GestureHandlerRootView
 } from "react-native-gesture-handler";
 import Animated, { Easing } from "react-native-reanimated";
 import HTMLView, { HTMLViewNode } from "react-native-htmlview";
-import LoadingOverlay from "../../components/LoadingOverlay";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 
 const Footer: React.FC<{ opacity: Animated.Value<number> }> =
