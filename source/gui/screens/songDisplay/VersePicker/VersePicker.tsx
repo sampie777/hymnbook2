@@ -13,8 +13,7 @@ import {
   toggleVerseInList
 } from "../../../../logic/songs/versePicker";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { StyleSheet, View, Text, Dimensions, ScaledSize } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { StyleSheet, View, Text, Dimensions, ScaledSize, ScrollView } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 
