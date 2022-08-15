@@ -8,7 +8,7 @@ import Db from "../../../../logic/db/db";
 import config from "../../../../config";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { SongSchema } from "../../../../logic/db/models/SongsSchema";
-import { isPortraitMode } from "../../../../logic/utils";
+import { isIOS, isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
@@ -17,7 +17,7 @@ import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 
 
-const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
+const SearchScreen: React.FC<BottomTabScreenProps<ParamList, "SongSearch">> =
   ({ navigation }) => {
     const [isPortrait, setIsPortrait] = useState(isPortraitMode(Dimensions.get("window")));
     const [inputValue, setInputValue] = useState("");
@@ -51,8 +51,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
     };
 
     const onExit = () => {
-      setInputValue("");
-      setSearchResult([]);
+      clearScreen();
       Dimensions.removeEventListener("change", handleDimensionsChange);
     };
 
@@ -63,6 +62,15 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, 'SongSearch'>> =
     };
 
     const onBlur = () => {
+      if (isIOS) {
+        // Use timeout to fix the bug on iOS that onLongPress doesn't get dismissed if the touch component gets unmounted
+        setTimeout(() => clearScreen(), 500);
+      } else {
+        clearScreen();
+      }
+    };
+
+    const clearScreen = () => {
       setInputValue("");
       setSearchResult([]);
     };
