@@ -227,6 +227,6 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingTop: 5
   },
   switchComponent: {
-    color: isIOS ? "#fff" : "dodgerblue"
+    color: isIOS ? "#fff" : colors.primary
   }
 });
