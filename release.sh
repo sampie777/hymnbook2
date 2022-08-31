@@ -65,6 +65,7 @@ function pushAndRelease {
   echo "Release version: ${RELEASE_VERSION}"
 
   git add package.json || exit 1
+  git add ios/hymnbook2/Info.plist || exit 1
   git commit -m "version release: ${RELEASE_VERSION}" || exit 1
   git tag "v${RELEASE_VERSION}" || exit 1
   git push -u origin master --tags || exit 1
@@ -87,6 +88,7 @@ function setNextDevelopmentVersion {
   setVersion "${DEV_VERSION}" || exit 1
 
   git add package.json || exit 1
+  git add ios/hymnbook2/Info.plist || exit 1
   git commit -m "next development version" || exit 1
   git push -u origin develop --tags || exit 1
 }
