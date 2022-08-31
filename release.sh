@@ -8,11 +8,23 @@ function usage {
      Usage: $progname [command]
 
      commands:
-       patch                Release a patch version (0.0.X)
-       minor                Release a minor version (0.X.0)
-       -h, --help           Show this help message and exit
+       patch                  Release a patch version (0.0.X)
+       minor                  Release a minor version (0.X.0)
+       setversion <version>   Change version to <version>
+       -h, --help             Show this help message and exit
 
 HEREDOC
+}
+
+function setVersion() {
+    version="$1"
+
+    npm --no-git-tag-version version "${version}" || exit 1
+
+    # Remove previous version tag
+    echo "$(sed -e '/<key>CFBundleShortVersionString<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
+    # Add new version tag
+    echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a \\\t<string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
 function releasePatch {
@@ -26,7 +38,7 @@ function releasePatch {
 
   git merge develop || exit 1
 
-  npm --no-git-tag-version version "${RELEASE_VERSION}" || exit 1
+  setVersion "${RELEASE_VERSION}" || exit 1
 
   pushAndRelease
 }
@@ -37,7 +49,11 @@ function releaseMinor {
   git checkout master || exit 1
   git merge develop || exit 1
 
-  npm --no-git-tag-version version minor || exit 1
+  # Create patch version
+  CURRENT_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
+  RELEASE_VERSION=$(echo ${CURRENT_VERSION} | awk -F'.' '{print $1"."$2+1".0"}')
+
+  setVersion "${RELEASE_VERSION}" || exit 1
 
   pushAndRelease
 }
@@ -68,7 +84,7 @@ function setNextDevelopmentVersion {
   DEV_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)-SNAPSHOT
 
   echo "Next development version: ${DEV_VERSION}"
-  npm --no-git-tag-version version ${DEV_VERSION} || exit 1
+  setVersion "${DEV_VERSION}" || exit 1
 
   git add package.json || exit 1
   git commit -m "next development version" || exit 1
@@ -84,6 +100,9 @@ case $command in
   minor)
     releaseMinor
     setNextDevelopmentVersion
+    ;;
+  setversion)
+    setVersion "$2"
     ;;
   -h|--help)
     usage
