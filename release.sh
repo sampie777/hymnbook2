@@ -18,13 +18,16 @@ HEREDOC
 
 function setVersion() {
     version="$1"
+    buildVersion=$(git rev-list HEAD --first-parent --count)
 
-    npm --no-git-tag-version version "${version}" || exit 1
+    npm --no-git-tag-version --allow-same-version version "${version}" || exit 1
 
     # Remove previous version tag
     echo "$(sed -e '/<key>CFBundleShortVersionString<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed -e '/<key>CFBundleVersion<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     # Add new version tag
     echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a \\\t<string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed "/<key>CFBundleVersion<\/key>/a \\\t<string>${buildVersion}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
 function releasePatch {
@@ -50,8 +53,8 @@ function releaseMinor {
   git merge develop || exit 1
 
   # Create patch version
-  CURRENT_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
-  RELEASE_VERSION=$(echo ${CURRENT_VERSION} | awk -F'.' '{print $1"."$2+1".0"}')
+  npm --no-git-tag-version version minor || exit 1
+  RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
 
   setVersion "${RELEASE_VERSION}" || exit 1
 
