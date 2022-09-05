@@ -209,7 +209,8 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   },
 
   titleContainer: {
-    flex: 1
+    flex: 1,
+    paddingRight: 5
   },
   titleText: {
     fontSize: 16,
