@@ -1,18 +1,18 @@
-import React from "react";
-import config from "../../../config";
-import { openLink } from "../../../logic/utils";
+import React, { useState } from "react";
 import { Types } from "../downloads/TypeSelectBar";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
-import { Alert, StyleProp, StyleSheet, TextStyle } from "react-native";
+import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { ParamList, routes } from "../../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import MenuItem from "./MenuItem";
+import FeedbackComponent from "../../components/popups/FeedbackComponent";
 
 const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
   ({ navigation }) => {
     const styles = createStyles(useTheme());
+    const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
 
     const routesToShow = [
       {
@@ -32,8 +32,7 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
       {
         name: "Give feedback" as keyof ParamList,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="comment" style={style} />,
-        onPress: () => openLink(config.feedbackUrl)
-          .catch(e => Alert.alert("Error opening link", e.message))
+        onPress: () => setShowFeedbackPopup(true)
       },
       {
         route: routes.About,
@@ -47,13 +46,19 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, "OtherMenu">> =
       }
     };
 
-    return (<ScrollView contentContainerStyle={styles.container}>
-      {routesToShow.map(it => <MenuItem
-        key={it.name || it.route}
-        name={it.name || it.route || ""}
-        icon={it.icon}
-        onPress={it.onPress ? it.onPress : () => onPress(it.route)} />)}
-    </ScrollView>);
+    return (<>
+      {!showFeedbackPopup ? undefined :
+        <FeedbackComponent onCompleted={() => setShowFeedbackPopup(false)}
+                           onDenied={() => setShowFeedbackPopup(false)} />
+      }
+      <ScrollView contentContainerStyle={styles.container}>
+        {routesToShow.map(it => <MenuItem
+          key={it.name || it.route}
+          name={it.name || it.route || ""}
+          icon={it.icon}
+          onPress={it.onPress ? it.onPress : () => onPress(it.route)} />)}
+      </ScrollView>
+    </>);
   };
 
 export default OtherMenuScreen;
