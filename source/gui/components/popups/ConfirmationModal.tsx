@@ -1,16 +1,19 @@
 import React from "react";
-import { Modal, StyleSheet, View, Text, Pressable } from "react-native";
+import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity } from "react-native";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface ComponentProps {
   isOpen: boolean;
   onClose?: () => void;
   onConfirm?: () => void;
+  onDeny?: () => void;
   invertConfirmColor?: boolean;
   closeText?: string;
   confirmText?: string;
   title?: string;
   message?: string;
+  showCloseButton?: boolean;
 }
 
 const ConfirmationModal: React.FC<ComponentProps> = ({
@@ -18,13 +21,19 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        isOpen,
                                                        onClose,
                                                        onConfirm,
+                                                       onDeny,
                                                        invertConfirmColor = false,
                                                        closeText = "Close",
                                                        confirmText = "Confirm",
                                                        title,
-                                                       message
+                                                       message,
+                                                       showCloseButton = false
                                                      }) => {
   const styles = createStyles(useTheme());
+  if (onDeny === undefined) {
+    onDeny = onClose;
+  }
+
   return (
     <Modal
       animationType="none"
@@ -34,16 +43,27 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalTitle}>{title}</Text>
+          <View style={styles.modalHeader}>
+            {!showCloseButton ? undefined : <View style={styles.headerCloseButton} />}
+
+            <Text style={styles.modalTitle}>{title}</Text>
+
+            {!showCloseButton ? undefined :
+              <TouchableOpacity style={styles.headerCloseButton}
+                                onPress={onClose}>
+                <Icon name={"times"} style={styles.headerCloseButtonText} />
+              </TouchableOpacity>
+            }
+          </View>
           <View style={styles.modalMessage}>
             {children ? children :
               <Text style={styles.modalMessageText}>{message}</Text>}
           </View>
 
           <View style={styles.buttons}>
-            {onClose === undefined ? undefined :
+            {onDeny === undefined ? undefined :
               <Pressable style={[styles.button, (onConfirm !== undefined ? {} : styles.soloButton)]}
-                         onPress={onClose}>
+                         onPress={onDeny}>
                 <Text style={[styles.buttonText, styles.buttonDenyText]}>{closeText}</Text>
               </Pressable>
             }
@@ -91,16 +111,31 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     overflow: "hidden"
   },
 
+  modalHeader: {
+    flexDirection: "row",
+    paddingTop: 10
+  },
+
+  headerCloseButton: {
+    width: 45,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  headerCloseButtonText: {
+    color: colors.textLighter,
+    fontSize: 15
+  },
+
   modalTitle: {
+    flex: 1,
     paddingHorizontal: 30,
-    paddingTop: 25,
+    paddingVertical: 10,
     fontWeight: "bold",
     textAlign: "center",
     color: colors.text
   },
   modalMessage: {
     paddingHorizontal: 30,
-    paddingTop: 15,
     paddingBottom: 50,
     textAlign: "center",
     alignItems: "center",
@@ -114,7 +149,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     flexDirection: "row",
     justifyContent: "space-evenly",
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.borderLight
   },
   button: {
     flex: 1,
@@ -129,7 +164,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   },
 
   buttonDenyText: {
-    borderBottomLeftRadius: 8,
+    borderBottomLeftRadius: 8
   },
   buttonConfirmText: {
     borderLeftWidth: 1,
@@ -148,6 +183,6 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     borderLeftWidth: 0,
-    borderRightWidth: 0,
+    borderRightWidth: 0
   }
 });

@@ -13,11 +13,7 @@ Hymnbook is an app developed for Christian believers who want to carry hymns wit
 
 ### Setup
 
-Create a file in the project root called `.env` and add these content and values:
-```
-ROLLBAR_API_KEY=
-DEVELOPER_EMAIL=
-```
+Copy the file `.env.template` to `.env` and update the values a needed.
 
 Run `yarn install`.
 
