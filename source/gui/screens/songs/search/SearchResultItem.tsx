@@ -124,8 +124,10 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontSize: 22,
     color: colors.primaryLight,
     backgroundColor: colors.surface2,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: 0,
+    borderLeftWidth: 0.2,
+    borderRightWidth: 1.2,
+    borderBottomWidth: 1.3,
     borderColor: colors.shadow1,
     alignItems: "center",
     justifyContent: "center"
