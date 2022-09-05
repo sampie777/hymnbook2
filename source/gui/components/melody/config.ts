@@ -1,5 +1,5 @@
 export const AbcConfig = {
-  baseScale: 0.75,
+  baseScale: 0.69,
 
   topSpacing: 20,
   lineSpacing: 8,
