@@ -17,7 +17,10 @@ export default class SongList {
     }
 
     return (songList.songs as unknown as Realm.Results<SongListSongModel>)
-      .sorted("index") as unknown as Array<SongListSongModel>;
+      .sorted("index")
+      // Fix for when null objects come through when database is in transaction
+      // (rollbar: #58 Cannot read property of undefined/null expression n)
+      .filter(it => it != null && it.song != null) as unknown as Array<SongListSongModel>;
   }
 
   static getAllSongLists(): Realm.Results<SongListModel> {
@@ -73,7 +76,7 @@ export default class SongList {
     Db.songs.realm().write(() => {
       // Delete all models with no song
       songList.songs.filter(it => it.song == null)
-        .forEach(it => Db.songs.realm().delete(it))
+        .forEach(it => Db.songs.realm().delete(it));
 
       songList.songs = songList.songs.filter(it => it.song != null);
     });
@@ -100,7 +103,7 @@ export default class SongList {
 
     Db.songs.realm().write(() => {
       Db.songs.realm().delete(songList.songs);
-    })
+    });
   }
 
   static getSongAtIndex(index: number): SongListSongModel | undefined {
