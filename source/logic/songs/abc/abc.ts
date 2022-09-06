@@ -77,14 +77,14 @@ export namespace ABC {
   };
 
   export const getField = (abc: string, field: string, _default?: string): (string | undefined) => {
-    const result = abc.match(new RegExp(field + ":(.*)?"));
-    if (result == null || result.length !== 2) {
+    const result = abc.match(new RegExp("(^|\n) *\t*" + field + ":(.*)?"));
+    if (result == null || result.length !== 3) {
       return _default;
     }
-    return result[1].trim();
+    return result[2].trim();
   };
 
-  const extractInfoFields = (abc: string, song: Song): string => {
+  export const extractInfoFields = (abc: string, song: Song): string => {
     song.area = getField(abc, "A");
     song.book = getField(abc, "B");
     song.composer = getField(abc, "C");
@@ -111,7 +111,7 @@ export namespace ABC {
     song.referenceNumber = getField(abc, "X", "1");
     song.transcription = getField(abc, "Z");
     return abc
-      .replace(/[ABCDFGHIKLMmNOPQRrSsTUVXZ]:.*/g, "")
+      .replace(/(^|\n) *\t*[ABCDFGHIKLMmNOPQRrSsTUVXZ]:.*/g, "")
       .replace(/\n+/g, "\n")
       .replace(/^\n*/g, "")
       .replace(/\n*$/g, "");
