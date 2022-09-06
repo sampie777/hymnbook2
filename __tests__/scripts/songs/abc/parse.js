@@ -181,4 +181,32 @@ describe("test abc parse", () => {
     expect(song.melody.length).toBe(67);
     expect(song.melody[2].duration).toBe(0.25);
   })
+
+  it("parses abc with fake header codes in text", () => {
+    const song = new ABC.Song();
+    const data = "X:1\n" +
+      "T:Psalm 115\n" +
+      "C:Nie aan ons, o troue Heer, ...(9)\n" +
+      "L:1/4\n" +
+      "M:C|\n" +
+      "K:D\n" +
+      "Q:1/2=100\n" +
+      "r:remark\n" +
+      "yy d2 B2 A A B c d2 z2\n" +
+      "yyyy A2 B2 A G F2 E2 D2 z2\n" +
+      "yyyy D2 F2 E D F ^G A2 z2\n" +
+      "yyyy F2 A2 B c d B A2 z2\n" +
+      "yyyy A2 =G2 F A G F E2 z2\n" +
+      "yyyy E2 F2 A G F2 E2 D3 yy |]\n" +
+      "\n" +
+      "w: 'K: de van die hei-den-dom, gou-e⁀of-sil-wer-beel-te-nir:, waar die mens sy knie voor krom, niks as ei-e maak-sel is: daar~'s 'n mond, maar son-der taal; daar~'s 'n oog, maar son-der straal.\n";
+
+    expect(ABC.extractInfoFields(data, song)).toBe("yy d2 B2 A A B c d2 z2\n" +
+      "yyyy A2 B2 A G F2 E2 D2 z2\n" +
+      "yyyy D2 F2 E D F ^G A2 z2\n" +
+      "yyyy F2 A2 B c d B A2 z2\n" +
+      "yyyy A2 =G2 F A G F E2 z2\n" +
+      "yyyy E2 F2 A G F2 E2 D3 yy |]\n" +
+      "w: 'K: de van die hei-den-dom, gou-e⁀of-sil-wer-beel-te-nir:, waar die mens sy knie voor krom, niks as ei-e maak-sel is: daar~'s 'n mond, maar son-der taal; daar~'s 'n oog, maar son-der straal.");
+  })
 })
