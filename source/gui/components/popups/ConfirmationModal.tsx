@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity } from "react-native";
+import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity, ScrollView } from "react-native";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
@@ -55,10 +55,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
               </TouchableOpacity>
             }
           </View>
-          <View style={styles.modalMessage}>
+          <ScrollView style={styles.modalMessageContainer} contentContainerStyle={styles.modalMessage}>
             {children ? children :
               <Text style={styles.modalMessageText}>{message}</Text>}
-          </View>
+          </ScrollView>
 
           <View style={styles.buttons}>
             {onDeny === undefined ? undefined :
@@ -133,6 +133,10 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     fontWeight: "bold",
     textAlign: "center",
     color: colors.text
+  },
+
+  modalMessageContainer: {
+    flexGrow: 0,
   },
   modalMessage: {
     paddingHorizontal: 30,

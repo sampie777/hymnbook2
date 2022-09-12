@@ -7,6 +7,7 @@ import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvide
 import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
 import PickerComponent from "../../../../components/popups/PickerComponent";
+import SliderComponent from "../../../../components/SliderComponent";
 
 interface Props {
   isMelodyShown: boolean;
@@ -17,6 +18,8 @@ interface Props {
   melodies?: AbcMelody[];
   showMelodyForAllVerses: boolean;
   setShowMelodyForAllVerses?: (value: boolean) => void;
+  melodyScale: number;
+  setMelodyScale: (value: number) => void;
 }
 
 const MelodySettingsModal: React.FC<Props> = ({
@@ -27,7 +30,9 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 onMelodySelect,
                                                 melodies = [],
                                                 showMelodyForAllVerses,
-                                                setShowMelodyForAllVerses
+                                                setShowMelodyForAllVerses,
+                                                melodyScale,
+                                                setMelodyScale
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
@@ -75,7 +80,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                          value={showMelodyForAllVerses}
                          onPress={() => {
                            Settings.showMelodyForAllVerses = !showMelodyForAllVerses;
-                           setShowMelodyForAllVerses?.(!showMelodyForAllVerses)
+                           setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
                          }} />
 
         {selectedMelody === undefined ? undefined : <View style={styles.melodyContainer}>
@@ -91,6 +96,17 @@ const MelodySettingsModal: React.FC<Props> = ({
           </TouchableOpacity>
         </View>
         }
+
+        <View style={styles.scaleContainer}>
+          <Text style={styles.scaleLabel}>Melody size</Text>
+
+          <SliderComponent value={Math.round(melodyScale * 100)}
+                           setValue={(v) => {
+                             Settings.songMelodyScale = v / 100;
+                             setMelodyScale?.(v / 100);
+                           }}
+                           onReset={() => setMelodyScale?.(1.0)} />
+        </View>
       </View>
     </ConfirmationModal>
   </>;
@@ -145,6 +161,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   pickerRowTextSelected: {
     fontWeight: "bold"
+  },
+
+  scaleContainer: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    paddingTop: 10
+  },
+  scaleLabel: {
+    color: colors.text,
+    fontSize: 15,
+    paddingBottom: 5
   }
 });
 

@@ -12,6 +12,7 @@ import MelodyView from "../../../components/melody/MelodyView";
 interface ContentVerseProps {
   verse: Verse;
   scale: Animated.Value;
+  melodyScale: number;
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;
@@ -20,6 +21,7 @@ interface ContentVerseProps {
 const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      verse,
                                                      scale,
+                                                     melodyScale,
                                                      selectedVerses,
                                                      activeMelody,
                                                      setIsMelodyLoading
@@ -105,7 +107,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       {!isMelodyAvailable() ? undefined :
         <MelodyView onLoaded={onMelodyLoaded}
                     abc={ABC.generateAbcForVerse(verse, activeMelody)}
-                    animatedScale={scale} />
+                    animatedScale={scale}
+                    melodyScale={melodyScale} />
       }
     </Animated.View>
   );
@@ -142,6 +145,6 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   },
 
   text: {
-    color: colors.text,
+    color: colors.text
   }
 });
