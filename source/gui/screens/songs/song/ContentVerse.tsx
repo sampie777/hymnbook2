@@ -65,23 +65,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
-  const isMelodyEnabled = () => Settings.showMelody && activeMelody !== undefined;
   const isMelodyAvailable = () => Boolean(activeMelody !== undefined && verse.abcLyrics);
-  const shouldMelodyBeShownForVerse = () =>
-    Settings.showMelodyForAllVerses ||
-    (selectedVerses.length > 0 && selectedVerses[0].id == verse.id) ||  // Show melody because it's first selected verse
-    (selectedVerses.length === 0 && verse.index === 0); // Show melody because it's first verse of song
-
-  const displayMelody = (
-    isMelodyEnabled() &&
-    isMelodyAvailable() &&
-    shouldMelodyBeShownForVerse()
-  );
 
   useEffect(() => {
     setIsMelodyLoaded(false);
-    if (shouldMelodyBeShownForVerse()) {
-      setIsMelodyLoading(displayMelody);
+    if (activeMelody !== undefined) {
+      setIsMelodyLoading(isMelodyAvailable());
     }
   }, [activeMelody?.id]);
 
@@ -107,13 +96,13 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         </Animated.Text>
       }
 
-      {isMelodyLoaded && displayMelody ? undefined :
+      {isMelodyLoaded && isMelodyAvailable() ? undefined :
         <Animated.Text style={[styles.text, animatedStyle.text]}>
           {verse.content}
         </Animated.Text>
       }
 
-      {!displayMelody ? undefined :
+      {!isMelodyAvailable() ? undefined :
         <MelodyView onLoaded={onMelodyLoaded}
                     abc={ABC.generateAbcForVerse(verse, activeMelody)}
                     animatedScale={scale} />

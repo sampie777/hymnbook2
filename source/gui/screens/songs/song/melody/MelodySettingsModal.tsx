@@ -15,6 +15,8 @@ interface Props {
   selectedMelody?: AbcMelody;
   onMelodySelect?: (value: AbcMelody) => void;
   melodies?: AbcMelody[];
+  showMelodyForAllVerses: boolean;
+  setShowMelodyForAllVerses?: (value: boolean) => void;
 }
 
 const MelodySettingsModal: React.FC<Props> = ({
@@ -23,9 +25,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 isMelodyShown,
                                                 selectedMelody,
                                                 onMelodySelect,
-                                                melodies = []
+                                                melodies = [],
+                                                showMelodyForAllVerses,
+                                                setShowMelodyForAllVerses
                                               }) => {
-  const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
 
@@ -72,11 +75,11 @@ const MelodySettingsModal: React.FC<Props> = ({
                          value={showMelodyForAllVerses}
                          onPress={() => {
                            Settings.showMelodyForAllVerses = !showMelodyForAllVerses;
-                           setShowMelodyForAllVerses(Settings.showMelodyForAllVerses);
+                           setShowMelodyForAllVerses?.(!showMelodyForAllVerses)
                          }} />
 
         {selectedMelody === undefined ? undefined : <View style={styles.melodyContainer}>
-          <Text style={styles.label}>Melody:</Text>
+          <Text style={styles.label}>Melody</Text>
 
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
