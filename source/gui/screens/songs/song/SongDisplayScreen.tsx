@@ -43,6 +43,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
+  const [melodyScale, setMelodyScale] = useState(Settings.songMelodyScale);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const animatedScale = new Animated.Value(Settings.songScale);
@@ -203,6 +204,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     return <ContentVerse verse={item}
                          scale={animatedScale}
+                         melodyScale={melodyScale}
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
                          setIsMelodyLoading={setIsMelodyLoading} />;
@@ -225,7 +227,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           onMelodySelect={setSelectedMelody}
           melodies={song?.abcMelodies}
           showMelodyForAllVerses={showMelodyForAllVerses}
-          setShowMelodyForAllVerses={setShowMelodyForAllVerses}/>}
+          setShowMelodyForAllVerses={setShowMelodyForAllVerses}
+          melodyScale={melodyScale}
+          setMelodyScale={setMelodyScale} />}
 
       <PinchGestureHandler
         ref={pinchGestureHandlerRef}

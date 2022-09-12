@@ -3,7 +3,7 @@ import Settings from "../../../settings";
 import { capitalize, isIOS } from "../../../logic/utils";
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import SliderComponent from "../../components/popups/SliderComponent";
+import SliderPopupComponent from "../../components/popups/SliderPopupComponent";
 
 interface SettingProps {
   title: string;
@@ -166,18 +166,18 @@ export const SettingsSliderComponent: React.FC<SettingProps & { defaultValue?: n
 
     return (<>
       {!showSlider ? undefined :
-        <SliderComponent title={title}
-                         description={description}
-                         initialValue={Math.round(_value * 100)}
-                         onCompleted={value => {
-                           setValue(value / 100);
-                           setShowSlider(false);
-                           if (keyName !== undefined) {
-                             _setValue(Settings.get(keyName));
-                           }
-                         }}
-                         onDenied={() => setShowSlider(false)}
-                         defaultValue={defaultValue === undefined ? undefined : defaultValue * 100} />
+        <SliderPopupComponent title={title}
+                              description={description}
+                              initialValue={Math.round(_value * 100)}
+                              onCompleted={value => {
+                                setValue(value / 100);
+                                setShowSlider(false);
+                                if (keyName !== undefined) {
+                                  _setValue(Settings.get(keyName));
+                                }
+                              }}
+                              onDenied={() => setShowSlider(false)}
+                              defaultValue={defaultValue === undefined ? undefined : defaultValue * 100} />
       }
       <SettingComponent title={title}
                         keyName={keyName}
