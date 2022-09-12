@@ -40,6 +40,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [viewIndex, setViewIndex] = useState(0);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
+  const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
 
@@ -194,13 +195,17 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const renderContentItem = ({ item }: { item: Verse }) => {
-    return (
-      <ContentVerse verse={item}
-                    scale={animatedScale}
-                    selectedVerses={route.params.selectedVerses || []}
-                    activeMelody={!showMelody ? undefined : selectedMelody}
-                    setIsMelodyLoading={setIsMelodyLoading} />
-    );
+    const selectedVerses = route.params.selectedVerses || [];
+    const shouldMelodyBeShownForVerse = showMelody && (
+      showMelodyForAllVerses ||
+      (selectedVerses.length > 0 && selectedVerses[0].id == item.id) ||  // Show melody because it's first selected verse
+      (selectedVerses.length === 0 && item.index === 0)); // Show melody because it's first verse of song
+
+    return <ContentVerse verse={item}
+                         scale={animatedScale}
+                         selectedVerses={selectedVerses}
+                         activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
+                         setIsMelodyLoading={setIsMelodyLoading} />;
   };
 
   const listViewabilityConfig = React.useRef({
@@ -218,7 +223,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           onClose={() => setShowMelodySettings(false)}
           selectedMelody={selectedMelody}
           onMelodySelect={setSelectedMelody}
-          melodies={song?.abcMelodies} />}
+          melodies={song?.abcMelodies}
+          showMelodyForAllVerses={showMelodyForAllVerses}
+          setShowMelodyForAllVerses={setShowMelodyForAllVerses}/>}
 
       <PinchGestureHandler
         ref={pinchGestureHandlerRef}
