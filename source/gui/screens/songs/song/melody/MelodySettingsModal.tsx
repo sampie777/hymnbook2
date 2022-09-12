@@ -105,7 +105,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                              Settings.songMelodyScale = v / 100;
                              setMelodyScale?.(v / 100);
                            }}
-                           onReset={() => setMelodyScale?.(1.0)} />
+                           onReset={() => {
+                             Settings.songMelodyScale = 1.0;
+                             setMelodyScale?.(1.0);
+                           }} />
         </View>
       </View>
     </ConfirmationModal>
