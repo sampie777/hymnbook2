@@ -12,6 +12,7 @@ import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/sr
 import ReAnimated, { Easing as ReAnimatedEasing } from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
+import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
 import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { generateSongTitle, loadSongWithId } from "../../../../logic/songs/utils";
@@ -24,6 +25,7 @@ import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
 import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
+import MelodySettingsModal from "./melody/MelodySettingsModal";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, "Song"> {
@@ -36,8 +38,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
+  const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
+  const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const animatedScale = new Animated.Value(Settings.songScale);
@@ -79,6 +83,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       scrollTimeout.current = undefined;
     }
     scrollTimeout.current = setTimeout(() => scrollToTop(), 500);
+
+    // Determine which melody tune to show
+    if (!song?.abcMelodies || song.abcMelodies.length === 0) {
+      setSelectedMelody(undefined);
+    } else if (song.abcMelodies.length === 1) {
+      setSelectedMelody(song.abcMelodies[0]);
+    } else {
+      const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
+      setSelectedMelody(defaultMelody ? defaultMelody : song.abcMelodies[0]);
+    }
   }, [song?.id]);
 
   useEffect(() => {
@@ -96,7 +110,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       title: title,
       headerRight: () => <ScreenHeader song={song}
                                        showMelody={showMelody}
-                                       setShowMelody={setShowMelody}
+                                       setShowMelodySettings={setShowMelodySettings}
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
     });
@@ -179,15 +193,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
-  const activeMelody = !showMelody || song === undefined
-  || !song.abcMelodies || song.abcMelodies.length === 0 ? undefined : song.abcMelodies[0];
-
   const renderContentItem = ({ item }: { item: Verse }) => {
     return (
       <ContentVerse verse={item}
                     scale={animatedScale}
                     selectedVerses={route.params.selectedVerses || []}
-                    activeMelody={activeMelody}
+                    activeMelody={!showMelody ? undefined : selectedMelody}
                     setIsMelodyLoading={setIsMelodyLoading} />
     );
   };
@@ -200,6 +211,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {!showMelodySettings ? undefined :
+        <MelodySettingsModal
+          isMelodyShown={showMelody}
+          enableMelody={(value) => setShowMelody(value)}
+          onClose={() => setShowMelodySettings(false)}
+          selectedMelody={selectedMelody}
+          onMelodySelect={setSelectedMelody}
+          melodies={song?.abcMelodies} />}
+
       <PinchGestureHandler
         ref={pinchGestureHandlerRef}
         onGestureEvent={_onPanGestureEvent}
