@@ -197,10 +197,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const renderContentItem = ({ item }: { item: Verse }) => {
     const selectedVerses = route.params.selectedVerses || [];
-    const shouldMelodyBeShownForVerse = showMelody && (
-      showMelodyForAllVerses ||
-      (selectedVerses.length > 0 && selectedVerses[0].id == item.id) ||  // Show melody because it's first selected verse
-      (selectedVerses.length === 0 && item.index === 0)); // Show melody because it's first verse of song
+
+    // Show melody if verse is part of (all) selected verses
+    const noVersesSelectedButAllMustBeShown = showMelodyForAllVerses && selectedVerses.length === 0;
+    const verseIsSelectedAndAllMustBeShown = showMelodyForAllVerses && selectedVerses.some(it => it.id == item.id);
+    // Show melody because it's first selected verse
+    const isVerseSelectedVerse = selectedVerses.length > 0 && selectedVerses[0].id == item.id;
+    // Show melody because it's first verse of song
+    const isFirstVerseOfSongWithNoSelectedVerses = selectedVerses.length === 0 && item.index === 0;
+
+    const shouldMelodyBeShownForVerse = showMelody && (noVersesSelectedButAllMustBeShown || verseIsSelectedAndAllMustBeShown || isVerseSelectedVerse || isFirstVerseOfSongWithNoSelectedVerses);
 
     return <ContentVerse verse={item}
                          scale={animatedScale}
