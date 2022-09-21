@@ -14,6 +14,9 @@
   },
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
+    "@react-navigation/bottom-tabs": "^6.0.9",
+    "@react-navigation/native": "^6.0.2",
+    "@react-navigation/native-stack": "^6.2.5",
     "@react-native-clipboard/clipboard": "^1.10.0",
     "abcjs": "git+https://github.com/MatthewDorner/abcjs.git",
     "react": "17.0.2",
@@ -35,9 +38,6 @@
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/runtime": "^7.15.3",
-    "@react-navigation/bottom-tabs": "^6.0.9",
-    "@react-navigation/native": "^6.0.2",
-    "@react-navigation/native-stack": "^6.2.5",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.19",
     "@types/react-native": "^0.64.13",
