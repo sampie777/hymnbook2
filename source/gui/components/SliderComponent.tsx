@@ -43,9 +43,7 @@ const SliderComponent: React.FC<Props> = ({
                      selectedStyle={styles.trackSelected}
                      markerStyle={styles.marker}
                      pressedMarkerStyle={styles.markerPressed}
-                     onValuesChangeFinish={values => {
-                       setValue?.(Math.round(values[0]));
-                     }} />
+                     onValuesChangeFinish={values => setValue?.(Math.round(values[0]))} />
       }
     </View>
 

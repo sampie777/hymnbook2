@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Settings from "../../../../../settings";
 import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
@@ -18,8 +18,7 @@ interface Props {
   melodies?: AbcMelody[];
   showMelodyForAllVerses: boolean;
   setShowMelodyForAllVerses?: (value: boolean) => void;
-  melodyScale: number;
-  setMelodyScale: (value: number) => void;
+  melodyScale: Animated.Value;
 }
 
 const MelodySettingsModal: React.FC<Props> = ({
@@ -32,7 +31,6 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 showMelodyForAllVerses,
                                                 setShowMelodyForAllVerses,
                                                 melodyScale,
-                                                setMelodyScale
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
@@ -49,6 +47,11 @@ const MelodySettingsModal: React.FC<Props> = ({
     closePicker();
     onMelodySelect?.(melody);
   };
+
+  const onScaleSliderValueChange = (value: number) => {
+    Settings.songMelodyScale = value / 100;
+    melodyScale.setValue(value / 100);
+  }
 
   return <>
     {!showPicker || selectedMelody === undefined || melodies?.length === 0 ? undefined :
@@ -100,14 +103,11 @@ const MelodySettingsModal: React.FC<Props> = ({
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleLabel}>Melody size</Text>
 
-          <SliderComponent value={Math.round(melodyScale * 100)}
-                           setValue={(v) => {
-                             Settings.songMelodyScale = v / 100;
-                             setMelodyScale?.(v / 100);
-                           }}
+          <SliderComponent value={Math.round(Settings.songMelodyScale * 100)}
+                           setValue={onScaleSliderValueChange}
                            onReset={() => {
                              Settings.songMelodyScale = 1.0;
-                             setMelodyScale?.(1.0);
+                             melodyScale.setValue(1.0);
                            }} />
         </View>
       </View>

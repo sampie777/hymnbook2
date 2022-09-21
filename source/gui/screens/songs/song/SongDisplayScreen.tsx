@@ -43,10 +43,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
-  const [melodyScale, setMelodyScale] = useState(Settings.songMelodyScale);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const animatedScale = new Animated.Value(Settings.songScale);
+  const melodyScale = new Animated.Value(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = new ReAnimated.Value<number>(1);
   const styles = createStyles(useTheme());
@@ -227,15 +227,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       {!showMelodySettings ? undefined :
         <MelodySettingsModal
           isMelodyShown={showMelody}
-          enableMelody={(value) => setShowMelody(value)}
+          enableMelody={setShowMelody}
           onClose={() => setShowMelodySettings(false)}
           selectedMelody={selectedMelody}
           onMelodySelect={setSelectedMelody}
           melodies={song?.abcMelodies}
           showMelodyForAllVerses={showMelodyForAllVerses}
           setShowMelodyForAllVerses={setShowMelodyForAllVerses}
-          melodyScale={melodyScale}
-          setMelodyScale={setMelodyScale} />}
+          melodyScale={melodyScale} />}
 
       <PinchGestureHandler
         ref={pinchGestureHandlerRef}

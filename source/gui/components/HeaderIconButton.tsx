@@ -19,10 +19,10 @@ const HeaderIconButton: React.FC<ComponentProps> = ({ icon, iconOverlay, onPress
     iconOverlay = <Icon name={iconOverlay} style={[styles.icon, styles.iconOverlay]} />;
   }
 
-  return (<TouchableOpacity onPress={onPress} style={styles.container}>
+  return <TouchableOpacity onPress={onPress} style={styles.container}>
     {icon}
     {iconOverlay}
-  </TouchableOpacity>);
+  </TouchableOpacity>;
 };
 
 export default HeaderIconButton;
@@ -34,11 +34,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: colors.text,
+    color: colors.text
   },
   iconOverlay: {
     position: "absolute",
     top: 12,
-    left: 12,
+    left: 12
   }
 });
