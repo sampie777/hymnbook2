@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Settings from "../../../../../settings";
+import { isIOS } from "../../../../../logic/utils";
 import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -104,7 +105,8 @@ const MelodySettingsModal: React.FC<Props> = ({
           <Text style={styles.scaleLabel}>Melody size</Text>
 
           <SliderComponent value={Math.round(Settings.songMelodyScale * 100)}
-                           setValue={onScaleSliderValueChange}
+                           onValueChange={isIOS ? onScaleSliderValueChange : undefined} // iOS is more performant
+                           onValueChanged={onScaleSliderValueChange}
                            onReset={() => {
                              Settings.songMelodyScale = 1.0;
                              melodyScale.setValue(1.0);
