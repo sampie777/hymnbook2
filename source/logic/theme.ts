@@ -1,4 +1,5 @@
 import { ColorValue } from "react-native";
+import { isIOS } from "./utils";
 
 export interface ThemeColors {
   primary: ColorValue,
@@ -23,6 +24,8 @@ export interface ThemeColors {
   shadow1: ColorValue,
   notesColor: ColorValue,
   notesLines: ColorValue,
+  switchComponentThumb: ColorValue,
+  switchComponentBackground?: ColorValue,
 }
 
 export const lightColors: ThemeColors = {
@@ -48,6 +51,8 @@ export const lightColors: ThemeColors = {
   shadow1: "#eaeaea",
   notesColor: "#222",
   notesLines: "#444",
+  switchComponentThumb: isIOS ? "#fff" : "dodgerblue",
+  switchComponentBackground: isIOS ? "#eee" : undefined,
 };
 
 export const darkColors: ThemeColors = {
@@ -73,6 +78,8 @@ export const darkColors: ThemeColors = {
   shadow1: "#242424",
   notesColor: "#d0d0d0",
   notesLines: "#888",
+  switchComponentThumb: isIOS ? "#fff" : "dodgerblue",
+  switchComponentBackground: undefined,
 };
 
 export interface ThemeFontFamilies {
