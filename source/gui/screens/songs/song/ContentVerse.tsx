@@ -12,7 +12,7 @@ import MelodyView from "../../../components/melody/MelodyView";
 interface ContentVerseProps {
   verse: Verse;
   scale: Animated.Value;
-  melodyScale: number;
+  melodyScale: Animated.Value;
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;

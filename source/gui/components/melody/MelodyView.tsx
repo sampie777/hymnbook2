@@ -9,7 +9,7 @@ import VoiceItemElement from "./voiceItems/VoiceItemElement";
 interface Props {
   abc: string;
   animatedScale: Animated.Value;
-  melodyScale: number;
+  melodyScale: Animated.Value;
   onLoaded: () => void;
 }
 
@@ -18,8 +18,9 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded
   const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
-  const animatedScaleMelody = Animated.multiply(animatedScale,
-    AbcConfig.baseScale * melodyScale) as unknown as Animated.Value;
+  const animatedScaleMelody =
+    Animated.multiply(animatedScale,
+      Animated.multiply(AbcConfig.baseScale, melodyScale)) as unknown as Animated.Value;
 
   useEffect(() => {
     setAbcSong(ABC.parse(abc));
