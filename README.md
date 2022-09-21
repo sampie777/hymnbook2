@@ -102,6 +102,8 @@ Make sure keystore is correctly defined in:
 
 ### IOS
 
+#### CLI
+
 Build the app for Release scheme (in xcode you should edit the scheme for release).
 ```
 npx react-native run-ios --configuration Release
@@ -113,6 +115,20 @@ export NODE_OPTIONS=--openssl-legacy-provider
 ```
 
 ... to be continued
+
+#### Xcode
+
+1. Checkout the master branch after release.
+2. In Xcode: select the project target
+3. Run the Archive under top menu -> Product
+4. Approve all the steps
+5. In appstoreconnect.apple.com, go to your app and then TestFlight
+6. Wait for the uploaded build to be processed
+7. Now, under App Store, create a new release under iOS App in the left menu
+8. Fill in all the information and select the processed build (if it's not there, just wait)
+9. When asked about encryption, say yes to both questions.
+10. Save and submit.
+
 
 ## To do
 
