@@ -35,9 +35,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     // Set the callback function for the button in this hook,
     // so the function will use the updated values. Strange behaviour, I know..
     navigation.setOptions({
-      headerRight: () => (
-        <HeaderIconButton icon={"check"} onPress={submit} />
-      )
+      headerRight: () => <HeaderIconButton icon={"check"} onPress={submit} />
     });
   }, [selectedVerses]);
 
@@ -99,14 +97,14 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       },
       merge: true // Navigate 'back'
     });
-  }
+  };
 
   const showSong = (verses: Verse[]) => {
     navigation.replace(routes.Song, {
       id: route.params.songId,
       selectedVerses: verses
     });
-  }
+  };
 
   const addToSongListAndShowSearch = (verses: Verse[]) => {
     if (route.params.songId === undefined) {

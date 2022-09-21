@@ -26,7 +26,6 @@ class SettingsClass extends SettingsBaseClass {
   animateAddedToSongList = true;
 
   // Documents
-  enableDocumentsFeatureSwitch = false;
   documentsMultiKeywordSearch = true;
 
   // Server authentication

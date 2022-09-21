@@ -12,6 +12,7 @@ import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/sr
 import ReAnimated, { Easing as ReAnimatedEasing } from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
+import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
 import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { generateSongTitle, loadSongWithId } from "../../../../logic/songs/utils";
@@ -24,6 +25,7 @@ import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
 import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
+import MelodySettingsModal from "./melody/MelodySettingsModal";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, "Song"> {
@@ -36,11 +38,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
+  const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
+  const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
+  const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const animatedScale = new Animated.Value(Settings.songScale);
+  const melodyScale = new Animated.Value(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = new ReAnimated.Value<number>(1);
   const styles = createStyles(useTheme());
@@ -79,6 +85,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       scrollTimeout.current = undefined;
     }
     scrollTimeout.current = setTimeout(() => scrollToTop(), 500);
+
+    // Determine which melody tune to show
+    if (!song?.abcMelodies || song.abcMelodies.length === 0) {
+      setSelectedMelody(undefined);
+    } else if (song.abcMelodies.length === 1) {
+      setSelectedMelody(song.abcMelodies[0]);
+    } else {
+      const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
+      setSelectedMelody(defaultMelody ? defaultMelody : song.abcMelodies[0]);
+    }
   }, [song?.id]);
 
   useEffect(() => {
@@ -96,7 +112,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       title: title,
       headerRight: () => <ScreenHeader song={song}
                                        showMelody={showMelody}
-                                       setShowMelody={setShowMelody}
+                                       setShowMelodySettings={setShowMelodySettings}
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
     });
@@ -179,17 +195,25 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
-  const activeMelody = !showMelody || song === undefined
-  || !song.abcMelodies || song.abcMelodies.length === 0 ? undefined : song.abcMelodies[0];
-
   const renderContentItem = ({ item }: { item: Verse }) => {
-    return (
-      <ContentVerse verse={item}
-                    scale={animatedScale}
-                    selectedVerses={route.params.selectedVerses || []}
-                    activeMelody={activeMelody}
-                    setIsMelodyLoading={setIsMelodyLoading} />
-    );
+    const selectedVerses = route.params.selectedVerses || [];
+
+    // Show melody if verse is part of (all) selected verses
+    const noVersesSelectedButAllMustBeShown = showMelodyForAllVerses && selectedVerses.length === 0;
+    const verseIsSelectedAndAllMustBeShown = showMelodyForAllVerses && selectedVerses.some(it => it.id == item.id);
+    // Show melody because it's first selected verse
+    const isVerseSelectedVerse = selectedVerses.length > 0 && selectedVerses[0].id == item.id;
+    // Show melody because it's first verse of song
+    const isFirstVerseOfSongWithNoSelectedVerses = selectedVerses.length === 0 && item.index === 0;
+
+    const shouldMelodyBeShownForVerse = showMelody && (noVersesSelectedButAllMustBeShown || verseIsSelectedAndAllMustBeShown || isVerseSelectedVerse || isFirstVerseOfSongWithNoSelectedVerses);
+
+    return <ContentVerse verse={item}
+                         scale={animatedScale}
+                         melodyScale={melodyScale}
+                         selectedVerses={selectedVerses}
+                         activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
+                         setIsMelodyLoading={setIsMelodyLoading} />;
   };
 
   const listViewabilityConfig = React.useRef({
@@ -200,6 +224,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {!showMelodySettings ? undefined :
+        <MelodySettingsModal
+          isMelodyShown={showMelody}
+          enableMelody={setShowMelody}
+          onClose={() => setShowMelodySettings(false)}
+          selectedMelody={selectedMelody}
+          onMelodySelect={setSelectedMelody}
+          melodies={song?.abcMelodies}
+          showMelodyForAllVerses={showMelodyForAllVerses}
+          setShowMelodyForAllVerses={setShowMelodyForAllVerses}
+          melodyScale={melodyScale} />}
+
       <PinchGestureHandler
         ref={pinchGestureHandlerRef}
         onGestureEvent={_onPanGestureEvent}
