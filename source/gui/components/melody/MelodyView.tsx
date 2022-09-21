@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { AbcConfig } from "./config";
-import Settings from "../../../settings";
 import { ABC } from "../../../logic/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
@@ -10,16 +9,18 @@ import VoiceItemElement from "./voiceItems/VoiceItemElement";
 interface Props {
   abc: string;
   animatedScale: Animated.Value;
+  melodyScale: Animated.Value;
   onLoaded: () => void;
 }
 
-const MelodyView: React.FC<Props> = ({ abc, animatedScale, onLoaded }) => {
+const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
   const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
   const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
-  const animatedScaleMelody = Animated.multiply(animatedScale,
-    AbcConfig.baseScale * Settings.songMelodyScale) as unknown as Animated.Value;
+  const animatedScaleMelody =
+    Animated.multiply(animatedScale,
+      Animated.multiply(AbcConfig.baseScale, melodyScale)) as unknown as Animated.Value;
 
   useEffect(() => {
     setAbcSong(ABC.parse(abc));
