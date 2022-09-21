@@ -22,6 +22,8 @@
 	<string>nl.sajansen.hymnbook2</string>
 	<key>CFBundleVersion</key>
 	<string>297</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>http</string>
