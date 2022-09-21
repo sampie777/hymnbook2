@@ -12,7 +12,8 @@ const SliderLabel: React.FC<LabelProps> = ({ oneMarkerValue, oneMarkerLeftPositi
 
 interface Props {
   value: number,
-  setValue?: (value: number) => void,
+  onValueChanged?: (value: number) => void,
+  onValueChange?: (value: number) => void,
   minValue?: number,
   maxValue?: number,
   onReset?: () => void;
@@ -20,7 +21,8 @@ interface Props {
 
 const SliderComponent: React.FC<Props> = ({
                                             value,
-                                            setValue,
+                                            onValueChanged,
+                                            onValueChange,
                                             minValue = 50,
                                             maxValue = 200,
                                             onReset
@@ -43,7 +45,8 @@ const SliderComponent: React.FC<Props> = ({
                      selectedStyle={styles.trackSelected}
                      markerStyle={styles.marker}
                      pressedMarkerStyle={styles.markerPressed}
-                     onValuesChangeFinish={values => setValue?.(Math.round(values[0]))} />
+                     onValuesChange={values => onValueChange?.(Math.round(values[0]))}
+                     onValuesChangeFinish={values => onValueChanged?.(Math.round(values[0]))} />
       }
     </View>
 

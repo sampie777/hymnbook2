@@ -46,7 +46,7 @@ const SliderPopupComponent: React.FC<Props> = ({
         </Text>}
 
       <SliderComponent value={sliderValue}
-                       setValue={setSliderValue}
+                       onValueChanged={setSliderValue}
                        onReset={defaultValue === undefined ? undefined : () => setSliderValue(defaultValue)}
                        minValue={minValue}
                        maxValue={maxValue} />
