@@ -38,13 +38,14 @@ export const SwitchComponent: React.FC<Props> =
       {value === undefined ? undefined :
         <Switch onValueChange={onPress}
                 thumbColor={styles.switchComponent.color}
+                ios_backgroundColor={styles.switchComponent.backgroundColor}
                 value={value} />}
     </View>;
   };
 
 export default SwitchComponent;
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingVertical: 10,
     marginBottom: 1
@@ -75,6 +76,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingTop: 5
   },
   switchComponent: {
-    color: isIOS ? "#fff" : colors.primary
+    color: colors.switchComponentThumb,
+    backgroundColor: colors.switchComponentBackground
   }
 });
