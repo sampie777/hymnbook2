@@ -93,13 +93,13 @@ export const api = {
     get: (id: number,
           loadSongs = false,
           loadVerses = false,
-          loadAbcMelodies = false) =>
+          loadAbcMelodies = true) =>
       get(`${apiBaseUrl}/songs/bundles/${id}?loadSongs=${loadSongs ? "true" : "false"}` +
         `&loadVerses=${loadVerses ? "true" : "false"}` +
         `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
     getWithSongs: (id: number,
                    loadVerses = true,
-                   loadAbcMelodies = false) =>
+                   loadAbcMelodies = true) =>
       api.songBundles.get(id, true, loadVerses, loadAbcMelodies),
     search: (query: string,
              page = 0,

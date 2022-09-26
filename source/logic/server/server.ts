@@ -31,7 +31,7 @@ export namespace Server {
   };
 
   export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle, resetAuthOn403: boolean = true): Promise<Result> => {
-    return api.songBundles.getWithSongs(bundle.id, true, Settings.showMelody)
+    return api.songBundles.getWithSongs(bundle.id, true, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
       .then((data: JsonResponse) => {
