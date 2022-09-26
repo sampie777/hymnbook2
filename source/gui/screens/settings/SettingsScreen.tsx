@@ -182,9 +182,6 @@ const SettingsScreen: React.FC = () => {
                                   onPress={((setValue, key, newValue) => {
                                     setValue(newValue);
                                     setShowSongMelodySettings(newValue);
-                                    if (newValue) {
-                                      Alert.alert("Update database", "You should probably update your song database to download the melodies.");
-                                    }
                                   })} />
           <SettingsSliderComponent title={"Song melody size"}
                                    keyName={"songMelodyScale"}
