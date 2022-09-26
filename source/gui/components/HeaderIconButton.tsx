@@ -7,9 +7,10 @@ interface ComponentProps {
   icon: string | ReactElement;
   iconOverlay?: string | ReactElement;
   onPress?: () => void;
+  onLongPress?: () => void;
 }
 
-const HeaderIconButton: React.FC<ComponentProps> = ({ icon, iconOverlay, onPress }) => {
+const HeaderIconButton: React.FC<ComponentProps> = ({ icon, iconOverlay, onPress, onLongPress }) => {
   const styles = createStyles(useTheme());
 
   if (typeof icon === "string") {
@@ -19,7 +20,9 @@ const HeaderIconButton: React.FC<ComponentProps> = ({ icon, iconOverlay, onPress
     iconOverlay = <Icon name={iconOverlay} style={[styles.icon, styles.iconOverlay]} />;
   }
 
-  return <TouchableOpacity onPress={onPress} style={styles.container}>
+  return <TouchableOpacity onPress={onPress}
+                           onLongPress={onLongPress}
+                           style={styles.container}>
     {icon}
     {iconOverlay}
   </TouchableOpacity>;

@@ -1,4 +1,5 @@
 import React from "react";
+import Settings from "../../../../settings";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Song } from "../../../../logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../logic/songs/utils";
@@ -11,10 +12,18 @@ interface Props {
   showMelody: boolean;
   isMelodyLoading: boolean;
   openVersePicker: () => void;
+  setShowMelody: (value: boolean) => void;
   setShowMelodySettings: (value: boolean) => void;
 }
 
-const ScreenHeader: React.FC<Props> = ({ song, showMelody, isMelodyLoading, openVersePicker, setShowMelodySettings }) => {
+const ScreenHeader: React.FC<Props> = ({
+                                         song,
+                                         showMelody,
+                                         isMelodyLoading,
+                                         openVersePicker,
+                                         setShowMelody,
+                                         setShowMelodySettings
+                                       }) => {
   const styles = createStyles(useTheme());
 
   const songHasMelodyToShow = hasMelodyToShow(song);
@@ -26,9 +35,8 @@ const ScreenHeader: React.FC<Props> = ({ song, showMelody, isMelodyLoading, open
     }
     {!songHasMelodyToShow || isMelodyLoading ? undefined :
       <HeaderIconButton icon={"music"}
-                        onPress={() => {
-                          setShowMelodySettings(true);
-                        }} />
+                        onPress={() => Settings.longPressForMelodyMenu ? setShowMelody(!showMelody) : setShowMelodySettings(true)}
+                        onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : setShowMelody(!showMelody)} />
     }
 
     <HeaderIconVersePicker onPress={openVersePicker} />

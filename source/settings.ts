@@ -21,9 +21,10 @@ class SettingsClass extends SettingsBaseClass {
   useNativeFlatList = Platform.OS === "ios";
   coloredVerseTitles = Math.random() > 0.5;
   highlightSelectedVerses = true;
+  animateAddedToSongList = true;
   showMelody = false;
   showMelodyForAllVerses = false;
-  animateAddedToSongList = true;
+  longPressForMelodyMenu = true;
 
   // Documents
   documentsMultiKeywordSearch = true;
