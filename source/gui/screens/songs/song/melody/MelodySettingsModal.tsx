@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Settings from "../../../../../settings";
 import { isIOS } from "../../../../../logic/utils";
 import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
@@ -34,7 +34,12 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 melodyScale,
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [songMelodyScale, setSongMelodyScale] = useState(Settings.songMelodyScale);
   const styles = createStyles(useTheme());
+
+  useEffect(() => {
+    Settings.songMelodyScale = songMelodyScale;
+  }, [songMelodyScale]);
 
   const openPicker = () => {
     setShowPicker(true);
@@ -50,7 +55,7 @@ const MelodySettingsModal: React.FC<Props> = ({
   };
 
   const onScaleSliderValueChange = (value: number) => {
-    Settings.songMelodyScale = value / 100;
+    setSongMelodyScale(value / 100);
     melodyScale.setValue(value / 100);
   }
 
@@ -104,11 +109,11 @@ const MelodySettingsModal: React.FC<Props> = ({
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleLabel}>Melody size</Text>
 
-          <SliderComponent value={Math.round(Settings.songMelodyScale * 100)}
+          <SliderComponent value={Math.round(songMelodyScale * 100)}
                            onValueChange={isIOS && !showMelodyForAllVerses ? onScaleSliderValueChange : undefined} // iOS is more performant
                            onValueChanged={onScaleSliderValueChange}
                            onReset={() => {
-                             Settings.songMelodyScale = 1.0;
+                             setSongMelodyScale(1.0);
                              melodyScale.setValue(1.0);
                            }} />
         </View>
