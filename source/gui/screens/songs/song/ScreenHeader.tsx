@@ -3,6 +3,7 @@ import Settings from "../../../../settings";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Song } from "../../../../logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../logic/songs/utils";
+import { hasVisibleNameForPicker } from "../../../../logic/songs/versePicker";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import HeaderIconVersePicker from "./HeaderIconVersePicker";
@@ -27,6 +28,7 @@ const ScreenHeader: React.FC<Props> = ({
   const styles = createStyles(useTheme());
 
   const songHasMelodyToShow = hasMelodyToShow(song);
+  const songHasVersesToPick = song?.verses?.some(hasVisibleNameForPicker);
   return <>
     {!songHasMelodyToShow || !isMelodyLoading ? undefined :
       <ActivityIndicator size={styles.loadIcon.fontSize}
@@ -39,7 +41,9 @@ const ScreenHeader: React.FC<Props> = ({
                         onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : setShowMelody(!showMelody)} />
     }
 
-    <HeaderIconVersePicker onPress={openVersePicker} />
+    {!songHasVersesToPick ? undefined :
+      <HeaderIconVersePicker onPress={openVersePicker} />
+    }
   </>;
 };
 
