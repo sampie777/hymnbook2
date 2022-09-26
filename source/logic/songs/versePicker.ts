@@ -54,3 +54,5 @@ export const clearOrSelectAll = (selectedVerses: Array<VerseProps>, allVerses: A
   }
   return allVerses;
 };
+
+export const hasVisibleNameForPicker = (verse: VerseProps) => verse.name.replace(/verse/gi, "").trim() !== "";

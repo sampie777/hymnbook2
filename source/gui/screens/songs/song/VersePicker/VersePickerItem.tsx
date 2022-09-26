@@ -19,10 +19,6 @@ const VersePickerItem: React.FC<ComponentProps> = ({
                                                      onLongPress,
                                                      horizontalMargin = 8
                                                    }) => {
-  if (verse.name.trim() === "") {
-    return null;
-  }
-
   const styles = createStyles(useTheme());
 
   const styleForVerseType = (type: VerseType) => {

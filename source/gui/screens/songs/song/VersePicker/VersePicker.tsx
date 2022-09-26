@@ -8,7 +8,7 @@ import { Song, Verse, VerseProps } from "../../../../../logic/db/models/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
   clearOrSelectAll,
-  getMarginForVerses,
+  getMarginForVerses, hasVisibleNameForPicker,
   isVerseInList,
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
@@ -138,12 +138,14 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   return (<View style={styles.container}>
     {verses !== undefined ? undefined : <Text>Failed to load verses</Text>}
     <ScrollView contentContainerStyle={styles.verseList}>
-      {verses?.map((it: VerseProps) => <VersePickerItem verse={it}
-                                                        key={it.id}
-                                                        isSelected={isVerseInList(selectedVerses, it)}
-                                                        horizontalMargin={horizontalMargin}
-                                                        onPress={toggleVerse}
-                                                        onLongPress={onItemLongPress} />)}
+      {verses
+        ?.filter(hasVisibleNameForPicker)
+        ?.map((it: VerseProps) => <VersePickerItem verse={it}
+                                                   key={it.id}
+                                                   isSelected={isVerseInList(selectedVerses, it)}
+                                                   horizontalMargin={horizontalMargin}
+                                                   onPress={toggleVerse}
+                                                   onLongPress={onItemLongPress} />)}
     </ScrollView>
   </View>);
 };
