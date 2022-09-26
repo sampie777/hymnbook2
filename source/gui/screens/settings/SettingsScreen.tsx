@@ -196,6 +196,10 @@ const SettingsScreen: React.FC = () => {
                                   description={"Show melody for all verses instead of the first (selected) verse."}
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings && showSongMelodySettings} />
+          <SettingSwitchComponent title={"Long press for menu"}
+                                  description={"Long press the melody button will show the menu, instead of instant toggling the melody."}
+                                  keyName={"longPressForMelodyMenu"}
+                                  isVisible={showAdvancedSettings && showSongMelodySettings} />
 
           <Header title={"Song list"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}

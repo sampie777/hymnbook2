@@ -112,6 +112,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       title: title,
       headerRight: () => <ScreenHeader song={song}
                                        showMelody={showMelody}
+                                       setShowMelody={setShowMelody}
                                        setShowMelodySettings={setShowMelodySettings}
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
