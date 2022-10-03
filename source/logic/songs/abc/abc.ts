@@ -78,7 +78,7 @@ export namespace ABC {
 
   export const getField = (abc: string, field: string, _default?: string): (string | undefined) => {
     const result = abc.match(new RegExp("(^|\n) *\t*" + field + ":(.*)?"));
-    if (result == null || result.length !== 3) {
+    if (result == null || result.length !== 3 || result[2] == null) {
       return _default;
     }
     return result[2].trim();
