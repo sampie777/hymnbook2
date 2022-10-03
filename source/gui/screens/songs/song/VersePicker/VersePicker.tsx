@@ -31,7 +31,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       styles.verseList.paddingHorizontal,
       versePickerItemStyles.container.minWidth));
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     // Set the callback function for the button in this hook,
     // so the function will use the updated values. Strange behaviour, I know..
     navigation.setOptions({
@@ -135,7 +135,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.navigate(routes.SongSearch);
   };
 
-  return (<View style={styles.container}>
+  return <View style={styles.container}>
     {verses !== undefined ? undefined : <Text>Failed to load verses</Text>}
     <ScrollView contentContainerStyle={styles.verseList}>
       {verses
@@ -147,7 +147,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
                                                    onPress={toggleVerse}
                                                    onLongPress={onItemLongPress} />)}
     </ScrollView>
-  </View>);
+  </View>;
 };
 
 export default VersePicker;

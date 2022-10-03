@@ -33,9 +33,9 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
 
     React.useLayoutEffect(() => {
       navigation.setOptions({
-        headerRight: () => (<DeleteModeButton onPress={toggleDeleteMode}
-                                              onLongPress={clearAll}
-                                              isActivated={isDeleteMode} />)
+        headerRight: () => <DeleteModeButton onPress={toggleDeleteMode}
+                                             onLongPress={clearAll}
+                                             isActivated={isDeleteMode} />
       });
     }, [navigation, isDeleteMode]);
 
