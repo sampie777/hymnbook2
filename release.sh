@@ -34,6 +34,7 @@ function releasePatch {
   yarn test || exit 1
 
   git checkout master || exit 1
+  git pull || exit 1
 
   # Create patch version
   CURRENT_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
@@ -50,6 +51,7 @@ function releaseMinor {
   yarn test || exit 1
 
   git checkout master || exit 1
+  git pull || exit 1
   git merge develop || exit 1
 
   # Create patch version
