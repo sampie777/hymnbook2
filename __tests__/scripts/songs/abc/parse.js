@@ -13,6 +13,20 @@ describe("test abc parse", () => {
     expect(ABC.getField(data, "A")).toBe(undefined);
   })
 
+  it("get field with nonexisting value", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "r:\n" +
+      "C2 DF E2 F2 | FG G4 A B | G8|]\n" +
+      "w: ik ben_ ge-test of niet waar~ik dan: ook end_";
+
+    expect(ABC.getField(data, "X")).toBe("1");
+    expect(ABC.getField(data, "T")).toBe("this is the title");
+    expect(ABC.getField(data, "A")).toBe(undefined);
+    expect(ABC.getField(data, "r")).toBe(undefined);
+    expect(ABC.getField(data, "n")).toBe(undefined);
+  })
+
   it("extracts notes and lyrics", () => {
     const data = "C2 DF E2 F2 | FG G4 A B | G8|]\n" +
       "w: ik ben_ ge-test of niet waar~ik dan ook end_";
