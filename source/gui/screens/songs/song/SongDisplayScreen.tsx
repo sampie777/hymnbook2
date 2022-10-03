@@ -97,7 +97,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
   }, [song?.id]);
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     if (song === undefined) {
       navigation.setOptions({
         title: "",
