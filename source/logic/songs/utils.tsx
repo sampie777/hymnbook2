@@ -4,6 +4,7 @@ import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName } from "../utils";
+import { AbcMelody } from "../db/models/AbcMelodies";
 
 export enum VerseType {
   Verse,
@@ -201,8 +202,7 @@ export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => 
     return undefined;
   }
 
-  return Db.songs.realm()
-    .objectForPrimaryKey(SongSchema.name, id) as (Song & Realm.Object | undefined);
+  return Db.songs.realm().objectForPrimaryKey(SongSchema.name, id);
 };
 
 export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: SongBundle): boolean => {
@@ -239,4 +239,20 @@ export const createCopyright = (song?: Song) => {
   }
 
   return result.trim();
+};
+
+export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
+  if (song === undefined) return undefined;
+
+  if (!song?.abcMelodies || song.abcMelodies.length === 0)
+    return undefined;
+
+  if (song.abcMelodies.length === 1)
+    return song.abcMelodies[0];
+
+  if (song.lastUsedMelody != null && song.abcMelodies.some(it => it.id == song.lastUsedMelody?.id))
+    return song.lastUsedMelody;
+
+  const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
+  return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
