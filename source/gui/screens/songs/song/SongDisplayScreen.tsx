@@ -80,16 +80,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       reAnimatedOpacity.setValue(1);
     }
 
-    // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
+    // Determine which melody tune to show
+    setSelectedMelody(getDefaultMelody(song));
+  }, [song?.id]);
+
+  useEffect(() => {
+    // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
     if (scrollTimeout.current != null) {
       clearTimeout(scrollTimeout.current);
       scrollTimeout.current = undefined;
     }
-    scrollTimeout.current = setTimeout(() => scrollToTop(), 500);
-
-    // Determine which melody tune to show
-    setSelectedMelody(getDefaultMelody(song));
-  }, [song?.id]);
+    scrollTimeout.current = setTimeout(() => scrollToFirstVerse(), 500);
+  }, [song?.id, route.params.selectedVerses]);
 
   // Store last used melody in database
   useEffect(() => {
@@ -173,7 +175,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       }
     });
 
-  const scrollToTop = () => {
+  const scrollToFirstVerse = () => {
     if (song === undefined
       || song?.verses === undefined || song?.verses.length === 0
       || route.params.selectedVerses === undefined || route.params.selectedVerses.length === 0) {
