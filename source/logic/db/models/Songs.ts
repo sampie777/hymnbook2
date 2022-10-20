@@ -58,6 +58,7 @@ export class Song {
   createdAt: Date;
   modifiedAt: Date;
   abcMelodies: AbcMelody[];
+  lastUsedMelody?: AbcMelody;
   _songBundles?: SongBundle[];
 
   constructor(
@@ -71,7 +72,8 @@ export class Song {
     abcMelodies: AbcMelody[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
     number?: number,
-    songBundle?: SongBundle
+    songBundle?: SongBundle,
+    lastUsedMelody?: AbcMelody
   ) {
     this.id = id;
     this.name = name;
@@ -83,6 +85,7 @@ export class Song {
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.abcMelodies = abcMelodies;
+    this.lastUsedMelody = lastUsedMelody;
     this._songBundles = songBundle === undefined ? [] : [songBundle];
   }
 

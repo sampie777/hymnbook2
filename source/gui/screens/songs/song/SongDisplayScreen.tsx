@@ -14,8 +14,9 @@ import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
 import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
+import Db from "../../../../logic/db/db";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
-import { generateSongTitle, loadSongWithId } from "../../../../logic/songs/utils";
+import { generateSongTitle, getDefaultMelody, loadSongWithId } from "../../../../logic/songs/utils";
 import { keepScreenAwake } from "../../../../logic/utils";
 import { Animated, FlatList as NativeFlatList } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
@@ -87,15 +88,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     scrollTimeout.current = setTimeout(() => scrollToTop(), 500);
 
     // Determine which melody tune to show
-    if (!song?.abcMelodies || song.abcMelodies.length === 0) {
-      setSelectedMelody(undefined);
-    } else if (song.abcMelodies.length === 1) {
-      setSelectedMelody(song.abcMelodies[0]);
-    } else {
-      const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
-      setSelectedMelody(defaultMelody ? defaultMelody : song.abcMelodies[0]);
-    }
+    setSelectedMelody(getDefaultMelody(song));
   }, [song?.id]);
+
+  // Store last used melody in database
+  useEffect(() => {
+    if (song == null) return;
+    if (selectedMelody?.id == song.lastUsedMelody?.id) return;
+
+    Db.songs.realm().write(() => {
+      song.lastUsedMelody = selectedMelody;
+    });
+  }, [selectedMelody]);
 
   React.useLayoutEffect(() => {
     if (song === undefined) {

@@ -36,6 +36,7 @@ export const SongSchema = {
     modifiedAt: "date",
     verses: VerseSchema.name + "[]",
     abcMelodies: AbcMelodySchema.name + "[]",
+    lastUsedMelody: AbcMelodySchema.name + "?",
     _songBundles: {
       type: "linkingObjects",
       objectType: "SongBundle",    // SongBundleSchema.name
