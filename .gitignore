@@ -58,7 +58,6 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
-gradle.properties
 gradlew
 gradlew.bat
 debug.keystore
