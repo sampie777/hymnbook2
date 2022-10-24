@@ -47,6 +47,12 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
       }, [isDeleteMode])
     );
 
+    useEffect(() => {
+      if (isDeleteMode && list.length === 0) {
+        setIsDeleteMode(false);
+      }
+    }, [list]);
+
     useFocusEffect(
       React.useCallback(() => {
         onFocus();
@@ -107,7 +113,6 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
 
     const clearAll = () => {
       SongList.clearAll();
-      setIsDeleteMode(false);
     };
 
     return (
