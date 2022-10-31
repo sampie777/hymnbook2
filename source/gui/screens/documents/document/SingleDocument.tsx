@@ -62,9 +62,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
   const onBlur = () => {
     keepScreenAwake(false);
     setDocument(undefined);
-    navigation.setOptions({
-      title: ""
-    });
   };
 
   useEffect(() => {
@@ -78,7 +75,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
     setTimeout(() => scrollToTop(), 150);
   }, [document?.id]);
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     if (document === undefined) {
       navigation.setOptions({
         title: ""
@@ -109,9 +106,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
     }
 
     setDocument(newDocument);
-    navigation.setOptions({
-      title: newDocument?.name
-    });
   };
 
   const animate = () => {
