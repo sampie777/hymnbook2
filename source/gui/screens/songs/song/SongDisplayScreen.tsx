@@ -16,9 +16,14 @@ import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
 import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
 import Db from "../../../../logic/db/db";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
-import { generateSongTitle, getDefaultMelody, loadSongWithId } from "../../../../logic/songs/utils";
+import {
+  calculateVerseHeight,
+  generateSongTitle,
+  getDefaultMelody,
+  loadSongWithId
+} from "../../../../logic/songs/utils";
 import { keepScreenAwake } from "../../../../logic/utils";
-import { Animated, FlatList as NativeFlatList } from "react-native";
+import { Animated, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import LoadingOverlay from "../../../components/LoadingOverlay";
@@ -36,6 +41,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
+  const verseHeights = useRef<Record<number, number>>({});
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
@@ -74,6 +80,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    verseHeights.current = {};
+
     if (Settings.songFadeIn) {
       animate();
     } else {
@@ -85,12 +93,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id]);
 
   useEffect(() => {
-    // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
-    if (scrollTimeout.current != null) {
-      clearTimeout(scrollTimeout.current);
-      scrollTimeout.current = undefined;
-    }
-    scrollTimeout.current = setTimeout(() => scrollToFirstVerse(), 500);
+    delayScrollToFirstVerse();
   }, [song?.id, route.params.selectedVerses]);
 
   // Store last used melody in database
@@ -161,6 +164,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     if (event.nativeEvent.state === State.END) {
+      verseHeights.current = {};
       animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
       Settings.songScale *= event.nativeEvent.scale;
     }
@@ -174,6 +178,28 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         setViewIndex(viewableItems[0].index);
       }
     });
+
+  const delayScrollToFirstVerse = (maxTries = 10) => {
+    // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
+    if (scrollTimeout.current != null) {
+      clearTimeout(scrollTimeout.current);
+      scrollTimeout.current = undefined;
+    }
+
+    if (maxTries <= 0) {
+      rollbar.warning(`Max scroll tries elapsed for song '${song?.name}' with verseHeights count: ${verseHeights.current == null ? "isNull" : Object.keys(verseHeights.current).length}`);
+      scrollToFirstVerse();
+      return;
+    }
+
+    // First wait for the verses to be loaded
+    if (verseHeights.current == null || Object.keys(verseHeights.current).length == 0) {
+      scrollTimeout.current = setTimeout(() => delayScrollToFirstVerse(maxTries - 1), 200);
+    }
+
+    // Once loaded, scroll to position
+    scrollTimeout.current = setTimeout(scrollToFirstVerse, 200);
+  };
 
   const scrollToFirstVerse = () => {
     if (song === undefined
@@ -197,6 +223,23 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
+  const storeVerseHeight = (verse: Verse, event: LayoutChangeEvent) => {
+    if (verseHeights.current == null) return;
+    verseHeights.current[verse.index] = event.nativeEvent.layout.height;
+  };
+
+  const calculateVerseLayout = (data: Array<Verse> | null | undefined, index: number): { length: number; offset: number; index: number } => {
+    if (data == null || data.length == 0 || verseHeights.current == null) {
+      return {
+        length: 0,
+        offset: 0,
+        index: 0
+      };
+    }
+
+    return calculateVerseHeight(data, index, verseHeights.current);
+  };
+
   const renderContentItem = ({ item }: { item: Verse }) => {
     const selectedVerses = route.params.selectedVerses || [];
 
@@ -215,7 +258,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          melodyScale={melodyScale}
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
-                         setIsMelodyLoading={setIsMelodyLoading} />;
+                         setIsMelodyLoading={setIsMelodyLoading}
+                         onLayout={e => storeVerseHeight(item, e)} />;
   };
 
   const listViewabilityConfig = React.useRef({
@@ -259,23 +303,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               renderItem={renderContentItem}
               initialNumToRender={20}
               keyExtractor={(item: Verse) => item.id.toString()}
+              getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
               onViewableItemsChanged={onListViewableItemsChanged.current}
               viewabilityConfig={listViewabilityConfig.current}
-              onScrollToIndexFailed={(error) => {
-                if (song !== undefined && error.index < song.verses.length - 1) {
-                  // todo: Temp fix
-                  flatListComponentRef.current?.scrollToIndex({
-                    index: error.index / 2,
-                    animated: Settings.animateScrolling
-                  });
-                  return;
-                }
-
-                flatListComponentRef.current?.scrollToEnd({
-                  animated: Settings.animateScrolling
-                });
-              }}
+              onScrollToIndexFailed={(error) => rollbar.warning(`Failed to scroll to index for song '${song?.name}': ${error}`, error)}
               ListFooterComponent={<Footer song={song} />} />
           </ReAnimated.View>
 

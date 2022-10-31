@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
 import { Verse } from "../../../../logic/db/models/Songs";
 import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
 import Settings from "../../../../settings";
@@ -16,6 +16,7 @@ interface ContentVerseProps {
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;
+  onLayout?: (event: LayoutChangeEvent) => void;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -24,7 +25,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      melodyScale,
                                                      selectedVerses,
                                                      activeMelody,
-                                                     setIsMelodyLoading
+                                                     setIsMelodyLoading,
+                                                     onLayout
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
@@ -86,7 +88,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     .replace(/verse */gi, "");
 
   return (
-    <Animated.View style={[styles.container, animatedStyle.container]}>
+    <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
       {displayName === "" ? undefined :
         <Animated.Text style={[
           styles.title,
