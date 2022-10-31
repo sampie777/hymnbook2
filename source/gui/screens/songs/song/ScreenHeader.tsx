@@ -37,6 +37,7 @@ const ScreenHeader: React.FC<Props> = ({
     }
     {!songHasMelodyToShow || isMelodyLoading ? undefined :
       <HeaderIconButton icon={"music"}
+                        iconOverlay={showMelody ? "slash" : undefined}
                         onPress={() => Settings.longPressForMelodyMenu ? setShowMelody(!showMelody) : setShowMelodySettings(true)}
                         onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : setShowMelody(!showMelody)} />
     }
