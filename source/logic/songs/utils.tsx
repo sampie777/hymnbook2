@@ -256,3 +256,29 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
+
+export const calculateVerseHeight = (verses: Array<Verse>, index: number, verseHeights: Record<number, number>): { length: number; offset: number; index: number } => {
+  if (index == 0 && verseHeights[index] > 0) {
+    return {
+      length: verseHeights[index],
+      offset: 0,
+      index: 0
+    };
+  }
+
+  let totalHeight = 0;
+  let count = 0;
+  Object.entries(verseHeights)
+    .filter(([key, value]) => +key < index)
+    .forEach(([key, value]) => {
+      totalHeight += value;
+      count++;
+    });
+  const averageHeight = count == 0 ? totalHeight : totalHeight / count;
+
+  return {
+    length: verseHeights[index] || averageHeight,
+    offset: averageHeight * index,
+    index: index
+  };
+};
