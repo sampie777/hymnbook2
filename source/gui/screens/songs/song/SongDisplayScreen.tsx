@@ -237,7 +237,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       };
     }
 
-    return calculateVerseHeight(data, index, verseHeights.current);
+    return calculateVerseHeight(index, verseHeights.current);
   };
 
   const renderContentItem = ({ item }: { item: Verse }) => {
