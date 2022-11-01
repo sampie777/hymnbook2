@@ -257,12 +257,20 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
 
-export const calculateVerseHeight = (verses: Array<Verse>, index: number, verseHeights: Record<number, number>): { length: number; offset: number; index: number } => {
+export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): { length: number; offset: number; index: number } => {
+  if (Object.keys(verseHeights).length == 0) {
+    return {
+      length: 0,
+      offset: 0,
+      index: index
+    }
+  }
+
   if (index == 0 && verseHeights[index] > 0) {
     return {
       length: verseHeights[index],
       offset: 0,
-      index: 0
+      index: index
     };
   }
 
@@ -274,7 +282,7 @@ export const calculateVerseHeight = (verses: Array<Verse>, index: number, verseH
       totalHeight += value;
       count++;
     });
-  const averageHeight = count == 0 ? totalHeight : totalHeight / count;
+  let averageHeight = count == 0 ? (totalHeight || verseHeights[index] || 0) : totalHeight / count;
 
   return {
     length: verseHeights[index] || averageHeight,
