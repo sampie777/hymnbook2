@@ -126,7 +126,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
     });
-  }, [song?.name, route.params.selectedVerses, showMelody, isMelodyLoading]);
+  }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const loadSong = () => {
     setSong(loadSongWithId(route.params.id));
