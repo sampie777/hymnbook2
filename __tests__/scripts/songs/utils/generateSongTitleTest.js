@@ -4,6 +4,10 @@ import { generateSongTitle } from "../../../../source/logic/songs/utils";
 describe("test generating song title", () => {
   const song = new Song("Psalm 1", "", "", "", new Date(), new Date(), [], [], 0, 1);
 
+  it("with no song", () => {
+    expect(generateSongTitle(null, [])).toBe("");
+  });
+
   it("with non following verses generates all verses", () => {
     const selectedVerses = [
       new Verse(0, "Verse 1", "", "", 0),

@@ -1,4 +1,5 @@
-import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
+import mockClipboard from "@react-native-clipboard/clipboard/jest/clipboard-mock.js";
+import Db from "./source/logic/db/db";
 
 jest.mock("rollbar-react-native", () => {
   return {
@@ -35,4 +36,15 @@ jest.mock("react-native-device-info", () => {
   };
 });
 
-jest.mock('@react-native-clipboard/clipboard', () => mockClipboard);
+jest.mock("@react-native-clipboard/clipboard", () => mockClipboard);
+
+jest.mock("hymnbook2/source/logic/db/db");
+Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+Db.songs.realm.mockImplementation(() => {
+  return {
+    objects: () => [],
+    write: (callback) => callback ? callback() : undefined,
+    create: () => undefined,
+    delete: () => undefined,
+  };
+});
