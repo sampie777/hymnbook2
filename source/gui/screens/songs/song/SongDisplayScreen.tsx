@@ -179,11 +179,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       }
     });
 
+  // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
   const delayScrollToFirstVerse = (maxTries = 10) => {
-    // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
     if (scrollTimeout.current != null) {
       clearTimeout(scrollTimeout.current);
       scrollTimeout.current = undefined;
+    }
+
+    if (song == undefined) {
+      return;
     }
 
     if (maxTries <= 0) {
