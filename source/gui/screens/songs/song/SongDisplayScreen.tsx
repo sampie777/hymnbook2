@@ -38,6 +38,7 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, "Song"> {
 }
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
+  const isMounted = useRef(true);
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
@@ -58,6 +59,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const reAnimatedOpacity = new ReAnimated.Value<number>(1);
   const styles = createStyles(useTheme());
 
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    }
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
       onFocus();
@@ -66,6 +74,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   );
 
   const onFocus = () => {
+    isMounted.current = true;
     keepScreenAwake(Settings.keepScreenAwake);
     loadSong();
   };
@@ -180,11 +189,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
 
   // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
-  const delayScrollToFirstVerse = (maxTries = 10) => {
+  const delayScrollToFirstVerse = (maxTries = 20) => {
     if (scrollTimeout.current != null) {
       clearTimeout(scrollTimeout.current);
       scrollTimeout.current = undefined;
     }
+
+    if (!isMounted.current) return;
 
     if (song == undefined) {
       return;
