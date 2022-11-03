@@ -104,4 +104,30 @@ describe("test adding song to song list", () => {
     expect(songListSong).toBe(undefined);
     expect(list1.songs.length).toBe(0);
   });
+
+  it("adds song to the end of an already filled list", () => {
+    Db.songs.realm.mockImplementation(() => {
+      const list = [list1];
+      list.filtered = (query) => list.filter(it => query.includes(`"${it.name}"`));
+      return {
+        objects: () => list,
+        write: () => {
+          throw Error("error");
+        },
+        create: () => undefined,
+        delete: () => undefined,
+      };
+    });
+
+    list1.songs.push(new SongListSongModel(0));
+    list1.songs.push(new SongListSongModel(1));
+    list1.songs.push(new SongListSongModel(0));
+
+    const song = new Song();
+
+    expect(SongList.addSong(song)).toThrow("error");
+    expect(Db.songs.realm).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(0);
+    expect(list1.songs.length).toBe(3);
+  });
 });
