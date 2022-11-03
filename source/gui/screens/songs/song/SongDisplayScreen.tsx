@@ -63,7 +63,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     isMounted.current = true;
     return () => {
       isMounted.current = false;
-    }
+    };
   }, []);
 
   useFocusEffect(
@@ -217,6 +217,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const scrollToFirstVerse = () => {
+    if (!isMounted.current) return;
+
     if (song === undefined
       || song?.verses === undefined || song?.verses.length === 0
       || route.params.selectedVerses === undefined || route.params.selectedVerses.length === 0) {
@@ -232,10 +234,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       return;
     }
 
-    flatListComponentRef.current?.scrollToIndex({
-      index: scrollIndex || 0,
-      animated: Settings.animateScrolling
-    });
+    try {
+      flatListComponentRef.current?.scrollToIndex({
+        index: scrollIndex || 0,
+        animated: Settings.animateScrolling
+      });
+    } catch (e: any) {
+      rollbar.warning(`Failed to scroll to index ${scrollIndex || 0} for song '${song?.name}': ${e}`, e);
+    }
   };
 
   const storeVerseHeight = (verse: Verse, event: LayoutChangeEvent) => {
@@ -322,7 +328,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               contentContainerStyle={styles.contentSectionList}
               onViewableItemsChanged={onListViewableItemsChanged.current}
               viewabilityConfig={listViewabilityConfig.current}
-              onScrollToIndexFailed={(error) => rollbar.warning(`Failed to scroll to index for song '${song?.name}': ${error}`, error)}
+              onScrollToIndexFailed={(info) => rollbar.warning(`Failed to scroll to index for song '${song?.name}'`, info)}
               ListFooterComponent={<Footer song={song} />} />
           </ReAnimated.View>
 
