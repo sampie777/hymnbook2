@@ -82,10 +82,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const onBlur = () => {
     keepScreenAwake(false);
     setSong(undefined);
-    navigation.setOptions({
-      title: "",
-      headerRight: undefined
-    });
   };
 
   useEffect(() => {
