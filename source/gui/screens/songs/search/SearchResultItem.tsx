@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { rollbar } from "../../../../logic/rollbar";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
 import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
@@ -37,7 +38,13 @@ export const SearchResultItem: React.FC<{
         return; // Wait for cool down
       }
 
-      SongList.addSong(song);
+      try {
+        SongList.addSong(song);
+      } catch (e: any) {
+        rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${e}`, e);
+        alert("Could not add song to songlist: " + e);
+        return;
+      }
 
       setSongAddedToSongList(true);
       clearCheckmarkTimeout.current = setTimeout(() => setSongAddedToSongList(false), 3000);
