@@ -15,16 +15,16 @@ export enum VerseType {
 }
 
 export const getVerseType = (verse: Verse): VerseType => {
-  if (verse.name.match(/chorus\W?/gi)) {
+  if (verse.name.match(/(chorus|refrein|refrain)\W?/gi)) {
     return VerseType.Chorus;
   }
-  if (verse.name.match(/bridge\W?/gi)) {
+  if (verse.name.match(/bridge|tussenspel\W?/gi)) {
     return VerseType.Bridge;
   }
-  if (verse.name.match(/intro\W?/gi)) {
+  if (verse.name.match(/(intro|inleiding)\W?/gi)) {
     return VerseType.Intro;
   }
-  if (verse.name.match(/end\W?/gi)) {
+  if (verse.name.match(/(end|slot|outro)\W?/gi)) {
     return VerseType.End;
   }
 
@@ -263,7 +263,7 @@ export const calculateVerseHeight = (index: number, verseHeights: Record<number,
       length: 0,
       offset: 0,
       index: index
-    }
+    };
   }
 
   if (index == 0 && verseHeights[index] > 0) {

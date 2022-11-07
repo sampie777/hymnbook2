@@ -110,19 +110,25 @@ export namespace SongProcessor {
     return new Result({ success: true, message: `${bundle.name} updated!` });
   };
 
-  const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle) => {
+  export const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle): SongBundle => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
     let melodyId = Db.songs.getIncrementedPrimaryKey(AbcMelodySchema);
     let subMelodyId = Db.songs.getIncrementedPrimaryKey(AbcSubMelodySchema);
 
-    const getSubMelodiesFromVerses = (verses: ServerVerse[], parentMelody: ServerAbcMelody): AbcSubMelody[] => {
+    const getSubMelodiesFromVerses = (verses: ServerVerse[], newVerses: Verse[], parentMelody: ServerAbcMelody): AbcSubMelody[] => {
       return verses.map(verse => {
         const subMelody = verse.abcMelodies?.find(it => it.parentId === parentMelody.id);
         if (subMelody == null) {
           return null;
         }
-        return new AbcSubMelody(subMelody.melody, verse, subMelodyId++);
+
+        const newVerse = newVerses.find(it => it.index == verse.index);
+        if (newVerse == null) {
+          return null;
+        }
+
+        return new AbcSubMelody(subMelody.melody, newVerse, subMelodyId++);
       })
         .filter(it => it != null) as AbcSubMelody[];
     };
@@ -144,7 +150,7 @@ export namespace SongProcessor {
             verse.language,
             verseId++,
             verse.abcLyrics
-          )),
+          )) || [],
         [],
         songId++,
         song.number
@@ -158,7 +164,7 @@ export namespace SongProcessor {
           .map(melody => new AbcMelody(
             melody.name,
             melody.melody,
-            getSubMelodiesFromVerses(song.verses || [], melody),
+            getSubMelodiesFromVerses(song.verses || [], newSong.verses, melody),
             melodyId++
           ));
       } catch (e: any) {
@@ -230,24 +236,23 @@ export namespace SongProcessor {
     return languages;
   };
 
-  export const determineDefaultFilterLanguage = (bundles: Array<ServerSongBundle | SongBundle>) => {
+  export const determineDefaultFilterLanguage = (bundles: Array<ServerSongBundle | SongBundle>): string => {
     if (bundles.length === 0) {
       return "";
     }
 
-    const languageCount = {};
+    const languageCount: Record<string, number> = {};
     bundles.forEach(it => {
-      // @ts-ignore
       languageCount[it.language] = (languageCount[it.language] || 0) + 1;
     });
 
     const languageTopList = Object.entries(languageCount)
-      .sort((a: Array<any>, b: Array<any>) => b[1] - a[1]);
+      .sort((a, b) => b[1] - a[1]);
     return languageTopList[0][0];
   };
 
   export const hasUpdate = (serverBundles: ServerSongBundle[], bundle: SongBundle): boolean => {
-    const serverBundle = serverBundles.find(it => it.uuid == bundle.uuid);
+    const serverBundle = getMatchingServerBundle(serverBundles, bundle);
     if (serverBundle === undefined) {
       return false;
     }

@@ -36,7 +36,7 @@ export const isVerseInList = (verses: Array<VerseProps>, verse: VerseProps): boo
   return verses.some(it => it.id === verse.id);
 };
 
-export const toggleVerseInList = (verses: Array<VerseProps>, verse: VerseProps) => {
+export const toggleVerseInList = (verses: Array<VerseProps>, verse: VerseProps): Array<VerseProps> => {
   let newSelection: Array<VerseProps>;
   if (isVerseInList(verses, verse)) {
     newSelection = verses.filter(it => it.id !== verse.id);
