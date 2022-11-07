@@ -8,6 +8,18 @@ import {
 import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
 import { Song, SongBundle, Verse } from "../../../../source/logic/db/models/Songs";
 import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
+import Db from "../../../../source/logic/db/db";
+
+jest.mock("hymnbook2/source/logic/db/db");
+Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+Db.songs.realm.mockImplementation(() => {
+  return {
+    objects: () => [],
+    write: (callback) => callback ? callback() : undefined,
+    create: () => undefined,
+    delete: () => undefined,
+  };
+});
 
 describe("test convert server songbundle to local songbundle", () => {
   it("converts bundle with children to local objects", () => {

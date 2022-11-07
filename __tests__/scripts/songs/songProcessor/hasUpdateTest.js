@@ -1,6 +1,18 @@
 import { SongBundle as ServerSongBundle } from "../../../../source/logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
 import { SongBundle } from "../../../../source/logic/db/models/Songs";
+import Db from "../../../../source/logic/db/db";
+
+jest.mock("hymnbook2/source/logic/db/db");
+Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+Db.songs.realm.mockImplementation(() => {
+  return {
+    objects: () => [],
+    write: (callback) => callback ? callback() : undefined,
+    create: () => undefined,
+    delete: () => undefined,
+  };
+});
 
 describe("test check if bundle has update", () => {
   const serverBundle1 = new ServerSongBundle(0, "", "", "EN", "", "", [], new Date(), new Date(), "uuid1");

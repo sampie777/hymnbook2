@@ -37,14 +37,3 @@ jest.mock("react-native-device-info", () => {
 });
 
 jest.mock("@react-native-clipboard/clipboard", () => mockClipboard);
-
-jest.mock("hymnbook2/source/logic/db/db");
-Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
-Db.songs.realm.mockImplementation(() => {
-  return {
-    objects: () => [],
-    write: (callback) => callback ? callback() : undefined,
-    create: () => undefined,
-    delete: () => undefined,
-  };
-});

@@ -3,9 +3,11 @@ import Db from "../../../../source/logic/db/db";
 import { SongListModel, SongListSongModel } from "../../../../source/logic/db/models/SongListModel";
 import { Song } from "../../../../source/logic/db/models/Songs";
 
-describe("test adding song to song list", () => {
-  const list1 = new SongListModel("Default");
+jest.mock("hymnbook2/source/logic/db/db");
 
+describe("test adding song to song list", () => {
+
+  const list1 = new SongListModel("Default");
   // Mocks
   Db.songs.realm.mockImplementation(() => {
     const list = [list1];
@@ -125,7 +127,13 @@ describe("test adding song to song list", () => {
 
     const song = new Song();
 
-    expect(SongList.addSong(song)).toThrow("error");
+    // Add try/catch for `yarn test` console command
+    try {
+      expect(SongList.addSong(song)).toThrow("error");
+      expect(false).toBe(true);
+    } catch (e) {
+      expect(e.message).toBe("error");
+    }
     expect(Db.songs.realm).toHaveBeenCalledTimes(3);
     expect(spy).toHaveBeenCalledTimes(0);
     expect(list1.songs.length).toBe(3);

@@ -2,6 +2,17 @@ import SongList from "../../../../source/logic/songs/songList";
 import Db from "../../../../source/logic/db/db";
 import { SongListModel, SongListSongModel } from "../../../../source/logic/db/models/SongListModel";
 
+jest.mock("hymnbook2/source/logic/db/db");
+Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+Db.songs.realm.mockImplementation(() => {
+  return {
+    objects: () => [],
+    write: (callback) => callback ? callback() : undefined,
+    create: () => undefined,
+    delete: () => undefined,
+  };
+});
+
 describe("test cleaning up song list", () => {
   const list1 = new SongListModel("Default");
 
