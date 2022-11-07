@@ -10,6 +10,7 @@ function usage {
      commands:
        patch                  Release a patch version (0.0.X)
        minor                  Release a minor version (0.X.0)
+       major                  Release a major version (X.0.0)
        setversion <version>   Change version to <version>
        -h, --help             Show this help message and exit
 
@@ -63,6 +64,22 @@ function releaseMinor {
   pushAndRelease
 }
 
+function releaseMajor {
+  yarn test || exit 1
+
+  git checkout master || exit 1
+  git pull || exit 1
+  git merge develop || exit 1
+
+  # Create patch version
+  npm --no-git-tag-version version major || exit 1
+  RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
+
+  setVersion "${RELEASE_VERSION}" || exit 1
+
+  pushAndRelease
+}
+
 function pushAndRelease {
   yarn test || exit 1
 
@@ -106,6 +123,10 @@ case $command in
     ;;
   minor)
     releaseMinor
+    setNextDevelopmentVersion
+    ;;
+  major)
+    releaseMajor
     setNextDevelopmentVersion
     ;;
   setversion)
