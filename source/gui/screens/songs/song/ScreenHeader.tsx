@@ -1,6 +1,6 @@
 import React from "react";
 import Settings from "../../../../settings";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { Song } from "../../../../logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../logic/songs/utils";
 import { hasVisibleNameForPicker } from "../../../../logic/songs/versePicker";
@@ -32,7 +32,7 @@ const ScreenHeader: React.FC<Props> = ({
 
   const toggleShowMelody = () => requestAnimationFrame(() => setShowMelody(!showMelody));
 
-  return <>
+  return <View style={styles.container}>
     {!songHasMelodyToShow || !isMelodyLoading ? undefined :
       <ActivityIndicator size={styles.loadIcon.fontSize}
                          style={styles.loadIcon}
@@ -48,10 +48,13 @@ const ScreenHeader: React.FC<Props> = ({
     {!songHasVersesToPick ? undefined :
       <HeaderIconVersePicker onPress={openVersePicker} />
     }
-  </>;
+  </View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+  container: {
+    flexDirection: "row"
+  },
   loadIcon: {
     fontSize: 26,
     color: colors.text,
