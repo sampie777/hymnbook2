@@ -29,6 +29,9 @@ const ScreenHeader: React.FC<Props> = ({
 
   const songHasMelodyToShow = hasMelodyToShow(song);
   const songHasVersesToPick = song?.verses?.some(hasVisibleNameForPicker);
+
+  const toggleShowMelody = () => requestAnimationFrame(() => setShowMelody(!showMelody));
+
   return <>
     {!songHasMelodyToShow || !isMelodyLoading ? undefined :
       <ActivityIndicator size={styles.loadIcon.fontSize}
@@ -38,8 +41,8 @@ const ScreenHeader: React.FC<Props> = ({
     {!songHasMelodyToShow || isMelodyLoading ? undefined :
       <HeaderIconButton icon={"music"}
                         iconOverlay={showMelody ? "slash" : undefined}
-                        onPress={() => Settings.longPressForMelodyMenu ? setShowMelody(!showMelody) : setShowMelodySettings(true)}
-                        onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : setShowMelody(!showMelody)} />
+                        onPress={() => Settings.longPressForMelodyMenu ? toggleShowMelody() : setShowMelodySettings(true)}
+                        onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : toggleShowMelody()} />
     }
 
     {!songHasVersesToPick ? undefined :
