@@ -4,11 +4,10 @@ import { Result } from "../utils";
 import { SongBundle } from "./models/ServerSongsModel";
 import { rollbar } from "../rollbar";
 import { JsonResponse, JsonResponseType } from "./models";
-import Settings from "../../settings";
 import { ServerAuth } from "./auth";
 
 export namespace Server {
-  export const fetchSongBundles = (includeOther: boolean = false): Promise<Result> => {
+  export const fetchSongBundles = (includeOther: boolean = false): Promise<Result<Array<SongBundle>>> => {
     return api.songBundles.list()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
@@ -30,7 +29,7 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle, resetAuthOn403: boolean = true): Promise<Result> => {
+  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle, resetAuthOn403: boolean = true): Promise<Result<SongBundle>> => {
     return api.songBundles.getWithSongs(bundle.id, true, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())

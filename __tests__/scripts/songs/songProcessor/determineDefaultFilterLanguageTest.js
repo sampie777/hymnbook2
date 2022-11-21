@@ -4,17 +4,18 @@ import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
 import Db from "../../../../source/logic/db/db";
 
 jest.mock("hymnbook2/source/logic/db/db");
-Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
-Db.songs.realm.mockImplementation(() => {
-  return {
-    objects: () => [],
-    write: (callback) => callback ? callback() : undefined,
-    create: () => undefined,
-    delete: () => undefined,
-  };
-});
 
 describe("test get most used language from all bundles", () => {
+  Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+  Db.songs.realm.mockImplementation(() => {
+    return {
+      objects: () => [],
+      write: (callback) => callback ? callback() : undefined,
+      create: () => undefined,
+      delete: () => undefined,
+    };
+  });
+
   const serverBundle1 = new ServerSongBundle(1, "", "", "EN");
   const serverBundle2 = new ServerSongBundle(1, "", "", "EN");
   const serverBundle3 = new ServerSongBundle(1, "", "", "AF");

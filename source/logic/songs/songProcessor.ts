@@ -16,7 +16,7 @@ import { Server } from "../server/server";
 
 export namespace SongProcessor {
 
-  export const loadLocalSongBundles = (): Result => {
+  export const loadLocalSongBundles = (): Result<Array<SongBundle & Realm.Object> | undefined> => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot load local song bundles: song database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
@@ -25,7 +25,7 @@ export namespace SongProcessor {
     const bundles = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted(`name`)
-      .map(it => it as unknown as SongBundle);
+      .map(it => it)  // Convert to array. Array.from() will crash tests
 
     return new Result({ success: true, data: bundles });
   };

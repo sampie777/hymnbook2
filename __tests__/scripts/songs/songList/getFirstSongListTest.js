@@ -3,17 +3,18 @@ import Db from "../../../../source/logic/db/db";
 import { SongListModel } from "../../../../source/logic/db/models/SongListModel";
 
 jest.mock("hymnbook2/source/logic/db/db");
-Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
-Db.songs.realm.mockImplementation(() => {
-  return {
-    objects: () => [],
-    write: (callback) => callback ? callback() : undefined,
-    create: () => undefined,
-    delete: () => undefined,
-  };
-});
 
 describe("test getting first song list", () => {
+  Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+  Db.songs.realm.mockImplementation(() => {
+    return {
+      objects: () => [],
+      write: (callback) => callback ? callback() : undefined,
+      create: () => undefined,
+      delete: () => undefined,
+    };
+  });
+
   const list1 = new SongListModel();
   const list2 = new SongListModel();
 

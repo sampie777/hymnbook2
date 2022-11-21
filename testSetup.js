@@ -1,5 +1,4 @@
 import mockClipboard from "@react-native-clipboard/clipboard/jest/clipboard-mock.js";
-import Db from "./source/logic/db/db";
 
 jest.mock("rollbar-react-native", () => {
   return {

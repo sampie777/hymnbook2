@@ -100,7 +100,7 @@ export namespace DocumentProcessor {
 
   export const fetchAndUpdateDocumentGroup = (group: ServerDocumentGroup): Promise<Result> => {
     return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then((result: Result) => updateAndSaveDocumentGroup(result.data))
+      .then((result: Result) => updateAndSaveDocumentGroup(result.data));
   };
 
   const updateAndSaveDocumentGroup = (group: ServerDocumentGroup): Result => {
@@ -150,7 +150,7 @@ export namespace DocumentProcessor {
     return new Result({ success: true, message: `${documentGroup.name} updated!` });
   };
 
-  export const loadLocalDocumentRoot = (): Result => {
+  export const loadLocalDocumentRoot = (): Result<Array<DocumentGroup & Realm.Object> | undefined> => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot load local document groups: document database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
@@ -160,7 +160,7 @@ export namespace DocumentProcessor {
       .objects<DocumentGroup>(DocumentGroupSchema.name)
       .filtered(`isRoot = true`)
       .sorted(`name`)
-      .map(it => it as unknown as DocumentGroup);
+      .map(it => it)  // Convert to array. Array.from() will crash tests
 
     return new Result({ success: true, data: groups });
   };
