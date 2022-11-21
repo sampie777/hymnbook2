@@ -189,7 +189,7 @@ const AppRoot: React.FC = () => {
   </SafeAreaView>;
 };
 
-export default function App() {
+const App = () => {
   return (
     <ThemeProvider>
       <AppRoot />
@@ -237,3 +237,5 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     lineHeight: 17
   }
 });
+
+export default App;
