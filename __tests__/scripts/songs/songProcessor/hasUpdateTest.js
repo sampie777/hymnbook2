@@ -4,17 +4,18 @@ import { SongBundle } from "../../../../source/logic/db/models/Songs";
 import Db from "../../../../source/logic/db/db";
 
 jest.mock("hymnbook2/source/logic/db/db");
-Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
-Db.songs.realm.mockImplementation(() => {
-  return {
-    objects: () => [],
-    write: (callback) => callback ? callback() : undefined,
-    create: () => undefined,
-    delete: () => undefined,
-  };
-});
 
 describe("test check if bundle has update", () => {
+  Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+  Db.songs.realm.mockImplementation(() => {
+    return {
+      objects: () => [],
+      write: (callback) => callback ? callback() : undefined,
+      create: () => undefined,
+      delete: () => undefined,
+    };
+  });
+
   const serverBundle1 = new ServerSongBundle(0, "", "", "EN", "", "", [], new Date(), new Date(), "uuid1");
   const serverBundle2 = new ServerSongBundle(1, "", "", "EN", "", "", [], new Date(), new Date(), "uuid2");
   const serverBundle3 = new ServerSongBundle(2, "", "", "NL", "", "", [], new Date(), new Date(), "uuid3");

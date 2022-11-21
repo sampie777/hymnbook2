@@ -10,18 +10,18 @@ export function dateFrom(date: Date | string): Date {
   return date;
 }
 
-export class Result {
+export class Result<T = any > {
   success: boolean;
   message?: string;
   error?: Error;
-  data?: any;
+  data?: T;
 
   constructor({ success, message, error, data }:
                 {
                   success: boolean,
                   message?: string,
                   error?: Error,
-                  data?: any,
+                  data?: T,
                 }) {
     this.success = success;
     this.message = message;

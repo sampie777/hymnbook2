@@ -6,9 +6,6 @@ import { Song } from "../../../../source/logic/db/models/Songs";
 jest.mock("hymnbook2/source/logic/db/db");
 
 describe("test adding song to song list", () => {
-
-  const list1 = new SongListModel("Default");
-  // Mocks
   Db.songs.realm.mockImplementation(() => {
     const list = [list1];
     list.filtered = (query) => list.filter(it => query.includes(`"${it.name}"`));
@@ -20,6 +17,8 @@ describe("test adding song to song list", () => {
     };
   });
   const spy = jest.spyOn(SongList, "cleanUpSongListFromNullsAndCorrectIndices").mockImplementation(() => undefined);
+
+  const list1 = new SongListModel("Default");
 
   beforeEach(() => {
     Db.songs.realm.mockClear();

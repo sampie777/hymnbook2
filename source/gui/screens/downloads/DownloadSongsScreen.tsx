@@ -25,7 +25,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(false);
   const [serverBundles, setServerBundles] = useState<Array<ServerSongBundle>>([]);
-  const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle>>([]);
+  const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle & Realm.Object>>([]);
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
@@ -88,7 +88,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
     Server.fetchSongBundles()
       .then(result => {
         if (!isMounted) return;
-        setServerBundles(result.data);
+        setServerBundles(result.data!);
       })
       .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}`))
       .finally(() => {
@@ -156,7 +156,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(result => {
         if (!isMounted) return;
-        saveSongBundle(result.data);
+        saveSongBundle(result.data!);
       })
       .catch(error =>
         Alert.alert("Error", `Error downloading ${bundle.name}: ${error}`))
@@ -267,12 +267,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
                                         tintColor={styles.refreshControl.color}
                                         refreshing={isLoading} />}>
 
-        {localBundles.map((bundle: LocalSongBundle) =>
-          <LocalSongBundleItem key={bundle.uuid + bundle.name}
-                               bundle={bundle}
-                               onPress={onLocalSongBundlePress}
-                               hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
-                               disabled={isLoading} />)}
+        {localBundles.filter(it => it.isValid())
+          .map((bundle: LocalSongBundle) =>
+            <LocalSongBundleItem key={bundle.uuid + bundle.name}
+                                 bundle={bundle}
+                                 onPress={onLocalSongBundlePress}
+                                 hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
+                                 disabled={isLoading} />)}
 
         {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())

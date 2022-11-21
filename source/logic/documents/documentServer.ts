@@ -4,10 +4,10 @@ import { throwErrorsIfNotOk } from "../apiUtils";
 import { Result } from "../utils";
 import { JsonResponse, JsonResponseType } from "../server/models";
 import { ServerAuth } from "../server/auth";
-import { DocumentGroup } from "../server/models/Documents";
+import { DocumentGroup as ServerDocumentGroup, DocumentGroup } from "../server/models/Documents";
 
 export namespace DocumentServer {
-  export const fetchDocumentGroups = (includeOther: boolean = false, resetAuthOn403: boolean = true): Promise<Result> => {
+  export const fetchDocumentGroups = (includeOther: boolean = false, resetAuthOn403: boolean = true): Promise<Result<Array<ServerDocumentGroup>>> => {
     return api.documents.groups.root()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
@@ -36,7 +36,7 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<Result> => {
+  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<Result<ServerDocumentGroup>> => {
     return api.documents.groups.get(group.id, true, true, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())

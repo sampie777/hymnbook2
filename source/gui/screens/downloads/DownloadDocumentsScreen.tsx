@@ -25,7 +25,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(false);
   const [serverGroups, setServerGroups] = useState<Array<ServerDocumentGroup>>([]);
-  const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup>>([]);
+  const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup & Realm.Object>>([]);
   const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
@@ -88,7 +88,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     DocumentServer.fetchDocumentGroups()
       .then(result => {
         if (!isMounted) return;
-        setServerGroups(result.data);
+        setServerGroups(result.data!);
       })
       .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}`))
       .finally(() => {
@@ -155,7 +155,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
       .then(result => {
         if (!isMounted) return;
-        saveDocumentGroup(result.data);
+        saveDocumentGroup(result.data!);
       })
       .catch(error =>
         Alert.alert("Error", `Error downloading ${group.name}: ${error}`))
@@ -265,12 +265,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
                                         tintColor={styles.refreshControl.color}
                                         refreshing={isLoading} />}>
 
-        {localGroups.map((group: LocalDocumentGroup) =>
-          <LocalDocumentGroupItem key={group.uuid + group.name}
-                                  group={group}
-                                  onPress={onLocalDocumentGroupPress}
-                                  hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
-                                  disabled={isLoading} />)}
+        {localGroups.filter(it => it.isValid())
+          .map((group: LocalDocumentGroup) =>
+            <LocalDocumentGroupItem key={group.uuid + group.name}
+                                    group={group}
+                                    onPress={onLocalDocumentGroupPress}
+                                    hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
+                                    disabled={isLoading} />)}
 
         {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())

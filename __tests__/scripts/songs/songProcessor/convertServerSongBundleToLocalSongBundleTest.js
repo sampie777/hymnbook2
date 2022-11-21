@@ -11,17 +11,18 @@ import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcM
 import Db from "../../../../source/logic/db/db";
 
 jest.mock("hymnbook2/source/logic/db/db");
-Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
-Db.songs.realm.mockImplementation(() => {
-  return {
-    objects: () => [],
-    write: (callback) => callback ? callback() : undefined,
-    create: () => undefined,
-    delete: () => undefined,
-  };
-});
 
 describe("test convert server songbundle to local songbundle", () => {
+  Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
+  Db.songs.realm.mockImplementation(() => {
+    return {
+      objects: () => [],
+      write: (callback) => callback ? callback() : undefined,
+      create: () => undefined,
+      delete: () => undefined,
+    };
+  });
+
   it("converts bundle with children to local objects", () => {
     const songs = [
       new ServerSong(0, "name0", "author", "copyright", "language", [
