@@ -1,20 +1,20 @@
 import React from "react";
-import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
-import { ParamList, routes } from "../../../../navigation";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { DatabasesRoute, ParamList } from "../../../../navigation";
 import { Types } from "../../downloads/TypeSelectBar";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
 
 
 interface ScreenProps {
-  navigation: NativeStackNavigationProp<ParamList>;
+  navigation: NativeStackNavigationProp<ParamList, any>;
 }
 
 const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
   const styles = createStyles(useTheme());
 
   const onPress = () => {
-    navigation.navigate(routes.Databases, { type: Types.Documents });
+    navigation.navigate(DatabasesRoute, { type: Types.Documents });
   };
 
   return (<View style={styles.container}>

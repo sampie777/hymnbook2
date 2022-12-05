@@ -1,19 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   FlatList,
   GestureEvent,
   GestureHandlerRootView,
-  PinchGestureHandler,
+  PinchGestureHandler, PinchGestureHandlerEventPayload,
   State
 } from "react-native-gesture-handler";
-import { PinchGestureHandlerEventPayload } from "react-native-gesture-handler/src/handlers/gestureHandlers";
-import ReAnimated, { Easing as ReAnimatedEasing } from "react-native-reanimated";
+import ReAnimated, {
+  Easing as ReAnimatedEasing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
-import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
+import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import Db from "../../../../logic/db/db";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import {
@@ -34,7 +38,7 @@ import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
 
 
-interface ComponentProps extends NativeStackScreenProps<ParamList, "Song"> {
+interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
 }
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
@@ -56,7 +60,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const animatedScale = new Animated.Value(Settings.songScale);
   const melodyScale = new Animated.Value(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
-  const reAnimatedOpacity = new ReAnimated.Value<number>(1);
+  const reAnimatedOpacity = useSharedValue(1);
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -90,7 +94,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (Settings.songFadeIn) {
       animate();
     } else {
-      reAnimatedOpacity.setValue(1);
+      reAnimatedOpacity.value = 1;
     }
 
     // Determine which melody tune to show
@@ -145,7 +149,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     const verseParams = useSong?.verses.map(it => Verse.toObject(it));
 
-    navigation.navigate(routes.VersePicker, {
+    navigation.navigate(VersePickerRoute, {
       verses: verseParams,
       selectedVerses: route.params.selectedVerses || [],
       songListIndex: route.params.songListIndex,
@@ -154,13 +158,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const animate = () => {
-    reAnimatedOpacity.setValue(0);
-    ReAnimated.timing(reAnimatedOpacity, {
-      toValue: 1,
+    reAnimatedOpacity.value = 0;
+    reAnimatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: ReAnimatedEasing.inOut(ReAnimatedEasing.ease)
-    })
-      .start();
+    });
   };
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
@@ -311,7 +313,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         flatListComponentRef={flatListComponentRef.current}
                         selectedVerses={route.params.selectedVerses} />
 
-          <ReAnimated.View style={[styles.contentSectionListContainer, { opacity: reAnimatedOpacity }]}>
+          <ReAnimated.View style={[
+            styles.contentSectionListContainer,
+            useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
+          ]}>
             <VerseList
               // @ts-ignore
               ref={flatListComponentRef}

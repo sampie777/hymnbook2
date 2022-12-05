@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { BackHandler, FlatList, StyleSheet, View } from "react-native";
-import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
 import { Verse } from "../../../logic/db/models/Songs";
-import { routes, ParamList } from "../../../navigation";
+import { ParamList, SongListRoute, SongRoute } from "../../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../logic/songs/songList";
 import { SongListSongModel } from "../../../logic/db/models/SongListModel";
@@ -14,7 +14,7 @@ import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import DeleteModeButton from "./DeleteModeButton";
 import SongItem from "./SongItem";
 
-const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
+const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
     const [list, setList] = useState<Array<SongListSongModel>>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
@@ -84,7 +84,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, "SongList">> =
     };
 
     const onSearchResultItemPress = (index: number, songListSong: SongListSongModel) => {
-      navigation.navigate(routes.Song, {
+      navigation.navigate(SongRoute, {
         id: songListSong.song.id,
         songListIndex: index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))

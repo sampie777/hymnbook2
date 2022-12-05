@@ -14,7 +14,15 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { CollectionChangeCallback } from "realm";
 import Db from "./logic/db/db";
 import Settings from "./settings";
-import { routes } from "./navigation";
+import {
+  AboutRoute, DatabasesRoute, DocumentRoute, DocumentSearchRoute,
+  HomeRoute, OtherMenuRoute,
+  ParamList,
+  PrivacyPolicyRoute,
+  SettingsRoute, SongListRoute,
+  SongRoute, SongSearchRoute,
+  VersePickerRoute
+} from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
 import {
   closeDatabases,
@@ -41,26 +49,26 @@ import DocumentSearchScreen from "./gui/screens/documents/search/DocumentSearchS
 import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-
-const RootNav = createNativeStackNavigator();
-const HomeNav = createBottomTabNavigator();
+const RootNav = createNativeStackNavigator<ParamList>();
+const HomeNav = createBottomTabNavigator<ParamList>();
 
 const RootNavigation = () => {
   const styles = createStyles(useTheme());
-  return <RootNav.Navigator initialRouteName={routes.Home}
+  return <RootNav.Navigator initialRouteName={HomeRoute}
                             screenOptions={{
                               headerStyle: styles.tabBarHeader,
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
                             }}>
-    <RootNav.Screen name={routes.Home} component={HomeNavigation}
+    <RootNav.Screen name={HomeRoute} component={HomeNavigation}
                     options={{ headerShown: false }} />
-    <RootNav.Screen name={routes.Settings} component={SettingsScreen} />
-    <RootNav.Screen name={routes.About} component={AboutScreen} />
-    <RootNav.Screen name={routes.PrivacyPolicy} component={PrivacyPolicyScreen} />
+    <RootNav.Screen name={SettingsRoute} component={SettingsScreen} />
+    <RootNav.Screen name={AboutRoute} component={AboutScreen} />
+    <RootNav.Screen name={PrivacyPolicyRoute} component={PrivacyPolicyScreen} options={{ title: "Privacy policy" }} />
 
-    <RootNav.Screen name={routes.Song} component={SongDisplayScreen}
+    <RootNav.Screen name={SongRoute} component={SongDisplayScreen}
                     options={{
                       title: ""
                     }}
@@ -69,7 +77,7 @@ const RootNavigation = () => {
                       songListIndex: undefined,
                       selectedVerses: []
                     }} />
-    <RootNav.Screen name={routes.VersePicker} component={VersePicker}
+    <RootNav.Screen name={VersePickerRoute} component={VersePicker}
                     options={{
                       title: "Select verses..."
                     }}
@@ -78,7 +86,7 @@ const RootNavigation = () => {
                       selectedVerses: []
                     }} />
 
-    <RootNav.Screen name={routes.Document} component={SingleDocument}
+    <RootNav.Screen name={DocumentRoute} component={SingleDocument}
                     options={{
                       title: ""
                     }}
@@ -86,7 +94,7 @@ const RootNavigation = () => {
                       id: undefined
                     }} />
 
-    <RootNav.Screen name={routes.Databases} component={DownloadsScreen}
+    <RootNav.Screen name={DatabasesRoute} component={DownloadsScreen}
                     initialParams={{
                       type: Types.Songs
                     }} />
@@ -114,7 +122,7 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
-  return (<HomeNav.Navigator initialRouteName={routes.SongSearch}
+  return (<HomeNav.Navigator initialRouteName={SongSearchRoute}
                              screenOptions={{
                                tabBarStyle: styles.tabBar,
                                tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
@@ -122,26 +130,30 @@ const HomeNavigation: React.FC = () => {
                                headerStyle: styles.tabBarHeader,
                                headerTitleStyle: styles.tabBarHeaderTitle
                              }}>
-    <HomeNav.Screen name={routes.SongSearch} component={SearchScreen}
+    <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
                     options={{
+                      title: "Songs",
                       headerShown: false,
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="music" size={size} color={color} style={styles.tabIcon} />
                     }} />
-    <HomeNav.Screen name={routes.SongList} component={SongListScreen}
+    <HomeNav.Screen name={SongListRoute} component={SongListScreen}
                     options={{
+                      title: "Song list",
                       tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
                       tabBarBadgeStyle: styles.tabBarBadgeStyle,
                       tabBarIcon: ({ focused, color, size }) =>
                         <SongListMenuIcon size={size} color={color} style={styles.tabIcon} />
                     }} />
-    <HomeNav.Screen name={routes.DocumentSearch} component={DocumentSearchScreen}
+    <HomeNav.Screen name={DocumentSearchRoute} component={DocumentSearchScreen}
                     options={{
+                      title: "Documents",
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
                     }} />
-    <HomeNav.Screen name={routes.OtherMenu} component={OtherMenuScreen}
+    <HomeNav.Screen name={OtherMenuRoute} component={OtherMenuScreen}
                     options={{
+                      title: "More",
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
                     }} />
@@ -191,9 +203,11 @@ const AppRoot: React.FC = () => {
 
 const App = () => {
   return (
-    <ThemeProvider>
-      <AppRoot />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <AppRoot />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 };
 

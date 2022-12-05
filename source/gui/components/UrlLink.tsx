@@ -5,7 +5,8 @@ import { openLink } from "../../logic/utils";
 const UrlLink: React.FC<{
   url: string,
   style?: Array<Object> | Object,
-  onOpened?: () => void
+  onOpened?: () => void,
+  children: React.ReactNode,
 }> =
   ({
      children,
@@ -16,7 +17,7 @@ const UrlLink: React.FC<{
     const open = () => {
       openLink(url)
         .then(onOpened)
-        .catch(e => Alert.alert("Error opening link", e.message))
+        .catch(e => Alert.alert("Error opening link", e.message));
     };
 
     return (
