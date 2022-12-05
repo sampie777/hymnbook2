@@ -1,6 +1,6 @@
 import React from "react";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList, routes } from "../../../navigation";
+import { DatabasesRoute, ParamList } from "../../../navigation";
 import { Types } from "../../screens/downloads/TypeSelectBar";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -13,7 +13,7 @@ const InitDatabaseComponent: React.FC<{
       }) => {
 
   const onConfirm = () => {
-    navigation.navigate(routes.Databases, { type: Types.Songs });
+    navigation.navigate(DatabasesRoute, { type: Types.Songs });
     onCompleted?.();
   };
 
@@ -23,7 +23,7 @@ const InitDatabaseComponent: React.FC<{
                             invertConfirmColor={false}
                             onClose={undefined}
                             onConfirm={onConfirm}
-                            message={`You don't have any songs in your database yet. Go to the ${routes.Databases}-screen to download some songs!`} />;
+                            message={`You don't have any songs in your database yet. Go to the ${DatabasesRoute}-screen to download some songs!`} />;
 };
 
 export default InitDatabaseComponent;

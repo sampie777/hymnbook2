@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import React, { useEffect, useRef, useState } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../../../logic/db/db";
 import { SongSchema } from "../../../../../logic/db/models/SongsSchema";
 import { rollbar } from "../../../../../logic/rollbar";
-import { routes, ParamList, VersePickerMethod } from "../../../../../navigation";
+import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
 import { Song, Verse, VerseProps } from "../../../../../logic/db/models/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
@@ -13,14 +13,15 @@ import {
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
-import { StyleSheet, View, Text, Dimensions, ScaledSize, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Dimensions, ScaledSize, ScrollView, EmitterSubscription } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 
-interface ComponentProps extends NativeStackScreenProps<ParamList, "VersePicker"> {
+interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VersePickerRoute> {
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
+  const dimensionEventListenerSubscription = useRef<EmitterSubscription>();
   const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
   const verses: Array<Verse> = route.params.verses || [];
   const songListIndex: number | undefined = route.params.songListIndex;
@@ -45,11 +46,11 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, []);
 
   const onFocus = () => {
-    Dimensions.addEventListener("change", handleDimensionsChange);
+    dimensionEventListenerSubscription.current = Dimensions.addEventListener("change", handleDimensionsChange);
   };
 
   const onBlur = () => {
-    Dimensions.removeEventListener("change", handleDimensionsChange);
+    dimensionEventListenerSubscription.current?.remove();
   };
 
   const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
@@ -91,7 +92,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
 
     navigation.navigate({
-      name: routes.Song,
+      name: SongRoute,
       params: {
         selectedVerses: verses
       },
@@ -100,7 +101,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const showSong = (verses: Verse[]) => {
-    navigation.replace(routes.Song, {
+    navigation.replace(SongRoute, {
       id: route.params.songId,
       selectedVerses: verses
     });
@@ -132,7 +133,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     SongList.saveSelectedVersesForSong(addedSongListSongModel.index, verses);
 
-    navigation.navigate(routes.SongSearch);
+    navigation.navigate(SongSearchRoute);
   };
 
   return <View style={styles.container}>

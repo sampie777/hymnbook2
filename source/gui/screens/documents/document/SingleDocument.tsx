@@ -11,40 +11,38 @@ import {
 } from "react-native";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
-import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { keepScreenAwake } from "../../../../logic/utils";
-import { ParamList } from "../../../../navigation";
+import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
   GestureHandlerRootView
 } from "react-native-gesture-handler";
-import Animated, { Easing } from "react-native-reanimated";
-import HTMLView, { HTMLViewNode } from "react-native-htmlview";
+import Animated, { Easing, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import HTMLView, { HTMLViewNode, HTMLViewNodeRenderer } from "react-native-htmlview";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 
-const Footer: React.FC<{ opacity: Animated.Value<number> }> =
+const Footer: React.FC<{ opacity: SharedValue<number> }> =
   ({ opacity }) => {
     const styles = createStyles(useTheme());
-    const animatedStyle = {
-      container: {
-        opacity: opacity
-      }
-    };
+    const animatedStyle = useAnimatedStyle(() => ({
+      opacity: opacity.value
+    }));
 
-    return (<Animated.View style={[styles.container, animatedStyle.container]} />);
+    return (<Animated.View style={[styles.container, animatedStyle]} />);
   };
 
-const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = ({ route, navigation }) => {
+const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
   const scrollViewComponent = useRef<ScrollView>();
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
-  const animatedOpacity = new Animated.Value<number>(1);
+  const animatedOpacity = useSharedValue(0);
   const styles = createStyles(useTheme());
 
   useFocusEffect(
@@ -68,7 +66,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
     if (Settings.songFadeIn) {
       animate();
     } else {
-      animatedOpacity.setValue(1);
+      animatedOpacity.value = 1;
     }
 
     // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
@@ -109,13 +107,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
   };
 
   const animate = () => {
-    animatedOpacity.setValue(0);
-    Animated.timing(animatedOpacity, {
-      toValue: 1,
+    animatedOpacity.value = 0;
+    animatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: Easing.inOut(Easing.ease)
-    })
-      .start();
+    });
   };
 
   const scrollToTop = () => {
@@ -163,11 +159,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, "Document">> = 
   };
 
   const renderNode = (
-    node: HTMLViewNode & { children: any },
+    node: HTMLViewNode,
     index: number,
-    siblings: HTMLViewNode,
+    siblings: HTMLViewNode[],
     parent: HTMLViewNode,
-    defaultRenderer: (node: HTMLViewNode, parent: HTMLViewNode) => ReactNode): ReactNode | undefined => {
+    defaultRenderer: HTMLViewNodeRenderer): ReactNode | undefined => {
     if (node.name === "sup") {
       return <View key={index}>
         {defaultRenderer(node.children, node)}

@@ -68,7 +68,7 @@ export function isPortraitMode(window: ScaledSize) {
   return window.height >= window.width;
 }
 
-export function openLink(url: string): Promise<any> {
+export function openLink(url?: string): Promise<any> {
   if (!url) {
     rollbar.critical("Trying to open link with empty url: '" + url + "'.");
     return new Promise(_ => {

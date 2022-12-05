@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
 import Db from "../../../../logic/db/db";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
-import { ParamList, routes } from "../../../../navigation";
+import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
@@ -17,7 +17,7 @@ import DownloadInstructions from "./DownloadInstructions";
 import SearchInput from "./SearchInput";
 
 
-const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ navigation }) => {
+const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
@@ -114,7 +114,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
   };
 
   const onDocumentPress = (document: Document) => {
-    navigation.navigate(routes.Document, { id: document.id });
+    navigation.navigate(DocumentRoute, { id: document.id });
   };
 
   const groups = (): Array<DocumentGroup> => {

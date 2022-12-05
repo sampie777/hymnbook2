@@ -5,6 +5,7 @@ import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { objectToArrayIfNotAlready } from "../../../../logic/utils";
 
 interface KeyProps {
+  children: React.ReactNode,
   onPress: () => void;
   extraStyle?: Object;
 }

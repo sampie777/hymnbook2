@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Appearance } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Appearance, NativeEventSubscription } from "react-native";
 import { darkColors, lightColors, ThemeColors, ThemeFontFamilies, defaultFontFamilies } from "../../logic/theme";
 import Settings from "../../settings";
 
@@ -14,13 +14,15 @@ export const ThemeContext = React.createContext<ThemeContextProps>({
   isDark: false,
   colors: lightColors,
   reload: () => undefined,
-  fontFamily: defaultFontFamilies,
+  fontFamily: defaultFontFamilies
 });
 
-const ThemeProvider: React.FC = ({ children }) => {
+const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const appearanceEventSubscription = useRef<NativeEventSubscription>();
+
   const getDefaultTheme = () => {
     if (Settings.theme !== "") {
-      return Settings.theme
+      return Settings.theme;
     }
     return Appearance.getColorScheme();
   };
@@ -33,11 +35,11 @@ const ThemeProvider: React.FC = ({ children }) => {
   }, []);
 
   const onLaunch = () => {
-    Appearance.addChangeListener(handleSystemThemeChange);
+    appearanceEventSubscription.current = Appearance.addChangeListener(handleSystemThemeChange);
   };
 
   const onExit = () => {
-    Appearance.removeChangeListener(handleSystemThemeChange);
+    appearanceEventSubscription.current?.remove();
   };
 
   const handleSystemThemeChange = () => {
@@ -46,13 +48,13 @@ const ThemeProvider: React.FC = ({ children }) => {
 
   const loadTheme = () => {
     setIsDark(getDefaultTheme() === "dark");
-  }
+  };
 
   const defaultContext: ThemeContextProps = {
     isDark: isDark,
     colors: isDark ? darkColors : lightColors,
     reload: () => loadTheme(),
-    fontFamily: defaultFontFamilies,
+    fontFamily: defaultFontFamilies
   };
 
   return (
