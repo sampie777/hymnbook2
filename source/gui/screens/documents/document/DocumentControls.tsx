@@ -6,7 +6,7 @@ import { DocumentRoute, ParamList } from "../../../../navigation";
 import { Document } from "../../../../logic/db/models/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
@@ -77,7 +77,7 @@ const DocumentControls: React.FC<Props> =
       animatedVerticalOffset.current.value = withTiming(show ? 0 : 100, {
         duration: 300,
         easing: Easing.inOut(Easing.ease)
-      }, () => setScrollDirection(0));
+      }, () => runOnJS(setScrollDirection)(0));
     };
 
     const getPreviousDocument = () => {
