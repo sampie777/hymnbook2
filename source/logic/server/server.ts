@@ -26,8 +26,8 @@ export namespace Server {
       .catch(error => {
         if (resetAuthOn403 && error.message.includes("Not authorized.")) {
           // Reset authentication to regain new rights
+          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching all song bundles`, { invalidJwt: ServerAuth.getJwt() });
           ServerAuth.forgetCredentials();
-          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching all song bundles`);
           return fetchSongBundles(includeOther, resetAuthOn403 = false);
         }
 
@@ -51,7 +51,7 @@ export namespace Server {
         if (resetAuthOn403 && error.message.includes("Not authorized.")) {
           // Reset authentication to regain new rights
           ServerAuth.forgetCredentials();
-          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching song bundle (${bundle.name})`);
+          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching song bundle (${bundle.name})`, { invalidJwt: ServerAuth.getJwt() });
           return fetchSongBundleWithSongsAndVerses(bundle, false);
         }
 

@@ -27,7 +27,7 @@ export namespace DocumentServer {
         if (resetAuthOn403 && error.message.includes("Not authorized.")) {
           // Reset authentication to regain new rights
           ServerAuth.forgetCredentials();
-          rollbar.info("Resetting credentials due to HTTP 401/403 error when fetching documents");
+          rollbar.info("Resetting credentials due to HTTP 401/403 error when fetching documents", { invalidJwt: ServerAuth.getJwt() });
           return fetchDocumentGroups(includeOther, false);
         }
 
@@ -36,7 +36,7 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<Result<ServerDocumentGroup>> => {
+  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup, resetAuthOn403: boolean = true): Promise<Result<ServerDocumentGroup>> => {
     return api.documents.groups.get(group.id, true, true, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
@@ -48,6 +48,13 @@ export namespace DocumentServer {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
+        if (resetAuthOn403 && error.message.includes("Not authorized.")) {
+          // Reset authentication to regain new rights
+          ServerAuth.forgetCredentials();
+          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching document group (${group.name})`, { invalidJwt: ServerAuth.getJwt() });
+          return fetchDocumentGroupWithChildrenAndContent(group, false);
+        }
+
         rollbar.error(`Error fetching documents for document group ${group.name}`, error);
         throw error;
       });
