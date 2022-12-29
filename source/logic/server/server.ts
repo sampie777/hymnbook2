@@ -7,7 +7,7 @@ import { JsonResponse, JsonResponseType } from "./models";
 import { ServerAuth } from "./auth";
 
 export namespace Server {
-  export const fetchSongBundles = (includeOther: boolean = false): Promise<Result<Array<SongBundle>>> => {
+  export const fetchSongBundles = (includeOther: boolean = false, resetAuthOn403: boolean = true): Promise<Result<Array<SongBundle>>> => {
     return api.songBundles.list()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
@@ -18,12 +18,19 @@ export namespace Server {
 
         let bundles: Array<SongBundle> = data.content;
         if (!includeOther) {
-          bundles = bundles.filter(it => it.name !== "Other")
+          bundles = bundles.filter(it => it.name !== "Other");
         }
 
         return new Result({ success: true, data: bundles });
       })
       .catch(error => {
+        if (resetAuthOn403 && error.message.includes("Not authorized.")) {
+          // Reset authentication to regain new rights
+          ServerAuth.forgetCredentials();
+          rollbar.info(`Resetting credentials due to HTTP 401/403 error when fetching all song bundles`);
+          return fetchSongBundles(includeOther, resetAuthOn403 = false);
+        }
+
         rollbar.error(`Error fetching song bundles`, error);
         throw error;
       });
