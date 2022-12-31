@@ -5,7 +5,7 @@ const apiHostUrl = songBundlesApiUrl;
 const apiBaseUrl = `${apiHostUrl}/api/v1`;
 
 const get = (url: string) =>
-  ServerAuth.withJwt(jwt =>
+  ServerAuth.fetchWithJwt(jwt =>
     fetch(url, {
       method: "GET",
       credentials: "include",
@@ -19,7 +19,7 @@ const get = (url: string) =>
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const post = (url: string, data: any = "", authenticate: boolean = true) => {
   if (authenticate) {
-    return ServerAuth.withJwt(jwt => {
+    return ServerAuth.fetchWithJwt(jwt => {
       return fetch(url, {
         method: "POST",
         credentials: "include",
@@ -46,7 +46,7 @@ const post = (url: string, data: any = "", authenticate: boolean = true) => {
   }
 };
 
-const put = (url: string, data: any = "") => ServerAuth.withJwt(jwt =>
+const put = (url: string, data: any = "") => ServerAuth.fetchWithJwt(jwt =>
   fetch(url, {
     method: "PUT",
     credentials: "include",
@@ -58,7 +58,7 @@ const put = (url: string, data: any = "") => ServerAuth.withJwt(jwt =>
     body: JSON.stringify(data)
   }));
 
-const remove = (url: string, data: any = "") => ServerAuth.withJwt(jwt =>
+const remove = (url: string, data: any = "") => ServerAuth.fetchWithJwt(jwt =>
   fetch(url, {
     method: "DELETE",
     credentials: "include",
@@ -69,7 +69,7 @@ const remove = (url: string, data: any = "") => ServerAuth.withJwt(jwt =>
     body: JSON.stringify(data)
   }));
 
-const upload = (url: string, data: FormData) => ServerAuth.withJwt(jwt =>
+const upload = (url: string, data: FormData) => ServerAuth.fetchWithJwt(jwt =>
   fetch(url, {
     method: "POST",
     credentials: "include",

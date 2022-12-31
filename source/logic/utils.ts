@@ -10,7 +10,7 @@ export function dateFrom(date: Date | string): Date {
   return date;
 }
 
-export class Result<T = any > {
+export class Result<T = any> {
   success: boolean;
   message?: string;
   error?: Error;
@@ -132,3 +132,6 @@ export const languageAbbreviationToFullName = (abbreviation: string) => {
 };
 
 export const runAsync = (f: () => any) => setTimeout(f, 0);
+
+export const emptyPromise = (): Promise<null> => new Promise((resolve => resolve(null)));
+export const emptyPromiseWithValue = <T>(value: T): Promise<T> => new Promise((resolve => resolve(value)));
