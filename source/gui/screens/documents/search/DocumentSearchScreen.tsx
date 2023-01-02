@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
 import { rollbar } from "../../../../logic/rollbar";
 import Db from "../../../../logic/db/db";
+import { runAsync } from "../../../../logic/utils";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
@@ -42,28 +43,24 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     setRootGroups([]);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [group, searchText])
-  );
+  useFocusEffect(React.useCallback(() => {
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  }, [group, searchText]));
 
-  useFocusEffect(
-    React.useCallback(() => {
-      onFocus();
-      return onBlur;
-    }, [])
-  );
+  useFocusEffect(React.useCallback(() => {
+    onFocus();
+    return onBlur;
+  }, []));
 
   const onFocus = () => {
     isMounted = true;
-    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange);
+    Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).addListener(onCollectionChange);
   };
 
   const onBlur = () => {
     isMounted = false;
-    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange);
+    Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).removeListener(onCollectionChange);
     setGroup(undefined);
     setRootGroups([]);
     setSearchText("");
@@ -84,18 +81,18 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     return false;
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange: CollectionChangeCallback<DocumentGroup> = () => {
     if (!isMounted) {
       return;
     }
-    reloadRootGroups();
+    runAsync(reloadRootGroups);
   };
 
   const reloadRootGroups = () => {
     try {
       const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
         .filtered(`isRoot = true`);
-      setRootGroups(groups.map(it => it));
+      setRootGroups(Array.from(groups));
     } catch (e: any) {
       rollbar.error("Failed to load document root groups from database: " + e, e);
     }
