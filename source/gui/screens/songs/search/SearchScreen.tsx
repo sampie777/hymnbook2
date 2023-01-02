@@ -200,7 +200,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
           <View style={styles.keyPadRow}>
             <ClearKey onPress={onClearKeyPress} useSmallerFontSize={useSmallerFontSize} />
             <NumberKey number={0} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
-            <BackspaceKey onPress={onDeleteKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <BackspaceKey onPress={onDeleteKeyPress}
+                          onLongPress={onClearKeyPress}
+                          useSmallerFontSize={useSmallerFontSize} />
           </View>
         </View>
       </View>
