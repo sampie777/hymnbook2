@@ -247,7 +247,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     textAlign: "center",
     fontFamily: fontFamily.sansSerifLight,
     color: colors.textLight,
-    borderStyle: "dashed",
+    borderStyle: "solid",
     borderBottomWidth: 2,
     borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140
