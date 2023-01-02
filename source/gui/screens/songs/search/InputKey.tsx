@@ -7,16 +7,18 @@ import { objectToArrayIfNotAlready } from "../../../../logic/utils";
 interface KeyProps {
   children: React.ReactNode,
   onPress: () => void;
+  onLongPress?: () => void,
   extraStyle?: Object;
 }
 
-export const Key: React.FC<KeyProps> = ({ children, onPress, extraStyle }) => {
+export const Key: React.FC<KeyProps> = ({ children, onPress, onLongPress, extraStyle }) => {
   const styles = createStyles(useTheme());
   const keyTextStyle: Array<Object> = [styles.keyText, ...objectToArrayIfNotAlready(extraStyle)];
 
   return (
     <TouchableOpacity style={styles.key}
-                      onPress={onPress}>
+                      onPress={onPress}
+                      onLongPress={onLongPress}>
       <Text style={keyTextStyle}>{children}</Text>
     </TouchableOpacity>
   );
@@ -37,11 +39,16 @@ export const ClearKey: React.FC<{ onPress: () => void, text?: string, useSmaller
                 extraStyle={[styles.specialKeyText, (!useSmallerFontSize ? undefined : styles.specialKeyTextSmaller)]}>{text}</Key>;
   };
 
-export const BackspaceKey: React.FC<{ onPress: () => void, useSmallerFontSize?: boolean }> =
-  ({ onPress, useSmallerFontSize = false }) => {
+export const BackspaceKey: React.FC<{
+  onPress: () => void,
+  onLongPress?: () => void,
+  useSmallerFontSize?: boolean
+}> =
+  ({ onPress, onLongPress, useSmallerFontSize = false }) => {
     const styles = createStyles(useTheme());
     const fontSize = useSmallerFontSize ? styles.keyTextSmaller.fontSize - 8 : styles.keyText.fontSize - 10;
     return <Key onPress={onPress}
+                onLongPress={onLongPress}
                 extraStyle={[styles.specialKeyText, (!useSmallerFontSize ? undefined : styles.specialKeyTextSmaller)]}>
       <Icon name="backspace" size={fontSize} color={styles.keyText.color as string} />
     </Key>;
