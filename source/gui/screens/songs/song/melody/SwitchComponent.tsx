@@ -1,5 +1,4 @@
 import React from "react";
-import { isIOS } from "../../../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 import { StyleSheet, Switch, Text, View } from "react-native";
 
@@ -45,7 +44,7 @@ export const SwitchComponent: React.FC<Props> =
 
 export default SwitchComponent;
 
-const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingVertical: 10,
     marginBottom: 1

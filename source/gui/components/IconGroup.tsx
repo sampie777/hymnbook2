@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
 interface Props {
+  children: React.ReactNode | React.ReactNode[];
 }
 
 /**

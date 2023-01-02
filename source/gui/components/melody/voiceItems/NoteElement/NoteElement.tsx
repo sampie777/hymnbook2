@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import { Animated, StyleSheet } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
 import { AbcConfig } from "../../config";
 import Note from "./Note";
@@ -20,7 +19,7 @@ const NoteElement: React.FC<Props> = ({
                                         showMelodyLines,
                                         animatedScale
                                       }) => {
-  const styles = createStyles(useTheme());
+  const styles = createStyles();
   const noteWidth = AbcGui.calculateNoteWidth(note);
 
   const animatedStyle = {
@@ -62,7 +61,7 @@ const NoteElement: React.FC<Props> = ({
   </Animated.View>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = () => StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "center"

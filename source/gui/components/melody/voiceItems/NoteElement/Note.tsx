@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { AbcConfig } from "../../config";
 import { AbcPitch, StemDirection } from "../../../../../logic/songs/abc/abcjsTypes";
-import { Circle, Color, Ellipse, G, Line, Path, Text } from "react-native-svg";
+import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 
 interface Props {
@@ -114,7 +114,7 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesColor as Color
+  color: colors.notesColor
 });
 
 const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>

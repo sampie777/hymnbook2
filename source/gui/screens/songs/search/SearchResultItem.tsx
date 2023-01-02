@@ -88,7 +88,7 @@ export const SearchResultItem: React.FC<{
     </TouchableOpacity>;
   };
 
-const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,

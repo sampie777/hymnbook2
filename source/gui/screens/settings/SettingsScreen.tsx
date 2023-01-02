@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { Alert, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import Settings from "../../../settings";
 import { ServerAuth } from "../../../logic/server/auth";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
