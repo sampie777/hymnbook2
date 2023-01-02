@@ -62,10 +62,7 @@ buck-out/
 /ios/Pods/
 /vendor/bundle/
 
-gradlew
-gradlew.bat
 debug.keystore
-gradle/
 build (copy)/
 
 sourcemap.android.js
