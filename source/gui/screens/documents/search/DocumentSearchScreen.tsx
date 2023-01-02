@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
+import { rollbar } from "../../../../logic/rollbar";
 import Db from "../../../../logic/db/db";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
@@ -91,10 +92,13 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   };
 
   const reloadRootGroups = () => {
-    const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`isRoot = true`)
-      .map(it => it as unknown as DocumentGroup);
-    setRootGroups(groups);
+    try {
+      const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
+        .filtered(`isRoot = true`);
+      setRootGroups(groups.map(it => it));
+    } catch (e: any) {
+      rollbar.error("Failed to load document root groups from database: " + e, e);
+    }
     setIsLoading(false);
   };
 
@@ -126,7 +130,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       return [];
     }
 
-    return group.groups;
+    return Array.from(group.groups);
   };
 
   const groupsForSearch = () => {
@@ -181,13 +185,14 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     {isLoading || rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
     <ScrollView>
-      {groupsWithSearchResult().map(it => it as DocumentGroup)
+      {groupsWithSearchResult()
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(it => <DocumentGroupItem
           key={it.id}
           group={it}
           searchText={searchText}
-          onPress={onGroupPress} />)}
+          onPress={onGroupPress} />)
+      }
 
       {items().map(it => it as Document)
         .sort((a, b) => a.name.localeCompare(b.name))
