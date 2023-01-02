@@ -24,7 +24,7 @@ Run `yarn android`.
 #### iOS
 
 1. Run `pod install` in `ios/`.
-1. Run `yarn ios` to fire up the simulator.
+2. Run `yarn ios` to fire up the simulator.
 
 ##### Pod install on ARM
 

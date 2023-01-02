@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { AbcConfig } from "../config";
-import { Color, Line } from "react-native-svg";
+import { Line } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 
 interface Props {
@@ -22,7 +22,7 @@ const Lines: React.FC<Props> = ({ width = 1000, scale = 1 }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesLines as Color
+  color: colors.notesLines
 });
 
 export default memo(Lines);
