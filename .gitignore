@@ -24,7 +24,6 @@ ios/.xcode.env.local
 
 # Android/IntelliJ
 #
-build/
 .idea
 .gradle
 local.properties
@@ -68,7 +67,6 @@ gradlew.bat
 debug.keystore
 gradle/
 build (copy)/
-*.hprof
 
 sourcemap.android.js
 sourcemap.ios.js

@@ -2,7 +2,7 @@ import React from "react";
 import { AbcConfig } from "../config";
 import { AbcClef } from "../../../../logic/songs/abc/abcjsTypes";
 import { Animated } from "react-native";
-import { Color, G, Path } from "react-native-svg";
+import { G, Path } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 import Lines from "./Lines";
 import { AnimatedG, AnimatedSvg } from "../../utils";
@@ -70,7 +70,7 @@ const Clef: React.FC<Props> = ({ animatedScale, clef }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notesColor as Color
+  color: colors.notesColor
 });
 
 export default Clef;
