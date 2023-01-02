@@ -4,7 +4,6 @@ import {
   StyleSheet,
   View,
   Platform,
-  Text,
   NativeSyntheticEvent,
   NativeScrollEvent,
   GestureResponderEvent

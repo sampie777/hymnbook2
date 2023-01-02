@@ -55,7 +55,6 @@ const DocumentControls: React.FC<Props> =
         return;
       }
 
-      const newAnimatedVerticalOffset = newScrollDirection > 0 ? 0 : 100;
       setPreviousScrollOffset(scrollOffset);
 
       if (scrollDirection !== 0 && bottomOffset > 5) {

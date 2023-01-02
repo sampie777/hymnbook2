@@ -1,7 +1,7 @@
 import React from "react";
 import { AbcConfig } from "../../config";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
-import { Circle, Color, G, Path, Rect } from "react-native-svg";
+import { Circle, G, Path, Rect } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 
 interface Props {
@@ -85,7 +85,7 @@ const Rest: React.FC<Props> = ({ note }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesColor as Color,
+  color: colors.notesColor,
 })
 
 export default Rest;
