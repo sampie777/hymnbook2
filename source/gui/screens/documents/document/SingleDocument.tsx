@@ -164,7 +164,10 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     parent: HTMLViewNode,
     defaultRenderer: HTMLViewNodeRenderer): ReactNode | undefined => {
     if (node.name === "sup") {
-      return <View key={index}>
+      // Disable auto removing empty views (collapsable=false),
+      // as it causes https://trello.com/c/lgysuHsN/79-bug-some-document-transitions-let-the-app-crash
+      return <View key={index}
+                   collapsable={false}>
         {defaultRenderer(node.children, node)}
       </View>;
     } else if (node.name === "span") {
