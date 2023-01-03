@@ -143,7 +143,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const openVersePicker = (useSong?: Song) => {
     if (useSong === undefined) {
-      rollbar.warning("Can't open versepicker for undefined song. route.params.id=" + route.params.id);
+      rollbar.warning("Can't open versepicker for undefined song.", {
+        "route.params.id": route.params.id,
+        isMounted: isMounted
+      });
       return;
     }
 
@@ -200,7 +203,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
 
     if (maxTries <= 0) {
-      rollbar.warning(`Max scroll tries elapsed for song '${song?.name}' with verseHeights count: ${verseHeights.current == null ? "isNull" : Object.keys(verseHeights.current).length}`);
+      rollbar.warning("Max scroll tries elapsed.", {
+        songName: song?.name,
+        verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+        isMounted: isMounted,
+        selectedVerses: route.params.selectedVerses?.map(it => it.name)
+      });
       scrollToFirstVerse();
       return;
     }
@@ -238,7 +246,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         animated: Settings.animateScrolling
       });
     } catch (e: any) {
-      rollbar.warning(`Failed to scroll to index ${scrollIndex || 0} for song '${song?.name}': ${e}`, e);
+      rollbar.warning(`Failed to scroll to index: ${e}`, {
+        error: e,
+        scrollIndex: scrollIndex,
+        songName: song?.name,
+        verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+        isMounted: isMounted,
+        selectedVerses: route.params.selectedVerses?.map(it => it.name)
+      });
     }
   };
 
@@ -329,7 +344,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               contentContainerStyle={styles.contentSectionList}
               onViewableItemsChanged={onListViewableItemsChanged.current}
               viewabilityConfig={listViewabilityConfig.current}
-              onScrollToIndexFailed={(info) => rollbar.warning(`Failed to scroll to index for song '${song?.name}'`, info)}
+              onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
+                info: info,
+                songName: song?.name,
+                verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+                isMounted: isMounted,
+                viewIndex: viewIndex,
+                selectedVerses: route.params.selectedVerses?.map(it => it.name)
+              })}
               ListFooterComponent={<Footer song={song} />} />
           </ReAnimated.View>
 
