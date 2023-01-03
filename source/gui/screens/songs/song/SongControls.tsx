@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ComponentProps {
-  navigation: NativeStackNavigationProp<ParamList>
+  navigation: NativeStackNavigationProp<ParamList>;
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;
@@ -35,11 +35,11 @@ const SongControls: React.FC<ComponentProps> =
     const styles = createStyles(useTheme());
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
-      navigation.navigate(SongRoute, {
+      requestAnimationFrame(() => navigation.navigate(SongRoute, {
         id: songListSong.song.id,
         songListIndex: songListSong.index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
-      });
+      }));
     };
 
     const canJumpToNextVerse = () => {
@@ -81,7 +81,7 @@ const SongControls: React.FC<ComponentProps> =
       });
     };
 
-    return <View style={styles.container} pointerEvents={'box-none'} >
+    return <View style={styles.container} pointerEvents={"box-none"}>
 
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
@@ -136,7 +136,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     position: "absolute",
     paddingHorizontal: 3,
     bottom: 30,
-    zIndex: 1,
+    zIndex: 1
   },
 
   buttonBase: {
@@ -165,7 +165,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     elevation: 2
   },
   buttonInvert: {
-    backgroundColor: colors.button,
+    backgroundColor: colors.button
   },
 
   buttonText: {

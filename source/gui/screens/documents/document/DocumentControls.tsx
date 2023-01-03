@@ -115,7 +115,7 @@ const DocumentControls: React.FC<Props> =
     const nextDocument = getNextDocument();
 
     const goToDocument = (doc: Document) => {
-      navigation.navigate(DocumentRoute, { id: doc.id });
+      requestAnimationFrame(() => navigation.navigate(DocumentRoute, { id: doc.id }));
     };
 
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
