@@ -70,6 +70,7 @@ const RootNavigation = () => {
 
     <RootNav.Screen name={SongRoute} component={SongDisplayScreen}
                     options={{
+                      animation: Settings.songFadeIn ? undefined : "none",
                       title: ""
                     }}
                     initialParams={{
@@ -88,6 +89,7 @@ const RootNavigation = () => {
 
     <RootNav.Screen name={DocumentRoute} component={SingleDocument}
                     options={{
+                      animation: Settings.songFadeIn ? undefined : "none",
                       title: ""
                     }}
                     initialParams={{
