@@ -25,7 +25,10 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
       theme?.reload();
       Settings.appOpenedTimes++;
       Settings.store();
-      rollbar.setPerson(Settings.authClientName);
+
+      if (Settings.authClientName != null && Settings.authClientName.length > 0) {
+        rollbar.setPerson(Settings.authClientName);
+      }
     });
 
 export const initSongDatabase = () =>
