@@ -43,6 +43,7 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRo
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useRef(true);
+  const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
@@ -60,7 +61,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const animatedScale = new Animated.Value(Settings.songScale);
   const melodyScale = new Animated.Value(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
-  const reAnimatedOpacity = useSharedValue(1);
+  const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -92,9 +93,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     verseHeights.current = {};
 
     if (Settings.songFadeIn) {
-      animate();
-    } else {
-      reAnimatedOpacity.value = 1;
+      animateSongFadeIn();
     }
 
     // Determine which melody tune to show
@@ -160,8 +159,32 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
-  const animate = () => {
+  const animateSongFadeIn = (maxTries = 10) => {
     reAnimatedOpacity.value = 0;
+
+    if (fadeInTimeout.current != null) {
+      clearTimeout(fadeInTimeout.current);
+      fadeInTimeout.current = undefined;
+    }
+
+    if (!isMounted.current) return;
+
+    if (maxTries > 0 && (verseHeights.current == null || Object.keys(verseHeights.current).length == 0)) {
+      // Wait for the verses to load before fading song in, otherwise the screen will look glitchy.
+      fadeInTimeout.current = setTimeout(() => animateSongFadeIn(maxTries - 1), 10);
+      return;
+    }
+
+    if (maxTries <= 0) {
+      rollbar.warning("Max song load animation tries elapsed", {
+        songName: song?.name,
+        verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+        isMounted: isMounted,
+        maxTries: maxTries,
+        SettingsSongFadeIn: Settings.songFadeIn
+      });
+    }
+
     reAnimatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: ReAnimatedEasing.inOut(ReAnimatedEasing.ease)
