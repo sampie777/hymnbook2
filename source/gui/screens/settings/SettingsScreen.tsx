@@ -162,7 +162,7 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"animateScrolling"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Animate song loading"}
-                                  description={"Use fade-in effect when showing a song."}
+                                  description={"Use fade-in effect when showing a song. Useful for e-ink displays. Restart might be required."}
                                   keyName={"songFadeIn"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"'Jump to next verse' button"}
