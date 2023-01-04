@@ -20,7 +20,7 @@ jest.mock("./source/logic/rollbar", () => {
   return {
     rollbar: {
       log: () => undefined,
-      debug: () => undefined,
+      debug: jest.fn(),
       info: () => undefined,
       warning: () => undefined,
       error: () => undefined,
