@@ -22,7 +22,7 @@ class SettingsClass extends SettingsBaseClass {
   coloredVerseTitles = Math.random() > 0.5;
   highlightSelectedVerses = true;
   animateAddedToSongList = true;
-  showMelody = false;
+  showMelody = Platform.OS === "android";
   showMelodyForAllVerses = false;
   longPressForMelodyMenu = true;
   melodyShowedTimes = 0;
