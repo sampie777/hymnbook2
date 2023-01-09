@@ -10,7 +10,7 @@ export function dateFrom(date: Date | string): Date {
   return date;
 }
 
-export class Result<T = any > {
+export class Result<T = any> {
   success: boolean;
   message?: string;
   error?: Error;
@@ -68,7 +68,7 @@ export function isPortraitMode(window: ScaledSize) {
   return window.height >= window.width;
 }
 
-export function openLink(url: string): Promise<any> {
+export function openLink(url?: string): Promise<any> {
   if (!url) {
     rollbar.critical("Trying to open link with empty url: '" + url + "'.");
     return new Promise(_ => {
@@ -132,3 +132,6 @@ export const languageAbbreviationToFullName = (abbreviation: string) => {
 };
 
 export const runAsync = (f: () => any) => setTimeout(f, 0);
+
+export const emptyPromise = (): Promise<null> => new Promise((resolve => resolve(null)));
+export const emptyPromiseWithValue = <T>(value: T): Promise<T> => new Promise((resolve => resolve(value)));

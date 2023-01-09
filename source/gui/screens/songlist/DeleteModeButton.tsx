@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
 }
 
 const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated = false }) => {
-  const styles = createStyles(useTheme());
+  const styles = createStyles();
   return <TouchableOpacity onPress={onPress}
                            onLongPress={onLongPress}
                            style={styles.deleteModeButton}>
@@ -21,7 +20,7 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
   </TouchableOpacity>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = () => StyleSheet.create({
   deleteModeButton: {
     paddingHorizontal: 15,
     right: 5,

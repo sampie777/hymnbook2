@@ -1,8 +1,8 @@
 import React from "react";
-import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SongListSongModel } from "../../../../logic/db/models/SongListModel";
 import SongList from "../../../../logic/songs/songList";
-import { routes, ParamList } from "../../../../navigation";
+import { ParamList, SongRoute } from "../../../../navigation";
 import Settings from "../../../../settings";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { getNextVerseIndex } from "../../../../logic/songs/utils";
@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ComponentProps {
-  navigation: NativeStackNavigationProp<ParamList>
+  navigation: NativeStackNavigationProp<ParamList>;
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;
@@ -35,11 +35,11 @@ const SongControls: React.FC<ComponentProps> =
     const styles = createStyles(useTheme());
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
-      navigation.navigate(routes.Song, {
+      requestAnimationFrame(() => navigation.navigate(SongRoute, {
         id: songListSong.song.id,
         songListIndex: songListSong.index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
-      });
+      }));
     };
 
     const canJumpToNextVerse = () => {
@@ -81,7 +81,7 @@ const SongControls: React.FC<ComponentProps> =
       });
     };
 
-    return <View style={styles.container} pointerEvents={'box-none'} >
+    return <View style={styles.container} pointerEvents={"box-none"}>
 
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
@@ -136,7 +136,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     position: "absolute",
     paddingHorizontal: 3,
     bottom: 30,
-    zIndex: 1,
+    zIndex: 1
   },
 
   buttonBase: {
@@ -165,7 +165,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     elevation: 2
   },
   buttonInvert: {
-    backgroundColor: colors.button,
+    backgroundColor: colors.button
   },
 
   buttonText: {

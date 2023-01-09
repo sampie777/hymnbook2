@@ -124,7 +124,7 @@ export namespace ABC {
       .map(it => it.trim())
       .forEach(it => {
         if (it.startsWith("w:") || it.startsWith("W:")) {
-          lyrics.push(it.substr(2).trim());
+          lyrics.push(it.substring(2).trim());
         } else {
           notes.push(it);
         }

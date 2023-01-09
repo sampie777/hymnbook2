@@ -1,7 +1,7 @@
 import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import { AbcConfig } from "../../config";
-import { Color, Line } from "react-native-svg";
+import { Line } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
 import LinesSvg from "../../other/LinesSvg";
 import { AnimatedG, AnimatedSvg } from "../../../utils";
@@ -31,7 +31,7 @@ const BarThin: React.FC<Props> = ({ animatedScale }) => {
       <AnimatedG scale={animatedScale} y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
         <Line x1={AbcConfig.lineBarThinWidth / 2} y1={0}
               x2={AbcConfig.lineBarThinWidth / 2} y2={4 * AbcConfig.lineSpacing}
-              stroke={styles.bar.color as Color}
+              stroke={styles.bar.color}
               strokeWidth={AbcConfig.lineBarThinWidth} />
       </AnimatedG>
     </AnimatedSvg>

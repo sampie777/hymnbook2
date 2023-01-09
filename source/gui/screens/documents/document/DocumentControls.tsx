@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
-import { NativeStackNavigationProp } from "react-native-screens/src/native-stack/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
-import { ParamList, routes } from "../../../../navigation";
+import { DocumentRoute, ParamList } from "../../../../navigation";
 import { Document } from "../../../../logic/db/models/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
@@ -26,18 +26,16 @@ const DocumentControls: React.FC<Props> =
      bottomOffset
    }) => {
     // Persist this value between renders due to receiving new props (scrollOffset)
-    const animatedVerticalOffset = useRef(new Animated.Value<number>(0));
+    const animatedVerticalOffset = useRef(useSharedValue(0));
     const [previousScrollOffset, setPreviousScrollOffset] = useState(0);
     const [scrollDirection, setScrollDirection] = useState(0);
 
     const styles = createStyles(useTheme());
-    const animatedStyle = {
-      buttonBase: {
-        transform: [
-          { translateY: animatedVerticalOffset.current }
-        ]
-      }
-    };
+    const animatedStyleButtonBase = useAnimatedStyle(() => ({
+      transform: [
+        { translateY: animatedVerticalOffset.current.value }
+      ]
+    }));
 
     useEffect(() => {
       if (scrollOffset === undefined) {
@@ -57,7 +55,6 @@ const DocumentControls: React.FC<Props> =
         return;
       }
 
-      const newAnimatedVerticalOffset = newScrollDirection > 0 ? 0 : 100;
       setPreviousScrollOffset(scrollOffset);
 
       if (scrollDirection !== 0 && bottomOffset > 5) {
@@ -76,13 +73,11 @@ const DocumentControls: React.FC<Props> =
     }, [forceShow]);
 
     const startShowAnimation = (show: boolean) => {
-      Animated.timing(animatedVerticalOffset.current, {
-        toValue: show ? 0 : 100,
+      animatedVerticalOffset.current.value = withTiming(show ? 0 : 100, {
         duration: 300,
         easing: Easing.inOut(Easing.ease)
-      })
-        .start(() => setScrollDirection(0));
-    }
+      }, () => runOnJS(setScrollDirection)(0));
+    };
 
     const getPreviousDocument = () => {
       if (document === undefined || document.index <= 0) {
@@ -120,16 +115,14 @@ const DocumentControls: React.FC<Props> =
     const nextDocument = getNextDocument();
 
     const goToDocument = (doc: Document) => {
-      navigation.navigate(routes.Document, {
-        id: doc.id
-      });
+      requestAnimationFrame(() => navigation.navigate(DocumentRoute, { id: doc.id }));
     };
 
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
     return <View style={styles.container} pointerEvents={"box-none"}>
       {previousDocument === undefined ? undefined :
-        <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyle.buttonBase]}
+        <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(previousDocument)}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
@@ -144,7 +137,7 @@ const DocumentControls: React.FC<Props> =
         (document === undefined ? undefined :
             <View style={styles.buttonBase} />
         ) :
-        <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyle.buttonBase]}
+        <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(nextDocument)}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}

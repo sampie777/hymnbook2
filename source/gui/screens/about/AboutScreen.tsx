@@ -5,13 +5,13 @@ import Config from "react-native-config";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { getVersion } from "react-native-device-info";
 import UrlLink from "../../components/UrlLink";
-import { routes } from "../../../navigation";
+import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
 
-const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({ navigation }) => {
+const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute> }> = ({ navigation }) => {
   const styles = createStyles(useTheme());
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
@@ -88,7 +88,7 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<any> }> = ({
           </UrlLink>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate(routes.PrivacyPolicy)}>
+        <TouchableOpacity onPress={() => navigation.navigate(PrivacyPolicyRoute)}>
           <Text style={styles.webpageLink}>
             Privacy Policy
           </Text>

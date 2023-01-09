@@ -7,6 +7,19 @@ export enum VersePickerMethod {
   AddToSongListAndShowSearch,
 }
 
+export const HomeRoute = "Home";
+export const SettingsRoute = "Settings";
+export const AboutRoute = "About";
+export const PrivacyPolicyRoute = "PrivacyPolicy";
+export const OtherMenuRoute = "OtherMenu";
+export const DatabasesRoute = "Databases";
+export const SongSearchRoute = "SongSearch";
+export const SongListRoute = "SongList";
+export const SongRoute = "Song";
+export const VersePickerRoute = "VersePicker";
+export const DocumentSearchRoute = "DocumentSearch";
+export const DocumentRoute = "Document";
+
 export type ParamList = {
   Home: undefined,
   Settings: undefined,
@@ -37,20 +50,3 @@ export type ParamList = {
     id: number;
   },
 }
-
-export const routes = {
-  Home: "Home" as keyof ParamList,
-  Settings: "Settings" as keyof ParamList,
-  About: "About" as keyof ParamList,
-  PrivacyPolicy: "Privacy policy" as keyof ParamList,
-  OtherMenu: "More" as keyof ParamList,
-  Databases: "Databases" as keyof ParamList,
-
-  SongSearch: "Songs" as keyof ParamList,
-  SongList: "Song list" as keyof ParamList,
-  Song: "Song" as keyof ParamList,
-  VersePicker: "VersePicker" as keyof ParamList,
-
-  DocumentSearch: "Documents" as keyof ParamList,
-  Document: "Document" as keyof ParamList
-};

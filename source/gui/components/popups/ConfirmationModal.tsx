@@ -14,10 +14,10 @@ interface ComponentProps {
   title?: string;
   message?: string;
   showCloseButton?: boolean;
+  children?: React.ReactNode;
 }
 
 const ConfirmationModal: React.FC<ComponentProps> = ({
-                                                       children,
                                                        isOpen,
                                                        onClose,
                                                        onConfirm,
@@ -27,7 +27,8 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        confirmText = "Confirm",
                                                        title,
                                                        message,
-                                                       showCloseButton = false
+                                                       showCloseButton = false,
+                                                       children,
                                                      }) => {
   const styles = createStyles(useTheme());
   if (onDeny === undefined) {

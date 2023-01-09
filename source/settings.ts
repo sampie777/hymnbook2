@@ -39,6 +39,9 @@ class SettingsClass extends SettingsBaseClass {
 
   // Survey
   surveyCompleted = false;
+
+  // Other
+  shareUsageData = true;
 }
 
 const Settings = new SettingsClass();

@@ -5,7 +5,7 @@ import SongList from "../../../logic/songs/songList";
 import Settings from "../../../settings";
 import { objectToArrayIfNotAlready } from "../../../logic/utils";
 import { CollectionChangeCallback } from "realm";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
@@ -16,30 +16,14 @@ interface Props {
 
 const SongListMenuIcon: React.FC<Props> = ({ size, color, style }) => {
   const previousSongListSize = useRef(-1);
-  const animatedValue = useRef(new Animated.Value<number>(0));
-  const animatedStyles = {
-    songListIcon: {
-      transform: [
-        {
-          scale: Animated.interpolate(animatedValue.current,
-            {
-              inputRange: [0, 100],
-              outputRange: [1, 4]
-            })
-        }
-      ],
-      zIndex: Animated.interpolate(animatedValue.current,
-        {
-          inputRange: [0, 100],
-          outputRange: [0, 100]
-        }),
-      opacity: Animated.interpolate(animatedValue.current,
-        {
-          inputRange: [0, 100],
-          outputRange: [1, 0.8]
-        })
-    }
-  };
+  const animatedValue = useRef(useSharedValue(0));
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: interpolate(animatedValue.current.value, [0, 100], [1, 4]) }
+    ],
+    zIndex: interpolate(animatedValue.current.value, [0, 100], [0, 100]),
+    opacity: interpolate(animatedValue.current.value, [0, 100], [1, 0.8])
+  }));
 
   useEffect(() => {
     onLaunch();
@@ -69,25 +53,21 @@ const SongListMenuIcon: React.FC<Props> = ({ size, color, style }) => {
       return;
     }
 
-    Animated.timing(animatedValue.current, {
-      toValue: 100,
-      duration: 50,
-      easing: Easing.inOut(Easing.ease)
-    })
-      .start(() =>
-        Animated.timing(animatedValue.current, {
-          toValue: 0,
+    animatedValue.current.value = withTiming(100, {
+        duration: 50,
+        easing: Easing.inOut(Easing.ease)
+      }, () =>
+        animatedValue.current.value = withTiming(0, {
           duration: 500,
           easing: Easing.inOut(Easing.ease)
         })
-          .start()
-      );
+    );
   };
 
   const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
   return <AnimatedIcon name="list-ul" size={size} color={color}
-                       style={[...objectToArrayIfNotAlready(style), animatedStyles.songListIcon]} />;
+                       style={[...objectToArrayIfNotAlready(style), animatedStyle]} />;
 };
 
 export default SongListMenuIcon;

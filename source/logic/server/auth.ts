@@ -4,8 +4,9 @@ import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
 import { throwErrorsIfNotOk } from "../apiUtils";
+import { emptyPromiseWithValue } from "../utils";
 
-class AccessRequestResponse {
+export class AccessRequestResponse {
   status: AccessRequestStatus;
   requestID: string | null;
   reason: string | null;
@@ -29,13 +30,13 @@ export class ServerAuth {
   }
 
   static authenticate(): Promise<string> {
-    if (Settings.authRequestId === "") {
+    if (Settings.authRequestId === undefined || Settings.authRequestId === "") {
       return this._requestAccess();
-    } else if (Settings.authJwt === "") {
+    } else if (Settings.authJwt === undefined || Settings.authJwt === "") {
       return this._retrieveAccessJWT();
     } else {
       // Already authenticated
-      return new Promise<string>(() => "");
+      return emptyPromiseWithValue(this.getJwt());
     }
   }
 
@@ -46,17 +47,28 @@ export class ServerAuth {
     return Settings.authJwt;
   }
 
-  static withJwt(callback: (jwt: string) => Promise<any>): Promise<any> {
+  static fetchWithJwt(callback: (jwt: string) => Promise<Response>, resetAuthIfInvalidRetries: number = 1): Promise<Response> {
     if (!Settings.useAuthentication) {
       return callback("");
     }
 
-    if (this.isAuthenticated()) {
-      return callback(this.getJwt());
-    }
-
     return this.authenticate()
-      .then(jwt => callback(jwt));
+      .then(jwt => callback(jwt))
+      .then(response => {
+        if (resetAuthIfInvalidRetries <= 0) return response;
+        if (!(response.status == 401 || response.status == 403)) return response;
+
+        rollbar.info(`Resetting credentials due to authentication error`, {
+          invalidJwt: ServerAuth.getJwt(),
+          httpStatus: response.status,
+          url: response.url,
+        });
+
+        // Reset authentication to regain new rights and try again
+        ServerAuth.forgetCredentials();
+
+        return this.fetchWithJwt(callback, resetAuthIfInvalidRetries - 1);
+      });
   }
 
   static forgetCredentials() {
@@ -106,10 +118,13 @@ export class ServerAuth {
       });
   }
 
+  /**
+   * Returns promise with <JWT string or empty if failed>
+   */
   static _retrieveAccessJWT(): Promise<string> {
     if (Settings.authRequestId == null || Settings.authRequestId === "") {
       rollbar.error("Cannot retrieve JWT if requestId is null or empty");
-      return new Promise<string>(() => "");
+      return emptyPromiseWithValue("");
     }
 
     return authApi.auth.retrieveAccess(this.getDeviceId(), Settings.authRequestId)

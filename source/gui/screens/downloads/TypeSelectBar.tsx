@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import Settings from "../../../settings";
 
 export enum Types {
   Songs = "Songs",

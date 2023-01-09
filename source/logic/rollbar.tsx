@@ -7,7 +7,7 @@ import config from "../config";
 const uniqueId = getUniqueId();
 
 const configuration = new Configuration(
-  Config.ROLLBAR_API_KEY,
+  Config.ROLLBAR_API_KEY || "",
   {
     captureUncaught: true,
     captureUnhandledRejections: true,

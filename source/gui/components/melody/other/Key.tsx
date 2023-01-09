@@ -2,7 +2,7 @@ import React from "react";
 import { Animated } from "react-native";
 import { AbcConfig } from "../config";
 import { KeySignature } from "../../../../logic/songs/abc/abcjsTypes";
-import { Color, Text } from "react-native-svg";
+import { Text } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../ThemeProvider";
 import Lines from "./Lines";
 import { AnimatedG, AnimatedSvg } from "../../utils";
@@ -63,7 +63,7 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notesColor as Color
+  color: colors.notesColor
 });
 
 export default Key;

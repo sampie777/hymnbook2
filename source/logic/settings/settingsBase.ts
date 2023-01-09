@@ -10,10 +10,9 @@ class SettingsProvider {
     }
 
     Db.settings.realm().write(() => {
-      // @ts-ignore
-      Db.settings.realm().create(SettingSchema.name,
+      Db.settings.realm().create<Setting>(SettingSchema.name,
         new Setting({ key, value }),
-        "all");
+        Realm.UpdateMode.All);
     });
   }
 
