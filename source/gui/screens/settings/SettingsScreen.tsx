@@ -224,10 +224,6 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Use authentication with backend"}
-                                  description={"Disabling this probably won't help you."}
-                                  keyName={"useAuthentication"}
-                                  isVisible={showAdvancedSettings} />
           <SettingComponent title={"Authentication status with backend"}
                             value={authenticationStatus}
                             isVisible={showAdvancedSettings}
