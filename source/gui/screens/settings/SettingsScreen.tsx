@@ -176,8 +176,8 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Song melody"} isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Show melody (experimental)"}
-                                  description={"Show song melody above lyrics. This is a work in progress and might not function as it should."}
+          <SettingSwitchComponent title={"Enable melodies (experimental)"}
+                                  description={"Song melody can be shown above the lyrics. This is a work in progress and might not function as it should."}
                                   keyName={"showMelody"}
                                   isVisible={showAdvancedSettings}
                                   onPress={((setValue, key, newValue) => {
