@@ -25,6 +25,7 @@ class SettingsClass extends SettingsBaseClass {
   showMelody = false;
   showMelodyForAllVerses = false;
   longPressForMelodyMenu = true;
+  melodyShowedTimes = 0;
 
   // Documents
   documentsMultiKeywordSearch = true;

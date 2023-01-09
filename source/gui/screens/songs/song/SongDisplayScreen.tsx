@@ -36,6 +36,7 @@ import SongControls from "./SongControls";
 import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
+import MelodyHelpModal from "./melody/MelodyHelpModal";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -53,6 +54,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
+  const [showMelodyHelp, setShowMelodyHelp] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
@@ -114,6 +116,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       song.lastUsedMelody = selectedMelody;
     });
   }, [selectedMelody]);
+
+  useEffect(() => {
+    if (!showMelody) return;
+
+    if (Settings.melodyShowedTimes == 0) {
+      setShowMelodyHelp(true);
+    }
+
+    Settings.melodyShowedTimes++;
+  }, [showMelody]);
 
   React.useLayoutEffect(() => {
     if (song === undefined) {
@@ -351,6 +363,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           showMelodyForAllVerses={showMelodyForAllVerses}
           setShowMelodyForAllVerses={setShowMelodyForAllVerses}
           melodyScale={melodyScale} />}
+
+      {!showMelodyHelp || showMelodySettings ? undefined :
+        <MelodyHelpModal onClose={() => setShowMelodyHelp(false)} />}
 
       <PinchGestureHandler
         ref={pinchGestureHandlerRef}
