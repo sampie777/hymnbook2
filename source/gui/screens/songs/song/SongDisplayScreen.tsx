@@ -9,7 +9,7 @@ import {
   State
 } from "react-native-gesture-handler";
 import ReAnimated, {
-  Easing as ReAnimatedEasing,
+  Easing as ReAnimatedEasing, runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming
@@ -48,6 +48,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const flatListComponentRef = useRef<FlatList<any>>();
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const verseHeights = useRef<Record<number, number>>({});
+  const shouldMelodyShowWhenSongIsLoaded = useRef(false);
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
@@ -160,6 +161,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const animateSongFadeIn = (maxTries = 10) => {
+    if (showMelody) {
+      // Disable melody while loading new song to improve loading speed
+      // Re-enable melody after song is completely loaded.
+      shouldMelodyShowWhenSongIsLoaded.current = showMelody;
+      setShowMelody(false);
+    }
+
     reAnimatedOpacity.value = 0;
 
     if (fadeInTimeout.current != null) {
@@ -188,7 +196,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     reAnimatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: ReAnimatedEasing.inOut(ReAnimatedEasing.ease)
-    });
+    }, () => runOnJS(afterSongFadeIn)());
+  };
+
+  const afterSongFadeIn = () => {
+    setShowMelody(shouldMelodyShowWhenSongIsLoaded.current);
+    shouldMelodyShowWhenSongIsLoaded.current = false;
   };
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
