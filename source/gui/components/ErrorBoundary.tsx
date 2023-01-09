@@ -4,6 +4,7 @@ import { rollbar } from "../../logic/rollbar";
 import { defaultFontFamilies } from "../../logic/theme";
 
 interface ComponentProps {
+  children: React.ReactNode
 }
 
 interface ComponentState {

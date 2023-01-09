@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList, routes, VersePickerMethod } from "../../../../navigation";
+import { ParamList, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
@@ -55,7 +55,7 @@ export const SearchResultItem: React.FC<{
     };
 
     const selectVersesAndAddToSongList = () => {
-      navigation.navigate(routes.VersePicker, {
+      navigation.navigate(VersePickerRoute, {
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
         songId: song.id,
@@ -88,7 +88,7 @@ export const SearchResultItem: React.FC<{
     </TouchableOpacity>;
   };
 
-const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,

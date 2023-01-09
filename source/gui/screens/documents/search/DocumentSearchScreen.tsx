@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { NativeStackScreenProps } from "react-native-screens/src/native-stack/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
+import { rollbar } from "../../../../logic/rollbar";
 import Db from "../../../../logic/db/db";
+import { runAsync } from "../../../../logic/utils";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
-import { ParamList, routes } from "../../../../navigation";
+import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
@@ -17,7 +19,7 @@ import DownloadInstructions from "./DownloadInstructions";
 import SearchInput from "./SearchInput";
 
 
-const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ navigation }) => {
+const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
@@ -41,28 +43,24 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
     setRootGroups([]);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [group, searchText])
-  );
+  useFocusEffect(React.useCallback(() => {
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  }, [group, searchText]));
 
-  useFocusEffect(
-    React.useCallback(() => {
-      onFocus();
-      return onBlur;
-    }, [])
-  );
+  useFocusEffect(React.useCallback(() => {
+    onFocus();
+    return onBlur;
+  }, []));
 
   const onFocus = () => {
     isMounted = true;
-    Db.documents.realm().objects(DocumentGroupSchema.name).addListener(onCollectionChange);
+    Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).addListener(onCollectionChange);
   };
 
   const onBlur = () => {
     isMounted = false;
-    Db.documents.realm().objects(DocumentGroupSchema.name).removeListener(onCollectionChange);
+    Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).removeListener(onCollectionChange);
     setGroup(undefined);
     setRootGroups([]);
     setSearchText("");
@@ -83,18 +81,21 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
     return false;
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange: CollectionChangeCallback<DocumentGroup> = () => {
     if (!isMounted) {
       return;
     }
-    reloadRootGroups();
+    runAsync(reloadRootGroups);
   };
 
   const reloadRootGroups = () => {
-    const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`isRoot = true`)
-      .map(it => it as unknown as DocumentGroup);
-    setRootGroups(groups);
+    try {
+      const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
+        .filtered(`isRoot = true`);
+      setRootGroups(Array.from(groups));
+    } catch (e: any) {
+      rollbar.error("Failed to load document root groups from database: " + e, e);
+    }
     setIsLoading(false);
   };
 
@@ -114,7 +115,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
   };
 
   const onDocumentPress = (document: Document) => {
-    navigation.navigate(routes.Document, { id: document.id });
+    navigation.navigate(DocumentRoute, { id: document.id });
   };
 
   const groups = (): Array<DocumentGroup> => {
@@ -126,7 +127,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
       return [];
     }
 
-    return group.groups;
+    return Array.from(group.groups);
   };
 
   const groupsForSearch = () => {
@@ -181,13 +182,14 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList>> = ({ nav
     {isLoading || rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
     <ScrollView>
-      {groupsWithSearchResult().map(it => it as DocumentGroup)
+      {groupsWithSearchResult()
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(it => <DocumentGroupItem
           key={it.id}
           group={it}
           searchText={searchText}
-          onPress={onGroupPress} />)}
+          onPress={onGroupPress} />)
+      }
 
       {items().map(it => it as Document)
         .sort((a, b) => a.name.localeCompare(b.name))

@@ -1,14 +1,15 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { Alert, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import Settings from "../../../settings";
 import { ServerAuth } from "../../../logic/server/auth";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
-import { useFocusEffect } from "@react-navigation/native";
-import { SettingComponent, SettingsSliderComponent, SettingSwitchComponent } from "./SettingComponent";
 import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
+import { Analytics } from "../../../logic/analytics";
 import { capitalize, isAndroid } from "../../../logic/utils";
+import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { SettingComponent, SettingsSliderComponent, SettingSwitchComponent } from "./SettingComponent";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
   const styles = createStyles(useTheme());
@@ -56,8 +57,8 @@ const SettingsScreen: React.FC = () => {
 
   const onBlur = () => {
     Settings.store();
+    Analytics.uploadSettings();
   };
-
 
   const reloadSettings = () => {
     setReloading(true);
@@ -162,7 +163,7 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"animateScrolling"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Animate song loading"}
-                                  description={"Use fade-in effect when showing a song."}
+                                  description={"Use fade-in effect when showing a song. Useful for e-ink displays. Restart might be required."}
                                   keyName={"songFadeIn"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"'Jump to next verse' button"}
@@ -209,12 +210,18 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"showSongListCountBadge"}
                                   isVisible={showAdvancedSettings} />
 
-            <Header title={"Documents"} isVisible={showAdvancedSettings} />
-            <SettingSwitchComponent title={"Multi keyword search for documents"}
-                                    description={"When enabled, each keyword will be matched individually instead of " +
-                                      "the whole search phrase. This will yield more results."}
-                                    keyName={"documentsMultiKeywordSearch"}
-                                    isVisible={showAdvancedSettings}/>
+          <Header title={"Documents"} isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Multi keyword search for documents"}
+                                  description={"When enabled, each keyword will be matched individually instead of " +
+                                    "the whole search phrase. This will yield more results."}
+                                  keyName={"documentsMultiKeywordSearch"}
+                                  isVisible={showAdvancedSettings} />
+
+          <Header title={"Other"} isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Share usage data"}
+                                  description={"Help us improve this app based on how you use the app, by sharing this app's settings with us."}
+                                  keyName={"shareUsageData"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use authentication with backend"}

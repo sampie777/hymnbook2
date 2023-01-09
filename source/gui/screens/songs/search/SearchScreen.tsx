@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
-import { routes, ParamList, VersePickerMethod } from "../../../../navigation";
+import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { getFontScale } from "react-native-device-info";
 import Settings from "../../../../settings";
@@ -11,14 +11,23 @@ import { SongSchema } from "../../../../logic/db/models/SongsSchema";
 import { isIOS, isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import { Dimensions, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  EmitterSubscription,
+  FlatList,
+  ScaledSize,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 
 
-const SearchScreen: React.FC<BottomTabScreenProps<ParamList, "SongSearch">> =
+const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
   ({ navigation }) => {
+    const dimensionChangeEventSubscription = useRef<EmitterSubscription>();
     const [isPortrait, setIsPortrait] = useState(isPortraitMode(Dimensions.get("window")));
     const [inputValue, setInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
@@ -46,13 +55,13 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, "SongSearch">> =
     );
 
     const onLaunch = () => {
-      Dimensions.addEventListener("change", handleDimensionsChange);
+      dimensionChangeEventSubscription.current = Dimensions.addEventListener("change", handleDimensionsChange);
       getFontScale().then(scale => setUseSmallerFontSize(scale >= 1.4));
     };
 
     const onExit = () => {
       clearScreen();
-      Dimensions.removeEventListener("change", handleDimensionsChange);
+      dimensionChangeEventSubscription.current?.remove();
     };
 
     const onFocus = () => {
@@ -119,11 +128,11 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, "SongSearch">> =
     };
 
     const onSearchResultItemPress = (song: Song) => {
-      navigation.navigate(routes.Song, { id: song.id });
+      navigation.navigate(SongRoute, { id: song.id });
     };
 
     const onSearchResultItemLongPress = (song: Song) => {
-      navigation.navigate(routes.VersePicker, {
+      navigation.navigate(VersePickerRoute, {
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
         songId: song.id,
@@ -191,7 +200,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, "SongSearch">> =
           <View style={styles.keyPadRow}>
             <ClearKey onPress={onClearKeyPress} useSmallerFontSize={useSmallerFontSize} />
             <NumberKey number={0} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />
-            <BackspaceKey onPress={onDeleteKeyPress} useSmallerFontSize={useSmallerFontSize} />
+            <BackspaceKey onPress={onDeleteKeyPress}
+                          onLongPress={onClearKeyPress}
+                          useSmallerFontSize={useSmallerFontSize} />
           </View>
         </View>
       </View>
@@ -238,7 +249,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     textAlign: "center",
     fontFamily: fontFamily.sansSerifLight,
     color: colors.textLight,
-    borderStyle: "dashed",
+    borderStyle: "solid",
     borderBottomWidth: 2,
     borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140

@@ -202,7 +202,7 @@ export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => 
     return undefined;
   }
 
-  return Db.songs.realm().objectForPrimaryKey(SongSchema.name, id);
+  return Db.songs.realm().objectForPrimaryKey(SongSchema.name, id) ?? undefined;
 };
 
 export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: SongBundle): boolean => {
