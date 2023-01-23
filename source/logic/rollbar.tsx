@@ -24,7 +24,8 @@ const configuration = new Configuration(
       person: {
         id: uniqueId
       }
-    }
+    },
+    captureDeviceInfo: true,
   });
 
 export const rollbar = new Client(configuration);
