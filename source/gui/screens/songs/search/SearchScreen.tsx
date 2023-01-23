@@ -43,7 +43,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     }, []);
 
     useEffect(() => {
-      fetchSearchResults();
+      requestAnimationFrame(fetchSearchResults);
       return () => undefined;
     }, [inputValue]);
 
