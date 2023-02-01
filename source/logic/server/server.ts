@@ -23,7 +23,11 @@ export namespace Server {
         return new Result({ success: true, data: bundles });
       })
       .catch(error => {
-        rollbar.error(`Error fetching song bundles`, error);
+        rollbar.error(`Error fetching song bundles`, {
+          error: error,
+          errorType: error.constructor.name,
+          includeOther: includeOther
+        });
         throw error;
       });
   };
@@ -40,7 +44,11 @@ export namespace Server {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
-        rollbar.error(`Error fetching songs for song bundle ${bundle.name}`, error);
+        rollbar.error(`Error fetching songs for song bundle`, {
+          error: error,
+          errorType: error.constructor.name,
+          songBundle: bundle
+        });
         throw error;
       });
   };
