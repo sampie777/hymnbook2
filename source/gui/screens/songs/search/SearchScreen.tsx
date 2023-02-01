@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
+import {
+  ParamList,
+  SongRoute,
+  SongSearchRoute,
+  SongStringSearchRoute,
+  VersePickerMethod,
+  VersePickerRoute
+} from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { getFontScale } from "react-native-device-info";
 import Settings from "../../../../settings";
@@ -17,12 +24,13 @@ import {
   FlatList,
   ScaledSize,
   StyleSheet,
-  Text,
+  Text, TouchableOpacity,
   View
 } from "react-native";
 import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -34,8 +42,6 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
 
     const styles = createStyles(useTheme());
-    const maxInputLength = config.maxSearchInputLength;
-    const maxResultsLength = config.maxSearchResultsLength;
 
     useEffect(() => {
       onLaunch();
@@ -89,7 +95,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onNumberKeyPress = (number: number) => {
-      if (inputValue.length >= maxInputLength) {
+      if (inputValue.length >= config.maxSearchInputLength) {
         return;
       }
 
@@ -122,7 +128,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
       const results = Db.songs.realm().objects<Song>(SongSchema.name)
         .sorted("name")
-        .filtered(`number = ${query} OR name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
+        .filtered(`number = ${query} OR name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${config.maxSearchResultsLength})`);
 
       setSearchResult(results as unknown as Array<Song>);
     };
@@ -145,6 +151,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       setInputValue("");
     };
 
+    const onStringSearchPress = () => {
+      navigation.navigate(SongStringSearchRoute);
+    };
+
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem navigation={navigation}
                         song={item}
@@ -159,15 +169,25 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
         <PopupsComponent navigation={navigation} />
 
         <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
-          <View style={styles.inputContainer}>
-            <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
-              number:</Text>
+          <View style={styles.topContainer}>
+            <View style={styles.topContainerLeft} />
 
-            <View style={styles.inputTextView}>
-              <View style={styles.inputTextViewContainer}>
-                <Text
-                  style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>{inputValue}</Text>
+            <View style={styles.topContainerCenter}>
+              <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
+                number:</Text>
+
+              <View style={styles.inputTextView}>
+                <View style={styles.inputTextViewContainer}>
+                  <Text
+                    style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>{inputValue}</Text>
+                </View>
               </View>
+            </View>
+
+            <View style={styles.topContainerRight}>
+              <TouchableOpacity onPress={onStringSearchPress}>
+                <Icon name={"search"} style={styles.searchIcon} />
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -223,9 +243,23 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     flex: 1
   },
 
-  inputContainer: {
+  topContainer: {
+    flex: 1,
+    flexDirection: "row"
+  },
+  topContainerLeft: {
+    flex: 1
+  },
+  topContainerCenter: {
+    flex: 2,
     alignItems: "center"
   },
+  topContainerRight: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+
   infoText: {
     fontSize: 18,
     color: colors.text,
@@ -256,6 +290,12 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   },
   inputTextFieldSmaller: {
     fontSize: 40
+  },
+
+  searchIcon: {
+    fontSize: 30,
+    padding: 15,
+    color: colors.textLighter
   },
 
   searchList: {
