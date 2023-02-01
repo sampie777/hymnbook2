@@ -90,7 +90,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         if (!isMounted) return;
         setServerBundles(result.data!);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}`))
+      .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}\n\nTry again later.`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -159,7 +159,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         saveSongBundle(result.data!);
       })
       .catch(error =>
-        Alert.alert("Error", `Error downloading ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error downloading ${bundle.name}: ${error}\n\nTry again later.`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -188,7 +188,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
         result.throwIfException();
       })
       .catch(error =>
-        Alert.alert("Error", `Error updating ${bundle.name}: ${error}`))
+        Alert.alert("Error", `Error updating ${bundle.name}: ${error}\n\nTry again later.`))
       .finally(() => {
         if (!isMounted) return;
         setLocalBundles([]);

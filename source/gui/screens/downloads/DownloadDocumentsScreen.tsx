@@ -90,7 +90,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         if (!isMounted) return;
         setServerGroups(result.data!);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}`))
+      .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}\n\nTry again later.`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -158,7 +158,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         saveDocumentGroup(result.data!);
       })
       .catch(error =>
-        Alert.alert("Error", `Error downloading ${group.name}: ${error}`))
+        Alert.alert("Error", `Error downloading ${group.name}: ${error}\n\nTry again later.`))
       .finally(() => {
         if (!isMounted) return;
         setIsLoading(false);
@@ -187,7 +187,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
         result.throwIfException();
       })
       .catch(error =>
-        Alert.alert("Error", `Error updating ${group.name}: ${error}`))
+        Alert.alert("Error", `Error updating ${group.name}: ${error}\n\nTry again later.`))
       .finally(() => {
         if (!isMounted) return;
         setLocalGroups([]);

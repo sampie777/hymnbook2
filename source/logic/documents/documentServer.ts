@@ -23,7 +23,11 @@ export namespace DocumentServer {
         return new Result({ success: true, data: groups });
       })
       .catch((error: Error) => {
-        rollbar.error(`Error fetching document groups`, error);
+        rollbar.error(`Error fetching document groups`, {
+          error: error,
+          errorType: error.constructor.name,
+          includeOther: includeOther
+        });
         throw error;
       });
   };
@@ -40,7 +44,11 @@ export namespace DocumentServer {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
-        rollbar.error(`Error fetching documents for document group ${group.name}`, error);
+        rollbar.error(`Error fetching documents for document group`, {
+          error: error,
+          errorType: error.constructor.name,
+          documentGroup: group
+        });
         throw error;
       });
   };
