@@ -2,7 +2,7 @@ import Config from "react-native-config";
 
 const config = {
   maxSearchInputLength: 4,
-  maxSearchResultsLength: 40,
+  maxSearchResultsLength: 200,
 
   surveyMinimumAppOpenedTimes: 6,
   surveyDisplayInterval: 4,
