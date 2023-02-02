@@ -30,7 +30,7 @@ import {
 import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import StringSearchButton from "./StringSearchButton";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -151,10 +151,6 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       setInputValue("");
     };
 
-    const onStringSearchPress = () => {
-      navigation.navigate(SongStringSearchRoute);
-    };
-
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem navigation={navigation}
                         song={item}
@@ -170,7 +166,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
         <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
           <View style={styles.topContainer}>
-            <View style={styles.topContainerLeft} />
+            <View style={styles.topContainerSide} />
 
             <View style={styles.topContainerCenter}>
               <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
@@ -184,10 +180,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
               </View>
             </View>
 
-            <View style={styles.topContainerRight}>
-              <TouchableOpacity onPress={onStringSearchPress}>
-                <Icon name={"search"} style={styles.searchIcon} />
-              </TouchableOpacity>
+            <View style={styles.topContainerSide}>
+              {inputValue.length > 0 ? undefined :
+                <StringSearchButton navigation={navigation} />
+              }
             </View>
           </View>
 
@@ -244,26 +240,23 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   },
 
   topContainer: {
-    flex: 1,
-    flexDirection: "row"
+    flexDirection: "row",
+    marginBottom: 5
   },
-  topContainerLeft: {
-    flex: 1
+  topContainerSide: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-end"
   },
   topContainerCenter: {
     flex: 2,
     alignItems: "center"
   },
-  topContainerRight: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  },
 
   infoText: {
     fontSize: 18,
     color: colors.text,
-    paddingTop: 20,
+    paddingTop: 15,
     fontFamily: fontFamily.sansSerifLight
   },
   infoTextSmaller: {
@@ -292,17 +285,10 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     fontSize: 40
   },
 
-  searchIcon: {
-    fontSize: 30,
-    padding: 15,
-    color: colors.textLighter
-  },
-
   searchList: {
     flexGrow: 1,
     justifyContent: "flex-start",
-    paddingBottom: 10,
-    paddingTop: 20
+    paddingBottom: 10
   },
 
   keyPad: {
