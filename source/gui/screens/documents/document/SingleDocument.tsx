@@ -36,7 +36,7 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
   };
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
-  const scrollViewComponent = useRef<ScrollView>();
+  const scrollViewComponent = useRef<ScrollView>(null);
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
@@ -188,7 +188,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
         {document === undefined ? undefined :
           <ScrollView
-            // @ts-ignore
             ref={scrollViewComponent}
             onScroll={onScrollViewScroll}
             onTouchStart={onScrollViewTouchStart}
