@@ -7,7 +7,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
 
 interface Props {
-  navigation: NativeStackNavigationProp<ParamList, any>;
+  navigation: NativeStackNavigationProp<ParamList>;
   song: Song;
   searchText: string;
   showSongBundle?: boolean;
