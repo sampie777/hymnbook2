@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Db from "../../../../logic/db/db";
 import { SongSearch } from "../../../../logic/songs/songSearch";
+import { debounce } from "../../../components/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
@@ -51,7 +52,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    requestAnimationFrame(fetchSearchResults);
+    requestAnimationFrame(fetchSearchResultsDebounced);
   }, [searchText]);
 
   const fetchSearchResults = () => {
@@ -68,6 +69,8 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
     setSearchResults(results);
   };
+
+  const fetchSearchResultsDebounced = debounce(fetchSearchResults, 300);
 
   const renderContentItem = ({ item }: { item: SongSearch.SearchResult }) => {
     return <SearchResult navigation={navigation}
@@ -92,9 +95,9 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.resultsInfoText}>
                   {searchResults.length === 0 ? "No" : searchResults.length} results
                 </Text>
-              } />
-  </View>
-    ;
+              }
+              ListFooterComponent={<View style={styles.listFooter} />} />
+  </View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
@@ -116,6 +119,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginTop: 5,
     marginBottom: 15,
     fontSize: 13
+  },
+  listFooter: {
+    height: 100
   }
 });
 
