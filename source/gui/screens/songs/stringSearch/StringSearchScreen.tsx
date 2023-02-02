@@ -19,7 +19,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   let isMounted = true;
   const [searchText, setSearchText] = useState("");
   const [searchInTitles, setSearchInTitles] = useState(true);
-  const [searchInVerses, setSearchInVerses] = useState(false);
+  const [searchInVerses, setSearchInVerses] = useState(true);
   const [searchResults, setSearchResults] = useState<SongSearch.SearchResult[]>([]);
 
   const styles = createStyles(useTheme());
@@ -53,7 +53,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     requestAnimationFrame(fetchSearchResultsDebounced);
-  }, [searchText]);
+  }, [searchText, searchInTitles, searchInVerses]);
 
   const fetchSearchResults = () => {
     if (!Db.songs.isConnected()) {
@@ -87,7 +87,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                    onVersePress={() => setSearchInVerses(!searchInVerses)} />
 
     <FlatList style={styles.listContainer}
-              data={searchResults}
+              data={searchResults.sort((a, b) => b.points - a.points)}
               renderItem={renderContentItem}
               initialNumToRender={30}
               keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
