@@ -376,7 +376,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         songListIndex={route.params.songListIndex}
                         song={song}
                         listViewIndex={viewIndex}
-                        flatListComponentRef={flatListComponentRef.current}
+                        flatListComponentRef={flatListComponentRef.current || undefined}
                         selectedVerses={route.params.selectedVerses} />
 
           <ReAnimated.View style={[
