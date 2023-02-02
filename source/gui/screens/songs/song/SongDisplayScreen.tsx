@@ -46,7 +46,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useRef(true);
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
-  const flatListComponentRef = useRef<FlatList<any>>();
+  const flatListComponentRef = useRef<FlatList<Verse>>(null);
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const verseHeights = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
@@ -384,7 +384,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
           ]}>
             <VerseList
-              // @ts-ignore
               ref={flatListComponentRef}
               waitFor={pinchGestureHandlerRef}
               data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}

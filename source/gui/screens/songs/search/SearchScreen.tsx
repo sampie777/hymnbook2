@@ -4,7 +4,6 @@ import {
   ParamList,
   SongRoute,
   SongSearchRoute,
-  SongStringSearchRoute,
   VersePickerMethod,
   VersePickerRoute
 } from "../../../../navigation";
