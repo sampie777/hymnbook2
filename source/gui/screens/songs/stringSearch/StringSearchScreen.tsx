@@ -20,6 +20,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
   const [searchInTitles, setSearchInTitles] = useState(true);
   const [searchInVerses, setSearchInVerses] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SongSearch.SearchResult[]>([]);
 
   const styles = createStyles(useTheme());
@@ -52,10 +53,6 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    requestAnimationFrame(fetchSearchResultsDebounced);
-  }, [searchText, searchInTitles, searchInVerses]);
-
-  const fetchSearchResults = () => {
     if (!Db.songs.isConnected()) {
       return;
     }
@@ -65,9 +62,15 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
+    setIsLoading(true);
+    requestAnimationFrame(fetchSearchResultsDebounced);
+  }, [searchText, searchInTitles, searchInVerses]);
+
+  const fetchSearchResults = () => {
     const results = SongSearch.find(searchText, searchInTitles, searchInVerses);
 
     setSearchResults(results);
+    setIsLoading(false);
   };
 
   const fetchSearchResultsDebounced = debounce(fetchSearchResults, 300);
@@ -80,20 +83,25 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return <View style={styles.container}>
-    <SearchInput value={searchText} onChange={setSearchText} />
+    <SearchInput value={searchText}
+                 onChange={setSearchText}
+                 autoFocus={true}/>
     <SearchOptions isTitleActive={searchInTitles}
                    isVerseActive={searchInVerses}
                    onTitlePress={() => setSearchInTitles(!searchInTitles)}
                    onVersePress={() => setSearchInVerses(!searchInVerses)} />
 
     <FlatList style={styles.listContainer}
+              refreshing={isLoading}
               data={searchResults.sort((a, b) => b.points - a.points)}
               renderItem={renderContentItem}
               initialNumToRender={30}
               keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
               ListHeaderComponent={
                 <Text style={styles.resultsInfoText}>
-                  {searchResults.length === 0 ? "No" : searchResults.length} results
+                  {isLoading ? "Searching..." :
+                    <>{searchResults.length === 0 ? "No" : searchResults.length} results</>
+                  }
                 </Text>
               }
               ListFooterComponent={<View style={styles.listFooter} />} />
