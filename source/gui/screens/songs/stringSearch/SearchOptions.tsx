@@ -25,7 +25,7 @@ const SearchOptions: React.FC<Props> = ({
   return <View style={styles.container}>
     <SearchOption title={"Titles"} active={isTitleActive} onPress={onTitlePress} />
     <SearchOption title={"Verses"} active={isVerseActive} onPress={onVersePress} />
-    <SearchOption title={"Bundles"} active={isBundleActive} onPress={onBundlePress} />
+    {/*<SearchOption title={"Bundles"} active={isBundleActive} onPress={onBundlePress} />*/}
   </View>;
 };
 
