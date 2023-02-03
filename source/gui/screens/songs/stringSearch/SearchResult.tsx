@@ -12,9 +12,10 @@ interface Props {
   song: Song;
   searchText: string;
   showSongBundle?: boolean;
+  disable?: boolean;
 }
 
-const SearchResult: React.FC<Props> = ({ navigation, song, searchText, showSongBundle }) => {
+const SearchResult: React.FC<Props> = ({ navigation, song, searchText, showSongBundle, disable = false }) => {
   const styles = createStyles(useTheme());
 
   const onPress = () => {
@@ -33,9 +34,9 @@ const SearchResult: React.FC<Props> = ({ navigation, song, searchText, showSongB
     });
   };
 
-  return <TouchableOpacity style={styles.container}
-                           onPress={onPress}
-                           onLongPress={onLongPress}>
+  return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled: {})]}
+                           onPress={disable ? undefined : onPress}
+                           onLongPress={disable ? undefined : onLongPress}>
     <View style={styles.titleContainer}>
       <Text style={styles.songName}>{song.name}</Text>
 
@@ -60,6 +61,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: colors.surface1,
     marginBottom: 5
+  },
+  containerDisabled: {
+    opacity: 0.4
   },
 
   titleContainer: {
