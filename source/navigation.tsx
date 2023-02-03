@@ -38,6 +38,7 @@ export type ParamList = {
     id?: number;
     songListIndex?: number;
     selectedVerses?: Verse[];
+    highlightText?: string;
   },
   VersePicker: {
     verses: Verse[],
@@ -45,6 +46,7 @@ export type ParamList = {
     method: VersePickerMethod
     songListIndex?: number, // Not used when method=ShowSong|AddToSongListAndShowSearch, otherwise still optional
     songId?: number;  // Required when method=ShowSong|AddToSongListAndShowSearch
+    highlightText?: string;
   },
 
   DocumentSearch: undefined,

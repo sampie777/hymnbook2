@@ -1,7 +1,8 @@
 import React from "react";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { SongSearch } from "../../../../logic/songs/songSearch";
+import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
@@ -17,14 +18,18 @@ const SearchResult: React.FC<Props> = ({ navigation, song, searchText, showSongB
   const styles = createStyles(useTheme());
 
   const onPress = () => {
-    navigation.navigate(SongRoute, { id: song.id });
+    navigation.navigate(SongRoute, {
+      id: song.id,
+      highlightText: SongSearch.versesContainWord(song, searchText) ? searchText : undefined
+    });
   };
   const onLongPress = () => {
     navigation.navigate(VersePickerRoute, {
       verses: song.verses?.map(it => Verse.toObject(it)),
       selectedVerses: [],
       songId: song.id,
-      method: VersePickerMethod.ShowSong
+      method: VersePickerMethod.ShowSong,
+      highlightText: SongSearch.versesContainWord(song, searchText) ? searchText : undefined
     });
   };
 
@@ -54,7 +59,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border,
     paddingHorizontal: 10,
     backgroundColor: colors.surface1,
-    marginBottom: 5,
+    marginBottom: 5
   },
 
   titleContainer: {
@@ -80,8 +85,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   verseContainer: {
     paddingHorizontal: 15,
-    paddingBottom: 10,
-  },
+    paddingBottom: 10
+  }
 });
 
 export default SearchResult;

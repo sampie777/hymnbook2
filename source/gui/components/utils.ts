@@ -1,7 +1,7 @@
+import React, { useRef } from "react";
+import { rollbar } from "../../logic/rollbar";
 import { Animated } from "react-native";
 import Svg, { G } from "react-native-svg";
-import { useRef } from "react";
-import { rollbar } from "../../logic/rollbar";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -50,4 +50,30 @@ export const debounce = (callback: () => void, period: number): () => void => {
       });
     }
   };
+};
+
+
+/**
+ * Render certain text differently based on searchText. Returns a
+ * React node group where `searchText` are replaced by a custom render function
+ * @param text Body of text which has to be transformed
+ * @param searchText The text which has to be rendered differently
+ * @param renderReplacement The render function which generates the replacement React node
+ * @param caseInsensitive The searchText must be treated caseInsensitive
+ */
+export const renderTextWithCustomReplacements = (text: string,
+                                                 searchText: string,
+                                                 renderReplacement: ((text: string, index: number) => React.ReactNode | null | undefined),
+                                                 caseInsensitive: boolean = true): Array<React.ReactNode | string> => {
+  const normalizedSearchText = caseInsensitive ? searchText.toLowerCase() : searchText;
+
+  const delimiter = "░";
+  return text.replace(new RegExp(`(${normalizedSearchText})`, "g" + (caseInsensitive ? "i" : "")), delimiter + "$1" + delimiter)
+    .split(delimiter)
+    .map((it, index) => {
+      if ((caseInsensitive ? it.toLowerCase() : it) == normalizedSearchText) {
+        return renderReplacement(it, index);
+      }
+      return it;
+    });
 };

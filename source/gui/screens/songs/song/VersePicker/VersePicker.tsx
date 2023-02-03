@@ -94,7 +94,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.navigate({
       name: SongRoute,
       params: {
-        selectedVerses: verses
+        selectedVerses: verses,
+        highlightText: route.params.highlightText
       },
       merge: true // Navigate 'back'
     });
@@ -103,7 +104,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const showSong = (verses: Verse[]) => {
     navigation.replace(SongRoute, {
       id: route.params.songId,
-      selectedVerses: verses
+      selectedVerses: verses,
+      highlightText: route.params.highlightText
     });
   };
 
