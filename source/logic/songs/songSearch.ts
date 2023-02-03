@@ -74,7 +74,7 @@ export namespace SongSearch {
     let result = 0;
 
     song.verses.forEach(it => {
-      const matches = it.content.match(new RegExp(`${text}`, "gi"));
+      const matches = it.content.match(new RegExp(text, "gi"));
       if (matches == null) return;
       result += matches.length * verseMatchPoints;
     });
@@ -85,4 +85,7 @@ export namespace SongSearch {
 
     return result / totalVerseLines;
   };
+
+  export const versesContainWord = (song: Song, text: string): boolean =>
+    song.verses.some(it => it.content.match(new RegExp(text, "gi")));
 }
