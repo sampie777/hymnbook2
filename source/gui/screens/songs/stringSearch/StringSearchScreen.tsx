@@ -79,19 +79,21 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     return <SearchResult navigation={navigation}
                          song={item.song}
                          searchText={searchText}
-                         showSongBundle={false} />;
+                         showSongBundle={false}
+                         disable={isLoading} />;
   };
 
   return <View style={styles.container}>
     <SearchInput value={searchText}
                  onChange={setSearchText}
-                 autoFocus={true}/>
+                 autoFocus={true} />
     <SearchOptions isTitleActive={searchInTitles}
                    isVerseActive={searchInVerses}
                    onTitlePress={() => setSearchInTitles(!searchInTitles)}
                    onVersePress={() => setSearchInVerses(!searchInVerses)} />
 
     <FlatList style={styles.listContainer}
+              onRefresh={isLoading ? () => undefined : undefined} // Hack to show loading icon when loading
               refreshing={isLoading}
               data={searchResults.sort((a, b) => b.points - a.points)}
               renderItem={renderContentItem}
