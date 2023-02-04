@@ -53,10 +53,13 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     isMounted = false;
   };
 
-  function clearSearch() {
+  const isSearchEmpty = (text: string) => text.length === 0 || (!searchInTitles && !searchInVerses);
+
+  const clearSearch = () => {
     setSearchResults([]);
     setIsLoading(false);
-  }
+    immediateSearchText.current = "";
+  };
 
   useEffect(() => {
     immediateSearchText.current = searchText;
@@ -67,7 +70,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    if (searchText.length === 0) {
+    if (isSearchEmpty(searchText)) {
       clearSearch();
       return;
     }
@@ -79,7 +82,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const fetchSearchResults = () => {
     if (!isMounted) return;
 
-    if (immediateSearchText.current.length === 0) {
+    if (isSearchEmpty(immediateSearchText.current)) {
       clearSearch();
       return;
     }
@@ -88,7 +91,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
     if (!isMounted) return;
 
-    if (immediateSearchText.current.length === 0) {
+    if (isSearchEmpty(immediateSearchText.current)) {
       clearSearch();
       return;
     }
