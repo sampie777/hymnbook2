@@ -15,6 +15,8 @@ interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
 }
 
+type FetchSearchResultsFunction = (text: string) => void;
+
 const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   let isMounted = true;
   const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
@@ -76,10 +78,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     setIsLoading(true);
-    requestAnimationFrame(fetchSearchResultsDebounced);
+    requestAnimationFrame(() => fetchSearchResultsDebounced(searchText));
   }, [searchText, searchInTitles, searchInVerses]);
 
-  const fetchSearchResults = () => {
+  const fetchSearchResults: FetchSearchResultsFunction = (text: string) => {
     if (!isMounted) return;
 
     if (isSearchEmpty(immediateSearchText.current)) {
@@ -87,20 +89,17 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    const results = SongSearch.find(immediateSearchText.current, searchInTitles, searchInVerses);
+    const results = SongSearch.find(text, searchInTitles, searchInVerses);
 
+    // Prevent state update if the new state will by invalid anyway
+    if (text != immediateSearchText.current) return;
     if (!isMounted) return;
-
-    if (isSearchEmpty(immediateSearchText.current)) {
-      clearSearch();
-      return;
-    }
 
     setSearchResults(results);
     setIsLoading(false);
   };
 
-  const fetchSearchResultsDebounced = debounce(fetchSearchResults, 300);
+  const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 300);
 
   const renderContentItem = ({ item }: { item: SongSearch.SearchResult }) => {
     return <SearchResult navigation={navigation}
