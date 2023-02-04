@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce } from "../../../components/utils";
@@ -17,6 +17,7 @@ interface Props {
 
 const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   let isMounted = true;
+  const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
   const [searchText, setSearchText] = useState("");
   const [searchInTitles, setSearchInTitles] = useState(true);
   const [searchInVerses, setSearchInVerses] = useState(true);
@@ -52,7 +53,14 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     isMounted = false;
   };
 
+  function clearSearch() {
+    setSearchResults([]);
+    setIsLoading(false);
+  }
+
   useEffect(() => {
+    immediateSearchText.current = searchText;
+
     if (!isMounted) return;
 
     if (!Db.songs.isConnected()) {
@@ -60,7 +68,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     if (searchText.length === 0) {
-      setSearchResults([]);
+      clearSearch();
       return;
     }
 
@@ -70,9 +78,21 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   const fetchSearchResults = () => {
     if (!isMounted) return;
-    const results = SongSearch.find(searchText, searchInTitles, searchInVerses);
+
+    if (immediateSearchText.current.length === 0) {
+      clearSearch();
+      return;
+    }
+
+    const results = SongSearch.find(immediateSearchText.current, searchInTitles, searchInVerses);
 
     if (!isMounted) return;
+
+    if (immediateSearchText.current.length === 0) {
+      clearSearch();
+      return;
+    }
+
     setSearchResults(results);
     setIsLoading(false);
   };
