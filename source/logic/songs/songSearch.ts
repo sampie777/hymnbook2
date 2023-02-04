@@ -1,6 +1,7 @@
 import Db from "../db/db";
 import { Song } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
+import { InterruptedError } from "../utils";
 
 export namespace SongSearch {
   const titleMatchPoints = 2;
@@ -11,7 +12,7 @@ export namespace SongSearch {
     points: number;
   }
 
-  export const find = (text: string, searchInTitles: boolean, searchInVerses: boolean): SearchResult[] => {
+  export const find = (text: string, searchInTitles: boolean, searchInVerses: boolean, shouldCancel?: () => boolean): SearchResult[] => {
     const results: SearchResult[] = [];
 
     if (searchInTitles) {
@@ -23,11 +24,16 @@ export namespace SongSearch {
       });
     }
 
+    if (shouldCancel?.()) throw new InterruptedError();
+
     // Add verse results to results
     if (searchInVerses) {
-      findByVerse(text).forEach(it => {
+      findByVerse(text).forEach((it) => {
+        if (shouldCancel?.()) throw new InterruptedError();
+
         const existingResult = results.find(result => result.song.id === it.id);
 
+        // Most time-consuming part: calculating how much the match is worth
         const points = calculateMatchPointsForVerseMatch(it, text);
 
         if (existingResult != null) {
@@ -73,16 +79,16 @@ export namespace SongSearch {
   export const calculateMatchPointsForVerseMatch = (song: Song, text: string): number => {
     let result = 0;
 
-    song.verses.forEach(it => {
-      const matches = it.content.match(new RegExp(text, "gi"));
-      if (matches == null) return;
+    const totalContent = song.verses.reduce((result, it) => result + "\n" + it.content, "");
+
+    const matches = totalContent.match(new RegExp(text, "gi"));
+    if (matches != null) {
       result += matches.length * verseMatchPoints;
-    });
+    }
 
-    const totalVerseLines: number = song.verses
-      .reduce((result, it) =>
-        result + it.content.split("\n").length, 0);
+    const totalVerseLines: number = totalContent.split("\n").length;
 
+    if (totalVerseLines == 0) return 0;
     return result / totalVerseLines;
   };
 

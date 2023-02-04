@@ -15,7 +15,7 @@ interface Props {
   disable?: boolean;
 }
 
-const SearchResult: React.FC<Props> = ({ navigation, song, searchText, showSongBundle, disable = false }) => {
+const SearchResultComponent: React.FC<Props> = ({ navigation, song, searchText, showSongBundle, disable = false }) => {
   const styles = createStyles(useTheme());
 
   const onPress = () => {
@@ -93,4 +93,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   }
 });
 
-export default SearchResult;
+export default SearchResultComponent;
