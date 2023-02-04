@@ -245,7 +245,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   topContainerSide: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-end"
+    justifyContent: "flex-start"
   },
   topContainerCenter: {
     flex: 2,
