@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
@@ -18,10 +18,6 @@ const StringSearchButton: React.FC<Props> = ({ navigation }) => {
   };
 
   return <TouchableOpacity style={styles.container} onPress={onPress}>
-    <Text style={styles.text}>
-      T
-      <Text style={styles.textSmaller}>T</Text>
-    </Text>
     <Icon name={"search"} style={styles.icon} />
   </TouchableOpacity>;
 };
@@ -29,27 +25,25 @@ const StringSearchButton: React.FC<Props> = ({ navigation }) => {
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    height: 50,
+    width: 50,
     backgroundColor: colors.surface1,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10
-  },
-  text: {
-    fontSize: 18,
-    color: colors.textLighter,
-    fontWeight: "bold",
-    lineHeight: 24
-  },
-  textSmaller: {
-    fontSize: 12
+
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.00
   },
   icon: {
-    fontSize: 16,
-    color: colors.textLight,
-    paddingLeft: 8
+    fontSize: 20,
+    color: colors.textLighter
   }
 });
 
