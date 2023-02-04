@@ -15,10 +15,10 @@ export const AnimatedG = Animated.createAnimatedComponent(G);
  * @param period
  * @return use the return function to be called on for debounce to work
  */
-export const debounce = (callback: () => void, period: number): () => void => {
+export const debounce = (callback: (...args: any) => void, period: number): (...args: any) => void => {
   const timeout = useRef<NodeJS.Timeout | undefined>();
 
-  return () => {
+  return (...args: any) => {
     if (timeout.current != undefined) {
       try {
         clearTimeout(timeout.current);
@@ -35,7 +35,7 @@ export const debounce = (callback: () => void, period: number): () => void => {
         timeout.current = undefined;
 
         try {
-          callback();
+          callback(...args);
         } catch (e: any) {
           rollbar.error("[debounce] Failed to execute callback", {
             error: e,
