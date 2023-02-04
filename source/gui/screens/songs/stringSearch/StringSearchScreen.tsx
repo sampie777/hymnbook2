@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
+import { rollbar } from "../../../../logic/rollbar";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce } from "../../../components/utils";
+import { InterruptedError } from "../../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
@@ -9,7 +11,7 @@ import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import SearchInput from "../../documents/search/SearchInput";
 import SearchOptions from "./SearchOptions";
-import SearchResult from "./SearchResult";
+import SearchResultComponent from "./SearchResultComponent";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
@@ -89,7 +91,24 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    const results = SongSearch.find(text, searchInTitles, searchInVerses);
+    let results: Array<SongSearch.SearchResult> = [];
+    try {
+      results = SongSearch.find(text, searchInTitles, searchInVerses,
+        () => text != immediateSearchText.current || isSearchEmpty(immediateSearchText.current)
+      );
+    } catch (e: any) {
+      if (e instanceof InterruptedError) return;
+
+      rollbar.error("Failed to fetch search results from song database", {
+        error: e,
+        errorName: e.name,
+        searchText: text,
+        immediateSearchText: immediateSearchText.current,
+        searchInTitles: searchInTitles,
+        searchInVerses: searchInVerses,
+        isMounted: isMounted
+      });
+    }
 
     // Prevent state update if the new state will by invalid anyway
     if (text != immediateSearchText.current) return;
@@ -102,11 +121,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 300);
 
   const renderContentItem = ({ item }: { item: SongSearch.SearchResult }) => {
-    return <SearchResult navigation={navigation}
-                         song={item.song}
-                         searchText={searchText}
-                         showSongBundle={false}
-                         disable={isLoading} />;
+    return <SearchResultComponent navigation={navigation}
+                                  song={item.song}
+                                  searchText={searchText}
+                                  showSongBundle={false}
+                                  disable={isLoading} />;
   };
 
   return <View style={styles.container}>
