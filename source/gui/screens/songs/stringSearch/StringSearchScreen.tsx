@@ -53,6 +53,8 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   useEffect(() => {
+    if (!isMounted) return;
+
     if (!Db.songs.isConnected()) {
       return;
     }
@@ -67,8 +69,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   }, [searchText, searchInTitles, searchInVerses]);
 
   const fetchSearchResults = () => {
+    if (!isMounted) return;
     const results = SongSearch.find(searchText, searchInTitles, searchInVerses);
 
+    if (!isMounted) return;
     setSearchResults(results);
     setIsLoading(false);
   };
