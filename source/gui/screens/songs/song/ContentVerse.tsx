@@ -6,6 +6,7 @@ import Settings from "../../../../settings";
 import { ABC } from "../../../../logic/songs/abc/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { getVerseType, VerseType } from "../../../../logic/songs/utils";
+import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import MelodyView from "../../../components/melody/MelodyView";
@@ -87,8 +88,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   };
 
   // Shorten name
-  const displayName = verse.name.trim()
-    .replace(/verse */gi, "");
+  const displayName = SongProcessor.verseShortName(verse);
 
   const createHighlightedTextComponent = (text: string, index: number) =>
     <Animated.Text key={index} style={styles.textHighlighted}>
@@ -97,7 +97,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   return (
     <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
-      {displayName === "" ? undefined :
+      {displayName.length === 0 ? undefined :
         <Animated.Text style={[
           styles.title,
           specificStyleForTitle(),

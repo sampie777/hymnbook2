@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
+import MatchedVersesSummary from "./MatchedVersesSummary";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>;
@@ -68,9 +69,13 @@ const SearchResultComponent: React.FC<Props> = ({
 
     {song.verses == null || song.verses.length === 0 ? undefined :
       <View style={styles.verseContainer}>
-        <VerseSummary verse={song.verses[0]}
-                      maxLines={2}
-                      searchText={!isVerseMatch ? undefined : searchText} />
+        {isVerseMatch
+          ? <MatchedVersesSummary song={song}
+                                  searchText={searchText} />
+          : <VerseSummary verse={song.verses[0]}
+                          maxLines={2}
+                          searchText={undefined} />
+        }
       </View>
     }
   </TouchableOpacity>;
@@ -110,7 +115,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   verseContainer: {
     paddingHorizontal: 15,
-    paddingBottom: 10
+    paddingBottom: 10,
+    justifyContent: "flex-start"
   },
 
   textHighlighted: {
