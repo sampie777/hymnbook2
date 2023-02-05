@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Verse } from "../../../../logic/db/models/Songs";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -15,10 +15,10 @@ const VerseSummary: React.FC<Props> = ({ verse, maxLines, searchText }) => {
 
   const lines = verse.content.split("\n").slice(0, maxLines).join("\n");
 
-  const createHighlightedTextComponent = (text: string, index: number) =>
+  const createHighlightedTextComponent = useCallback((text: string, index: number) =>
     <Text key={index} style={styles.textHighlighted}>
       {text}
-    </Text>;
+    </Text>, []);
 
   return <Text style={styles.text}>
     {searchText === undefined ? lines :

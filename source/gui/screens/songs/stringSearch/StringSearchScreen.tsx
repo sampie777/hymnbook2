@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
 import { rollbar } from "../../../../logic/rollbar";
 import { SongSearch } from "../../../../logic/songs/songSearch";
@@ -120,15 +120,15 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 300);
 
-  const renderContentItem = ({ item }: { item: SongSearch.SearchResult }) => {
+  const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
     return <SearchResultComponent navigation={navigation}
-                                  searchText={immediateSearchText.current}
+                                  searchText={immediateSearchText.current}  // Use the ref, as the state will cause unnecessary updates
                                   showSongBundle={false}
                                   disable={isLoading}
                                   song={item.song}
                                   isTitleMatch={item.isTitleMatch}
                                   isVerseMatch={item.isVerseMatch} />;
-  };
+  }, []);
 
   return <View style={styles.container}>
     <SearchInput value={searchText}
@@ -142,9 +142,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     <FlatList style={styles.listContainer}
               onRefresh={isLoading ? () => undefined : undefined} // Hack to show loading icon when loading
               refreshing={isLoading}
+              progressViewOffset={15}
               data={searchResults.sort((a, b) => b.points - a.points)}
               renderItem={renderContentItem}
-              initialNumToRender={30}
+              initialNumToRender={25}
+              maxToRenderPerBatch={10}
               keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
               ListHeaderComponent={
                 <Text style={styles.resultsInfoText}>
