@@ -122,10 +122,12 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   const renderContentItem = ({ item }: { item: SongSearch.SearchResult }) => {
     return <SearchResultComponent navigation={navigation}
-                                  song={item.song}
-                                  searchText={searchText}
+                                  searchText={immediateSearchText.current}
                                   showSongBundle={false}
-                                  disable={isLoading} />;
+                                  disable={isLoading}
+                                  song={item.song}
+                                  isTitleMatch={item.isTitleMatch}
+                                  isVerseMatch={item.isVerseMatch} />;
   };
 
   return <View style={styles.container}>

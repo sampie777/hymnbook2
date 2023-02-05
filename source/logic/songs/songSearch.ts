@@ -10,6 +10,8 @@ export namespace SongSearch {
   export interface SearchResult {
     song: Song;
     points: number;
+    isTitleMatch: boolean;
+    isVerseMatch: boolean;
   }
 
   export const find = (text: string, searchInTitles: boolean, searchInVerses: boolean, shouldCancel?: () => boolean): SearchResult[] => {
@@ -19,7 +21,9 @@ export namespace SongSearch {
       findByTitle(text).forEach(it => {
         results.push({
           song: it,
-          points: calculateMatchPointsForTitleMatch(it, text)
+          points: calculateMatchPointsForTitleMatch(it, text),
+          isTitleMatch: true,
+          isVerseMatch: false
         });
       });
     }
@@ -38,10 +42,13 @@ export namespace SongSearch {
 
         if (existingResult != null) {
           existingResult.points += points;
+          existingResult.isVerseMatch = true;
         } else {
           results.push({
             song: it,
-            points: points
+            points: points,
+            isTitleMatch: false,
+            isVerseMatch: true
           });
         }
       });
@@ -91,7 +98,4 @@ export namespace SongSearch {
     if (totalVerseLines == 0) return 0;
     return result / totalVerseLines;
   };
-
-  export const versesContainWord = (song: Song, text: string): boolean =>
-    song.verses.some(it => it.content.match(new RegExp(text, "gi")));
 }
