@@ -1,6 +1,6 @@
 import React from "react";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
-import { SongSearch } from "../../../../logic/songs/songSearch";
+import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -13,15 +13,25 @@ interface Props {
   searchText: string;
   showSongBundle?: boolean;
   disable?: boolean;
+  isTitleMatch?: boolean;
+  isVerseMatch?: boolean;
 }
 
-const SearchResultComponent: React.FC<Props> = ({ navigation, song, searchText, showSongBundle, disable = false }) => {
+const SearchResultComponent: React.FC<Props> = ({
+                                                  navigation,
+                                                  song,
+                                                  searchText,
+                                                  showSongBundle,
+                                                  disable = false,
+                                                  isTitleMatch = false,
+                                                  isVerseMatch = false
+                                                }) => {
   const styles = createStyles(useTheme());
 
   const onPress = () => {
     navigation.navigate(SongRoute, {
       id: song.id,
-      highlightText: SongSearch.versesContainWord(song, searchText) ? searchText : undefined
+      highlightText: isVerseMatch ? searchText : undefined
     });
   };
   const onLongPress = () => {
@@ -30,15 +40,24 @@ const SearchResultComponent: React.FC<Props> = ({ navigation, song, searchText, 
       selectedVerses: [],
       songId: song.id,
       method: VersePickerMethod.ShowSong,
-      highlightText: SongSearch.versesContainWord(song, searchText) ? searchText : undefined
+      highlightText: isVerseMatch ? searchText : undefined
     });
   };
 
-  return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled: {})]}
+  const createHighlightedTextComponent = (text: string, index: number) =>
+    <Text key={index} style={styles.textHighlighted}>
+      {text}
+    </Text>;
+
+  return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled : {})]}
                            onPress={disable ? undefined : onPress}
                            onLongPress={disable ? undefined : onLongPress}>
     <View style={styles.titleContainer}>
-      <Text style={styles.songName}>{song.name}</Text>
+      <Text style={styles.songName}>
+        {!isTitleMatch ? song.name :
+          renderTextWithCustomReplacements(song.name, searchText, createHighlightedTextComponent)
+        }
+      </Text>
 
       {!showSongBundle ? undefined :
         <Text style={styles.songBundleName}>
@@ -49,7 +68,9 @@ const SearchResultComponent: React.FC<Props> = ({ navigation, song, searchText, 
 
     {song.verses == null || song.verses.length === 0 ? undefined :
       <View style={styles.verseContainer}>
-        <VerseSummary verse={song.verses[0]} maxLines={2} />
+        <VerseSummary verse={song.verses[0]}
+                      maxLines={2}
+                      searchText={!isVerseMatch ? undefined : searchText} />
       </View>
     }
   </TouchableOpacity>;
@@ -90,6 +111,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   verseContainer: {
     paddingHorizontal: 15,
     paddingBottom: 10
+  },
+
+  textHighlighted: {
+    color: colors.textHighlightedForeground,
+    backgroundColor: colors.textHighlightedBackground
   }
 });
 
