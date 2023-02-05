@@ -44,7 +44,7 @@ export const lightColors: ThemeColors = {
   textLighter: "#8d8d8e",
   textHeader: "#1c1c1c",
   textHighlightedForeground: "#000",
-  textHighlightedBackground: "#bbb",
+  textHighlightedBackground: "#ccc",
   verseTitle: "#333",
   url: "#57a4fd",
   button: "#fcfcfc",
