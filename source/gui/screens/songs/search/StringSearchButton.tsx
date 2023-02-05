@@ -31,6 +31,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
+    top: 10,
 
     elevation: 2,
     shadowColor: "#000",
