@@ -12,9 +12,9 @@ export namespace DocumentSearch {
 
     const searchNameFunc = (group: DocumentGroup) => {
       if (Settings.documentsMultiKeywordSearch) {
-        return searchWords.every(it => group.name.toLowerCase().includes(it));
+        return searchWords.every(it => (new RegExp(it, "i")).test(group.name));
       }
-      return group.name.toLowerCase().includes(searchText);
+      return (new RegExp(searchText, "i")).test(group.name);
     };
 
     return groups
@@ -35,9 +35,9 @@ export namespace DocumentSearch {
 
     const searchNameFunc = (item: Document) => {
       if (Settings.documentsMultiKeywordSearch) {
-        return searchWords.every(it => item.name.toLowerCase().includes(it));
+        return searchWords.every(it => (new RegExp(it, "i")).test(item.name));
       }
-      return item.name.toLowerCase().includes(searchText);
+      return (new RegExp(searchText, "i")).test(item.name);
     };
 
     return groups
