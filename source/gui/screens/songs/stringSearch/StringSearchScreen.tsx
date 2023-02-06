@@ -128,7 +128,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                                   song={item.song}
                                   isTitleMatch={item.isTitleMatch}
                                   isVerseMatch={item.isVerseMatch} />;
-  }, []);
+  }, [isLoading]);
 
   return <View style={styles.container}>
     <SearchInput value={searchText}

@@ -27,6 +27,8 @@ const SearchResultComponent: React.FC<Props> = ({
                                                   isTitleMatch = false,
                                                   isVerseMatch = false
                                                 }) => {
+  if (searchText.length === 0) return null;
+
   const styles = createStyles(useTheme());
 
   const onPress = () => {
