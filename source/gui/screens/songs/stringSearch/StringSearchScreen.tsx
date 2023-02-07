@@ -160,6 +160,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
               initialNumToRender={25}
               maxToRenderPerBatch={10}
               keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
+              disableScrollViewPanResponder={true}
               ListHeaderComponent={
                 <Text style={styles.resultsInfoText}>
                   {isLoading ? "Searching..." :
