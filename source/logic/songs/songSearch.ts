@@ -14,6 +14,14 @@ export namespace SongSearch {
     isVerseMatch: boolean;
   }
 
+  export enum StringSearchButtonPlacement {
+    TopLeft = 0,
+    TopRight,
+    BottomRight,
+    BottomLeft,
+    Length
+  }
+
   export const find = (text: string, searchInTitles: boolean, searchInVerses: boolean, shouldCancel?: () => boolean): SearchResult[] => {
     const results: SearchResult[] = [];
 
