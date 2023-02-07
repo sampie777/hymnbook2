@@ -12,6 +12,8 @@ class SettingsClass extends SettingsBaseClass {
   // Song search
   clearSearchAfterAddedToSongList = true;
   stringSearchButtonPlacement = SongSearch.StringSearchButtonPlacement.BottomRight;
+  songSearchInTitles = true;
+  songSearchInVerses = true;
 
   // Songs
   songScale = 1.0;
