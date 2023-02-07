@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
+import Settings from "../../../../settings";
 import { rollbar } from "../../../../logic/rollbar";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce } from "../../../components/utils";
@@ -23,8 +24,8 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   let isMounted = true;
   const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
   const [searchText, setSearchText] = useState("");
-  const [searchInTitles, setSearchInTitles] = useState(true);
-  const [searchInVerses, setSearchInVerses] = useState(true);
+  const [searchInTitles, setSearchInTitles] = useState(Settings.songSearchInTitles);
+  const [searchInVerses, setSearchInVerses] = useState(Settings.songSearchInVerses);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SongSearch.SearchResult[]>([]);
 
@@ -44,7 +45,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     setSearchText("");
   };
 
-  useFocusEffect(React.useCallback(() => {
+  useFocusEffect(useCallback(() => {
     onFocus();
     return onBlur;
   }, []));
@@ -56,6 +57,17 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const onBlur = () => {
     isMounted = false;
   };
+
+  useEffect(useCallback(() => {
+    if (Settings.songSearchInTitles == searchInTitles
+      && Settings.songSearchInVerses == searchInVerses) {
+      return;
+    }
+
+    Settings.songSearchInTitles = searchInTitles;
+    Settings.songSearchInVerses = searchInVerses;
+    Settings.store();
+  }, [searchInTitles, searchInVerses]), [searchInTitles, searchInVerses]);
 
   const isSearchEmpty = (text: string) => text.length === 0 || (!searchInTitles && !searchInVerses);
 
