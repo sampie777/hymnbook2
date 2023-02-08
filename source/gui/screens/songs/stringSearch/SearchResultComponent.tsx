@@ -1,5 +1,6 @@
 import React from "react";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { SongSearch } from "../../../../logic/songs/songSearch";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -31,16 +32,22 @@ const SearchResultComponent: React.FC<Props> = ({
 
   const styles = createStyles(useTheme());
 
+  const getSelectedVerses = () => !isVerseMatch ? []
+    : SongSearch.getMatchedVerses(song, searchText)
+      .map(it => Verse.toObject(it));
+
   const onPress = () => {
     navigation.navigate(SongRoute, {
       id: song.id,
-      highlightText: isVerseMatch ? searchText : undefined
+      highlightText: isVerseMatch ? searchText : undefined,
+      selectedVerses: getSelectedVerses()
     });
   };
+
   const onLongPress = () => {
     navigation.navigate(VersePickerRoute, {
       verses: song.verses?.map(it => Verse.toObject(it)),
-      selectedVerses: [],
+      selectedVerses: getSelectedVerses(),
       songId: song.id,
       method: VersePickerMethod.ShowSong,
       highlightText: isVerseMatch ? searchText : undefined

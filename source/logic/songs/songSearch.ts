@@ -1,5 +1,5 @@
 import Db from "../db/db";
-import { Song } from "../db/models/Songs";
+import { Song, Verse } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { InterruptedError } from "../utils";
 
@@ -105,5 +105,9 @@ export namespace SongSearch {
 
     if (totalVerseLines == 0) return 0;
     return result / totalVerseLines;
+  };
+
+  export const getMatchedVerses = (song: Song, text: string): Verse[] => {
+    return song.verses.filter(it => (new RegExp(text, "i")).test(it.content));
   };
 }
