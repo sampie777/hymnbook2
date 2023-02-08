@@ -1,5 +1,6 @@
 import React from "react";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { SongSearch } from "../../../../logic/songs/songSearch";
 import VerseSummary from "./VerseSummary";
 
 interface Props {
@@ -12,8 +13,7 @@ const MatchedVersesSummary: React.FC<Props> = ({ song, searchText }) => {
     verse.content.split("\n")
       .findIndex(it => (new RegExp(searchText, "i")).test(it));
 
-  const matchedVerses = song.verses
-    .filter(it => (new RegExp(searchText, "i")).test(it.content));
+  const matchedVerses = SongSearch.getMatchedVerses(song, searchText);
   const visibleVerses = matchedVerses.length === 0 && song.verses.length > 0 ? [song.verses[0]] : matchedVerses;
 
   return <>
