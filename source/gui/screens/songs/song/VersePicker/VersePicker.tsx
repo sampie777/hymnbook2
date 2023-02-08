@@ -69,9 +69,6 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const submit = () => {
     let versesToSubmit = selectedVerses;
-    if (versesToSubmit.length === verses.length) {
-      versesToSubmit = [];
-    }
 
     switch (route.params.method) {
       case VersePickerMethod.UpdatePossibleSongListAndGoBackToSong:
