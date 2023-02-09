@@ -126,11 +126,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     if (text != immediateSearchText.current) return;
     if (!isMounted) return;
 
-    setSearchResults(results);
+    setSearchResults(results.sort((a, b) => b.points - a.points));
     setIsLoading(false);
   };
 
-  const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 300);
+  const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 500);
 
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
     return <SearchResultComponent navigation={navigation}
@@ -155,9 +155,9 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
               onRefresh={isLoading ? () => undefined : undefined} // Hack to show loading icon when loading
               refreshing={isLoading}
               progressViewOffset={15}
-              data={searchResults.sort((a, b) => b.points - a.points)}
+              data={searchResults}
               renderItem={renderContentItem}
-              initialNumToRender={25}
+              initialNumToRender={10}
               maxToRenderPerBatch={10}
               keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
               disableScrollViewPanResponder={true}
