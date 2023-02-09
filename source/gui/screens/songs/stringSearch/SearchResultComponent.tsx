@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
@@ -54,10 +54,10 @@ const SearchResultComponent: React.FC<Props> = ({
     });
   };
 
-  const createHighlightedTextComponent = (text: string, index: number) =>
+  const createHighlightedTextComponent = useCallback((text: string, index: number) =>
     <Text key={index} style={styles.textHighlighted}>
       {text}
-    </Text>;
+    </Text>, [searchText]);
 
   return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled : {})]}
                            onPress={disable ? undefined : onPress}
