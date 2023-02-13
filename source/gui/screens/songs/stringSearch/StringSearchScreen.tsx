@@ -4,7 +4,7 @@ import Settings from "../../../../settings";
 import { rollbar } from "../../../../logic/rollbar";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce } from "../../../components/utils";
-import { InterruptedError } from "../../../../logic/utils";
+import { InterruptedError, isIOS } from "../../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
@@ -152,7 +152,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                    onVersePress={() => setSearchInVerses(!searchInVerses)} />
 
     <FlatList style={styles.listContainer}
-              onRefresh={isLoading ? () => undefined : undefined} // Hack to show loading icon when loading
+              onRefresh={isIOS || isLoading ? () => undefined : undefined} // Hack to show loading icon only when loading and disabling pull to refresh
               refreshing={isLoading}
               progressViewOffset={15}
               data={searchResults}
