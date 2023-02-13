@@ -65,13 +65,11 @@ export const renderTextWithCustomReplacements = (text: string,
                                                  searchText: string,
                                                  renderReplacement: ((text: string, index: number) => React.ReactNode | null | undefined),
                                                  caseInsensitive: boolean = true): Array<React.ReactNode | string> => {
-  const normalizedSearchText = caseInsensitive ? searchText.toLowerCase() : searchText;
-
   const delimiter = "░";
-  return text.replace(new RegExp(`(${normalizedSearchText})`, "g" + (caseInsensitive ? "i" : "")), delimiter + "$1" + delimiter)
+  return text.replace(new RegExp(`(${searchText})`, "g" + (caseInsensitive ? "i" : "")), delimiter + "$1" + delimiter)
     .split(delimiter)
     .map((it, index) => {
-      if ((caseInsensitive ? it.toLowerCase() : it) == normalizedSearchText) {
+      if (RegExp(searchText, caseInsensitive ? "i" : "").test(it)) {
         return renderReplacement(it, index);
       }
       return it;
