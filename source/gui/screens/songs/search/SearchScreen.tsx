@@ -182,7 +182,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
               <View style={styles.inputTextView}>
                 <View style={styles.inputTextViewContainer}>
                   <Text
-                    style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>{inputValue}</Text>
+                    style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
+                    {inputValue || " " /* Insert empty space so the Text element doesn't disappear on iOS when empty */}
+                  </Text>
                 </View>
               </View>
             </View>
