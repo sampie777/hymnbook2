@@ -285,9 +285,10 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     alignItems: "center"
   },
   inputTextViewContainer: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: isDark ? "#404040" : "#ddd"
   },
   inputTextField: {
     fontSize: 70,
@@ -295,8 +296,6 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     fontFamily: fontFamily.sansSerifLight,
     color: colors.textLight,
     borderStyle: "solid",
-    borderBottomWidth: 2,
-    borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140
   },
   inputTextFieldSmaller: {
