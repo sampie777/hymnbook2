@@ -27,7 +27,7 @@ import {
   loadSongWithId
 } from "../../../../logic/songs/utils";
 import { keepScreenAwake } from "../../../../logic/utils";
-import { Animated, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
+import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import LoadingOverlay from "../../../components/LoadingOverlay";
@@ -46,7 +46,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useRef(true);
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
-  const flatListComponentRef = useRef<FlatList<any>>();
+  const flatListComponentRef = useRef<FlatList<Verse>>(null);
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const verseHeights = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
@@ -59,6 +59,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
+  const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const animatedScale = new Animated.Value(Settings.songScale);
@@ -126,6 +127,20 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     Settings.melodyShowedTimes++;
   }, [showMelody]);
+
+  useFocusEffect(React.useCallback(() => {
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  }, [highlightText]));
+
+  const onBackPress = (): boolean => {
+    if (highlightText != null && highlightText.length > 0) {
+      setHighlightText(undefined);
+      return true;
+    }
+
+    return false;
+  };
 
   React.useLayoutEffect(() => {
     if (song === undefined) {
@@ -341,7 +356,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
                          setIsMelodyLoading={setIsMelodyLoading}
-                         onLayout={e => storeVerseHeight(item, e)} />;
+                         onLayout={e => storeVerseHeight(item, e)}
+                         highlightText={highlightText} />;
   };
 
   const listViewabilityConfig = React.useRef({
@@ -376,7 +392,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         songListIndex={route.params.songListIndex}
                         song={song}
                         listViewIndex={viewIndex}
-                        flatListComponentRef={flatListComponentRef.current}
+                        flatListComponentRef={flatListComponentRef.current || undefined}
                         selectedVerses={route.params.selectedVerses} />
 
           <ReAnimated.View style={[
@@ -384,7 +400,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
           ]}>
             <VerseList
-              // @ts-ignore
               ref={flatListComponentRef}
               waitFor={pinchGestureHandlerRef}
               data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}

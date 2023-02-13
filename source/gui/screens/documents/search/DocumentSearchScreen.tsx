@@ -181,7 +181,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
 
     {isLoading || rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
-    <ScrollView>
+    <ScrollView keyboardShouldPersistTaps={"handled"}>
       {groupsWithSearchResult()
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(it => <DocumentGroupItem

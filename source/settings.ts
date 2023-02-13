@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import { AccessRequestStatus } from "./logic/server/models";
 import { SettingsBaseClass } from "./logic/settings/settingsBase";
+import { SongSearch } from "./logic/songs/songSearch";
 
 class SettingsClass extends SettingsBaseClass {
   // System
@@ -10,6 +11,9 @@ class SettingsClass extends SettingsBaseClass {
 
   // Song search
   clearSearchAfterAddedToSongList = true;
+  stringSearchButtonPlacement = SongSearch.StringSearchButtonPlacement.BottomRight;
+  songSearchInTitles = true;
+  songSearchInVerses = true;
 
   // Songs
   songScale = 1.0;

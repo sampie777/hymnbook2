@@ -5,6 +5,7 @@ import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
+import { SongSearch } from "../../../logic/songs/songSearch";
 import { capitalize, isAndroid } from "../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
@@ -138,7 +139,7 @@ const SettingsScreen: React.FC = () => {
                               setValue(newValue);
                               theme.reload();
                             }}
-                            valueRender={(it: string) => {
+                            valueRender={it => {
                               if (it === "") {
                                 return "System (auto)";
                               }
@@ -152,6 +153,31 @@ const SettingsScreen: React.FC = () => {
                                    keyName={"songScale"}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
                                    defaultValue={1.0} />
+          <SettingComponent<SongSearch.StringSearchButtonPlacement>
+            title={"Search button location"}
+            keyName={"stringSearchButtonPlacement"}
+            description={"Tap here to change the location of the song search button."}
+            onPress={(setValue) => {
+              let newValue = ++Settings.stringSearchButtonPlacement;
+              if (newValue >= SongSearch.StringSearchButtonPlacement.Length)
+                newValue = 0;
+
+              setValue(newValue);
+            }}
+            valueRender={(it) => {
+              switch (it) {
+                case SongSearch.StringSearchButtonPlacement.TopLeft:
+                  return "Top left";
+                case SongSearch.StringSearchButtonPlacement.TopRight:
+                  return "Top right";
+                case SongSearch.StringSearchButtonPlacement.BottomRight:
+                  return "Bottom right";
+                case SongSearch.StringSearchButtonPlacement.BottomLeft:
+                  return "Bottom left";
+                default:
+                  return "Unknown";
+              }
+            }} />
           <SettingSwitchComponent title={"Use colored verse numbers."}
                                   keyName={"coloredVerseTitles"} />
           <SettingSwitchComponent title={"Highlight selected verses"}
@@ -240,7 +266,7 @@ const SettingsScreen: React.FC = () => {
                                   if (isConfirmed) {
                                     ServerAuth.forgetCredentials();
                                   }
-                                  setValue(getAuthenticationStateAsMessage);
+                                  setValue(getAuthenticationStateAsMessage());
                                 })} />
 
           {!showDevSettings ? undefined : developerSettings}

@@ -135,3 +135,7 @@ export const runAsync = (f: () => any) => setTimeout(f, 0);
 
 export const emptyPromise = (): Promise<null> => new Promise((resolve => resolve(null)));
 export const emptyPromiseWithValue = <T>(value: T): Promise<T> => new Promise((resolve => resolve(value)));
+
+export class InterruptedError extends Error {
+  name = "InterruptedError";
+}

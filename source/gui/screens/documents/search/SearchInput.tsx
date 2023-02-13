@@ -6,9 +6,10 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 interface ScreenProps {
   value: string;
   onChange?: (value: string) => void;
+  autoFocus?: boolean;
 }
 
-const SearchInput: React.FC<ScreenProps> = ({ value, onChange }) => {
+const SearchInput: React.FC<ScreenProps> = ({ value, onChange, autoFocus = false }) => {
   const styles = createStyles(useTheme());
 
   const clear = () => onChange?.("");
@@ -20,7 +21,8 @@ const SearchInput: React.FC<ScreenProps> = ({ value, onChange }) => {
                maxLength={255}
                returnKeyType={"search"}
                onChangeText={onChange}
-               value={value} />
+               value={value}
+               autoFocus={autoFocus} />
     {value.length === 0
       ? <Icon name={"search"} style={styles.icon} />
       : <TouchableOpacity onPress={clear}>
@@ -49,7 +51,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     width: 45,
     textAlign: "center",
     paddingVertical: 12,
-    color: colors.textLighter,
+    color: colors.textLighter
   },
 
   input: {
@@ -59,7 +61,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 3,
     paddingVertical: 2,
-    alignSelf: "stretch",
+    alignSelf: "stretch"
   },
   inputPlaceholder: {
     color: colors.textLighter

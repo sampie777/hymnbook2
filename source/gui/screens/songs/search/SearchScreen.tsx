@@ -8,21 +8,15 @@ import Db from "../../../../logic/db/db";
 import config from "../../../../config";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { SongSchema } from "../../../../logic/db/models/SongsSchema";
-import { isIOS, isPortraitMode } from "../../../../logic/utils";
+import { SongSearch } from "../../../../logic/songs/songSearch";
+import { isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  Dimensions,
-  EmitterSubscription,
-  FlatList,
-  ScaledSize,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { Dimensions, EmitterSubscription, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
 import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
+import StringSearchButton from "./StringSearchButton";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -32,10 +26,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const [inputValue, setInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
+    // Use a state for this, so the GUI will be updated when the setting changes in the settings screen
+    const [stringSearchButtonPlacement, setStringSearchButtonPlacement] = useState(Settings.stringSearchButtonPlacement);
 
     const styles = createStyles(useTheme());
-    const maxInputLength = config.maxSearchInputLength;
-    const maxResultsLength = config.maxSearchResultsLength;
 
     useEffect(() => {
       onLaunch();
@@ -68,15 +62,12 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       // This listener fixes the problem where the app is closed in landscape
       // and opened in portrait, but than this screens still thinks it's in landscape
       handleDimensionsChange({ window: Dimensions.get("window") });
+      setStringSearchButtonPlacement(Settings.stringSearchButtonPlacement);
     };
 
     const onBlur = () => {
-      if (isIOS) {
-        // Use timeout to fix the bug on iOS that onLongPress doesn't get dismissed if the touch component gets unmounted
-        setTimeout(() => clearScreen(), 500);
-      } else {
-        clearScreen();
-      }
+      // Use timeout to fix the bug on iOS that onLongPress doesn't get dismissed if the touch component gets unmounted
+      setTimeout(() => clearScreen(), 500);
     };
 
     const clearScreen = () => {
@@ -89,7 +80,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onNumberKeyPress = (number: number) => {
-      if (inputValue.length >= maxInputLength) {
+      if (inputValue.length >= config.maxSearchInputLength) {
         return;
       }
 
@@ -122,7 +113,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
       const results = Db.songs.realm().objects<Song>(SongSchema.name)
         .sorted("name")
-        .filtered(`number = ${query} OR name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${maxResultsLength})`);
+        .filtered(`number = ${query} OR name LIKE "* ${query}" OR name LIKE "* ${query} *" LIMIT(${config.maxSearchResultsLength})`);
 
       setSearchResult(results as unknown as Array<Song>);
     };
@@ -145,6 +136,20 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       setInputValue("");
     };
 
+    const isStringSearchButtonsPositionTop = () => {
+      return stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopLeft
+        || stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopRight;
+    };
+
+    const isStringSearchButtonsPosition = (position: SongSearch.StringSearchButtonPlacement) => {
+      if (stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.BottomLeft
+        || stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.BottomRight) {
+        return position == SongSearch.StringSearchButtonPlacement.BottomLeft
+          || position == SongSearch.StringSearchButtonPlacement.BottomRight;
+      }
+      return position == stringSearchButtonPlacement;
+    };
+
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem navigation={navigation}
                         song={item}
@@ -159,16 +164,40 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
         <PopupsComponent navigation={navigation} />
 
         <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
-          <View style={styles.inputContainer}>
-            <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
-              number:</Text>
+          <View style={styles.topContainer}>
+            {!isStringSearchButtonsPositionTop() ? undefined :
+              <View style={styles.topContainerSide}>
+                {!isStringSearchButtonsPosition(SongSearch.StringSearchButtonPlacement.TopLeft)
+                || inputValue.length > 0 || results.length > 0 ? undefined :
+                  <StringSearchButton navigation={navigation}
+                                      position={stringSearchButtonPlacement} />
+                }
+              </View>
+            }
 
-            <View style={styles.inputTextView}>
-              <View style={styles.inputTextViewContainer}>
-                <Text
-                  style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>{inputValue}</Text>
+            <View style={styles.topContainerCenter}>
+              <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
+                number:</Text>
+
+              <View style={styles.inputTextView}>
+                <View style={styles.inputTextViewContainer}>
+                  <Text
+                    style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
+                    {inputValue || " " /* Insert empty space so the Text element doesn't disappear on iOS when empty */}
+                  </Text>
+                </View>
               </View>
             </View>
+
+            {!isStringSearchButtonsPositionTop() ? undefined :
+              <View style={styles.topContainerSide}>
+                {!isStringSearchButtonsPosition(SongSearch.StringSearchButtonPlacement.TopRight)
+                || inputValue.length > 0 || results.length > 0 ? undefined :
+                  <StringSearchButton navigation={navigation}
+                                      position={stringSearchButtonPlacement} />
+                }
+              </View>
+            }
           </View>
 
           <FlatList
@@ -176,6 +205,12 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
             renderItem={renderSearchResultItem}
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={styles.searchList} />
+
+          {isStringSearchButtonsPositionTop()
+          || inputValue.length > 0 || results.length > 0 ? undefined :
+            <StringSearchButton navigation={navigation}
+                                position={stringSearchButtonPlacement} />
+          }
         </View>
 
         <View style={[styles.keyPad,
@@ -223,14 +258,26 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     flex: 1
   },
 
-  inputContainer: {
+  topContainer: {
+    flexDirection: "row",
+    marginBottom: 5
+  },
+  topContainerSide: {
+    width: 75,  // Width calculated based on StringSearchButton
+    alignItems: "center",
+    justifyContent: "flex-start"
+  },
+  topContainerCenter: {
+    flex: 1,
     alignItems: "center"
   },
+
   infoText: {
     fontSize: 18,
     color: colors.text,
     paddingTop: 20,
-    fontFamily: fontFamily.sansSerifLight
+    fontFamily: fontFamily.sansSerifLight,
+    textAlign: "center"
   },
   infoTextSmaller: {
     fontSize: 14
@@ -240,9 +287,10 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     alignItems: "center"
   },
   inputTextViewContainer: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: isDark ? "#404040" : "#ddd"
   },
   inputTextField: {
     fontSize: 70,
@@ -250,8 +298,6 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     fontFamily: fontFamily.sansSerifLight,
     color: colors.textLight,
     borderStyle: "solid",
-    borderBottomWidth: 2,
-    borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140
   },
   inputTextFieldSmaller: {
@@ -261,8 +307,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   searchList: {
     flexGrow: 1,
     justifyContent: "flex-start",
-    paddingBottom: 10,
-    paddingTop: 20
+    paddingBottom: 10
   },
 
   keyPad: {

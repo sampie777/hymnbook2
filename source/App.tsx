@@ -20,7 +20,7 @@ import {
   ParamList,
   PrivacyPolicyRoute,
   SettingsRoute, SongListRoute,
-  SongRoute, SongSearchRoute,
+  SongRoute, SongSearchRoute, SongStringSearchRoute,
   VersePickerRoute
 } from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
@@ -50,6 +50,7 @@ import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -68,6 +69,10 @@ const RootNavigation = () => {
     <RootNav.Screen name={AboutRoute} component={AboutScreen} />
     <RootNav.Screen name={PrivacyPolicyRoute} component={PrivacyPolicyScreen} options={{ title: "Privacy policy" }} />
 
+    <RootNav.Screen name={SongStringSearchRoute} component={StringSearchScreen}
+                    options={{
+                      title: "Search through songs"
+                    }} />
     <RootNav.Screen name={SongRoute} component={SongDisplayScreen}
                     options={{
                       animation: Settings.songFadeIn ? undefined : "none",

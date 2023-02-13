@@ -292,4 +292,7 @@ export namespace SongProcessor {
         }
       });
   };
+
+  export const verseShortName = (verse: Verse) => verse.name.trim()
+    .replace(/verse */gi, "");
 }
