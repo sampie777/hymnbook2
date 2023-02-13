@@ -133,8 +133,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 500);
 
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
+    // Use the ref, as the state will cause unnecessary updates
+    const searchRegex = SongSearch.makeSearchTextRegexable(immediateSearchText.current);
     return <SearchResultComponent navigation={navigation}
-                                  searchText={immediateSearchText.current}  // Use the ref, as the state will cause unnecessary updates
+                                  searchText={searchRegex}
                                   showSongBundle={false}
                                   disable={isLoading}
                                   song={item.song}

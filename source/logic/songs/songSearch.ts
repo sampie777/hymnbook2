@@ -77,7 +77,17 @@ export namespace SongSearch {
   };
 
   export const findByVerse = (text: string): Song[] => {
-    const query = `verses.content LIKE[c] "*${text}*"`;
+    let query = `verses.content LIKE[c] "*${text}*"`;
+
+    // Add wildcards to ignore some punctuation (max 1 at the moment)
+    // ("ab, cd" will match "ab cd")
+    if (/ .+/.test(text)) {
+      for (let i = 0; i < text.length; i++) {
+        if (text[i] != " ") continue;
+        const regex = text.slice(0, i) + "?" + text.slice(i);
+        query += ` or verses.content LIKE[c] "*${regex}*"`;
+      }
+    }
 
     const results = Db.songs.realm().objects<Song>(SongSchema.name)
       .sorted("name")
@@ -96,7 +106,8 @@ export namespace SongSearch {
 
     const totalContent = song.verses.reduce((result, it) => result + "\n" + it.content, "");
 
-    const matches = totalContent.match(new RegExp(text, "gi"));
+    const regexText = makeSearchTextRegexable(text);
+    const matches = totalContent.match(new RegExp(regexText, "gi"));
     if (matches != null) {
       result += matches.length * verseMatchPoints;
     }
@@ -110,4 +121,8 @@ export namespace SongSearch {
   export const getMatchedVerses = (song: Song, text: string): Verse[] => {
     return song.verses.filter(it => (new RegExp(text, "i")).test(it.content));
   };
+
+  export const makeSearchTextRegexable = (text: string): string => text
+    .replace(/ (.+?)/g, ".? $1")  // Allow for matching over punctuation ("ab, cd" will match "ab cd")
+    .replace(/\*/g, ".*");  // Allow user to use "*" as wildcard
 }
