@@ -86,18 +86,26 @@ export class SettingsBaseClass {
   }
 
   store() {
-    Object.entries(this).forEach(([key, value]) => {
-      switch (typeof value) {
-        case "string":
-          return SettingsProvider.set(key, value);
-        case "number":
-          return SettingsProvider.setNumber(key, value);
-        case "boolean":
-          return SettingsProvider.setBoolean(key, value);
-        default:
-          rollbar.error("No matching set function found for storing type of key: " + key + " of type: " + typeof value);
-      }
-    });
+    try {
+      Object.entries(this).forEach(([key, value]) => {
+        switch (typeof value) {
+          case "string":
+            return SettingsProvider.set(key, value);
+          case "number":
+            return SettingsProvider.setNumber(key, value);
+          case "boolean":
+            return SettingsProvider.setBoolean(key, value);
+          default:
+            rollbar.error("No matching set function found for storing type of key: " + key + " of type: " + typeof value);
+        }
+      });
+    } catch (error: any) {
+      rollbar.error("Failed to store settings", {
+        error: error,
+        errorType: error.constructor.name,
+        settings: this
+      });
+    }
   }
 
   get(key: string): any {

@@ -6,7 +6,9 @@ import Settings from "../../../../settings";
 import { ABC } from "../../../../logic/songs/abc/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { getVerseType, VerseType } from "../../../../logic/songs/utils";
+import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { renderTextWithCustomReplacements } from "../../../components/utils";
 import MelodyView from "../../../components/melody/MelodyView";
 
 interface ContentVerseProps {
@@ -17,6 +19,7 @@ interface ContentVerseProps {
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;
   onLayout?: (event: LayoutChangeEvent) => void;
+  highlightText?: string;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -26,7 +29,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      selectedVerses,
                                                      activeMelody,
                                                      setIsMelodyLoading,
-                                                     onLayout
+                                                     onLayout,
+                                                     highlightText
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
@@ -84,12 +88,16 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   };
 
   // Shorten name
-  const displayName = verse.name.trim()
-    .replace(/verse */gi, "");
+  const displayName = SongProcessor.verseShortName(verse);
+
+  const createHighlightedTextComponent = (text: string, index: number) =>
+    <Animated.Text key={index} style={styles.textHighlighted}>
+      {text}
+    </Animated.Text>;
 
   return (
     <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
-      {displayName === "" ? undefined :
+      {displayName.length === 0 ? undefined :
         <Animated.Text style={[
           styles.title,
           specificStyleForTitle(),
@@ -102,7 +110,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
       {isMelodyLoaded && isMelodyAvailable() ? undefined :
         <Animated.Text style={[styles.text, animatedStyle.text]}>
-          {verse.content}
+          {highlightText == null
+            ? verse.content
+            : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
         </Animated.Text>
       }
 
@@ -148,5 +158,9 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
 
   text: {
     color: colors.text
+  },
+  textHighlighted: {
+    color: colors.textHighlightedForeground,
+    backgroundColor: colors.textHighlightedBackground
   }
 });

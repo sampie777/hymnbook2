@@ -15,16 +15,16 @@ export enum VerseType {
 }
 
 export const getVerseType = (verse: Verse): VerseType => {
-  if (verse.name.match(/(chorus|refrein|refrain)\W?/gi)) {
+  if (/(chorus|refrein|refrain)\W?/i.test(verse.name)) {
     return VerseType.Chorus;
   }
-  if (verse.name.match(/bridge|tussenspel\W?/gi)) {
+  if (/bridge|tussenspel\W?/i.test(verse.name)) {
     return VerseType.Bridge;
   }
-  if (verse.name.match(/(intro|inleiding)\W?/gi)) {
+  if (/(intro|inleiding)\W?/i.test(verse.name)) {
     return VerseType.Intro;
   }
-  if (verse.name.match(/(end|slot|outro)\W?/gi)) {
+  if (/(end|slot|outro)\W?/i.test(verse.name)) {
     return VerseType.End;
   }
 
@@ -34,7 +34,7 @@ export const getVerseType = (verse: Verse): VerseType => {
 // Creates string like "1-3, 5" or "1, 2, 5" or similar based on the selected verses
 function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
   const onlyVerses = (selectedVerses as Array<VerseProps>)
-    .filter(it => it.name.toLowerCase().includes("verse"))
+    .filter(it => /verse/i.test(it.name))
     .map(it => it.name.replace(/verse */gi, ""));
 
   if (onlyVerses.length === 0) {
@@ -112,11 +112,13 @@ function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
 }
 
 export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): string => {
-  if (song === undefined || song === null) {
+  if (song == null) {
     return "";
   }
 
-  if (selectedVerses === undefined || selectedVerses === null || selectedVerses.length === 0) {
+  if (selectedVerses == null
+    || selectedVerses.length === 0
+    || selectedVerses.length === song.verses.length) {
     return song.name;
   }
 

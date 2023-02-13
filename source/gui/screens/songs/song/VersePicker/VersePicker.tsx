@@ -68,20 +68,15 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const submit = () => {
-    let versesToSubmit = selectedVerses;
-    if (versesToSubmit.length === verses.length) {
-      versesToSubmit = [];
-    }
-
     switch (route.params.method) {
       case VersePickerMethod.UpdatePossibleSongListAndGoBackToSong:
-        updatePossibleSongListAndGoBackToSong(versesToSubmit);
+        updatePossibleSongListAndGoBackToSong(selectedVerses);
         break;
       case VersePickerMethod.ShowSong:
-        showSong(versesToSubmit);
+        showSong(selectedVerses);
         break;
       case VersePickerMethod.AddToSongListAndShowSearch:
-        addToSongListAndShowSearch(versesToSubmit);
+        addToSongListAndShowSearch(selectedVerses);
         break;
     }
   };
@@ -94,7 +89,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.navigate({
       name: SongRoute,
       params: {
-        selectedVerses: verses
+        selectedVerses: verses,
+        highlightText: route.params.highlightText
       },
       merge: true // Navigate 'back'
     });
@@ -103,7 +99,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const showSong = (verses: Verse[]) => {
     navigation.replace(SongRoute, {
       id: route.params.songId,
-      selectedVerses: verses
+      selectedVerses: verses,
+      highlightText: route.params.highlightText
     });
   };
 
