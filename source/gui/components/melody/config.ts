@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 export const AbcConfig = {
   baseScale: 0.69,
 
@@ -22,7 +24,12 @@ export const AbcConfig = {
   textLineHeight: 40,
 
   totalLineHeight: 0,
-  introEmptyGapWidth: 10
+  introEmptyGapWidth: 10,
+
+  sharpOffsetY: Platform.OS === "ios" ? 9 : 6,
+  flatFontSize: Platform.OS === "ios" ? 28 : 34,
+  flatOffsetY: Platform.OS === "ios" ? 9 : 4,
+  naturalOffsetY: Platform.OS === "ios" ? 12 : 4,
 };
 
 AbcConfig.totalLineHeight = AbcConfig.topSpacing + 4 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
