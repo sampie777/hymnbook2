@@ -178,7 +178,7 @@ const SettingsScreen: React.FC = () => {
                   return "Unknown";
               }
             }} />
-          <SettingSwitchComponent title={"Use colored verse numbers."}
+          <SettingSwitchComponent title={"Use colored verse numbers"}
                                   keyName={"coloredVerseTitles"} />
           <SettingSwitchComponent title={"Highlight selected verses"}
                                   description={"Give verse titles an accent when selected."}
@@ -228,13 +228,6 @@ const SettingsScreen: React.FC = () => {
           <Header title={"Song list"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
                                   keyName={"clearSearchAfterAddedToSongList"} />
-          <SettingSwitchComponent title={"'Added to song list' animation"}
-                                  description={"Show a small animation when a song is added to the song list."}
-                                  keyName={"animateAddedToSongList"}
-                                  isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Display song list size badge"}
-                                  keyName={"showSongListCountBadge"}
-                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Multi keyword search for documents"}
