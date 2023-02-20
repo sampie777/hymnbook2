@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getFontScale } from "react-native-device-info";
 import { Animated, StyleSheet, View } from "react-native";
 import { AbcConfig } from "./config";
 import { ABC } from "../../../logic/songs/abc/abc";
@@ -14,13 +15,17 @@ interface Props {
 }
 
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
+  const [systemFontScale, setSystemFontScale] = useState(1);
   const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
   const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
+  getFontScale().then(scale => setSystemFontScale(scale));
+
   const animatedScaleMelody =
     Animated.multiply(animatedScale,
-      Animated.multiply(AbcConfig.baseScale, melodyScale)) as unknown as Animated.Value;
+      Animated.multiply(systemFontScale,
+        Animated.multiply(AbcConfig.baseScale, melodyScale))) as unknown as Animated.Value;
 
   useEffect(() => {
     setAbcSong(ABC.parse(abc));
