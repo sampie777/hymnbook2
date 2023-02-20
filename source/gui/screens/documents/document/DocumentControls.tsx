@@ -26,15 +26,16 @@ const DocumentControls: React.FC<Props> =
      bottomOffset
    }) => {
     // Persist this value between renders due to receiving new props (scrollOffset)
-    const animatedVerticalOffset = useRef(useSharedValue(0));
+    const animatedScale = useRef(useSharedValue(1));
     const [previousScrollOffset, setPreviousScrollOffset] = useState(0);
     const [scrollDirection, setScrollDirection] = useState(0);
 
     const styles = createStyles(useTheme());
     const animatedStyleButtonBase = useAnimatedStyle(() => ({
       transform: [
-        { translateY: animatedVerticalOffset.current.value }
-      ]
+        { scale: animatedScale.current.value },
+      ],
+      opacity: animatedScale.current.value
     }));
 
     useEffect(() => {
@@ -73,8 +74,8 @@ const DocumentControls: React.FC<Props> =
     }, [forceShow]);
 
     const startShowAnimation = (show: boolean) => {
-      animatedVerticalOffset.current.value = withTiming(show ? 0 : 100, {
-        duration: 300,
+      animatedScale.current.value = withTiming(show ? 1 : 0, {
+        duration: 200,
         easing: Easing.inOut(Easing.ease)
       }, () => runOnJS(setScrollDirection)(0));
     };
