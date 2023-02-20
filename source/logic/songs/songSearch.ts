@@ -126,5 +126,5 @@ export namespace SongSearch {
     .replace(/([.\[\](){}+$^!])/g, "\\$1") // Escape all illegal characters
     .replace(/\?/g, ".?")  // Allow user to use "?" as wildcard
     .replace(/\*/g, ".*")  // Allow user to use "*" as wildcard
-    .replace(/ (.+?)/g, ".? $1");  // Allow for matching over punctuation ("ab, cd" will match "ab cd")
+    .replace(/(.+?) (.+?)/g, "$1.? $2");  // Allow for matching over punctuation ("ab, cd" will match "ab cd")
 }
