@@ -17,6 +17,8 @@ export const throwErrorsIfNotOk = (response: Response) => {
       throw new HttpError(`Could not retrieve the requested data: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`);
     case 403:
       throw new HttpError(`Could not retrieve the requested data: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`);
+    case 429:
+      throw new HttpError(`Too many request (${response.status}).\n\nTake a break and try again later.`);
     case 500:
       throw new HttpError(`Could not connect to server: (${response.status}) Internal server error`);
     default:
