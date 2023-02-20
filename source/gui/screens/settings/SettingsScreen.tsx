@@ -6,10 +6,10 @@ import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
-import { capitalize, isAndroid } from "../../../logic/utils";
+import { capitalize, isAndroid, isMelodyEnabled } from "../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { Platform, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { SettingComponent, SettingsSliderComponent, SettingSwitchComponent } from "./SettingComponent";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
@@ -25,7 +25,7 @@ const SettingsScreen: React.FC = () => {
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
-  const [showSongMelodySettings, setShowSongMelodySettings] = useState(Settings.showMelody);
+  const [showSongMelodySettings, setShowSongMelodySettings] = useState(isMelodyEnabled());
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -205,7 +205,7 @@ const SettingsScreen: React.FC = () => {
           <SettingSwitchComponent title={"Enable melodies (experimental)"}
                                   description={"Song melody can be shown above the lyrics. This is a work in progress and might not function as it should."}
                                   keyName={"showMelody"}
-                                  isVisible={showAdvancedSettings}
+                                  isVisible={showAdvancedSettings && Platform.OS !== "android"}
                                   onPress={((setValue, key, newValue) => {
                                     setValue(newValue);
                                     setShowSongMelodySettings(newValue);

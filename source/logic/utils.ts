@@ -1,6 +1,7 @@
 import { Alert, Linking, Platform, ScaledSize } from "react-native";
 import KeepAwake from "react-native-keep-awake";
 import Clipboard from "@react-native-clipboard/clipboard";
+import Settings from "../settings";
 import { rollbar } from "./rollbar";
 
 export function dateFrom(date: Date | string): Date {
@@ -139,3 +140,5 @@ export const emptyPromiseWithValue = <T>(value: T): Promise<T> => new Promise((r
 export class InterruptedError extends Error {
   name = "InterruptedError";
 }
+
+export const isMelodyEnabled = () => Settings.showMelody || Platform.OS === "android";
