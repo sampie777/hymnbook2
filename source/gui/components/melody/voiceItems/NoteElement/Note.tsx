@@ -95,19 +95,19 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
 
     {pitch.accidental !== "sharp" ? undefined :
       <Text fontSize={22}
-            x={-7} y={6}
+            x={-7} y={AbcConfig.sharpOffsetY}
             fill={styles.color}
             textAnchor={"end"}>♯</Text>}
 
     {pitch.accidental !== "flat" ? undefined :
-      <Text fontSize={34}
-            x={-7} y={4}
+      <Text fontSize={AbcConfig.flatFontSize}
+            x={-7} y={AbcConfig.flatOffsetY}
             fill={styles.color}
             textAnchor={"end"}>♭</Text>}
 
     {pitch.accidental !== "natural" ? undefined :
       <Text fontSize={28}
-            x={-7} y={4}
+            x={-7} y={AbcConfig.naturalOffsetY}
             fill={styles.color}
             textAnchor={"end"}>♮</Text>}
   </G>;
