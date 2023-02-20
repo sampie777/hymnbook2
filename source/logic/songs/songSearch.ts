@@ -1,7 +1,7 @@
 import Db from "../db/db";
 import { Song, Verse } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
-import { InterruptedError } from "../utils";
+import { InterruptedError } from "../InterruptedError";
 
 export namespace SongSearch {
   const titleMatchPoints = 2;
