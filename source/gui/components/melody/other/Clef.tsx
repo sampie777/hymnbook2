@@ -22,7 +22,7 @@ const Clef: React.FC<Props> = ({ animatedScale, clef }) => {
     },
     svg: {
       width: "100%",
-      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
+      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight + 3)
     }
   };
 
