@@ -78,7 +78,8 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    immediateSearchText.current = searchText;
+    const escapedSearchText = searchText.replace(/\\/g, "\\\\");
+    immediateSearchText.current = escapedSearchText;
 
     if (!isMounted) return;
 
@@ -86,13 +87,13 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    if (isSearchEmpty(searchText)) {
+    if (isSearchEmpty(escapedSearchText)) {
       clearSearch();
       return;
     }
 
     setIsLoading(true);
-    requestAnimationFrame(() => fetchSearchResultsDebounced(searchText));
+    requestAnimationFrame(() => fetchSearchResultsDebounced(escapedSearchText));
   }, [searchText, searchInTitles, searchInVerses]);
 
   const fetchSearchResults: FetchSearchResultsFunction = (text: string) => {
@@ -135,8 +136,24 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
     // Use the ref, as the state will cause unnecessary updates
     const searchRegex = SongSearch.makeSearchTextRegexable(immediateSearchText.current);
+
+    // Validate regex syntax
+    try {
+      RegExp(searchRegex);
+    } catch (e: any) {
+      // Invalid regex
+      rollbar.warning("Failed to create safe regex for song search", {
+        error: e,
+        errorName: e.name,
+        searchText: searchText,
+        immediateSearchText: immediateSearchText.current,
+        searchRegex: searchRegex
+      });
+      return null;
+    }
+
     return <SearchResultComponent navigation={navigation}
-                                  searchText={searchRegex}
+                                  searchRegex={searchRegex}
                                   showSongBundle={false}
                                   disable={isLoading}
                                   song={item.song}

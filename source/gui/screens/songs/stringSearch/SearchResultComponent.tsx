@@ -12,7 +12,7 @@ import MatchedVersesSummary from "./MatchedVersesSummary";
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>;
   song: Song;
-  searchText: string;
+  searchRegex: string;
   showSongBundle?: boolean;
   disable?: boolean;
   isTitleMatch?: boolean;
@@ -22,24 +22,24 @@ interface Props {
 const SearchResultComponent: React.FC<Props> = ({
                                                   navigation,
                                                   song,
-                                                  searchText,
+                                                  searchRegex,
                                                   showSongBundle,
                                                   disable = false,
                                                   isTitleMatch = false,
                                                   isVerseMatch = false
                                                 }) => {
-  if (searchText.length === 0) return null;
+  if (searchRegex.length === 0) return null;
 
   const styles = createStyles(useTheme());
 
   const getSelectedVerses = () => !isVerseMatch ? []
-    : SongSearch.getMatchedVerses(song, searchText)
+    : SongSearch.getMatchedVerses(song, searchRegex)
       .map(it => Verse.toObject(it));
 
   const onPress = () => {
     navigation.navigate(SongRoute, {
       id: song.id,
-      highlightText: isVerseMatch ? searchText : undefined,
+      highlightText: isVerseMatch ? searchRegex : undefined,
       selectedVerses: getSelectedVerses()
     });
   };
@@ -50,14 +50,14 @@ const SearchResultComponent: React.FC<Props> = ({
       selectedVerses: getSelectedVerses(),
       songId: song.id,
       method: VersePickerMethod.ShowSong,
-      highlightText: isVerseMatch ? searchText : undefined
+      highlightText: isVerseMatch ? searchRegex : undefined
     });
   };
 
   const createHighlightedTextComponent = useCallback((text: string, index: number) =>
     <Text key={index} style={styles.textHighlighted}>
       {text}
-    </Text>, [searchText]);
+    </Text>, [searchRegex]);
 
   return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled : {})]}
                            onPress={disable ? undefined : onPress}
@@ -65,7 +65,7 @@ const SearchResultComponent: React.FC<Props> = ({
     <View style={styles.titleContainer}>
       <Text style={styles.songName}>
         {!isTitleMatch ? song.name :
-          renderTextWithCustomReplacements(song.name, searchText, createHighlightedTextComponent)
+          renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
         }
       </Text>
 
@@ -80,7 +80,7 @@ const SearchResultComponent: React.FC<Props> = ({
       <View style={styles.verseContainer}>
         {isVerseMatch
           ? <MatchedVersesSummary song={song}
-                                  searchText={searchText} />
+                                  searchRegex={searchRegex} />
           : <VerseSummary verse={song.verses[0]}
                           maxLines={2}
                           searchText={undefined} />
