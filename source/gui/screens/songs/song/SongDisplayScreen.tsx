@@ -212,11 +212,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     if (maxTries <= 0) {
       rollbar.warning("Max song load animation tries elapsed", {
-        songName: song?.name,
-        verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+        songName: song?.name ?? "null",
+        verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
         isMounted: isMounted,
         maxTries: maxTries,
-        SettingsSongFadeIn: Settings.songFadeIn
+        SettingsSongFadeIn: Settings.songFadeIn,
+        showMelody: showMelody,
+        isMelodyLoading: isMelodyLoading,
+        viewIndex: viewIndex
       });
     }
 
@@ -267,10 +270,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     if (maxTries <= 0) {
       rollbar.warning("Max scroll tries elapsed.", {
-        songName: song?.name,
-        verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+        songName: song?.name ?? "null",
+        verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
         isMounted: isMounted,
-        selectedVerses: route.params.selectedVerses?.map(it => it.name)
+        selectedVerses: route.params.selectedVerses?.map(it => it.name),
+        showMelody: showMelody,
+        isMelodyLoading: isMelodyLoading,
+        viewIndex: viewIndex
       });
       scrollToFirstVerse();
       return;
@@ -312,8 +318,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       rollbar.warning(`Failed to scroll to index: ${e}`, {
         error: e,
         scrollIndex: scrollIndex,
-        songName: song?.name,
-        verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+        songName: song?.name ?? "null",
+        verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
         isMounted: isMounted,
         selectedVerses: route.params.selectedVerses?.map(it => it.name)
       });
@@ -412,8 +418,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               viewabilityConfig={listViewabilityConfig.current}
               onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
                 info: info,
-                songName: song?.name,
-                verseHeights: verseHeights.current == null ? null : Object.keys(verseHeights.current).length,
+                songName: song?.name ?? "null",
+                verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
                 isMounted: isMounted,
                 viewIndex: viewIndex,
                 selectedVerses: route.params.selectedVerses?.map(it => it.name)
