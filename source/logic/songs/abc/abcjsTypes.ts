@@ -80,7 +80,7 @@ export interface AbcRest {
 
 export interface AbcLyric {
   syllable: string;
-  divider: string;
+  divider: ' ' | '-' | '_';
 }
 
 export interface VoiceItemBar {
@@ -90,15 +90,18 @@ export interface VoiceItemBar {
   endChar: number;
 }
 
-export interface VoiceItemNote {
-  el_type: "note";
+export interface NoteProperties{
   duration: number;
-  startChar: number;
-  endChar: number;
   pitches?: AbcPitch[];
   lyric?: AbcLyric[];
   chord?: AbcChord[];
   rest?: AbcRest;
+}
+
+export interface VoiceItemNote extends NoteProperties{
+  el_type: "note";
+  startChar: number;
+  endChar: number;
 }
 
 export interface VoiceItemStem {
