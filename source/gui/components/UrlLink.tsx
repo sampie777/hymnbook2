@@ -23,9 +23,7 @@ const UrlLink: React.FC<{
     return (
       <View style={style}>
         <TouchableOpacity onPress={open}>
-          <View>
-            {children}
-          </View>
+          {children}
         </TouchableOpacity>
       </View>);
   };
