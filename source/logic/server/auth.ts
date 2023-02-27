@@ -3,7 +3,7 @@ import { authApi } from "./authApi";
 import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
-import { throwErrorsIfNotOk } from "../apiUtils";
+import { HttpError, throwErrorsIfNotOk } from "../apiUtils";
 import { emptyPromiseWithValue } from "../utils";
 
 export class AccessRequestResponse {
@@ -47,7 +47,7 @@ export class ServerAuth {
     return Settings.authJwt;
   }
 
-  static fetchWithJwt(callback: (jwt: string) => Promise<Response>, resetAuthIfInvalidRetries: number = 1): Promise<Response> {
+  static fetchWithJwt(callback: (jwt: string) => Promise<Response>, resetAuthIfInvalidRetries: number = 2): Promise<Response> {
     if (!Settings.useAuthentication) {
       return callback("");
     }
@@ -55,6 +55,8 @@ export class ServerAuth {
     return this.authenticate()
       .then(jwt => callback(jwt))
       .then(response => {
+        // After the request has been made, check if it was successful or if there was an authentication problem.
+
         if (resetAuthIfInvalidRetries <= 0) return response;
         if (!(response.status == 401 || response.status == 403)) return response;
 
