@@ -1,14 +1,15 @@
 import React from "react";
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { displayName, homepage } from "../../../../app.json";
 import Config from "react-native-config";
-import Icon from "react-native-vector-icons/FontAwesome5";
 import { getVersion } from "react-native-device-info";
-import UrlLink from "../../components/UrlLink";
 import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import UrlLink from "../../components/UrlLink";
+import IconLabel from "../../components/IconLabel";
 
 
 const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute> }> = ({ navigation }) => {
@@ -51,20 +52,19 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, t
         <Text style={[styles.contentText, styles.contributionText]}>
           This app is made free in order to make the access to Christian songs available for everyone with a digital
           device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
-          thanks,
-          please consider donating using the following option:
+          thanks, please consider donating using one of the following options:
         </Text>
 
-        <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
-          <Text style={[styles.contentText, styles.donationLinkText]}>
-            Buy me a coffee
-          </Text>
-        </UrlLink>
-        {/*<View style={styles.donationLink}>*/}
-        {/*  <Text style={[styles.contentText, styles.donationLinkText]}>*/}
-        {/*    Directly using PayPal*/}
-        {/*  </Text>*/}
-        {/*</View>*/}
+        <View style={styles.donationLinksContainer}>
+          <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
+            <IconLabel text={"Buy me a coffee"}
+                       iconSource={require("./buymeacoffee-logo.jpeg")} />
+          </UrlLink>
+          <UrlLink url={"https://www.paypal.com/donate/?hosted_button_id=6KTU5JNVS699E"} style={styles.donationLink}>
+            <IconLabel text={"Donate using Paypal"}
+                       iconSource={require("./paypal-logo.png")} />
+          </UrlLink>
+        </View>
       </View>
 
       <View style={styles.footerContainer}>
@@ -181,25 +181,21 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   donationContainer: {
     alignItems: "center",
     paddingTop: 60,
-    paddingBottom: 45,
+    paddingBottom: 70,
     backgroundColor: colors.surface1
   },
   contributionText: {
     marginBottom: 40
   },
+  donationLinksContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center"
+  },
   donationLink: {
     marginBottom: 20,
-    overflow: 'hidden',
-    borderRadius: 80
-  },
-  donationLinkText: {
-    backgroundColor: colors.primaryLight,
-    alignItems: "center",
-    marginBottom: 0,
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    color: colors.onPrimary,
-    fontWeight: "bold"
+    overflow: "hidden"
   },
 
   footerContainer: {
