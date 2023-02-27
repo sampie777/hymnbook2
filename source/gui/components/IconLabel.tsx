@@ -13,9 +13,11 @@ interface Props {
 const IconLabel: React.FC<Props> = ({ text, iconSource, iconSize = 60, iconStyle, textStyle }) => {
   const styles = createStyles(useTheme(), iconSize);
   return <View style={styles.container}>
-    <Text style={[styles.text, textStyle]}>
-      {text}
-    </Text>
+    <View style={styles.textContainer}>
+      <Text style={[styles.text, textStyle]}>
+        {text}
+      </Text>
+    </View>
     <Image source={iconSource} style={[styles.icon, iconStyle]} />
   </View>;
 };
@@ -33,15 +35,17 @@ const createStyles = ({ colors }: ThemeContextProps, iconSize = 60) => StyleShee
     borderColor: colors.primaryLight,
     left: -(iconSize / 2)
   },
-  text: {
+  textContainer: {
     backgroundColor: colors.primaryLight,
-    color: colors.onPrimary,
-    fontWeight: "bold",
+    borderRadius: iconSize,
     paddingVertical: 15,
     paddingRight: 30,
     paddingLeft: iconSize + 15,
-    left: (iconSize / 2),
-    borderRadius: iconSize
+    left: (iconSize / 2)
+  },
+  text: {
+    color: colors.onPrimary,
+    fontWeight: "bold"
   }
 });
 
