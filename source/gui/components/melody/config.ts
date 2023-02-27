@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 
 export const AbcConfig = {
-  baseScale: 0.69,
+  baseScale: 0.79,
 
   topSpacing: 20,
   lineSpacing: 8,
