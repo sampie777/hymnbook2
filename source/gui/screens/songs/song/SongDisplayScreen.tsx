@@ -44,6 +44,7 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRo
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useRef(true);
+  const _isFocused = useRef(false); // todo: Temporary value to analyze "Max song load animation tries elapsed" cause
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<Verse>>(null);
@@ -84,11 +85,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const onFocus = () => {
     isMounted.current = true;
+    _isFocused.current = true;
     keepScreenAwake(Settings.keepScreenAwake);
     loadSong();
   };
 
   const onBlur = () => {
+    _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
   };
@@ -172,7 +175,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (useSong === undefined) {
       rollbar.warning("Can't open versepicker for undefined song.", {
         "route.params.id": route.params.id,
-        isMounted: isMounted
+        isMounted: isMounted.current,
+        isFocused: _isFocused.current
       });
       return;
     }
@@ -214,12 +218,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       rollbar.warning("Max song load animation tries elapsed", {
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted,
+        isMounted: isMounted.current,
         maxTries: maxTries,
         SettingsSongFadeIn: Settings.songFadeIn,
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
-        viewIndex: viewIndex
+        viewIndex: viewIndex,
+        isFocused: _isFocused.current
       });
     }
 
@@ -272,11 +277,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       rollbar.warning("Max scroll tries elapsed.", {
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted,
+        isMounted: isMounted.current,
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
-        viewIndex: viewIndex
+        viewIndex: viewIndex,
+        isFocused: _isFocused.current
       });
       scrollToFirstVerse();
       return;
@@ -320,8 +326,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted,
-        selectedVerses: route.params.selectedVerses?.map(it => it.name)
+        isMounted: isMounted.current,
+        selectedVerses: route.params.selectedVerses?.map(it => it.name),
+        isFocused: _isFocused.current
       });
     }
   };
@@ -420,9 +427,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                 info: info,
                 songName: song?.name ?? "null",
                 verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-                isMounted: isMounted,
+                isMounted: isMounted.current,
                 viewIndex: viewIndex,
-                selectedVerses: route.params.selectedVerses?.map(it => it.name)
+                selectedVerses: route.params.selectedVerses?.map(it => it.name),
+                isFocused: _isFocused.current
               })}
               ListFooterComponent={<Footer song={song} />} />
           </ReAnimated.View>
