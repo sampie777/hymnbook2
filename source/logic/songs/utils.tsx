@@ -2,7 +2,7 @@ import Db from "../db/db";
 import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
-import { isMelodyEnabled, languageAbbreviationToFullName } from "../utils";
+import { languageAbbreviationToFullName } from "../utils";
 import { AbcMelody } from "../db/models/AbcMelodies";
 
 export enum VerseType {
@@ -171,10 +171,6 @@ export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean =
 };
 
 export const hasMelodyToShow = (song?: Song) => {
-  if (!isMelodyEnabled()) {
-    return false;
-  }
-
   if (song === undefined) {
     return false;
   }

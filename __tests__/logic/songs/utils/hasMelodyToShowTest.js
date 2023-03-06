@@ -1,7 +1,6 @@
 import { Song, Verse } from "../../../../source/logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../source/logic/songs/utils";
 import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
-import Settings from "../../../../source/settings";
 
 describe("test if song has a melody to show", () => {
   const verse1 = new Verse(0, "", "", "", [], 0)
@@ -9,10 +8,6 @@ describe("test if song has a melody to show", () => {
   const song = new Song("", "", "", "", new Date(), new Date(), [verse1, verse2], [], 0, 1);
 
   const abcMelody = new AbcMelody("", "", [], 0);
-
-  beforeEach(() => {
-    Settings.showMelody = true;
-  })
 
   it("does not have a melody to show if the song is undefined", () => {
     expect(hasMelodyToShow(undefined)).toBe(false);
@@ -38,12 +33,6 @@ describe("test if song has a melody to show", () => {
     song.abcMelodies = [];
     verse1.abcLyrics = "123";
     new AbcSubMelody("", verse1, 0);
-    expect(hasMelodyToShow(song)).toBe(false);
-  });
-  it("does not have a melody to show if the song has a melody and at least one verse has lyrics but the settings is disabled", () => {
-    Settings.showMelody = false;
-    song.abcMelodies = [abcMelody];
-    verse1.abcLyrics = "123";
     expect(hasMelodyToShow(song)).toBe(false);
   });
 
