@@ -44,7 +44,7 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRo
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useRef(true);
-  const _isFocused = useRef(false); // todo: Temporary value to analyze "Max song load animation tries elapsed" cause
+  const _isFocused = useRef(false); // todo: Temporary value to analyze "Failed to scroll to index" cause
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<Verse>>(null);
@@ -206,7 +206,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       fadeInTimeout.current = undefined;
     }
 
-    if (!isMounted.current) return;
+    if (!isMounted.current || song == null) return;
 
     if (maxTries > 0 && (verseHeights.current == null || Object.keys(verseHeights.current).length == 0)) {
       // Wait for the verses to load before fading song in, otherwise the screen will look glitchy.
@@ -267,11 +267,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       scrollTimeout.current = undefined;
     }
 
-    if (!isMounted.current) return;
-
-    if (song == undefined) {
-      return;
-    }
+    if (!isMounted.current || song == null) return;
 
     if (maxTries <= 0) {
       rollbar.warning("Max scroll tries elapsed.", {
