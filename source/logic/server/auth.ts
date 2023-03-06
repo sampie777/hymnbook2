@@ -47,7 +47,7 @@ export class ServerAuth {
     return Settings.authJwt;
   }
 
-  static fetchWithJwt(callback: (jwt: string) => Promise<Response>, resetAuthIfInvalidRetries: number = 2): Promise<Response> {
+  static fetchWithJwt(callback: (jwt: string) => Promise<Response>, resetAuthIfInvalidRetries: number = 1): Promise<Response> {
     if (!Settings.useAuthentication) {
       return callback("");
     }
