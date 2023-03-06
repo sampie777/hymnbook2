@@ -6,7 +6,7 @@ import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
-import { capitalize, isAndroid, isMelodyEnabled } from "../../../logic/utils";
+import { capitalize, isAndroid } from "../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { Platform, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
@@ -25,7 +25,6 @@ const SettingsScreen: React.FC = () => {
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
-  const [showSongMelodySettings, setShowSongMelodySettings] = useState(isMelodyEnabled());
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -202,28 +201,20 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Song melody"} isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Enable melodies (experimental)"}
-                                  description={"Song melody can be shown above the lyrics. This is a work in progress and might not function as it should."}
-                                  keyName={"showMelody"}
-                                  isVisible={showAdvancedSettings && Platform.OS !== "android"}
-                                  onPress={((setValue, key, newValue) => {
-                                    setValue(newValue);
-                                    setShowSongMelodySettings(newValue);
-                                  })} />
           <SettingsSliderComponent title={"Song melody size"}
                                    keyName={"songMelodyScale"}
                                    description={"The size of the melody notes relative to the size of the text."}
-                                   isVisible={showAdvancedSettings && showSongMelodySettings}
+                                   isVisible={showAdvancedSettings}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
                                    defaultValue={1.0} />
           <SettingSwitchComponent title={"Show melody for all verses (experimental)"}
                                   description={"Show melody for all verses instead of the first (selected) verse."}
                                   keyName={"showMelodyForAllVerses"}
-                                  isVisible={showAdvancedSettings && showSongMelodySettings} />
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Long press for menu"}
                                   description={"Long press the melody button will show the menu, instead of instant toggling the melody."}
                                   keyName={"longPressForMelodyMenu"}
-                                  isVisible={showAdvancedSettings && showSongMelodySettings} />
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Song list"} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
