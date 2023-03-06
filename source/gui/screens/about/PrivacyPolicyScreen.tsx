@@ -9,13 +9,29 @@ const PrivacyPolicyScreen: React.FC = () => {
   return (<ScrollView style={styles.container}>
     <View style={styles.content}>
       <Text style={[styles.contentText]}>
-        Last updated: 16/10/2021.
+        Last updated: 6/3/2023.
       </Text>
       <Text style={[styles.contentText]}>
         INTRODUCTION. Privacy is important, and we value it. That's why we want you to know what you can expect
         regarding your privacy while using this app. In short: we won't know who you are and what we know (which is very
         little), we will keep to ourselves.
       </Text>
+
+      <Text style={[styles.contentText]}>
+        SURVEYS.
+        The surveys are created using Google Forms. Please refer to Google's privacy policy when you use these surveys.
+        Note that we don't collect your e-mail information, but Google may use it for their purposes.
+      </Text>
+
+      <Text style={[styles.contentText]}>
+        USAGE DATA.
+        As this app is still quite new and under heavy development, the developers are in need of user feedback. Some advanced app settings are available for users to change. These app settings are logged to our logging framework so we can keep track of what settings are used by the users and what settings are preferred (e.g. blue or black verse number colors). Sharing of these settings is totally optional and enabled by default. You can disable this under advanced settings in the settings screen.
+      </Text>
+
+      <Text style={[styles.contentText]}>
+        ERROR LOGGING. Further more, error logging is collected. If your app crashes for some reason, some information about this crash is send to our logging framework. The developers can start their investigation using this information, although it's usually not much. So if you can provide us with more information, please do so using the Feedback option in the menu. This crash information may (not always) include information like: the error name, some app settings related to the crash, your device information (IP address, device type and Android version, but no personal information).
+      </Text>
+
       <Text style={[styles.contentText]}>
         BACKEND. This app or it's backend doesn't collect any personal information from you. The authentication with the
         backend
@@ -38,12 +54,6 @@ const PrivacyPolicyScreen: React.FC = () => {
       <UrlLink url={"https://jschedule.sajansen.nl"}>
         <Text style={[styles.contentText, styles.webpageLink]}>Visit jSchedule.</Text>
       </UrlLink>
-
-      <Text style={[styles.contentText]}>
-        SURVEYS.
-        The surveys are created using Google Forms. Please refer to Google's privacy policy when you use these surveys.
-        Note that we don't collect your e-mail information, but Google may use it for their purposes.
-      </Text>
     </View>
   </ScrollView>);
 };
