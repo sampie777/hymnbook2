@@ -10,12 +10,12 @@ export namespace Server {
     return api.songBundles.list()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then((data: JsonResponse) => {
+      .then((data: JsonResponse<SongBundle[]>) => {
         if (data.type === JsonResponseType.ERROR) {
           throw new Error(data.content);
         }
 
-        let bundles: Array<SongBundle> = data.content;
+        let bundles = data.content;
         if (!includeOther) {
           bundles = bundles.filter(it => it.name !== "Other");
         }
@@ -36,7 +36,7 @@ export namespace Server {
     return api.songBundles.getWithSongs(bundle.id, true, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then((data: JsonResponse) => {
+      .then((data: JsonResponse<SongBundle>) => {
         if (data.type === JsonResponseType.ERROR) {
           throw new Error(data.content);
         }
