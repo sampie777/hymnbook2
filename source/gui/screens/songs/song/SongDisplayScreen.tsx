@@ -253,12 +253,17 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const onListViewableItemsChanged = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
+
       if (viewableItems.length === 0) {
         setViewIndex(-1);
       } else if (viewableItems[0].index !== null) {
         setViewIndex(viewableItems[0].index);
       }
     });
+
+  const onListEndReached = () => {
+    setViewIndex((song?.verses?.length ?? 0) - 1);
+  };
 
   // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
   const delayScrollToFirstVerse = (maxTries = 20) => {
@@ -419,6 +424,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               contentContainerStyle={styles.contentSectionList}
               onViewableItemsChanged={onListViewableItemsChanged.current}
               viewabilityConfig={listViewabilityConfig.current}
+              onEndReached={onListEndReached}
               onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
                 info: info,
                 songName: song?.name ?? "null",
@@ -458,7 +464,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   contentSectionList: {
     paddingLeft: 30,
     paddingTop: 5,
-    paddingRight: 20,
-    paddingBottom: 200
+    paddingRight: 20
   }
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SongListSongModel } from "../../../../logic/db/models/SongListModel";
 import SongList from "../../../../logic/songs/songList";
@@ -32,7 +32,14 @@ const SongControls: React.FC<ComponentProps> =
     const previousSong = songListIndex === undefined ? undefined : SongList.previousSong(songListIndex);
     const nextSong = songListIndex === undefined ? undefined : SongList.nextSong(songListIndex);
     const hasSelectableVerses = selectedVerses !== undefined && selectedVerses.length > 0;
+    const [jumpToVerseTargetIndex, setJumpToVerseTargetIndex] = useState<number | null>(null);
     const styles = createStyles(useTheme());
+
+    useEffect(() => {
+      if (listViewIndex == jumpToVerseTargetIndex) {
+        setJumpToVerseTargetIndex(null);
+      }
+    }, [listViewIndex]);
 
     const goToSongListSong = (songListSong: SongListSongModel) => {
       requestAnimationFrame(() => navigation.navigate(SongRoute, {
@@ -42,11 +49,15 @@ const SongControls: React.FC<ComponentProps> =
       }));
     };
 
-    const canJumpToNextVerse = () => {
+    const canJumpToNextVerse = (): boolean => {
+      if (song == null) return false;
+
+      const nextIndex = jumpToVerseTargetIndex ?? listViewIndex;
+
       if (!hasSelectableVerses) {
-        return song !== undefined && listViewIndex + 1 < song?.verses.length;
+        return nextIndex + 1 < song?.verses.length;
       }
-      return getNextVerseIndex(selectedVerses, listViewIndex) > -1;
+      return getNextVerseIndex(selectedVerses, nextIndex) > -1;
     };
 
     const jumpToNextVerse = () => {
@@ -54,11 +65,14 @@ const SongControls: React.FC<ComponentProps> =
         return;
       }
 
-      let nextIndex = listViewIndex + 1;
+      let nextIndex = (jumpToVerseTargetIndex ?? listViewIndex) + 1;
       if (hasSelectableVerses) {
-        nextIndex = getNextVerseIndex(selectedVerses, listViewIndex);
+        nextIndex = getNextVerseIndex(selectedVerses, jumpToVerseTargetIndex ?? listViewIndex);
       }
 
+      nextIndex = Math.min((song?.verses.length ?? 1) - 1, nextIndex);
+
+      setJumpToVerseTargetIndex(nextIndex);
       flatListComponentRef?.scrollToIndex({
         index: nextIndex,
         animated: Settings.animateScrolling
@@ -70,11 +84,12 @@ const SongControls: React.FC<ComponentProps> =
         return;
       }
 
-      let lastIndex = song!.verses.length - 1;
+      let lastIndex = (song?.verses.length ?? 1) - 1;
       if (hasSelectableVerses) {
         lastIndex = selectedVerses[selectedVerses.length - 1].index;
       }
 
+      setJumpToVerseTargetIndex(lastIndex);
       flatListComponentRef?.scrollToIndex({
         index: lastIndex,
         animated: Settings.animateScrolling
