@@ -10,7 +10,14 @@ export enum JsonResponseType {
   ERROR = "ERROR"
 }
 
-export interface JsonResponse {
-  content: any | null;
-  type: JsonResponseType;
+interface JsonErrorResponse<T> {
+  type: JsonResponseType.ERROR;
+  content: string | undefined;
 }
+
+interface JsonSuccessResponse<T> {
+  type: JsonResponseType.SUCCESS;
+  content: T;
+}
+
+export type JsonResponse<T> = JsonSuccessResponse<T> | JsonErrorResponse<T>;

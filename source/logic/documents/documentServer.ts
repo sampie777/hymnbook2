@@ -10,12 +10,12 @@ export namespace DocumentServer {
     return api.documents.groups.root()
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then((data: JsonResponse) => {
+      .then((data: JsonResponse<DocumentGroup[]>) => {
         if (data.type === JsonResponseType.ERROR) {
           throw new Error(data.content);
         }
 
-        let groups: Array<DocumentGroup> = data.content;
+        let groups = data.content;
         if (!includeOther) {
           groups = groups.filter(it => it.name !== "Other");
         }
@@ -36,7 +36,7 @@ export namespace DocumentServer {
     return api.documents.groups.get(group.id, true, true, true)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then((data: JsonResponse) => {
+      .then((data: JsonResponse<DocumentGroup>) => {
         if (data.type === JsonResponseType.ERROR) {
           throw new Error(data.content);
         }
