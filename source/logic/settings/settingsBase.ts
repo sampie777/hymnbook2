@@ -61,6 +61,7 @@ class SettingsProvider {
 }
 
 export class SettingsBaseClass {
+  private _isLoaded = false;
 
   load() {
     Object.entries(this).forEach(([key, value]) => {
@@ -70,6 +71,7 @@ export class SettingsBaseClass {
         this[key] = dbValue;
       }
     });
+    this._isLoaded = true;
   }
 
   private loadValueFor(key: string, value: any) {
@@ -86,6 +88,12 @@ export class SettingsBaseClass {
   }
 
   store() {
+    if (!this._isLoaded) {
+      // Settings can't be stored, as they are not loaded yet.
+      // Return to prevent settings from being reset by default values.
+      return;
+    }
+
     try {
       Object.entries(this).forEach(([key, value]) => {
         switch (typeof value) {
