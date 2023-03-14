@@ -1,7 +1,6 @@
-import { songBundlesApiUrl } from "../../../app.json";
+import { databaseHost } from "../../../app.json";
 
-const apiHostUrl = songBundlesApiUrl;
-const apiBaseUrl = `${apiHostUrl}/api/v1`;
+const authEndpoint = `${databaseHost}/api/v1`;
 
 const post = (url: string, data: any = "") =>
   fetch(url, {
@@ -17,8 +16,8 @@ const post = (url: string, data: any = "") =>
 export const authApi = {
   auth: {
     requestAccess: (clientName: string) =>
-      post(`${apiBaseUrl}/auth/application/request-access/hymnbook?clientName=${clientName}`, ""),
+      post(`${authEndpoint}/auth/application/request-access/hymnbook?clientName=${clientName}`, ""),
     retrieveAccess: (clientName: string, requestId: string) =>
-      post(`${apiBaseUrl}/auth/application/request-access/hymnbook?clientName=${clientName}&requestID=${requestId}`, "")
+      post(`${authEndpoint}/auth/application/request-access/hymnbook?clientName=${clientName}&requestID=${requestId}`, "")
   }
 };

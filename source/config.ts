@@ -15,6 +15,8 @@ const config = {
     "77975543a8268cd4", // local emulator
     "e110b2f6acc009ac", // Google emulator
     "e7693a312035bf94", // Google emulator
-  ]
+  ],
+
+  featuresWaitForDatabaseMaxTries: 10,
 };
 export default config;
