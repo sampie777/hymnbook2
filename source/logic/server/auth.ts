@@ -85,12 +85,12 @@ export class ServerAuth {
     return authApi.auth.requestAccess(this.getDeviceId())
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then((data: JsonResponse) => {
+      .then((data: JsonResponse<AccessRequestResponse>) => {
         if (data.type === JsonResponseType.ERROR) {
           throw new Error(data.content);
         }
 
-        const accessRequestResponse = data.content as AccessRequestResponse;
+        const accessRequestResponse = data.content;
         Settings.authStatus = accessRequestResponse.status;
         Settings.authDeniedReason = accessRequestResponse.reason || "";
         Settings.store();
@@ -132,12 +132,12 @@ export class ServerAuth {
     return authApi.auth.retrieveAccess(this.getDeviceId(), Settings.authRequestId)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
-      .then((data: JsonResponse) => {
+      .then((data: JsonResponse<AccessRequestResponse>) => {
         if (data.type === JsonResponseType.ERROR) {
           throw new Error(data.content);
         }
 
-        const accessRequestResponse = data.content as AccessRequestResponse;
+        const accessRequestResponse = data.content;
         Settings.authStatus = accessRequestResponse.status;
         Settings.authDeniedReason = accessRequestResponse.reason || "";
         Settings.store();

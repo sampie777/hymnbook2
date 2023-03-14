@@ -2,5 +2,6 @@
   "name": "hymnbook2",
   "displayName": "Hymnbook",
   "homepage": "https://sajansen.nl",
-  "songBundlesApiUrl": "https://jschedule.sajansen.nl"
+  "databaseHost": "https://jschedule.sajansen.nl",
+  "hymnbookHost": "https://hymnbook.sajansen.nl"
 }

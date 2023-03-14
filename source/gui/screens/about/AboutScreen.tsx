@@ -2,6 +2,7 @@ import React from "react";
 import { displayName, homepage } from "../../../../app.json";
 import Config from "react-native-config";
 import { getVersion } from "react-native-device-info";
+import { useFeatures } from "../../components/FeaturesProvider";
 import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
@@ -14,6 +15,8 @@ import IconLabel from "../../components/IconLabel";
 
 const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute> }> = ({ navigation }) => {
   const styles = createStyles(useTheme());
+  const { goldenEgg } = useFeatures();
+
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>
@@ -48,24 +51,26 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, t
         </Text>
       </View>
 
-      <View style={styles.donationContainer}>
-        <Text style={[styles.contentText, styles.contributionText]}>
-          This app is made free in order to make the access to Christian songs available for everyone with a digital
-          device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
-          thanks, please consider donating using one of the following options:
-        </Text>
+      {!goldenEgg ? undefined :
+        <View style={styles.donationContainer}>
+          <Text style={[styles.contentText, styles.contributionText]}>
+            This app is made free in order to make the access to Christian songs available for everyone with a digital
+            device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
+            thanks, please consider donating using one of the following options:
+          </Text>
 
-        <View style={styles.donationLinksContainer}>
-          <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
-            <IconLabel text={"Buy me a coffee"}
-                       iconSource={require("./buymeacoffee-logo.jpeg")} />
-          </UrlLink>
-          <UrlLink url={"https://www.paypal.com/donate/?hosted_button_id=6KTU5JNVS699E"} style={styles.donationLink}>
-            <IconLabel text={"Donate using Paypal"}
-                       iconSource={require("./paypal-logo.png")} />
-          </UrlLink>
+          <View style={styles.donationLinksContainer}>
+            <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
+              <IconLabel text={"Buy me a coffee"}
+                         iconSource={require("./buymeacoffee-logo.jpeg")} />
+            </UrlLink>
+            <UrlLink url={"https://www.paypal.com/donate/?hosted_button_id=6KTU5JNVS699E"} style={styles.donationLink}>
+              <IconLabel text={"Donate using Paypal"}
+                         iconSource={require("./paypal-logo.png")} />
+            </UrlLink>
+          </View>
         </View>
-      </View>
+      }
 
       <View style={styles.footerContainer}>
         <Text style={[styles.contentText, styles.footerText]}>

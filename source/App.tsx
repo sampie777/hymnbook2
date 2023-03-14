@@ -51,6 +51,7 @@ import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
+import FeaturesProvider from "./gui/components/FeaturesProvider";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -211,9 +212,11 @@ const AppRoot: React.FC = () => {
 const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <AppRoot />
-      </ThemeProvider>
+      <FeaturesProvider>
+        <ThemeProvider>
+          <AppRoot />
+        </ThemeProvider>
+      </FeaturesProvider>
     </GestureHandlerRootView>
   );
 };
