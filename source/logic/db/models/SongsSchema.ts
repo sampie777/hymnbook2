@@ -1,6 +1,7 @@
+import Realm from "realm";
 import { AbcMelodySchema, AbcSubMelodySchema } from "./AbcMelodiesSchema";
 
-export const VerseSchema = {
+export const VerseSchema: Realm.ObjectSchema = {
   name: "Verse",
   properties: {
     id: "int",
@@ -23,7 +24,7 @@ export const VerseSchema = {
   primaryKey: "id"
 };
 
-export const SongSchema = {
+export const SongSchema: Realm.ObjectSchema = {
   name: "Song",
   properties: {
     id: "int",
@@ -46,7 +47,7 @@ export const SongSchema = {
   primaryKey: "id"
 };
 
-export const SongBundleSchema = {
+export const SongBundleSchema: Realm.ObjectSchema = {
   name: "SongBundle",
   properties: {
     id: "int",
