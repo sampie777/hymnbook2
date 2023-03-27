@@ -204,6 +204,7 @@ export namespace SongProcessor {
       dateFrom(bundle.createdAt),
       dateFrom(bundle.modifiedAt),
       bundle.uuid,
+      bundle.hash,
       songs
     );
   };
@@ -274,9 +275,7 @@ export namespace SongProcessor {
       return false;
     }
 
-    const serverDate = dateFrom(serverBundle.modifiedAt);
-    const localDate = bundle.modifiedAt;
-    return serverDate > localDate;
+    return serverBundle.hash != bundle.hash;
   };
 
   export const getMatchingServerBundle = (serverBundles: ServerSongBundle[], bundle: SongBundle): ServerSongBundle | undefined => {

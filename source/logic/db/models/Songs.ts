@@ -113,6 +113,7 @@ export class SongBundle {
   createdAt: Date;
   modifiedAt: Date;
   uuid: string;
+  hash: string;
 
   constructor(
     abbreviation: string,
@@ -123,8 +124,9 @@ export class SongBundle {
     createdAt: Date,
     modifiedAt: Date,
     uuid: string,
+    hash: string = "",
     songs: Array<Song> = [],
-    id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema)
+    id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema),
   ) {
     this.id = id;
     this.abbreviation = abbreviation;
@@ -136,5 +138,6 @@ export class SongBundle {
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
+    this.hash = hash;
   }
 }

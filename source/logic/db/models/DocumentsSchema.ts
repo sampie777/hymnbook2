@@ -1,3 +1,5 @@
+import Realm from "realm";
+
 export const DocumentSchema = {
   name: "Document",
   properties: {
@@ -29,6 +31,7 @@ export const DocumentGroupSchema: Realm.ObjectSchema = {
     createdAt: "date",
     modifiedAt: "date",
     uuid: "string",
+    hash: "string?",
     isRoot: "bool",
     _parent: {
       type: "linkingObjects",

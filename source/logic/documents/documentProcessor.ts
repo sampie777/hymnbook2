@@ -79,6 +79,7 @@ export namespace DocumentProcessor {
       dateFrom(group.createdAt),
       dateFrom(group.modifiedAt),
       group.uuid,
+      group.hash,
       privateConversionState.totalDocuments,
       isRoot,
       conversionState.groupId++
@@ -241,9 +242,7 @@ export namespace DocumentProcessor {
       return false;
     }
 
-    const serverDate = dateFrom(serverGroup.modifiedAt);
-    const localDate = group.modifiedAt;
-    return serverDate > localDate;
+    return serverGroup.hash != group.hash;
   };
 
   export const getMatchingServerGroup = (serverGroups: ServerDocumentGroup[], group: DocumentGroup): ServerDocumentGroup | undefined => {

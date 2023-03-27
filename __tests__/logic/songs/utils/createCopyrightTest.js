@@ -3,7 +3,7 @@ import { Song, SongBundle } from "../../../../source/logic/db/models/Songs";
 
 describe("creating copyright for song", () => {
   const song = new Song("", "", "", "", new Date(), new Date(), [], [], 0, 1);
-  const songBundle = new SongBundle("", "name", "", "", "", new Date(), new Date(), "000", [], 0);
+  const songBundle = new SongBundle("", "name", "", "", "", new Date(), new Date(), "000", "", [], 0);
   song._songBundles = [songBundle];
 
   it("returns nothing if song is undefined", () => {
