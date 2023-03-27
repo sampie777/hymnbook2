@@ -1,6 +1,6 @@
 import Realm from "realm";
 
-export const DocumentSchema = {
+export const DocumentSchema: Realm.ObjectSchema = {
   name: "Document",
   properties: {
     id: "int",

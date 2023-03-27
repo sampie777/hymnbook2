@@ -1,4 +1,6 @@
-export const AbcSubMelodySchema = {
+import Realm from "realm";
+
+export const AbcSubMelodySchema: Realm.ObjectSchema = {
   name: "AbcSubMelody",
   properties: {
     id: "int",
@@ -13,7 +15,7 @@ export const AbcSubMelodySchema = {
   primaryKey: "id"
 };
 
-export const AbcMelodySchema = {
+export const AbcMelodySchema: Realm.ObjectSchema = {
   name: "AbcMelody",
   properties: {
     id: "int",
