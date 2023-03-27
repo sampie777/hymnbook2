@@ -8,9 +8,9 @@ import {
 } from "../../../source/logic/server/models/Documents";
 
 describe("test document processor", () => {
-  const group = (name = "group 1", id = undefined, isRoot = false) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), "000", 0, isRoot, id);
+  const group = (name = "group 1", id = undefined, isRoot = false) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), "000", "", 0, isRoot, id);
   const document = (name = "doc 1", id = undefined) => new Document(name, "", "NL", -1, new Date(), new Date(), id);
-  const serverGroup = (name = "group 1", id = undefined) => new ServerDocumentGroup(name, "NL", [], [], (new Date()).toISOString(), (new Date()).toISOString(), 0, id, "000");
+  const serverGroup = (name = "group 1", id = undefined) => new ServerDocumentGroup(name, "NL", [], [], (new Date()).toISOString(), (new Date()).toISOString(), 0, id, "000", "abc");
   const serverDocument = (name = "doc 1", id = undefined) => new ServerDocument(name, "", "NL", -1, (new Date()).toISOString(), (new Date()).toISOString(), id);
 
   beforeEach(() => {
@@ -47,6 +47,8 @@ describe("test document processor", () => {
     expect(result.name).toBe("group 2");
     expect(result.size).toBe(4);
     expect(result.isRoot).toBe(true);
+    expect(result.uuid).toBe(group2.uuid);
+    expect(result.hash).toBe(group2.hash);
     expect(result.items.length).toBe(2);
     expect(result.groups.length).toBe(2);
 

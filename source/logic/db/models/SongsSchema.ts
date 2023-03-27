@@ -58,6 +58,7 @@ export const SongBundleSchema = {
     createdAt: "date",
     modifiedAt: "date",
     uuid: "string",
+    hash: "string",
     songs: SongSchema.name + "[]"
   },
   primaryKey: "id"

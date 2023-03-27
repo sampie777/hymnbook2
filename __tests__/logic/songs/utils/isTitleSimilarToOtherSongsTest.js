@@ -6,7 +6,7 @@ describe("test if title is similar to other songs", () => {
                     id,
                     songBundleId = 0) =>
     new Song(name, "", "", "", new Date(), new Date(), [], [], id, 0,
-      new SongBundle("", "", "", "", "", new Date(), new Date(), "", [], songBundleId));
+      new SongBundle("", "", "", "", "", new Date(), new Date(), "", "", [], songBundleId));
   const songs = [
     mockSong("Song 1", 101, 0),
     mockSong("Song 2", 102, 0),

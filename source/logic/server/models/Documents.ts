@@ -37,6 +37,7 @@ export class DocumentGroup {
   modifiedAt: string;
   size: number;
   uuid: string;
+  hash?: string;
 
   constructor(
     name: string,
@@ -48,6 +49,7 @@ export class DocumentGroup {
     size: number = 0,
     id: number,
     uuid: string,
+    hash?: string,
   ) {
     this.id = id;
     this.name = name;
@@ -58,5 +60,6 @@ export class DocumentGroup {
     this.modifiedAt = modifiedAt;
     this.size = size || 0;
     this.uuid = uuid;
+    this.hash = hash;
   }
 }
