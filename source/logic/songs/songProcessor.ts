@@ -110,6 +110,23 @@ export namespace SongProcessor {
     return new Result({ success: true, message: `${bundle.name} updated!` });
   };
 
+  export const sortSongMelodyByName = (a: (ServerAbcMelody | AbcMelody), b: (ServerAbcMelody | AbcMelody)): number => {
+    if (a.name == "Default") return -1;
+    if (b.name == "Default") return 1;
+    if (RegExp("^(Eerste|First)", "").test(a.name)) return -1;
+    if (RegExp("^(Eerste|First)", "").test(b.name)) return 1;
+    if (RegExp("^(Tweede|Second)", "").test(a.name)) return -1;
+    if (RegExp("^(Tweede|Second)", "").test(b.name)) return 1;
+    if (RegExp("^(Derde|Third)", "").test(a.name)) return -1;
+    if (RegExp("^(Derde|Third)", "").test(b.name)) return 1;
+    if (RegExp("^(Vierde|Forth)", "").test(a.name)) return -1;
+    if (RegExp("^(Vierde|Forth)", "").test(b.name)) return 1;
+    if (RegExp("^(Vyfde|Vijfde|Fifth)", "").test(a.name)) return -1;
+    if (RegExp("^(Vyfde|Vijfde|Fifth)", "").test(b.name)) return 1;
+
+    return a.name.localeCompare(b.name);
+  }
+
   export const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle): SongBundle => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
@@ -160,7 +177,7 @@ export namespace SongProcessor {
       // to the melody as sub melodies (each with a reference to its verse)
       try {
         newSong.abcMelodies = (song.abcMelodies || [])
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort(sortSongMelodyByName)
           .map(melody => new AbcMelody(
             melody.name,
             melody.melody,
