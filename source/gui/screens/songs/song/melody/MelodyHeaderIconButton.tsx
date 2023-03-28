@@ -32,14 +32,16 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
                               color={styles.loadIcon.color} />;
   }
 
-  return <TouchableOpacity style={styles.container}
+  const shouldShowMelodyCount = song.abcMelodies.length > 1;
+
+  return <TouchableOpacity style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
                            onPress={() => Settings.longPressForMelodyMenu ? toggleShowMelody() : setShowMelodySettings(true)}
                            onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : toggleShowMelody()}>
     <Icon name={"music"} style={styles.icon} />
     {!showMelody ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
 
     {/* Show a dot for each available melody (if multiple), maxed at 4 dots/melodies */}
-    {song.abcMelodies.length <= 1 ? undefined :
+    {!shouldShowMelodyCount ? undefined :
       <View style={styles.countIndicator}>
         {song.abcMelodies.slice(0, 4)
           .map(it => <View key={it.id} style={styles.countIndicatorDot} />)}
@@ -61,7 +63,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
     paddingTop: 10,
+    paddingBottom: 2,
     width: 44
+  },
+  containerSingle: {
+    paddingBottom: 10,
   },
   icon: {
     fontSize: 20,
