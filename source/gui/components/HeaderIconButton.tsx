@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
@@ -8,9 +8,16 @@ interface ComponentProps {
   iconOverlay?: string | ReactElement;
   onPress?: () => void;
   onLongPress?: () => void;
+  buttonStyle?: StyleProp<ViewStyle> | undefined;
 }
 
-const HeaderIconButton: React.FC<ComponentProps> = ({ icon, iconOverlay, onPress, onLongPress }) => {
+const HeaderIconButton: React.FC<ComponentProps> = ({
+                                                      icon,
+                                                      iconOverlay,
+                                                      onPress,
+                                                      onLongPress,
+                                                      buttonStyle
+                                                    }) => {
   const styles = createStyles(useTheme());
 
   if (typeof icon === "string") {
@@ -22,7 +29,7 @@ const HeaderIconButton: React.FC<ComponentProps> = ({ icon, iconOverlay, onPress
 
   return <TouchableOpacity onPress={onPress}
                            onLongPress={onLongPress}
-                           style={styles.container}>
+                           style={[styles.container, buttonStyle]}>
     {icon}
     {iconOverlay}
   </TouchableOpacity>;

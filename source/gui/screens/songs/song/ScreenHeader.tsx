@@ -1,12 +1,10 @@
 import React from "react";
-import Settings from "../../../../settings";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Song } from "../../../../logic/db/models/Songs";
-import { hasMelodyToShow } from "../../../../logic/songs/utils";
 import { hasVisibleNameForPicker } from "../../../../logic/songs/versePicker";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import HeaderIconButton from "../../../components/HeaderIconButton";
 import HeaderIconVersePicker from "./HeaderIconVersePicker";
+import MelodyHeaderIconButton from "./melody/MelodyHeaderIconButton";
 
 interface Props {
   song: Song & Realm.Object | undefined;
@@ -27,22 +25,15 @@ const ScreenHeader: React.FC<Props> = ({
                                        }) => {
   const styles = createStyles(useTheme());
 
-  const songHasMelodyToShow = hasMelodyToShow(song);
   const songHasVersesToPick = song?.verses?.some(hasVisibleNameForPicker);
 
-  const toggleShowMelody = () => requestAnimationFrame(() => setShowMelody(!showMelody));
-
   return <View style={styles.container}>
-    {!songHasMelodyToShow || !isMelodyLoading ? undefined :
-      <ActivityIndicator size={styles.loadIcon.fontSize}
-                         style={styles.loadIcon}
-                         color={styles.loadIcon.color} />
-    }
-    {!songHasMelodyToShow || isMelodyLoading ? undefined :
-      <HeaderIconButton icon={"music"}
-                        iconOverlay={showMelody ? "slash" : undefined}
-                        onPress={() => Settings.longPressForMelodyMenu ? toggleShowMelody() : setShowMelodySettings(true)}
-                        onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : toggleShowMelody()} />
+    {!song ? undefined :
+      <MelodyHeaderIconButton song={song}
+                              showMelody={showMelody}
+                              isMelodyLoading={isMelodyLoading}
+                              setShowMelodySettings={setShowMelodySettings}
+                              setShowMelody={setShowMelody} />
     }
 
     {!songHasVersesToPick ? undefined :
@@ -53,7 +44,8 @@ const ScreenHeader: React.FC<Props> = ({
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center"
   },
   loadIcon: {
     fontSize: 26,
