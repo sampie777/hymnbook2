@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { ParamList } from "../../../../navigation";
+import { Song } from "../../../../logic/db/models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -14,10 +14,19 @@ export const SearchResultItem: React.FC<{
   song: Song,
   onPress: (song: Song) => void,
   onLongPress?: (song: Song) => void,
+  onAddToSongListLongPress?: (song: Song) => void,
   onAddedToSongList?: () => void,
   showSongBundle?: boolean,
 }> =
-  ({ navigation, song, onPress, onLongPress, onAddedToSongList, showSongBundle }) => {
+  ({
+     navigation,
+     song,
+     onPress,
+     onLongPress,
+     onAddToSongListLongPress,
+     onAddedToSongList,
+     showSongBundle
+   }) => {
     const [songAddedToSongList, setSongAddedToSongList] = useState(false);
     const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
     const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>();
@@ -54,15 +63,6 @@ export const SearchResultItem: React.FC<{
       }
     };
 
-    const selectVersesAndAddToSongList = () => {
-      navigation.navigate(VersePickerRoute, {
-        verses: song.verses?.map(it => Verse.toObject(it)),
-        selectedVerses: [],
-        songId: song.id,
-        method: VersePickerMethod.AddToSongListAndShowSearch
-      });
-    };
-
     return <TouchableOpacity onPress={() => onPress(song)}
                              onLongPress={() => onLongPress?.(song)}
                              style={styles.container}>
@@ -77,7 +77,7 @@ export const SearchResultItem: React.FC<{
       </View>
 
       <TouchableOpacity onPress={addSongToSongList}
-                        onLongPress={selectVersesAndAddToSongList}
+                        onLongPress={() => onAddToSongListLongPress?.(song)}
                         style={styles.button}>
         <Icon name={songAddedToSongList ? "check" : "plus"}
               size={styles.button.fontSize}
