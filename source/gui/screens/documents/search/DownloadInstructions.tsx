@@ -20,7 +20,7 @@ const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
   return (<View style={styles.container}>
     <Text style={styles.titleText}>Nothing to show</Text>
     <Text style={styles.text}>You need to download some documents first before you can use them.</Text>
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={styles.button}>
       <Text style={styles.downloadText}>Take me to downloads</Text>
     </TouchableOpacity>
   </View>);
@@ -48,9 +48,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     textAlign: "center",
     color: colors.text
   },
+  button: {
+    marginTop: 25,
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: colors.primaryVariant,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   downloadText: {
-    marginTop: 10,
     fontSize: 16,
-    color: colors.url
+    color: colors.onPrimary
   }
 });
