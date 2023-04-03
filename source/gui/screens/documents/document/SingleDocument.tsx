@@ -24,6 +24,7 @@ import Animated, { Easing, SharedValue, useAnimatedStyle, useSharedValue, withTi
 import HTMLView, { HTMLViewNode, HTMLViewNodeRenderer } from "react-native-htmlview";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
+import DocumentBreadcrumb from "./DocumentsBreadcrumb";
 
 const Footer: React.FC<{ opacity: SharedValue<number> }> =
   ({ opacity }) => {
@@ -177,41 +178,42 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   };
 
   return <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <DocumentControls navigation={navigation}
+                        document={document}
+                        forceShow={onPressed}
+                        scrollOffset={scrollOffset}
+                        bottomOffset={bottomOffset} />
 
-        <DocumentControls navigation={navigation}
-                          document={document}
-                          forceShow={onPressed}
-                          scrollOffset={scrollOffset}
-                          bottomOffset={bottomOffset} />
+      {document === undefined ? undefined :
+        <ScrollView
+          ref={scrollViewComponent}
+          onScroll={onScrollViewScroll}
+          onTouchStart={onScrollViewTouchStart}
+          onTouchMove={onScrollViewTouchMove}
+          onTouchCancel={onScrollViewTouchCancel}
+          onTouchEnd={onScrollViewTouchEnd}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={styles.contentSectionList}>
 
-        {document === undefined ? undefined :
-          <ScrollView
-            ref={scrollViewComponent}
-            onScroll={onScrollViewScroll}
-            onTouchStart={onScrollViewTouchStart}
-            onTouchMove={onScrollViewTouchMove}
-            onTouchCancel={onScrollViewTouchCancel}
-            onTouchEnd={onScrollViewTouchEnd}
-            showsVerticalScrollIndicator={true}
-            contentContainerStyle={styles.contentSectionList}>
+          <DocumentBreadcrumb document={document} />
 
-            <HTMLView value={document.html.replace(/\n/gi, "")}
-                      paragraphBreak={""}
-                      renderNode={renderNode}
-                      stylesheet={styles} />
+          <HTMLView value={document.html.replace(/\n/gi, "")}
+                    paragraphBreak={""}
+                    renderNode={renderNode}
+                    stylesheet={styles} />
 
-            <Footer opacity={animatedOpacity} />
-          </ScrollView>
-        }
+          <Footer opacity={animatedOpacity} />
+        </ScrollView>
+      }
 
-        <LoadingOverlay text={null}
-                        isVisible={
-                          route.params.id !== undefined
-                          && (document === undefined || document.id !== route.params.id)}
-                        animate={Settings.songFadeIn} />
-      </View>
-    </GestureHandlerRootView>;
+      <LoadingOverlay text={null}
+                      isVisible={
+                        route.params.id !== undefined
+                        && (document === undefined || document.id !== route.params.id)}
+                      animate={Settings.songFadeIn} />
+    </View>
+  </GestureHandlerRootView>;
 };
 
 export default SingleDocument;
