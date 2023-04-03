@@ -1,7 +1,7 @@
 import React from "react";
 import { displayName, homepage } from "../../../../app.json";
 import Config from "react-native-config";
-import { getVersion } from "react-native-device-info";
+import { getBuildNumber, getVersion } from "react-native-device-info";
 import { useFeatures } from "../../components/FeaturesProvider";
 import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -23,8 +23,7 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, t
         <Icon name={"book-open"} size={styles.titleIcon.fontSize} color={styles.titleIcon.color as string} />
         <Text style={styles.titleContent}>{displayName}</Text>
       </View>
-      <Text
-        style={styles.versionText}>version: {getVersion()} {process.env.NODE_ENV === "production" ? undefined : `(${process.env.NODE_ENV})`}</Text>
+      <Text style={styles.versionText}>version: {getVersion()} ({getBuildNumber()}) {process.env.NODE_ENV === "production" ? undefined : `(${process.env.NODE_ENV})`}</Text>
     </View>
 
     <View style={styles.content}>
