@@ -32,7 +32,7 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
       opacity: opacity.value
     }));
 
-    return (<Animated.View style={[styles.container, animatedStyle]} />);
+    return <Animated.View style={[styles.container, animatedStyle]} />;
   };
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
@@ -176,8 +176,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     return undefined;
   };
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+  return <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
 
         <DocumentControls navigation={navigation}
@@ -212,8 +211,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
                           && (document === undefined || document.id !== route.params.id)}
                         animate={Settings.songFadeIn} />
       </View>
-    </GestureHandlerRootView>
-  );
+    </GestureHandlerRootView>;
 };
 
 export default SingleDocument;
