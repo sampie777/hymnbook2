@@ -1,4 +1,3 @@
-
 export class Document {
   id: number;
   name: string;
@@ -7,6 +6,7 @@ export class Document {
   index: number;
   createdAt: string;
   modifiedAt: string;
+  uuid: string;
 
   constructor(
     name: string,
@@ -15,6 +15,7 @@ export class Document {
     index: number,
     createdAt: string,
     modifiedAt: string,
+    uuid: string,
     id: number
   ) {
     this.id = id;
@@ -24,6 +25,7 @@ export class Document {
     this.index = index;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.uuid = uuid;
   }
 }
 
@@ -49,7 +51,7 @@ export class DocumentGroup {
     size: number = 0,
     id: number,
     uuid: string,
-    hash?: string,
+    hash?: string
   ) {
     this.id = id;
     this.name = name;

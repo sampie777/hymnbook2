@@ -25,65 +25,44 @@ describe("test convert server songbundle to local songbundle", () => {
 
   it("converts bundle with children to local objects", () => {
     const songs = [
-      new ServerSong(0, "name0", "author", "copyright", "language", [
-        new ServerVerse(
-          0,
-          "name0",
-          "content",
-          "language",
-          0,
-          null,
-          [new ServerAbcSubMelody(0, "melody0", 0)],
-          "abcLyrics",
-        ),
-        new ServerVerse(
-          1,
-          "name1",
-          "content",
-          "language",
-          1,
-          null,
-          [],
-          "abcLyrics",
-        ),
-      ], null, new Date(), new Date(), 1, [
-        new ServerAbcMelody(
-          0,
-          "name0",
-          "melody",
-          null,
-          null,
-        ),
-        new ServerAbcMelody(
-          1,
-          "name1",
-          "melody",
-          null,
-          null,
-        ),
-      ]),
+      new ServerSong(0,
+        "name0",
+        "author",
+        "copyright",
+        "language",
+        [
+          new ServerVerse(0, "name0", "content", "language", 0, "verse0", null,
+            [new ServerAbcSubMelody(0, "melody0", 0, "submelody0")], "abcLyrics"),
+          new ServerVerse(1, "name1", "content", "language", 1, "verse1", null, [], "abcLyrics"),
+        ],
+        null,
+        new Date(),
+        new Date(),
+        "song0",
+        1,
+        [
+          new ServerAbcMelody(
+            0,
+            "name0",
+            "melody",
+            "melody0",
+            null,
+            null,
+          ),
+          new ServerAbcMelody(
+            1,
+            "name1",
+            "melody",
+            "melody1",
+            null,
+            null,
+          ),
+        ],
+      ),
 
       new ServerSong(1, "name1", "author", "copyright", "language", [
-        new ServerVerse(
-          2,
-          "name2",
-          "content",
-          "language",
-          0,
-          null,
-          [],
-          "abcLyrics",
-        ),
-        new ServerVerse(
-          3,
-          "name3",
-          "content",
-          "language",
-          1,
-          null,
-          [],
-          "abcLyrics",
-        )], null, new Date(), new Date(), 2, null),
+        new ServerVerse(2, "name2", "content", "language", 0, "", null, [], "abcLyrics"),
+        new ServerVerse(3, "name3", "content", "language", 1, "", null, [], "abcLyrics")], null, new Date(), new Date(), "", 2, null),
     ];
     const bundle = new ServerSongBundle(1,
       "abbreviation",
@@ -121,6 +100,7 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].language).toBe("language");
     expect(result.songs[0].createdAt).toBe(bundle.songs[0].createdAt);
     expect(result.songs[0].modifiedAt).toBe(bundle.songs[0].modifiedAt);
+    expect(result.songs[0].uuid).toBe("song0");
     expect(result.songs[0].lastUsedMelody).toBe(undefined);
     expect(result.songs[0].abcMelodies.length).toBe(2);
     expect(result.songs[0].verses.length).toBe(2);
@@ -129,11 +109,13 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].abcMelodies[0].id).toBe(1);
     expect(result.songs[0].abcMelodies[0].name).toBe("name0");
     expect(result.songs[0].abcMelodies[0].melody).toBe("melody");
+    expect(result.songs[0].abcMelodies[0].uuid).toBe("melody0");
     expect(result.songs[0].abcMelodies[0].subMelodies.length).toBe(1);
 
     expect(result.songs[0].abcMelodies[0].subMelodies[0]).toBeInstanceOf(AbcSubMelody);
     expect(result.songs[0].abcMelodies[0].subMelodies[0].id).toBe(1);
     expect(result.songs[0].abcMelodies[0].subMelodies[0].melody).toBe("melody0");
+    expect(result.songs[0].abcMelodies[0].subMelodies[0].uuid).toBe("submelody0");
     expect(result.songs[0].abcMelodies[0].subMelodies[0].verse).toBeInstanceOf(Verse);
     expect(result.songs[0].abcMelodies[0].subMelodies[0].verse).toBe(result.songs[0].verses[0]);
 
@@ -141,6 +123,7 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].abcMelodies[1].id).toBe(2);
     expect(result.songs[0].abcMelodies[1].name).toBe("name1");
     expect(result.songs[0].abcMelodies[1].melody).toBe("melody");
+    expect(result.songs[0].abcMelodies[1].uuid).toBe("melody1");
     expect(result.songs[0].abcMelodies[1].subMelodies).toStrictEqual([]);
 
     expect(result.songs[0].verses[0]).toBeInstanceOf(Verse);
@@ -149,6 +132,7 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].verses[0].content).toBe("content");
     expect(result.songs[0].verses[0].language).toBe("language");
     expect(result.songs[0].verses[0].index).toBe(0);
+    expect(result.songs[0].verses[0].uuid).toBe("verse0");
     expect(result.songs[0].verses[0].abcLyrics).toBe("abcLyrics");
 
     expect(result.songs[0].verses[1]).toBeInstanceOf(Verse);
@@ -157,6 +141,7 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].verses[1].content).toBe("content");
     expect(result.songs[0].verses[1].language).toBe("language");
     expect(result.songs[0].verses[1].index).toBe(1);
+    expect(result.songs[0].verses[1].uuid).toBe("verse1");
     expect(result.songs[0].verses[1].abcLyrics).toBe("abcLyrics");
 
     expect(result.songs[1]).toBeInstanceOf(Song);

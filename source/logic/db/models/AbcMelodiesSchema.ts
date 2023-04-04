@@ -6,6 +6,7 @@ export const AbcSubMelodySchema: Realm.ObjectSchema = {
     id: "int",
     melody: "string",
     verse: "Verse", // VerseSchema.name
+    uuid: "string",
     _parent: {
       type: "linkingObjects",
       objectType: "AbcMelody",    // AbcMelodySchema.name
@@ -21,6 +22,7 @@ export const AbcMelodySchema: Realm.ObjectSchema = {
     id: "int",
     name: "string",
     melody: "string",
+    uuid: "string",
     subMelodies: AbcSubMelodySchema.name + "[]",
     _song: {
       type: "linkingObjects",

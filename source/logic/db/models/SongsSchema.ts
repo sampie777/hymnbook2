@@ -9,6 +9,7 @@ export const VerseSchema: Realm.ObjectSchema = {
     content: "string",
     language: "string",
     index: "int",
+    uuid: "string",
     abcLyrics: "string?",
     _songs: {
       type: "linkingObjects",
@@ -35,6 +36,7 @@ export const SongSchema: Realm.ObjectSchema = {
     language: "string",
     createdAt: "date",
     modifiedAt: "date",
+    uuid: "string",
     verses: VerseSchema.name + "[]",
     abcMelodies: AbcMelodySchema.name + "[]",
     lastUsedMelody: AbcMelodySchema.name + "?",

@@ -3,10 +3,10 @@ import { Song } from "../../../../source/logic/db/models/Songs";
 import { AbcMelody } from "../../../../source/logic/db/models/AbcMelodies";
 
 describe("test getting default melody for song", () => {
-  const melody1 = new AbcMelody("Default", "", [], 1);
-  const melody2 = new AbcMelody("Melody 2", "", [], 2);
-  const melody3 = new AbcMelody("Melody 3", "", [], 3);
-  const song = new Song("", "", "", "", new Date(), new Date(), [], [], 0, 1);
+  const melody1 = new AbcMelody("Default", "", "", [], 1);
+  const melody2 = new AbcMelody("Melody 2", "", "", [], 2);
+  const melody3 = new AbcMelody("Melody 3", "", "", [], 3);
+  const song = new Song("", "", "", "", new Date(), new Date(), "", [], [], 0, 1);
 
   it("returns undefined if song is undefined", () => {
     expect(getDefaultMelody(undefined)).toBe(undefined);

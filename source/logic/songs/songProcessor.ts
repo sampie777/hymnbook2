@@ -25,7 +25,7 @@ export namespace SongProcessor {
     const bundles = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted(`name`)
-      .map(it => it)  // Convert to array. Array.from() will crash tests
+      .map(it => it);  // Convert to array. Array.from() will crash tests
 
     return new Result({ success: true, data: bundles });
   };
@@ -125,7 +125,7 @@ export namespace SongProcessor {
     if (RegExp("^(Vyfde|Vijfde|Fifth)", "").test(b.name)) return 1;
 
     return a.name.localeCompare(b.name);
-  }
+  };
 
   export const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle): SongBundle => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
@@ -145,7 +145,12 @@ export namespace SongProcessor {
           return null;
         }
 
-        return new AbcSubMelody(subMelody.melody, newVerse, subMelodyId++);
+        return new AbcSubMelody(
+          subMelody.melody,
+          newVerse,
+          subMelody.uuid,
+          subMelodyId++
+        );
       })
         .filter(it => it != null) as AbcSubMelody[];
     };
@@ -158,6 +163,7 @@ export namespace SongProcessor {
         song.language,
         dateFrom(song.createdAt),
         dateFrom(song.modifiedAt),
+        song.uuid,
         song.verses
           ?.sort((a, b) => a.index - b.index)
           ?.map(verse => new Verse(
@@ -165,6 +171,7 @@ export namespace SongProcessor {
             verse.name,
             verse.content,
             verse.language,
+            verse.uuid,
             verseId++,
             verse.abcLyrics
           )) || [],
@@ -181,6 +188,7 @@ export namespace SongProcessor {
           .map(melody => new AbcMelody(
             melody.name,
             melody.melody,
+            melody.uuid,
             getSubMelodiesFromVerses(song.verses || [], newSong.verses, melody),
             melodyId++
           ));

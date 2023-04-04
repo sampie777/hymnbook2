@@ -2,7 +2,7 @@ import { getVerseType, VerseType } from "../../../../source/logic/songs/utils";
 import { Verse } from "../../../../source/logic/db/models/Songs";
 
 describe("test getting verse type", () => {
-  const mockVerse = (name) => new Verse(0, name, "", "", 0)
+  const mockVerse = (name) => new Verse(0, name, "", "", "", 0)
 
   it("handles verse type correctly", () => {
     expect(getVerseType(mockVerse("verse 1"))).toBe(VerseType.Verse);
