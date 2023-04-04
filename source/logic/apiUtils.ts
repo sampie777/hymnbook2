@@ -24,7 +24,7 @@ export const throwErrorsIfNotOk = (response: Response) => {
     case 403:
       throw new HttpError(`Could not retrieve the requested data: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`, response);
     case 410:
-      throw new HttpError(`Too many request (${response.status}).\n\nTake a break and try again later.`, response);
+      throw new HttpError(`Server says resource is gone (${response.status}).\n\nTry again later.`, response);
     case 429:
       throw new HttpError(`Too many request (${response.status}).\n\nTake a break and try again later.`, response);
     case 500:
