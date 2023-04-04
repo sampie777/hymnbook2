@@ -2,15 +2,18 @@ export class AbcSubMelody {
   id: number;
   melody: string = "";
   parentId: number;
+  uuid: string = "";
 
   constructor(
     id: number,
     melody: string = "",
-    parentId: number
+    parentId: number,
+    uuid: string
   ) {
     this.id = id;
     this.melody = melody;
     this.parentId = parentId;
+    this.uuid = uuid;
   }
 }
 
@@ -18,6 +21,7 @@ export class AbcMelody {
   id: number;
   name: string = "Default";
   melody: string = "";
+  uuid: string = "";
   song: Song | null;
   subMelodies: AbcSubMelody[] | null;
 
@@ -25,12 +29,14 @@ export class AbcMelody {
     id: number,
     name: string = "Default",
     melody: string = "",
+    uuid: string = "",
     song: Song | null,
     subMelodies: AbcSubMelody[] | null
   ) {
     this.id = id;
     this.name = name;
     this.melody = melody;
+    this.uuid = uuid;
     this.song = song;
     this.subMelodies = subMelodies;
   }
@@ -42,6 +48,7 @@ export class SongVerse {
   content: string;
   language: string;
   index: number;
+  uuid: string;
   song: Song | null;
   abcMelodies?: AbcSubMelody[] | null;
   abcLyrics?: string;
@@ -52,6 +59,7 @@ export class SongVerse {
     content: string,
     language: string,
     index: number,
+    uuid: string,
     song: Song | null,
     abcMelodies?: AbcSubMelody[] | null,
     abcLyrics?: string
@@ -61,6 +69,7 @@ export class SongVerse {
     this.content = content;
     this.language = language;
     this.index = index;
+    this.uuid = uuid;
     this.song = song;
     this.abcMelodies = abcMelodies;
     this.abcLyrics = abcLyrics;
@@ -78,6 +87,7 @@ export class Song {
   songBundle: SongBundle | null;
   createdAt: string;
   modifiedAt: string;
+  uuid: string;
   abcMelodies?: AbcMelody[] | null;
 
   constructor(
@@ -90,6 +100,7 @@ export class Song {
     songBundle: SongBundle | null,
     createdAt: string,
     modifiedAt: string,
+    uuid: string,
     number?: number,
     abcMelodies?: AbcMelody[] | null
   ) {
@@ -103,6 +114,7 @@ export class Song {
     this.songBundle = songBundle;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.uuid = uuid;
     this.abcMelodies = abcMelodies;
   }
 }

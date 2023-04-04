@@ -2,7 +2,7 @@ import { createCopyright } from "../../../../source/logic/songs/utils";
 import { Song, SongBundle } from "../../../../source/logic/db/models/Songs";
 
 describe("creating copyright for song", () => {
-  const song = new Song("", "", "", "", new Date(), new Date(), [], [], 0, 1);
+  const song = new Song("", "", "", "", new Date(), new Date(), "", [], [], 0, 1);
   const songBundle = new SongBundle("", "name", "", "", "", new Date(), new Date(), "000", "", [], 0);
   song._songBundles = [songBundle];
 
@@ -111,12 +111,12 @@ describe("creating copyright for song", () => {
   });
 
   it("includes nothing if no song bundle is specified", () => {
-    const song2 = new Song("", "", "", "", new Date(), new Date(), [], [], 0, 1);
+    const song2 = new Song("", "", "", "", new Date(), new Date(), "", [], [], 0, 1);
     expect(createCopyright(song2)).toBe("");
   });
 
   it("includes song specified information if no song bundle is specified", () => {
-    const song2 = new Song("", "songauthor", "songcopyright", "AF", new Date(), new Date(), [], [], 0, 1);
+    const song2 = new Song("", "songauthor", "songcopyright", "AF", new Date(), new Date(), "", [], [], 0, 1);
     expect(createCopyright(song2)).toBe("songauthor\nsongcopyright");
   });
 });

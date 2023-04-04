@@ -94,6 +94,7 @@ export namespace DocumentProcessor {
       document.index,
       dateFrom(document.createdAt),
       dateFrom(document.modifiedAt),
+      document.uuid,
       conversionState.documentId++
     );
   };
@@ -161,7 +162,7 @@ export namespace DocumentProcessor {
       .objects<DocumentGroup>(DocumentGroupSchema.name)
       .filtered(`isRoot = true`)
       .sorted(`name`)
-      .map(it => it)  // Convert to array. Array.from() will crash tests
+      .map(it => it);  // Convert to array. Array.from() will crash tests
 
     return new Result({ success: true, data: groups });
   };

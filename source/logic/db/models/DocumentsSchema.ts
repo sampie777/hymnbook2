@@ -10,6 +10,7 @@ export const DocumentSchema: Realm.ObjectSchema = {
     index: "int",
     createdAt: "date",
     modifiedAt: "date",
+    uuid: "string",
     _parent: {
       type: "linkingObjects",
       objectType: "DocumentGroup",    // DocumentGroupSchema.name

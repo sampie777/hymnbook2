@@ -17,14 +17,14 @@ const Db = {
       VerseSchema, SongSchema, SongBundleSchema,
       SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema
     ],
-    schemaVersion: 9
+    schemaVersion: 10
   }),
   documents: new DatabaseProvider({
     path: "hymnbook_documents",
     schemas: [
       DocumentSchema, DocumentGroupSchema
     ],
-    schemaVersion: 4
+    schemaVersion: 5
   }),
   settings: new DatabaseProvider({
     path: "hymnbook_settings",

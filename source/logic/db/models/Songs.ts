@@ -8,6 +8,7 @@ export interface VerseProps {
   content: string;
   language: string;
   index: number;
+  uuid: string;
   abcLyrics?: string;
 }
 
@@ -17,6 +18,7 @@ export class Verse implements VerseProps {
   content: string;
   language: string;
   index: number;
+  uuid: string;
   abcLyrics?: string;
 
   constructor(
@@ -24,6 +26,7 @@ export class Verse implements VerseProps {
     name: string,
     content: string,
     language: string,
+    uuid: string,
     id = Db.songs.getIncrementedPrimaryKey(VerseSchema),
     abcLyrics?: string
   ) {
@@ -32,6 +35,7 @@ export class Verse implements VerseProps {
     this.content = content;
     this.language = language;
     this.index = index;
+    this.uuid = uuid;
     this.abcLyrics = abcLyrics;
   }
 
@@ -57,6 +61,7 @@ export class Song {
   verses: Array<Verse>;
   createdAt: Date;
   modifiedAt: Date;
+  uuid: string;
   abcMelodies: AbcMelody[];
   lastUsedMelody?: AbcMelody;
   _songBundles?: SongBundle[];
@@ -68,6 +73,7 @@ export class Song {
     language: string,
     createdAt: Date,
     modifiedAt: Date,
+    uuid: string,
     verses: Array<Verse> = [],
     abcMelodies: AbcMelody[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
@@ -84,6 +90,7 @@ export class Song {
     this.verses = verses;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
+    this.uuid = uuid;
     this.abcMelodies = abcMelodies;
     this.lastUsedMelody = lastUsedMelody;
     this._songBundles = songBundle === undefined ? [] : [songBundle];
@@ -126,7 +133,7 @@ export class SongBundle {
     uuid: string,
     hash: string = "",
     songs: Array<Song> = [],
-    id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema),
+    id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema)
   ) {
     this.id = id;
     this.abbreviation = abbreviation;

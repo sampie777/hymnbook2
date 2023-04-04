@@ -9,9 +9,9 @@ import {
 
 describe("test document processor", () => {
   const group = (name = "group 1", id = undefined, isRoot = false) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), "000", "", 0, isRoot, id);
-  const document = (name = "doc 1", id = undefined) => new Document(name, "", "NL", -1, new Date(), new Date(), id);
+  const document = (name = "doc 1", id = undefined) => new Document(name, "", "NL", -1, new Date(), new Date(), name, id);
   const serverGroup = (name = "group 1", id = undefined) => new ServerDocumentGroup(name, "NL", [], [], (new Date()).toISOString(), (new Date()).toISOString(), 0, id, "000", "abc");
-  const serverDocument = (name = "doc 1", id = undefined) => new ServerDocument(name, "", "NL", -1, (new Date()).toISOString(), (new Date()).toISOString(), id);
+  const serverDocument = (name = "doc 1", id = undefined) => new ServerDocument(name, "", "NL", -1, (new Date()).toISOString(), (new Date()).toISOString(), name, id);
 
   beforeEach(() => {
     return Db.documents.connect();
@@ -51,6 +51,9 @@ describe("test document processor", () => {
     expect(result.hash).toBe(group2.hash);
     expect(result.items.length).toBe(2);
     expect(result.groups.length).toBe(2);
+
+    expect(result.items[0].name).toBe("doc 2.1");
+    expect(result.items[0].uuid).toBe("doc 2.1");
 
     expect(result.groups[0].name).toBe("group 2.1");
     expect(result.groups[0].size).toBe(0);
