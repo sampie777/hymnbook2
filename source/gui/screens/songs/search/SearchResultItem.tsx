@@ -130,14 +130,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontSize: 22,
     color: colors.primaryLight,
     backgroundColor: colors.surface2,
-    borderRadius: 45,
-    borderTopWidth: 0,
-    borderLeftWidth: 0.2,
-    borderRightWidth: 1.2,
-    borderBottomWidth: 1.3,
-    borderColor: colors.shadowDarker,
+    borderRadius: 23,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
   buttonHighlight: {
     color: colors.primary
