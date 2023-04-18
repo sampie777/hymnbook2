@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Song } from "../../../../logic/db/models/Songs";
 import { createCopyright } from "../../../../logic/songs/utils";
-import { Animated, Dimensions, EmitterSubscription, ScaledSize, StyleSheet } from "react-native";
+import { Animated, StyleSheet, useWindowDimensions } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { useHeaderHeight } from "@react-navigation/elements";
 
@@ -10,22 +10,10 @@ interface Props {
 }
 
 const Footer: React.FC<Props> = ({ song }) => {
-  const dimensionChangeEventSubscription = useRef<EmitterSubscription>();
-  const [windowHeight, setWindowHeight] = useState(Dimensions.get("window").height);
   const styles = createStyles(useTheme());
+  const windowDimension = useWindowDimensions();
 
-  useEffect(() => {
-    dimensionChangeEventSubscription.current = Dimensions.addEventListener("change", handleDimensionsChange);
-    return () => {
-      dimensionChangeEventSubscription.current?.remove();
-    };
-  });
-
-  const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
-    setWindowHeight(e.window.height);
-  };
-
-  return <Animated.View style={[styles.container, { minHeight: windowHeight - useHeaderHeight() - 200 }]}>
+  return <Animated.View style={[styles.container, { minHeight: windowDimension.height - useHeaderHeight() - 200 }]}>
     <Animated.Text style={[styles.copyright]}>{createCopyright(song)}</Animated.Text>
   </Animated.View>;
 };
