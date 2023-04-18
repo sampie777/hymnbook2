@@ -12,7 +12,13 @@ import { SongSearch } from "../../../../logic/songs/songSearch";
 import { isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import { Dimensions, EmitterSubscription, FlatList, ScaledSize, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View
+} from "react-native";
 import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
@@ -21,14 +27,13 @@ import StringSearchButton from "./StringSearchButton";
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
   ({ navigation }) => {
-    const dimensionChangeEventSubscription = useRef<EmitterSubscription>();
     const isNavigatingToVersePickerScreen = useRef<boolean>(false);
-    const [isPortrait, setIsPortrait] = useState(isPortraitMode(Dimensions.get("window")));
     const [inputValue, setInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
     // Use a state for this, so the GUI will be updated when the setting changes in the settings screen
     const [stringSearchButtonPlacement, setStringSearchButtonPlacement] = useState(Settings.stringSearchButtonPlacement);
+    const windowDimension = useWindowDimensions();
 
     const styles = createStyles(useTheme());
 
@@ -50,19 +55,14 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     );
 
     const onLaunch = () => {
-      dimensionChangeEventSubscription.current = Dimensions.addEventListener("change", handleDimensionsChange);
       getFontScale().then(scale => setUseSmallerFontSize(scale >= 1.4));
     };
 
     const onExit = () => {
       clearScreen();
-      dimensionChangeEventSubscription.current?.remove();
     };
 
     const onFocus = () => {
-      // This listener fixes the problem where the app is closed in landscape
-      // and opened in portrait, but than this screens still thinks it's in landscape
-      handleDimensionsChange({ window: Dimensions.get("window") });
       setStringSearchButtonPlacement(Settings.stringSearchButtonPlacement);
     };
 
@@ -77,10 +77,6 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const clearScreen = () => {
       setInputValue("");
       setSearchResult([]);
-    };
-
-    const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
-      setIsPortrait(isPortraitMode(e.window));
     };
 
     const onNumberKeyPress = (number: number) => {
@@ -175,10 +171,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     );
 
     return (
-      <View style={[styles.container, isPortrait ? {} : stylesLandscape.container]}>
+      <View style={[styles.container, isPortraitMode(windowDimension) ? {} : stylesLandscape.container]}>
         <PopupsComponent navigation={navigation} />
 
-        <View style={[styles.inputAndResults, isPortrait ? {} : stylesLandscape.inputAndResults]}>
+        <View style={[styles.inputAndResults, isPortraitMode(windowDimension) ? {} : stylesLandscape.inputAndResults]}>
           <View style={styles.topContainer}>
             {!isStringSearchButtonsPositionTop() ? undefined :
               <View style={styles.topContainerSide}>
@@ -230,7 +226,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
         <View style={[styles.keyPad,
           (!useSmallerFontSize ? {} : styles.keyPadSmaller),
-          (isPortrait ? {} : stylesLandscape.keyPad)
+          (isPortraitMode(windowDimension) ? {} : stylesLandscape.keyPad)
         ]}>
           <View style={styles.keyPadRow}>
             <NumberKey number={1} onPress={onNumberKeyPress} useSmallerFontSize={useSmallerFontSize} />

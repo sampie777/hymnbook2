@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../../../logic/db/db";
 import { SongSchema } from "../../../../../logic/db/models/SongsSchema";
@@ -13,7 +13,13 @@ import {
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
-import { StyleSheet, View, Text, Dimensions, ScaledSize, ScrollView, EmitterSubscription } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  useWindowDimensions
+} from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 
@@ -21,16 +27,15 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VerseP
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
-  const dimensionEventListenerSubscription = useRef<EmitterSubscription>();
   const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
   const verses: Array<Verse> = route.params.verses || [];
   const songListIndex: number | undefined = route.params.songListIndex;
   const styles = createStyles(useTheme());
   const versePickerItemStyles = createVersePickerItemStyles(useTheme());
-  const [horizontalMargin, setHorizontalMargin] = useState(
-    getMarginForVerses(Dimensions.get("window"),
-      styles.verseList.paddingHorizontal,
-      versePickerItemStyles.container.minWidth));
+  const windowDimension = useWindowDimensions();
+  const horizontalMargin = getMarginForVerses(windowDimension,
+    styles.verseList.paddingHorizontal,
+    versePickerItemStyles.container.minWidth);
 
   React.useLayoutEffect(() => {
     // Set the callback function for the button in this hook,
@@ -39,25 +44,6 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       headerRight: () => <HeaderIconButton icon={"check"} onPress={submit} />
     });
   }, [selectedVerses]);
-
-  useEffect(() => {
-    onFocus();
-    return onBlur;
-  }, []);
-
-  const onFocus = () => {
-    dimensionEventListenerSubscription.current = Dimensions.addEventListener("change", handleDimensionsChange);
-  };
-
-  const onBlur = () => {
-    dimensionEventListenerSubscription.current?.remove();
-  };
-
-  const handleDimensionsChange = (e: { window: ScaledSize; screen?: ScaledSize; }) => {
-    setHorizontalMargin(getMarginForVerses(e.window,
-      styles.verseList.paddingHorizontal,
-      versePickerItemStyles.container.minWidth));
-  };
 
   const toggleVerse = (verse: VerseProps) => {
     setSelectedVerses(toggleVerseInList(selectedVerses, verse));
