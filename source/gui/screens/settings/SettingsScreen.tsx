@@ -100,6 +100,9 @@ const SettingsScreen: React.FC = () => {
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}
                       onPress={(setValue) => setValue(0)} />
+    <SettingComponent title={"Melody showed times"}
+                      keyName={"melodyShowedTimes"}
+                      onPress={(setValue) => setValue(0)} />
   </>;
 
   return (
@@ -216,11 +219,16 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"longPressForMelodyMenu"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Song list"} />
+          <Header title={"Song list"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Clear search after adding song to song list"}
-                                  keyName={"clearSearchAfterAddedToSongList"} />
+                                  keyName={"clearSearchAfterAddedToSongList"}
+                                  isVisible={showAdvancedSettings} />
 
-          <Header title={"Documents"} isVisible={showAdvancedSettings} />
+          <Header title={"Documents"} />
+          <SettingsSliderComponent title={"Document text size"}
+                                   keyName={"documentScale"}
+                                   valueRender={(it) => Math.round(it * 100) + " %"}
+                                   defaultValue={1.0} />
           <SettingSwitchComponent title={"Multi keyword search for documents"}
                                   description={"When enabled, each keyword will be matched individually instead of " +
                                     "the whole search phrase. This will yield more results."}
