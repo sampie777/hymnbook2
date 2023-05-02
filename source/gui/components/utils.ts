@@ -75,3 +75,19 @@ export const renderTextWithCustomReplacements = (text: string,
       return it;
     });
 };
+
+export const mergeStyleSheets = (styles: Array<object | Array<object>>): object => {
+  let result = {};
+  styles.flatMap(style => Array.isArray(style) ? [...style] : style)
+    .forEach(style => {
+      Object.keys(style).forEach(key => {
+        // @ts-ignore
+        if (result[key] == undefined)
+          // @ts-ignore
+          result[key] = [];
+        // @ts-ignore
+        result[key].push(style[key]);
+      });
+    });
+  return result;
+};

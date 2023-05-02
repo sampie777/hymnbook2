@@ -2,34 +2,42 @@ import React from "react";
 import { Document } from "../../../../logic/db/models/Documents";
 import { getPathForDocument } from "../../../../logic/documents/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
+import Animated from "react-native-reanimated";
 
 interface Props {
   document?: Document;
+  scale: Animated.Value<number>;
 }
 
-const DocumentsBreadcrumb: React.FC<Props> = ({ document }) => {
+const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
   if (!document) return null;
 
   const styles = createStyles(useTheme());
+  const animatedStyles = {
+    container: {
+      marginBottom: Animated.multiply(scale, 20)
+    },
+    text: {
+      fontSize: Animated.multiply(scale, 13),
+      lineHeight: Animated.multiply(scale, 18)
+    }
+  };
   const path = getPathForDocument(document);
 
-  return <View style={styles.container}>
-    <Text style={styles.text}>
+  return <Animated.View style={[styles.container, animatedStyles.container]}>
+    <Animated.Text style={[styles.text, animatedStyles.text]}>
       {path.map(it => it.name).join("  >  ")}
-    </Text>
-  </View>;
+    </Animated.Text>
+  </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
-    marginBottom: 20
   },
   text: {
-    fontSize: 13,
-    color: colors.textLight,
-    lineHeight: 18
+    color: colors.textLight
   }
 });
 
