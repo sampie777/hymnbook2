@@ -1,12 +1,9 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ScrollView,
   StyleSheet,
-  View,
-  Platform,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  GestureResponderEvent
+  GestureResponderEvent, View
 } from "react-native";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
@@ -18,13 +15,14 @@ import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
-  GestureHandlerRootView
+  GestureEvent,
+  GestureHandlerRootView, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView, State
 } from "react-native-gesture-handler";
 import Animated, { Easing, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import HTMLView, { HTMLViewNode, HTMLViewNodeRenderer } from "react-native-htmlview";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 import DocumentBreadcrumb from "./DocumentsBreadcrumb";
+import AnimatedHtmlView from "../../../components/htmlView/AnimatedHtmlView";
 
 const Footer: React.FC<{ opacity: SharedValue<number> }> =
   ({ opacity }) => {
@@ -37,13 +35,88 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
   };
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
+  const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const scrollViewComponent = useRef<ScrollView>(null);
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = useSharedValue(0);
-  const styles = createStyles(useTheme());
+
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const htmlStyles = useMemo(() => createHtmlStyles(theme), [theme]);
+  const animatedScale = Animated.useValue<number>(1);
+  const animatedHtmlStyles = {
+    p: {
+      fontSize: Animated.multiply(animatedScale, 20),
+      lineHeight: Animated.multiply(animatedScale, 30)
+    },
+    h1: {
+      fontSize: Animated.multiply(animatedScale, 38),
+      lineHeight: Animated.multiply(animatedScale, 50),
+      paddingTop: Animated.multiply(animatedScale, 10),
+      marginBottom: Animated.multiply(animatedScale, 20)
+    },
+    h2: {
+      fontSize: Animated.multiply(animatedScale, 32),
+      lineHeight: Animated.multiply(animatedScale, 50),
+      paddingTop: Animated.multiply(animatedScale, 25),
+      marginBottom: Animated.multiply(animatedScale, 10)
+    },
+    h3: {
+      fontSize: Animated.multiply(animatedScale, 22),
+      lineHeight: Animated.multiply(animatedScale, 40),
+      paddingTop: Animated.multiply(animatedScale, 30),
+      marginBottom: Animated.multiply(animatedScale, 10)
+    },
+    h4: {
+      fontSize: Animated.multiply(animatedScale, 20),
+      lineHeight: Animated.multiply(animatedScale, 35),
+      paddingTop: Animated.multiply(animatedScale, 25),
+      marginBottom: Animated.multiply(animatedScale, 10)
+    },
+    h5: {
+      fontSize: Animated.multiply(animatedScale, 18),
+      lineHeight: Animated.multiply(animatedScale, 30),
+      paddingTop: Animated.multiply(animatedScale, 15),
+      marginBottom: Animated.multiply(animatedScale, 20)
+    },
+    h6: {
+      fontSize: Animated.multiply(animatedScale, 16),
+      lineHeight: Animated.multiply(animatedScale, 25),
+      paddingTop: Animated.multiply(animatedScale, 10)
+    },
+    ul: {
+      marginVertical: Animated.multiply(animatedScale, 20)
+    },
+    ol: {
+      marginVertical: Animated.multiply(animatedScale, 20)
+    },
+    liText: {
+      fontSize: Animated.multiply(animatedScale, 20),
+      lineHeight: Animated.multiply(animatedScale, 30)
+    },
+    pre: {
+      fontSize: Animated.multiply(animatedScale, 19),
+      lineHeight: Animated.multiply(animatedScale, 30)
+    },
+    blockquote: {
+      fontSize: Animated.multiply(animatedScale, 20),
+      lineHeight: Animated.multiply(animatedScale, 30),
+      paddingVertical: Animated.multiply(animatedScale, 15),
+      marginVertical: Animated.multiply(animatedScale, 15)
+    },
+    code: {
+      fontSize: Animated.multiply(animatedScale, 19)
+    },
+    sup: {
+      fontSize: Animated.multiply(animatedScale, 13)
+    },
+    sub: {
+      fontSize: Animated.multiply(animatedScale, 13)
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -158,61 +231,59 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     setOnPressed(true);
   };
 
-  const renderNode = (
-    node: HTMLViewNode,
-    index: number,
-    siblings: HTMLViewNode[],
-    parent: HTMLViewNode,
-    defaultRenderer: HTMLViewNodeRenderer): ReactNode | undefined => {
-    if (node.name === "sup") {
-      // Disable auto removing empty views (collapsable=false),
-      // as it causes https://trello.com/c/lgysuHsN/79-bug-some-document-transitions-let-the-app-crash
-      return <View key={index}
-                   collapsable={false}>
-        {defaultRenderer(node.children, node)}
-      </View>;
-    } else if (node.name === "span") {
-      return defaultRenderer(node.children, node);
-    }
-    return undefined;
+  const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
   };
 
+  const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    if (event.nativeEvent.state === State.END) {
+      animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
+      Settings.documentScale *= event.nativeEvent.scale;
+    }
+  };
+
+  const HtmlView = useMemo(() => <AnimatedHtmlView html={document?.html ?? ""}
+                                                   styles={[htmlStyles, animatedHtmlStyles]} />, [document?.id]);
+
   return <GestureHandlerRootView style={{ flex: 1 }}>
-    <View style={styles.container}>
-      <DocumentControls navigation={navigation}
-                        document={document}
-                        forceShow={onPressed}
-                        scrollOffset={scrollOffset}
-                        bottomOffset={bottomOffset} />
+    <PinchGestureHandler
+      ref={pinchGestureHandlerRef}
+      onGestureEvent={_onPanGestureEvent}
+      onHandlerStateChange={_onPinchHandlerStateChange}>
+      <View style={styles.container}>
+        <DocumentControls navigation={navigation}
+                          document={document}
+                          forceShow={onPressed}
+                          scrollOffset={scrollOffset}
+                          bottomOffset={bottomOffset} />
 
-      {document === undefined ? undefined :
-        <ScrollView
-          ref={scrollViewComponent}
-          onScroll={onScrollViewScroll}
-          onTouchStart={onScrollViewTouchStart}
-          onTouchMove={onScrollViewTouchMove}
-          onTouchCancel={onScrollViewTouchCancel}
-          onTouchEnd={onScrollViewTouchEnd}
-          showsVerticalScrollIndicator={true}
-          contentContainerStyle={styles.contentSectionList}>
+        {document === undefined ? undefined :
+          <ScrollView
+            ref={scrollViewComponent}
+            waitFor={pinchGestureHandlerRef}
+            onScroll={onScrollViewScroll}
+            onTouchStart={onScrollViewTouchStart}
+            onTouchMove={onScrollViewTouchMove}
+            onTouchCancel={onScrollViewTouchCancel}
+            onTouchEnd={onScrollViewTouchEnd}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={styles.contentSectionList}>
 
-          <DocumentBreadcrumb document={document} />
+            <DocumentBreadcrumb document={document} scale={animatedScale} />
 
-          <HTMLView value={document.html.replace(/\n/gi, "")}
-                    paragraphBreak={""}
-                    renderNode={renderNode}
-                    stylesheet={styles} />
+            {HtmlView}
 
-          <Footer opacity={animatedOpacity} />
-        </ScrollView>
-      }
+            <Footer opacity={animatedOpacity} />
+          </ScrollView>
+        }
 
-      <LoadingOverlay text={null}
-                      isVisible={
-                        route.params.id !== undefined
-                        && (document === undefined || document.id !== route.params.id)}
-                      animate={Settings.songFadeIn} />
-    </View>
+        <LoadingOverlay text={null}
+                        isVisible={
+                          route.params.id !== undefined
+                          && (document === undefined || document.id !== route.params.id)}
+                        animate={Settings.songFadeIn} />
+      </View>
+    </PinchGestureHandler>
   </GestureHandlerRootView>;
 };
 
@@ -239,107 +310,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginTop: 100,
     marginBottom: 100,
     alignSelf: "center"
-  },
-
-  p: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale
-  },
-  h1: {
-    color: colors.text,
-    fontSize: 38 * Settings.songScale,
-    lineHeight: 50 * Settings.songScale,
-    paddingTop: 10 * Settings.songScale,
-    marginBottom: -30 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h2: {
-    color: colors.text,
-    fontSize: 32 * Settings.songScale,
-    lineHeight: 50 * Settings.songScale,
-    paddingTop: 20 * Settings.songScale,
-    marginBottom: -30 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h3: {
-    color: colors.text,
-    fontSize: 26 * Settings.songScale,
-    lineHeight: 45 * Settings.songScale,
-    paddingTop: 20 * Settings.songScale,
-    marginBottom: -25 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h4: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 40 * Settings.songScale,
-    paddingTop: 15 * Settings.songScale,
-    marginBottom: -18 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h5: {
-    color: colors.text,
-    fontSize: 18 * Settings.songScale,
-    lineHeight: 35 * Settings.songScale,
-    paddingTop: 15 * Settings.songScale,
-    marginBottom: -20 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h6: {
-    color: colors.text,
-    fontSize: 12 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    paddingTop: 10 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  ul: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    marginVertical: 10 * Settings.songScale
-  },
-  ol: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    marginVertical: 10 * Settings.songScale
-  },
-  pre: {
-    color: colors.text,
-    fontSize: 19 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
-  },
-
-  blockquote: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    borderLeftWidth: 5,
-    borderLeftColor: colors.borderVariant,
-    paddingLeft: 30,
-    paddingVertical: 15 * Settings.songScale,
-    marginVertical: 15 * Settings.songScale
-  },
-  code: {
-    fontSize: 19 * Settings.songScale,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
-  },
-  ins: {
-    textDecorationLine: "underline"
-  },
-  del: {
-    textDecorationLine: "line-through"
-  },
-  sup: {
-    fontSize: 13 * Settings.songScale
-  },
-  sub: {
-    fontSize: 13 * Settings.songScale
-  },
-  hr: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#555"
   }
 });
+
+const createHtmlStyles = ({}: ThemeContextProps) => StyleSheet.create({});

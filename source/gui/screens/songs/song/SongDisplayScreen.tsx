@@ -378,6 +378,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     itemVisiblePercentThreshold: 10
   });
 
+  // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
   return (
