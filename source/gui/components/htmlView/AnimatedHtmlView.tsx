@@ -13,40 +13,10 @@ import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import { DataNode, Document, Element, Node } from "domhandler/lib/node";
 import { ElementType } from "domelementtype";
 import { mergeStyleSheets } from "../utils";
-import { AnimatedStyle } from "react-native-reanimated/lib/types";
 import Animated, { AnimateStyle } from "react-native-reanimated";
 import { openLink } from "../../../logic/utils";
 
 interface HtmlStyles {
-  p?: TextStyle | AnimatedStyle,
-  h1?: TextStyle,
-  h2?: TextStyle,
-  h3?: TextStyle,
-  h4?: TextStyle,
-  h5?: TextStyle,
-  h6?: TextStyle,
-  ul?: ViewStyle,
-  ol?: ViewStyle,
-  li?: ViewStyle,
-  liIndexText?: TextStyle,
-  liText?: TextStyle,
-  pre?: TextStyle,
-  blockquote?: TextStyle,
-  code?: TextStyle,
-  ins?: TextStyle,
-  del?: TextStyle,
-  sup?: TextStyle,
-  sub?: TextStyle,
-  hr?: TextStyle,
-  strong?: TextStyle,
-  em?: TextStyle,
-  u?: TextStyle,
-  div?: ViewStyle,
-  br?: TextStyle,
-  a?: TextStyle,
-}
-
-interface MergedHtmlStyles {
   p?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   h1?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   h2?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
@@ -76,11 +46,12 @@ interface MergedHtmlStyles {
 }
 
 interface Props {
-  html: string,
-  styles?: HtmlStyles | HtmlStyles[],
+  html: string;
+  styles?: HtmlStyles | HtmlStyles[];
+  scale: Animated.Value<number>;
 }
 
-const AnimatedHtmlView: React.FC<Props> = ({ html, styles }) => {
+const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale }) => {
   const start = new Date();
   const sanitizedHtml = html
     .replace(/\n/g, "")
@@ -90,9 +61,78 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles }) => {
   if (html.trim().length == 0) return null;
 
   const defaultHtmlStyles = createDefaultHtmlStyles(useTheme());
-  const mergedStyles: MergedHtmlStyles = mergeStyleSheets([defaultHtmlStyles, styles ?? []]);
-  const document = parseDocument(sanitizedHtml
-  ) as Document;
+  const animatedHtmlStyles = {
+    p: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.p.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.p.lineHeight)
+    },
+    h1: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.h1.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h1.lineHeight),
+      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h1.paddingTop),
+      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h1.marginBottom)
+    },
+    h2: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.h2.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h2.lineHeight),
+      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h2.paddingTop),
+      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h2.marginBottom)
+    },
+    h3: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.h3.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h3.lineHeight),
+      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h3.paddingTop),
+      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h3.marginBottom)
+    },
+    h4: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.h4.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h4.lineHeight),
+      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h4.paddingTop),
+      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h4.marginBottom)
+    },
+    h5: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.h5.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h5.lineHeight),
+      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h5.paddingTop),
+      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h5.marginBottom)
+    },
+    h6: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.h6.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h6.lineHeight),
+      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h6.paddingTop)
+    },
+    ul: {
+      marginVertical: Animated.multiply(scale, defaultHtmlStyles.ul.marginVertical)
+    },
+    ol: {
+      marginVertical: Animated.multiply(scale, defaultHtmlStyles.ol.marginVertical)
+    },
+    liText: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.liText.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.liText.lineHeight)
+    },
+    pre: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.pre.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.pre.lineHeight)
+    },
+    blockquote: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.blockquote.fontSize),
+      lineHeight: Animated.multiply(scale, defaultHtmlStyles.blockquote.lineHeight),
+      paddingVertical: Animated.multiply(scale, defaultHtmlStyles.blockquote.paddingVertical),
+      marginVertical: Animated.multiply(scale, defaultHtmlStyles.blockquote.marginVertical)
+    },
+    code: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.code.fontSize)
+    },
+    sup: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.sup.fontSize)
+    },
+    sub: {
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.sub.fontSize)
+    }
+  };
+  const mergedStyles: HtmlStyles = mergeStyleSheets([defaultHtmlStyles, animatedHtmlStyles, styles]);
+  const document = parseDocument(sanitizedHtml) as Document;
   const ignoreTags = ["head", "script", "meta"];
 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
@@ -193,10 +233,12 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles }) => {
     return undefined;
   };
 
-  return <View onLayout={() => console.log((new Date()).getTime() - start.getTime())}>{document.children.map((it, index) => renderNode(it, index))}</View>;
+  return <View onLayout={() => console.log((new Date()).getTime() - start.getTime())}>
+    {document.children.map((it, index) => renderNode(it, index))}
+  </View>;
 };
 
-export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps): HtmlStyles => StyleSheet.create({
+export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   p: {
     color: colors.text,
     fontSize: 20,

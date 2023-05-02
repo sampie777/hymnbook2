@@ -42,81 +42,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = useSharedValue(0);
+  const animatedScale = Animated.useValue<number>(Settings.documentScale);
 
   const theme = useTheme();
   const styles = createStyles(theme);
   const htmlStyles = useMemo(() => createHtmlStyles(theme), [theme]);
-  const animatedScale = Animated.useValue<number>(1);
-  const animatedHtmlStyles = {
-    p: {
-      fontSize: Animated.multiply(animatedScale, 20),
-      lineHeight: Animated.multiply(animatedScale, 30)
-    },
-    h1: {
-      fontSize: Animated.multiply(animatedScale, 38),
-      lineHeight: Animated.multiply(animatedScale, 50),
-      paddingTop: Animated.multiply(animatedScale, 10),
-      marginBottom: Animated.multiply(animatedScale, 20)
-    },
-    h2: {
-      fontSize: Animated.multiply(animatedScale, 32),
-      lineHeight: Animated.multiply(animatedScale, 50),
-      paddingTop: Animated.multiply(animatedScale, 25),
-      marginBottom: Animated.multiply(animatedScale, 10)
-    },
-    h3: {
-      fontSize: Animated.multiply(animatedScale, 22),
-      lineHeight: Animated.multiply(animatedScale, 40),
-      paddingTop: Animated.multiply(animatedScale, 30),
-      marginBottom: Animated.multiply(animatedScale, 10)
-    },
-    h4: {
-      fontSize: Animated.multiply(animatedScale, 20),
-      lineHeight: Animated.multiply(animatedScale, 35),
-      paddingTop: Animated.multiply(animatedScale, 25),
-      marginBottom: Animated.multiply(animatedScale, 10)
-    },
-    h5: {
-      fontSize: Animated.multiply(animatedScale, 18),
-      lineHeight: Animated.multiply(animatedScale, 30),
-      paddingTop: Animated.multiply(animatedScale, 15),
-      marginBottom: Animated.multiply(animatedScale, 20)
-    },
-    h6: {
-      fontSize: Animated.multiply(animatedScale, 16),
-      lineHeight: Animated.multiply(animatedScale, 25),
-      paddingTop: Animated.multiply(animatedScale, 10)
-    },
-    ul: {
-      marginVertical: Animated.multiply(animatedScale, 20)
-    },
-    ol: {
-      marginVertical: Animated.multiply(animatedScale, 20)
-    },
-    liText: {
-      fontSize: Animated.multiply(animatedScale, 20),
-      lineHeight: Animated.multiply(animatedScale, 30)
-    },
-    pre: {
-      fontSize: Animated.multiply(animatedScale, 19),
-      lineHeight: Animated.multiply(animatedScale, 30)
-    },
-    blockquote: {
-      fontSize: Animated.multiply(animatedScale, 20),
-      lineHeight: Animated.multiply(animatedScale, 30),
-      paddingVertical: Animated.multiply(animatedScale, 15),
-      marginVertical: Animated.multiply(animatedScale, 15)
-    },
-    code: {
-      fontSize: Animated.multiply(animatedScale, 19)
-    },
-    sup: {
-      fontSize: Animated.multiply(animatedScale, 13)
-    },
-    sub: {
-      fontSize: Animated.multiply(animatedScale, 13)
-    }
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -242,8 +172,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
   };
 
-  const HtmlView = useMemo(() => <AnimatedHtmlView html={document?.html ?? ""}
-                                                   styles={[htmlStyles, animatedHtmlStyles]} />, [document?.id]);
+  const HtmlView = useMemo(() =>
+      <AnimatedHtmlView html={document?.html ?? ""}
+                        styles={htmlStyles}
+                        scale={animatedScale} />,
+    [document?.id]);
 
   return <GestureHandlerRootView style={{ flex: 1 }}>
     <PinchGestureHandler
