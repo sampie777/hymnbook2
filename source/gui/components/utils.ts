@@ -77,15 +77,14 @@ export const renderTextWithCustomReplacements = (text: string,
 };
 
 export const mergeStyleSheets = (styles: Array<object | Array<object>>): object => {
-  let result = {};
+  const result: { [key: string]: Array<object> } = {};
+
   styles.flatMap(style => Array.isArray(style) ? [...style] : style)
-    .forEach(style => {
+    .forEach((style: { [key: string]: any }) => {
       Object.keys(style).forEach(key => {
-        // @ts-ignore
         if (result[key] == undefined)
-          // @ts-ignore
           result[key] = [];
-        // @ts-ignore
+
         result[key].push(style[key]);
       });
     });
