@@ -8,15 +8,17 @@ import {
   View,
   ViewStyle
 } from "react-native";
+import { openLink } from "../../../logic/utils";
+import { rollbar } from "../../../logic/rollbar";
 import { parseDocument } from "htmlparser2";
+import { mergeStyleSheets } from "../utils";
+import { ElementType } from "domelementtype";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import { DataNode, Document, Element, Node } from "domhandler/lib/node";
-import { ElementType } from "domelementtype";
-import { mergeStyleSheets } from "../utils";
 import Animated, { AnimateStyle } from "react-native-reanimated";
-import { openLink } from "../../../logic/utils";
 
 interface HtmlStyles {
+  defaultText?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   p?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   h1?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   h2?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
@@ -59,7 +61,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
     .replace(/ +/g, " ")
     .replace(/(<(p|span|strong|em|u|\/li)[^>]*>) +/g, "$1");  // Remove whitespaces after opening tags
 
-  if (html.trim().length == 0) return null;
+  if (sanitizedHtml.trim().length == 0) return null;
 
   const defaultHtmlStyles = createDefaultHtmlStyles(useTheme());
   const animatedHtmlStyles = {
@@ -137,7 +139,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const ignoreTags = ["head", "script", "meta"];
 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
-    <Animated.Text key={index} style={args?.["style"]}>{node.data}</Animated.Text>;
+    <Animated.Text key={index} style={[mergedStyles.defaultText, args?.["style"]]}>{node.data}</Animated.Text>;
 
   const renderElementDiv = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} style={mergedStyles.div}>
@@ -171,8 +173,12 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
     const listIndex = args?.listStyleType == "ol" ? `${args?.listIndex.value}.` : "●";
     return <Animated.View key={index} style={mergedStyles.li}>
-      <Animated.Text style={[mergedStyles.liText, mergedStyles.liIndexText]}>{listIndex}</Animated.Text>
-      {element.children.map((it, i) => renderNode(it, i, { ...args, style: mergedStyles.liText }))}
+      <Animated.Text style={[mergedStyles.liText, mergedStyles.liIndexText]}>
+        {listIndex}
+      </Animated.Text>
+      <Animated.Text style={mergedStyles.liText}>
+        {element.children.map((it, i) => renderNode(it, i, args))}
+      </Animated.Text>
     </Animated.View>;
   };
 
@@ -229,7 +235,11 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
       case ElementType.Tag:
         return renderElement(node as Element, index, args);
       default:
-        console.warn("No render implemented for node type", node.type);
+        rollbar.warning("No render implemented for node type", {
+          nodeType: node.type,
+          node: node,
+          parentNode: node.parent
+        });
     }
     return undefined;
   };
@@ -246,6 +256,9 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 };
 
 export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+  defaultText: {
+    color: colors.text
+  },
   p: {
     color: colors.text,
     fontSize: 20,
