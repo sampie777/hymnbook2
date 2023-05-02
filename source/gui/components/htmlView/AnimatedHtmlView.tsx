@@ -49,9 +49,10 @@ interface Props {
   html: string;
   styles?: HtmlStyles | HtmlStyles[];
   scale: Animated.Value<number>;
+  onLayout?: () => void;
 }
 
-const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale }) => {
+const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout }) => {
   const start = new Date();
   const sanitizedHtml = html
     .replace(/\n/g, "")
@@ -236,7 +237,10 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale }) => {
   // Use some value to keep track of changing HTML content, so we can tell
   // React a rerender is necessary. The 'index'-keys on the child elements don't
   // do a very good job with this.
-  return <View key={html.length} onLayout={() => console.log((new Date()).getTime() - start.getTime())}>
+  return <View key={html.length} onLayout={() => {
+    onLayout?.();
+    console.log((new Date()).getTime() - start.getTime());
+  }}>
     {document.children.map((it, index) => renderNode(it, index))}
   </View>;
 };

@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
+import { rollbar } from "../../../../logic/rollbar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/Documents";
@@ -18,7 +19,14 @@ import {
   GestureEvent,
   GestureHandlerRootView, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView, State
 } from "react-native-gesture-handler";
-import Animated, { Easing, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 import DocumentBreadcrumb from "./DocumentsBreadcrumb";
@@ -37,6 +45,7 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const scrollViewComponent = useRef<ScrollView>(null);
+  const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
@@ -46,6 +55,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
   const theme = useTheme();
   const styles = createStyles(theme);
+  const animatedStyle = {
+    htmlViewContainer: useAnimatedStyle(() => ({
+      opacity: animatedOpacity.value
+    }))
+  };
   const htmlStyles = useMemo(() => createHtmlStyles(theme), [theme]);
 
   useFocusEffect(
@@ -66,14 +80,19 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   };
 
   useEffect(() => {
-    if (Settings.songFadeIn) {
-      animate();
-    } else {
-      animatedOpacity.value = 1;
-    }
+    animatedOpacity.value = 0;
 
-    // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-    setTimeout(() => scrollToTop(), 150);
+    // Set fallback timer for fading in document screen
+    if (fadeInFallbackTimeout.current !== undefined) {
+      clearTimeout(fadeInFallbackTimeout.current);
+    }
+    fadeInFallbackTimeout.current = setTimeout(() => {
+      rollbar.warning("Document loading timed out", {
+        documentId: document?.id ?? "null",
+        SettingsSongFadeIn: Settings.songFadeIn
+      });
+      onHtmlViewLoaded();
+    }, 5000);
   }, [document?.id]);
 
   React.useLayoutEffect(() => {
@@ -109,12 +128,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     setDocument(newDocument);
   };
 
-  const animate = () => {
-    animatedOpacity.value = 0;
+  const animate = (callback?: () => void) => {
     animatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: Easing.inOut(Easing.ease)
-    });
+    }, () => callback ? runOnJS(callback)() : undefined);
   };
 
   const scrollToTop = () => {
@@ -122,6 +140,27 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
       y: 0,
       animated: Settings.animateScrolling
     });
+  };
+
+  const onHtmlViewLoaded = () => {
+    if (fadeInFallbackTimeout.current !== undefined) {
+      clearTimeout(fadeInFallbackTimeout.current);
+    }
+
+    const afterDisplay = () => {
+      // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
+      setTimeout(() => scrollToTop(), 150);
+    };
+
+    if (Settings.songFadeIn) {
+      animate(afterDisplay);
+    } else {
+      // Use small delay so the text doesn't jump around due to Animation scale.
+      setTimeout(() => {
+        animatedOpacity.value = 1;
+        afterDisplay();
+      }, 30);
+    }
   };
 
   const onScrollViewScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -175,7 +214,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const HtmlView = useMemo(() =>
       <AnimatedHtmlView html={document?.html ?? ""}
                         styles={htmlStyles}
-                        scale={animatedScale} />,
+                        scale={animatedScale}
+                        onLayout={onHtmlViewLoaded} />,
     [document?.id]);
 
   return <GestureHandlerRootView style={{ flex: 1 }}>
@@ -204,7 +244,9 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
             <DocumentBreadcrumb document={document} scale={animatedScale} />
 
-            {HtmlView}
+            <Animated.View style={animatedStyle.htmlViewContainer}>
+              {HtmlView}
+            </Animated.View>
 
             <Footer opacity={animatedOpacity} />
           </ScrollView>
