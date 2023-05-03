@@ -31,6 +31,7 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 import DocumentBreadcrumb from "./DocumentsBreadcrumb";
 import AnimatedHtmlView from "../../../components/htmlView/AnimatedHtmlView";
+import OriginalHtmlViewer from "../../../components/htmlView/OriginalHtmlViewer";
 
 const Footer: React.FC<{ opacity: SharedValue<number> }> =
   ({ opacity }) => {
@@ -60,7 +61,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
       opacity: animatedOpacity.value
     }))
   };
-  const htmlStyles = useMemo(() => createHtmlStyles(theme), [theme]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -200,10 +200,12 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   };
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    if (!Settings.documentsUseExperimentalViewer) return;
     animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
   };
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    if (!Settings.documentsUseExperimentalViewer) return;
     if (event.nativeEvent.state === State.END) {
       animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
       Settings.documentScale *= event.nativeEvent.scale;
@@ -211,10 +213,12 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   };
 
   const HtmlView = useMemo(() =>
-      <AnimatedHtmlView html={document?.html ?? ""}
-                        styles={htmlStyles}
-                        scale={animatedScale}
-                        onLayout={onHtmlViewLoaded} />,
+      Settings.documentsUseExperimentalViewer
+        ? <AnimatedHtmlView html={document?.html ?? ""}
+                            scale={animatedScale}
+                            onLayout={onHtmlViewLoaded} />
+        : <OriginalHtmlViewer html={document?.html ?? ""}
+                              onLayout={onHtmlViewLoaded} />,
     [document?.id]);
 
   return <GestureHandlerRootView style={{ flex: 1 }}>
@@ -286,5 +290,3 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignSelf: "center"
   }
 });
-
-const createHtmlStyles = ({}: ThemeContextProps) => StyleSheet.create({});
