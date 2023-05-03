@@ -227,7 +227,7 @@ const SettingsScreen: React.FC = () => {
 
           <Header title={"Documents"} />
           <SettingSwitchComponent title={"Enable zoom (experimental)"}
-                                  description={"Use the experimental document viewer, which can be zoomed in/out. Let us know if you see "}
+                                  description={"Use the experimental document viewer, which can be zoomed in/out. Let us know if you see something wrong."}
                                   keyName={"documentsUseExperimentalViewer"}
                                   onPress={((setValue, key, newValue) => {
                                     setValue(newValue);
