@@ -47,6 +47,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const scrollViewComponent = useRef<ScrollView>(null);
   const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
+  const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
+
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
@@ -148,6 +150,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
 
     const afterDisplay = () => {
+      // Don't jump to top when we're still on the same document, as this
+      // method will also be called after a zoom event.
+      if (document?.id == htmlViewLastLoadedForDocumentId.current) return;
+      htmlViewLastLoadedForDocumentId.current = document?.id;
+
       scrollToTop();
     };
 
