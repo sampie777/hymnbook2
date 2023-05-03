@@ -148,8 +148,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
 
     const afterDisplay = () => {
-      // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-      setTimeout(() => scrollToTop(), 150);
+      scrollToTop();
     };
 
     if (Settings.songFadeIn) {

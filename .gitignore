@@ -74,3 +74,4 @@ ios/assets
 .env
 names_apple_store.txt
 /coverage/
+tmp/
