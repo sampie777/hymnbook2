@@ -9,11 +9,11 @@ class SettingsProvider {
       return;
     }
 
-    Db.settings.realm().write(() => {
+    return Db.settings.realm().write(() =>
       Db.settings.realm().create<Setting>(SettingSchema.name,
         new Setting({ key, value }),
-        Realm.UpdateMode.All);
-    });
+        Realm.UpdateMode.All)
+    );
   }
 
   static setNumber(key: string, value: number) {
