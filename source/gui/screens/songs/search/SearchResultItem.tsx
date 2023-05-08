@@ -8,6 +8,7 @@ import SongList from "../../../../logic/songs/songList";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
 
 export const SearchResultItem: React.FC<{
   navigation: BottomTabNavigationProp<ParamList>,
@@ -63,7 +64,7 @@ export const SearchResultItem: React.FC<{
       }
     };
 
-    return <TouchableOpacity onPress={() => onPress(song)}
+    return <OffscreenTouchableOpacity onPress={() => onPress(song)}
                              onLongPress={() => onLongPress?.(song)}
                              style={styles.container}>
       <View style={styles.infoContainer}>
@@ -85,7 +86,7 @@ export const SearchResultItem: React.FC<{
                 ? styles.buttonHighlight.color as string
                 : styles.button.color as string} />
       </TouchableOpacity>
-    </TouchableOpacity>;
+    </OffscreenTouchableOpacity>;
   };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
