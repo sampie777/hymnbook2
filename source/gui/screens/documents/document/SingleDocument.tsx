@@ -54,7 +54,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = useSharedValue(0);
-  const animatedScale = Animated.useValue<number>(Settings.documentScale);
+  const animatedScale = Animated.useValue<number>(0.95 * Settings.documentScale);
 
   const theme = useTheme();
   const styles = createStyles(theme);
