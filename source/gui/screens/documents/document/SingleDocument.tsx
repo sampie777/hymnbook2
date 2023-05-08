@@ -94,7 +94,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
         SettingsSongFadeIn: Settings.songFadeIn
       });
       onHtmlViewLoaded();
-    }, 5000);
+    }, 3000);
   }, [document?.id]);
 
   React.useLayoutEffect(() => {
