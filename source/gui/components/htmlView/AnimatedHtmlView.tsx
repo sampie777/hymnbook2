@@ -42,6 +42,7 @@ interface HtmlStyles {
   strong?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   em?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   u?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
+  strike?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   div?: StyleProp<AnimateStyle<StyleProp<ViewStyle>>>,
   br?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
   a?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
@@ -59,7 +60,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const sanitizedHtml = html
     .replace(/\n/g, "")
     .replace(/ +/g, " ")
-    .replace(/(<(p|span|strong|em|u|\/li)[^>]*>) +/g, "$1");  // Remove whitespaces after opening tags
+    .replace(/(<(p|span|strong|em|u|i|s|strike|b|\/li)[^>]*>) +/g, "$1");  // Remove whitespaces after opening tags
 
   if (sanitizedHtml.trim().length == 0) return null;
 
@@ -197,11 +198,16 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const renderElement = (element: Element, index: number, args?: any) => {
     if (ignoreTags.includes(element.name)) return null;
 
+    if (element.name == "i") element.name = "em";
+    if (element.name == "b") element.name = "strong";
+    if (element.name == "s") element.name = "strike";
+
     switch (element.name) {
       case "p":
       case "strong":
       case "em":
       case "u":
+      case "strike":
       case "h1":
       case "h2":
       case "h3":
@@ -382,6 +388,12 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
   u: {
     color: colors.text,
     textDecorationLine: "underline",
+    textDecorationStyle: "solid",
+    textDecorationColor: colors.text
+  },
+  strike: {
+    color: colors.text,
+    textDecorationLine: "line-through",
     textDecorationStyle: "solid",
     textDecorationColor: colors.text
   },
