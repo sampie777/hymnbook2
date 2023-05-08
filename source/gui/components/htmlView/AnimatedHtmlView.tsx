@@ -128,7 +128,8 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
       fontSize: Animated.multiply(scale, defaultHtmlStyles.code.fontSize)
     },
     sup: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.sup.fontSize)
+      fontSize: Animated.multiply(scale, defaultHtmlStyles.sup.fontSize),
+      top: Animated.multiply(scale, defaultHtmlStyles.sup.top)
     },
     sub: {
       fontSize: Animated.multiply(scale, defaultHtmlStyles.sub.fontSize)
@@ -359,7 +360,8 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
   },
   sup: {
     color: colors.text,
-    fontSize: 13
+    fontSize: 13,
+    top: -5
   },
   sub: {
     color: colors.text,
