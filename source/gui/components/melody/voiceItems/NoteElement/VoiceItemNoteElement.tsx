@@ -33,7 +33,6 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animat
     }
   };
 
-
   return <Animated.View style={[styles.container, animatedStyle.container]}>
     <NoteElement showMelodyLines={showMelodyLines}
                  note={note}

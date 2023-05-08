@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
 import { Verse } from "../../../../logic/db/models/Songs";
 import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
@@ -95,6 +95,13 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       {text}
     </Animated.Text>;
 
+  const memoizedMelodyView = useMemo(() =>
+      <MelodyView onLoaded={onMelodyLoaded}
+                  abc={ABC.generateAbcForVerse(verse, activeMelody)}
+                  animatedScale={scale}
+                  melodyScale={melodyScale} />,
+    [activeMelody?.id]);
+
   return (
     <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
       {displayName.length === 0 ? undefined :
@@ -116,12 +123,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         </Animated.Text>
       }
 
-      {!isMelodyAvailable() ? undefined :
-        <MelodyView onLoaded={onMelodyLoaded}
-                    abc={ABC.generateAbcForVerse(verse, activeMelody)}
-                    animatedScale={scale}
-                    melodyScale={melodyScale} />
-      }
+      {!isMelodyAvailable() ? undefined : memoizedMelodyView}
     </Animated.View>
   );
 };
