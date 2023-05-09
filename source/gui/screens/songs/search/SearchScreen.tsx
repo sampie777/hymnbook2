@@ -29,6 +29,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
   ({ navigation }) => {
     const isNavigatingToVersePickerScreen = useRef<boolean>(false);
     const [inputValue, setInputValue] = useState("");
+    const [previousInputValue, setPreviousInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
     // Use a state for this, so the GUI will be updated when the setting changes in the settings screen
@@ -64,6 +65,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
     const onFocus = () => {
       setStringSearchButtonPlacement(Settings.stringSearchButtonPlacement);
+      if (!Settings.songSearchRememberPreviousEntry) {
+        setPreviousInputValue("");
+      }
     };
 
     const onBlur = () => {
@@ -74,7 +78,16 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       isNavigatingToVersePickerScreen.current = false;
     };
 
+    const storeSelectedSongInformation = () => {
+      if (!Settings.songSearchRememberPreviousEntry) {
+        setPreviousInputValue("");
+      } else if (inputValue) {
+        setPreviousInputValue(inputValue);
+      }
+    };
+
     const clearScreen = () => {
+      storeSelectedSongInformation();
       setInputValue("");
       setSearchResult([]);
     };
@@ -98,6 +111,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
     const onClearKeyPress = () => {
       setInputValue("");
+      setPreviousInputValue("");
     };
 
     const fetchSearchResults = () => {
@@ -119,10 +133,12 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onSearchResultItemPress = (song: Song) => {
+      storeSelectedSongInformation();
       navigation.navigate(SongRoute, { id: song.id });
     };
 
     const onSearchResultItemLongPress = (song: Song) => {
+      storeSelectedSongInformation();
       navigation.navigate(VersePickerRoute, {
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
@@ -132,6 +148,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const selectVersesAndAddToSongList = (song: Song) => {
+      storeSelectedSongInformation();
       isNavigatingToVersePickerScreen.current = true;
       navigation.navigate(VersePickerRoute, {
         verses: song.verses?.map(it => Verse.toObject(it)),
@@ -142,6 +159,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onAddedToSongList = () => {
+      storeSelectedSongInformation();
       if (!Settings.clearSearchAfterAddedToSongList) return;
       setInputValue("");
     };
@@ -194,7 +212,11 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                 <View style={styles.inputTextViewContainer}>
                   <Text
                     style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
-                    {inputValue || " " /* Insert empty space so the Text element doesn't disappear on iOS when empty */}
+                    {inputValue ? inputValue
+                      : (!Settings.songSearchRememberPreviousEntry ? " " :
+                          <> <Text style={styles.inputTextFieldPlaceholder}>{previousInputValue}</Text> </>
+                      )
+                    }
                   </Text>
                 </View>
               </View>
@@ -310,6 +332,11 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     color: colors.textLight,
     borderStyle: "solid",
     minWidth: 140
+  },
+  inputTextFieldPlaceholder: {
+    color: isDark ? "#2a2a2a00" : "#e5e5e500",
+    textShadowColor: isDark ? "#404040aa" : "#ddd",
+    textShadowRadius: 12
   },
   inputTextFieldSmaller: {
     fontSize: 40
