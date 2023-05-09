@@ -183,6 +183,10 @@ const SettingsScreen: React.FC = () => {
                                   description={"Give verse titles an accent when selected."}
                                   keyName={"highlightSelectedVerses"}
                                   isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Remember previous song"}
+                                  description={"Show the previous song number in the search screen."}
+                                  keyName={"songSearchRememberPreviousEntry"}
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Animate scrolling"}
                                   description={"Disable this if scrolling isn't performing smooth."}
                                   keyName={"animateScrolling"}
