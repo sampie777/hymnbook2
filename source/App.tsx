@@ -193,15 +193,13 @@ const AppRoot: React.FC = () => {
   const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
 
   return <SafeAreaView style={styles.container}>
-    <ErrorBoundary>
-      <LoadingOverlay isVisible={isLoading} />
+    <LoadingOverlay isVisible={isLoading} />
 
-      {isLoading ? undefined :
-        <NavigationContainer>
-          <RootNavigation />
-        </NavigationContainer>
-      }
-    </ErrorBoundary>
+    {isLoading ? undefined :
+      <NavigationContainer>
+        <RootNavigation />
+      </NavigationContainer>
+    }
 
     <StatusBar barStyle={!theme.isDark ? "dark-content" : "light-content"}
                backgroundColor={theme.colors.background}
@@ -209,8 +207,8 @@ const AppRoot: React.FC = () => {
   </SafeAreaView>;
 };
 
-const App = () => {
-  return (
+const App = () =>
+  <ErrorBoundary>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <FeaturesProvider>
         <ThemeProvider>
@@ -218,8 +216,7 @@ const App = () => {
         </ThemeProvider>
       </FeaturesProvider>
     </GestureHandlerRootView>
-  );
-};
+  </ErrorBoundary>;
 
 const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
   container: {
