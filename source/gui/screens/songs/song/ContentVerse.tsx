@@ -95,37 +95,33 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       {text}
     </Animated.Text>;
 
-  const memoizedMelodyView = useMemo(() =>
-      <MelodyView onLoaded={onMelodyLoaded}
-                  abc={ABC.generateAbcForVerse(verse, activeMelody)}
-                  animatedScale={scale}
-                  melodyScale={melodyScale} />,
-    [activeMelody?.id]);
+  const memoizedAbc = useMemo(() => ABC.generateAbcForVerse(verse, activeMelody), [activeMelody?.id]);
 
-  return (
-    <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
-      {displayName.length === 0 ? undefined :
-        <Animated.Text style={[
-          styles.title,
-          specificStyleForTitle(),
-          animatedStyle.title,
-          styleForVerseType(getVerseType(verse))
-        ]}>
-          {displayName}
-        </Animated.Text>
-      }
+  return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
+    {displayName.length === 0 ? undefined :
+      <Animated.Text style={[
+        styles.title,
+        specificStyleForTitle(),
+        animatedStyle.title,
+        styleForVerseType(getVerseType(verse))
+      ]}>
+        {displayName}
+      </Animated.Text>
+    }
 
-      {isMelodyLoaded && isMelodyAvailable() ? undefined :
-        <Animated.Text style={[styles.text, animatedStyle.text]}>
-          {highlightText == null
-            ? verse.content
-            : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
-        </Animated.Text>
-      }
+    {isMelodyLoaded && isMelodyAvailable() ? undefined :
+      <Animated.Text style={[styles.text, animatedStyle.text]}>
+        {highlightText == null
+          ? verse.content
+          : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
+      </Animated.Text>
+    }
 
-      {!isMelodyAvailable() ? undefined : memoizedMelodyView}
-    </Animated.View>
-  );
+    {!isMelodyAvailable() ? undefined : <MelodyView onLoaded={onMelodyLoaded}
+                                                    abc={memoizedAbc}
+                                                    animatedScale={scale}
+                                                    melodyScale={melodyScale} />}
+  </Animated.View>;
 };
 
 export default ContentVerse;
