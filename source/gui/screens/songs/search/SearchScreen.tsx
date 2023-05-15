@@ -334,7 +334,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     minWidth: 140
   },
   inputTextFieldPlaceholder: {
-    color: isDark ? "#2a2a2a00" : "#e5e5e500",
+    color: isDark ? "#2a2a2a00" : "#e5e5e5",
     textShadowColor: isDark ? "#404040aa" : "#ddd",
     textShadowRadius: 12
   },

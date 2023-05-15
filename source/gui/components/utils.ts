@@ -75,3 +75,18 @@ export const renderTextWithCustomReplacements = (text: string,
       return it;
     });
 };
+
+export const mergeStyleSheets = (styles: Array<object | Array<object>>): object => {
+  const result: { [key: string]: Array<object> } = {};
+
+  styles.flatMap(style => Array.isArray(style) ? [...style] : style)
+    .forEach((style: { [key: string]: any }) => {
+      Object.keys(style).forEach(key => {
+        if (result[key] == undefined)
+          result[key] = [];
+
+        result[key].push(style[key]);
+      });
+    });
+  return result;
+};
