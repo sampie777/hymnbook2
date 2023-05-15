@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { getFontScale } from "react-native-device-info";
 import { Animated, StyleSheet, View } from "react-native";
 import { AbcConfig } from "./config";
@@ -27,8 +27,10 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded
       Animated.multiply(systemFontScale,
         Animated.multiply(AbcConfig.baseScale, melodyScale))) as unknown as Animated.Value;
 
+  const memoizedAbc = useMemo(() => ABC.parse(abc), [abc]);
+
   useEffect(() => {
-    setAbcSong(ABC.parse(abc));
+    setAbcSong(memoizedAbc);
   }, [abc]);
 
   if (abcSong === undefined) {

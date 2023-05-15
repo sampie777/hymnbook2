@@ -339,7 +339,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     verseHeights.current[verse.index] = event.nativeEvent.layout.height;
   };
 
-  const calculateVerseLayout = (data: Array<Verse> | null | undefined, index: number): { length: number; offset: number; index: number } => {
+  const calculateVerseLayout = (data: Array<Verse> | null | undefined, index: number): {
+    length: number;
+    offset: number;
+    index: number
+  } => {
     if (data == null || data.length == 0 || verseHeights.current == null) {
       return {
         length: 0,
@@ -381,72 +385,70 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {!showMelodySettings ? undefined :
-        <MelodySettingsModal
-          isMelodyShown={showMelody}
-          enableMelody={setShowMelody}
-          onClose={() => setShowMelodySettings(false)}
-          selectedMelody={selectedMelody}
-          onMelodySelect={setSelectedMelody}
-          melodies={song?.abcMelodies}
-          showMelodyForAllVerses={showMelodyForAllVerses}
-          setShowMelodyForAllVerses={setShowMelodyForAllVerses}
-          melodyScale={melodyScale} />}
+  return <GestureHandlerRootView style={{ flex: 1 }}>
+    {!showMelodySettings ? undefined :
+      <MelodySettingsModal
+        isMelodyShown={showMelody}
+        enableMelody={setShowMelody}
+        onClose={() => setShowMelodySettings(false)}
+        selectedMelody={selectedMelody}
+        onMelodySelect={setSelectedMelody}
+        melodies={song?.abcMelodies}
+        showMelodyForAllVerses={showMelodyForAllVerses}
+        setShowMelodyForAllVerses={setShowMelodyForAllVerses}
+        melodyScale={melodyScale} />}
 
-      {!showMelodyHelp || showMelodySettings ? undefined :
-        <MelodyHelpModal onClose={() => setShowMelodyHelp(false)} />}
+    {!showMelodyHelp || showMelodySettings ? undefined :
+      <MelodyHelpModal onClose={() => setShowMelodyHelp(false)} />}
 
-      <PinchGestureHandler
-        ref={pinchGestureHandlerRef}
-        onGestureEvent={_onPanGestureEvent}
-        onHandlerStateChange={_onPinchHandlerStateChange}>
-        <View style={styles.container}>
-          <SongControls navigation={navigation}
-                        songListIndex={route.params.songListIndex}
-                        song={song}
-                        listViewIndex={viewIndex}
-                        flatListComponentRef={flatListComponentRef.current || undefined}
-                        selectedVerses={route.params.selectedVerses} />
+    <PinchGestureHandler
+      ref={pinchGestureHandlerRef}
+      onGestureEvent={_onPanGestureEvent}
+      onHandlerStateChange={_onPinchHandlerStateChange}>
+      <View style={styles.container}>
+        <SongControls navigation={navigation}
+                      songListIndex={route.params.songListIndex}
+                      song={song}
+                      listViewIndex={viewIndex}
+                      flatListComponentRef={flatListComponentRef.current || undefined}
+                      selectedVerses={route.params.selectedVerses} />
 
-          <ReAnimated.View style={[
-            styles.contentSectionListContainer,
-            useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
-          ]}>
-            <VerseList
-              ref={flatListComponentRef}
-              waitFor={pinchGestureHandlerRef}
-              data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
-              renderItem={renderContentItem}
-              initialNumToRender={20}
-              keyExtractor={(item: Verse) => item.id.toString()}
-              getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
-              contentContainerStyle={styles.contentSectionList}
-              onViewableItemsChanged={onListViewableItemsChanged.current}
-              viewabilityConfig={listViewabilityConfig.current}
-              onEndReached={onListEndReached}
-              onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
-                info: info,
-                songName: song?.name ?? "null",
-                verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-                isMounted: isMounted.current,
-                viewIndex: viewIndex,
-                selectedVerses: route.params.selectedVerses?.map(it => it.name),
-                isFocused: _isFocused.current
-              })}
-              ListFooterComponent={<Footer song={song} />} />
-          </ReAnimated.View>
+        <ReAnimated.View style={[
+          styles.contentSectionListContainer,
+          useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
+        ]}>
+          <VerseList
+            ref={flatListComponentRef}
+            waitFor={pinchGestureHandlerRef}
+            data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+            renderItem={renderContentItem}
+            initialNumToRender={20}
+            keyExtractor={(item: Verse) => item.id.toString()}
+            getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
+            contentContainerStyle={styles.contentSectionList}
+            onViewableItemsChanged={onListViewableItemsChanged.current}
+            viewabilityConfig={listViewabilityConfig.current}
+            onEndReached={onListEndReached}
+            onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
+              info: info,
+              songName: song?.name ?? "null",
+              verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
+              isMounted: isMounted.current,
+              viewIndex: viewIndex,
+              selectedVerses: route.params.selectedVerses?.map(it => it.name),
+              isFocused: _isFocused.current
+            })}
+            ListFooterComponent={<Footer song={song} />} />
+        </ReAnimated.View>
 
-          <LoadingOverlay text={null}
-                          isVisible={
-                            route.params.id !== undefined
-                            && (song === undefined || song.id !== route.params.id)}
-                          animate={Settings.songFadeIn} />
-        </View>
-      </PinchGestureHandler>
-    </GestureHandlerRootView>
-  );
+        <LoadingOverlay text={null}
+                        isVisible={
+                          route.params.id !== undefined
+                          && (song === undefined || song.id !== route.params.id)}
+                        animate={Settings.songFadeIn} />
+      </View>
+    </PinchGestureHandler>
+  </GestureHandlerRootView>;
 };
 
 export default SongDisplayScreen;
