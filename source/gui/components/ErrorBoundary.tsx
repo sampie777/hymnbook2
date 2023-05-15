@@ -4,12 +4,14 @@ import { rollbar } from "../../logic/rollbar";
 import { defaultFontFamilies } from "../../logic/theme";
 
 interface ComponentProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 interface ComponentState {
   error: Error | null,
   errorInfo: React.ErrorInfo | null,
+  showDebugInfo: boolean,
+  catchTimes: number,
 }
 
 export default class ErrorBoundary extends Component<ComponentProps, ComponentState> {
@@ -19,24 +21,35 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
 
     this.state = {
       error: null,
-      errorInfo: null
+      errorInfo: null,
+      showDebugInfo: false,
+      catchTimes: 0
     };
 
     this.reset = this.reset.bind(this);
+    this.toggleDebugInfo = this.toggleDebugInfo.bind(this);
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     rollbar.critical(error, errorInfo);
     this.setState({
       error: error,
-      errorInfo: errorInfo
+      errorInfo: errorInfo,
+      catchTimes: this.state.catchTimes + 1
     });
   }
 
   reset() {
     this.setState({
       error: null,
-      errorInfo: null
+      errorInfo: null,
+      showDebugInfo: false,
+    });
+  }
+
+  toggleDebugInfo() {
+    this.setState({
+      showDebugInfo: !this.state.showDebugInfo
     });
   }
 
@@ -55,20 +68,34 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
     }
 
     return <View style={styles.container}>
-      <Text style={styles.deathFace}>X _ x</Text>
-      <Text style={styles.header}>Whoops, something went wrong</Text>
+      <Text style={styles.header}>Whoops</Text>
+      <Text style={styles.paragraph}>Something decided to stop working...</Text>
+      <Text style={styles.paragraph}>And we're really sorry about that.</Text>
 
-      <View style={styles.details}>
-        <Text style={styles.errorName}>{this.state.error && this.state.error.toString()}</Text>
-
-        <FlatList
-          data={this.state.errorInfo.componentStack
-            .trim()
-            .split("\n")}
-          renderItem={this.renderCodeLine}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.code} />
+      <View style={styles.resetButtonContainer}>
+        <View onTouchStart={this.reset} style={styles.resetButton}>
+          <Text style={styles.resetButtonText}>Try again</Text>
+        </View>
+        {this.state.catchTimes < 2 ? null :
+          <Text style={styles.catchTimesText}>For the {this.state.catchTimes} time</Text>}
       </View>
+
+      {!this.state.showDebugInfo
+        ? <View onTouchStart={this.toggleDebugInfo} style={styles.debugButton}>
+          <Text style={styles.debugButtonText}>Show more information</Text>
+        </View>
+        : <View style={styles.details}>
+          <Text style={styles.errorName}>{this.state.error && this.state.error.toString()}</Text>
+
+          <FlatList
+            data={this.state.errorInfo.componentStack
+              .trim()
+              .split("\n")}
+            renderItem={this.renderCodeLine}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.code} />
+        </View>
+      }
     </View>;
   }
 }
@@ -77,24 +104,66 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
+    flexDirection: "column"
   },
-  deathFace: {
+  header: {
     fontSize: 50,
     paddingVertical: 40,
     textAlign: "center",
     fontFamily: defaultFontFamilies.sansSerifThin
   },
-  header: {
-    fontSize: 30,
-    marginBottom: 50,
-    paddingHorizontal: 30,
+  subheader: {
+    fontSize: 25,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    textAlign: "center",
     alignSelf: "center"
   },
+  paragraph: {
+    fontSize: 20,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    textAlign: "center"
+  },
+
+  resetButtonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    marginVertical: 30
+  },
+  resetButton: {
+    backgroundColor: "dodgerblue",
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 10,
+    alignSelf: "center",
+    marginBottom: 10
+  },
+  resetButtonText: {
+    color: "#fff",
+    fontSize: 20,
+    textAlign: "center"
+  },
+  catchTimesText: {
+    textAlign: "center",
+    fontStyle: "italic",
+    color: "#0006"
+  },
+
+  debugButton: {
+    paddingVertical: 30
+  },
+  debugButtonText: {
+    textAlign: "center",
+    fontSize: 14
+  },
+
   details: {
-    flex: 1
+    flex: 2
   },
   errorName: {
+    color: "firebrick",
     fontSize: 20,
     fontFamily: defaultFontFamilies.sansSerifLight,
     marginBottom: 20,
@@ -118,6 +187,6 @@ const styles = StyleSheet.create({
   },
   lineText: {
     color: "#eee",
-    fontFamily: defaultFontFamilies.sansSerifLight,
+    fontFamily: defaultFontFamilies.sansSerifLight
   }
 });
