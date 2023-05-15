@@ -1,15 +1,13 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ScrollView,
   StyleSheet,
-  View,
-  Platform,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  GestureResponderEvent
+  GestureResponderEvent, View
 } from "react-native";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
+import { rollbar } from "../../../../logic/rollbar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/Documents";
@@ -18,13 +16,22 @@ import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
-  GestureHandlerRootView
+  GestureEvent,
+  GestureHandlerRootView, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView, State
 } from "react-native-gesture-handler";
-import Animated, { Easing, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import HTMLView, { HTMLViewNode, HTMLViewNodeRenderer } from "react-native-htmlview";
+import Animated, {
+  Easing,
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 import DocumentBreadcrumb from "./DocumentsBreadcrumb";
+import AnimatedHtmlView from "../../../components/htmlView/AnimatedHtmlView";
+import OriginalHtmlViewer from "../../../components/htmlView/OriginalHtmlViewer";
 
 const Footer: React.FC<{ opacity: SharedValue<number> }> =
   ({ opacity }) => {
@@ -37,13 +44,25 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
   };
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
+  const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const scrollViewComponent = useRef<ScrollView>(null);
+  const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
+  const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
+
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = useSharedValue(0);
-  const styles = createStyles(useTheme());
+  const animatedScale = Animated.useValue<number>(0.95 * Settings.documentScale);
+
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const animatedStyle = {
+    htmlViewContainer: useAnimatedStyle(() => ({
+      opacity: animatedOpacity.value
+    }))
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -63,14 +82,19 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   };
 
   useEffect(() => {
-    if (Settings.songFadeIn) {
-      animate();
-    } else {
-      animatedOpacity.value = 1;
-    }
+    animatedOpacity.value = 0;
 
-    // Use small timeout for scrollToTop to prevent scroll being stuck / not firing..
-    setTimeout(() => scrollToTop(), 150);
+    // Set fallback timer for fading in document screen
+    if (fadeInFallbackTimeout.current !== undefined) {
+      clearTimeout(fadeInFallbackTimeout.current);
+    }
+    fadeInFallbackTimeout.current = setTimeout(() => {
+      rollbar.warning("Document loading timed out", {
+        documentId: document?.id ?? "null",
+        SettingsSongFadeIn: Settings.songFadeIn
+      });
+      onHtmlViewLoaded();
+    }, 3000);
   }, [document?.id]);
 
   React.useLayoutEffect(() => {
@@ -106,12 +130,11 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     setDocument(newDocument);
   };
 
-  const animate = () => {
-    animatedOpacity.value = 0;
+  const animate = (callback?: () => void) => {
     animatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: Easing.inOut(Easing.ease)
-    });
+    }, () => callback ? runOnJS(callback)() : undefined);
   };
 
   const scrollToTop = () => {
@@ -119,6 +142,31 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
       y: 0,
       animated: Settings.animateScrolling
     });
+  };
+
+  const onHtmlViewLoaded = () => {
+    if (fadeInFallbackTimeout.current !== undefined) {
+      clearTimeout(fadeInFallbackTimeout.current);
+    }
+
+    const afterDisplay = () => {
+      // Don't jump to top when we're still on the same document, as this
+      // method will also be called after a zoom event.
+      if (document?.id == htmlViewLastLoadedForDocumentId.current) return;
+      htmlViewLastLoadedForDocumentId.current = document?.id;
+
+      scrollToTop();
+    };
+
+    if (Settings.songFadeIn) {
+      animate(afterDisplay);
+    } else {
+      // Use small delay so the text doesn't jump around due to Animation scale.
+      setTimeout(() => {
+        animatedOpacity.value = 1;
+        afterDisplay();
+      }, 30);
+    }
   };
 
   const onScrollViewScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -158,61 +206,69 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     setOnPressed(true);
   };
 
-  const renderNode = (
-    node: HTMLViewNode,
-    index: number,
-    siblings: HTMLViewNode[],
-    parent: HTMLViewNode,
-    defaultRenderer: HTMLViewNodeRenderer): ReactNode | undefined => {
-    if (node.name === "sup") {
-      // Disable auto removing empty views (collapsable=false),
-      // as it causes https://trello.com/c/lgysuHsN/79-bug-some-document-transitions-let-the-app-crash
-      return <View key={index}
-                   collapsable={false}>
-        {defaultRenderer(node.children, node)}
-      </View>;
-    } else if (node.name === "span") {
-      return defaultRenderer(node.children, node);
-    }
-    return undefined;
+  const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    if (!Settings.documentsUseExperimentalViewer) return;
+    animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
   };
 
+  const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    if (!Settings.documentsUseExperimentalViewer) return;
+    if (event.nativeEvent.state === State.END) {
+      animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
+      Settings.documentScale *= event.nativeEvent.scale;
+    }
+  };
+
+  const HtmlView = useMemo(() =>
+      Settings.documentsUseExperimentalViewer
+        ? <AnimatedHtmlView html={document?.html ?? ""}
+                            scale={animatedScale}
+                            onLayout={onHtmlViewLoaded} />
+        : <OriginalHtmlViewer html={document?.html ?? ""}
+                              onLayout={onHtmlViewLoaded} />,
+    [document?.id]);
+
   return <GestureHandlerRootView style={{ flex: 1 }}>
-    <View style={styles.container}>
-      <DocumentControls navigation={navigation}
-                        document={document}
-                        forceShow={onPressed}
-                        scrollOffset={scrollOffset}
-                        bottomOffset={bottomOffset} />
+    <PinchGestureHandler
+      ref={pinchGestureHandlerRef}
+      onGestureEvent={_onPanGestureEvent}
+      onHandlerStateChange={_onPinchHandlerStateChange}>
+      <View style={styles.container}>
+        <DocumentControls navigation={navigation}
+                          document={document}
+                          forceShow={onPressed}
+                          scrollOffset={scrollOffset}
+                          bottomOffset={bottomOffset} />
 
-      {document === undefined ? undefined :
-        <ScrollView
-          ref={scrollViewComponent}
-          onScroll={onScrollViewScroll}
-          onTouchStart={onScrollViewTouchStart}
-          onTouchMove={onScrollViewTouchMove}
-          onTouchCancel={onScrollViewTouchCancel}
-          onTouchEnd={onScrollViewTouchEnd}
-          showsVerticalScrollIndicator={true}
-          contentContainerStyle={styles.contentSectionList}>
+        {document === undefined ? undefined :
+          <ScrollView
+            ref={scrollViewComponent}
+            waitFor={pinchGestureHandlerRef}
+            onScroll={onScrollViewScroll}
+            onTouchStart={onScrollViewTouchStart}
+            onTouchMove={onScrollViewTouchMove}
+            onTouchCancel={onScrollViewTouchCancel}
+            onTouchEnd={onScrollViewTouchEnd}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={styles.contentSectionList}>
 
-          <DocumentBreadcrumb document={document} />
+            <DocumentBreadcrumb document={document} scale={animatedScale} />
 
-          <HTMLView value={document.html.replace(/\n/gi, "")}
-                    paragraphBreak={""}
-                    renderNode={renderNode}
-                    stylesheet={styles} />
+            <Animated.View style={animatedStyle.htmlViewContainer}>
+              {HtmlView}
+            </Animated.View>
 
-          <Footer opacity={animatedOpacity} />
-        </ScrollView>
-      }
+            <Footer opacity={animatedOpacity} />
+          </ScrollView>
+        }
 
-      <LoadingOverlay text={null}
-                      isVisible={
-                        route.params.id !== undefined
-                        && (document === undefined || document.id !== route.params.id)}
-                      animate={Settings.songFadeIn} />
-    </View>
+        <LoadingOverlay text={null}
+                        isVisible={
+                          route.params.id !== undefined
+                          && (document === undefined || document.id !== route.params.id)}
+                        animate={Settings.songFadeIn} />
+      </View>
+    </PinchGestureHandler>
   </GestureHandlerRootView>;
 };
 
@@ -239,107 +295,5 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginTop: 100,
     marginBottom: 100,
     alignSelf: "center"
-  },
-
-  p: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale
-  },
-  h1: {
-    color: colors.text,
-    fontSize: 38 * Settings.songScale,
-    lineHeight: 50 * Settings.songScale,
-    paddingTop: 10 * Settings.songScale,
-    marginBottom: -30 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h2: {
-    color: colors.text,
-    fontSize: 32 * Settings.songScale,
-    lineHeight: 50 * Settings.songScale,
-    paddingTop: 20 * Settings.songScale,
-    marginBottom: -30 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h3: {
-    color: colors.text,
-    fontSize: 26 * Settings.songScale,
-    lineHeight: 45 * Settings.songScale,
-    paddingTop: 20 * Settings.songScale,
-    marginBottom: -25 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h4: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 40 * Settings.songScale,
-    paddingTop: 15 * Settings.songScale,
-    marginBottom: -18 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h5: {
-    color: colors.text,
-    fontSize: 18 * Settings.songScale,
-    lineHeight: 35 * Settings.songScale,
-    paddingTop: 15 * Settings.songScale,
-    marginBottom: -20 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  h6: {
-    color: colors.text,
-    fontSize: 12 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    paddingTop: 10 * Settings.songScale,
-    fontWeight: "bold"
-  },
-  ul: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    marginVertical: 10 * Settings.songScale
-  },
-  ol: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    marginVertical: 10 * Settings.songScale
-  },
-  pre: {
-    color: colors.text,
-    fontSize: 19 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
-  },
-
-  blockquote: {
-    color: colors.text,
-    fontSize: 20 * Settings.songScale,
-    lineHeight: 30 * Settings.songScale,
-    borderLeftWidth: 5,
-    borderLeftColor: colors.borderVariant,
-    paddingLeft: 30,
-    paddingVertical: 15 * Settings.songScale,
-    marginVertical: 15 * Settings.songScale
-  },
-  code: {
-    fontSize: 19 * Settings.songScale,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
-  },
-  ins: {
-    textDecorationLine: "underline"
-  },
-  del: {
-    textDecorationLine: "line-through"
-  },
-  sup: {
-    fontSize: 13 * Settings.songScale
-  },
-  sub: {
-    fontSize: 13 * Settings.songScale
-  },
-  hr: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#555"
   }
 });

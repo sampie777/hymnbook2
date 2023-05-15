@@ -17,6 +17,8 @@ Copy the file `.env.template` to `.env` and update the values a needed.
 
 Run `yarn install`.
 
+> Don't use node v19 as Realm installation will [hang](https://github.com/realm/realm-js/issues/5136)
+
 #### Android
 
 Run `yarn android`.
@@ -134,20 +136,15 @@ export NODE_OPTIONS=--openssl-legacy-provider
 
 - Add Hermes (https://reactnative.dev/docs/hermes) for decreased binary size and increased performance
 
-### Known issues
-
-- Scrolling to out-of-rendered-zone doesn't work. E.g., 20 verses are loaded but one want to scroll to verse 30. That doesn't work and as fallback it will scroll to half the index (verse 15).
-
 ## Upload to play store
 
 ```bash
 yarn bundle
-# OR
-cd android && ./gradlew bundleRelease
 ```
 
 Upload the .aab file from `android/app/build/outputs/bundle/release/`.
 
+Upload the .apk file to Github.
 
 ### Share
 
