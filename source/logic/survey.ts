@@ -1,12 +1,12 @@
 import Settings from "../settings";
 import config from "../config";
 
-export class Survey {
-  static url() {
+export namespace Survey {
+  export const url = () => {
     return config.surveyUrl;
-  }
+  };
 
-  static needToShow(date = new Date()) {
+  export const needToShow = (date = new Date()) => {
     const isDuringSundayService = date.getDay() === 0 &&
       (
         (date.getHours() >= 9 && date.getHours() < 12) ||
@@ -16,10 +16,10 @@ export class Survey {
       Settings.appOpenedTimes >= config.surveyMinimumAppOpenedTimes &&
       (Settings.appOpenedTimes - config.surveyMinimumAppOpenedTimes) % config.surveyDisplayInterval === 0 &&
       !isDuringSundayService;
-  }
+  };
 
-  static complete() {
+  export const complete = () => {
     Settings.surveyCompleted = true;
     Settings.store();
-  }
+  };
 }
