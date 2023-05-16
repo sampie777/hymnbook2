@@ -33,8 +33,11 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 {
   RCTAppSetupPrepareApp(application);
 
+  RollbarConfiguration *config = [RollbarConfiguration configuration];
+  config.environment = [ReactNativeConfig envFor:@"NODE_ENV"];
+
   NSString *rollbarKey = [ReactNativeConfig envFor:@"ROLLBAR_API_KEY"];
-  [RollbarReactNative initWithAccessToken:rollbarKey];
+  [RollbarReactNative initWithAccessToken:rollbarKey configuration:config];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 
