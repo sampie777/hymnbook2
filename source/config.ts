@@ -11,7 +11,7 @@ const config = {
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSetqgPvuLh9K0m2nbonauXxrHiaFGpZz8_AUXOc9NcCpjnUUg/viewform?usp=sf_link",
   whatsappFeedbackGroupUrl: Config.WHATSAPP_USER_GROUP_LINK,
 
-   debugEmulators: [
+  debugEmulators: [
     "77975543a8268cd4", // local emulator API 30
     "120835e8ccec39a3", // local emulator API 33
     "e110b2f6acc009ac", // Google emulator
@@ -31,8 +31,15 @@ const config = {
     "830149ae5d1a7810", // Google emulator
     "c3e345bfb9baedd9", // Google emulator
     "25fe8f559df268ed", // Google emulator
+    "7a73164ba4dd3e6d", // Google emulator
+    "fe3fc5a8b8ddbb83", // Google emulator
+    "3a71976eb868632b", // Google emulator
+    "b534682214912d2b", // Google emulator
+    "bc632a4839066590", // Google emulator
+    "86f801c52e501cda", // Google emulator
+    "55977ff9d8e98eff" // Google emulator
   ],
 
-  featuresWaitForDatabaseMaxTries: 10,
+  featuresWaitForDatabaseMaxTries: 10
 };
 export default config;
