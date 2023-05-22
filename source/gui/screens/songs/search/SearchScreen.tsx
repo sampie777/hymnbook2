@@ -9,7 +9,7 @@ import config from "../../../../config";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { SongSchema } from "../../../../logic/db/models/SongsSchema";
 import { SongSearch } from "../../../../logic/songs/songSearch";
-import { isPortraitMode } from "../../../../logic/utils";
+import { isIOS, isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -214,7 +214,8 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                     style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
                     {inputValue ? inputValue
                       : (!Settings.songSearchRememberPreviousEntry ? " " :
-                          <> <Text style={styles.inputTextFieldPlaceholder}>{previousInputValue}</Text> </>
+                          <>{isIOS ? "" : " "}<Text
+                            style={styles.inputTextFieldPlaceholder}>{previousInputValue}</Text> </>
                       )
                     }
                   </Text>
@@ -334,7 +335,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     minWidth: 140
   },
   inputTextFieldPlaceholder: {
-    color: isDark ? "#2a2a2a00" : "#e5e5e5",
+    color: isDark ? (isIOS ? "#2a2a2a66" : "#2a2a2a00") : "#e5e5e5",
     textShadowColor: isDark ? "#404040aa" : "#ddd",
     textShadowRadius: 12
   },
