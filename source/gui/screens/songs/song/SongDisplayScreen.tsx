@@ -26,7 +26,7 @@ import {
   getDefaultMelody,
   loadSongWithId
 } from "../../../../logic/songs/utils";
-import { keepScreenAwake } from "../../../../logic/utils";
+import { isIOS, keepScreenAwake } from "../../../../logic/utils";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -419,7 +419,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         ]}>
           <VerseList
             ref={flatListComponentRef}
-            waitFor={pinchGestureHandlerRef}
+            waitFor={isIOS ? undefined : pinchGestureHandlerRef}
             data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
             renderItem={renderContentItem}
             initialNumToRender={20}
