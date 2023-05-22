@@ -3,7 +3,8 @@ import {
   StyleSheet,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  GestureResponderEvent, View
+  GestureResponderEvent, View,
+  ScrollView as NativeScrollView
 } from "react-native";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
@@ -13,11 +14,11 @@ import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { keepScreenAwake } from "../../../../logic/utils";
+import { isIOS, keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
   GestureEvent,
-  GestureHandlerRootView, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView, State
+  GestureHandlerRootView, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView as GestureScrollView, State
 } from "react-native-gesture-handler";
 import Animated, {
   Easing,
@@ -45,7 +46,7 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
-  const scrollViewComponent = useRef<ScrollView>(null);
+  const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>(null);
   const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
   const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
 
@@ -228,6 +229,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
                               onLayout={onHtmlViewLoaded} />,
     [document?.id]);
 
+  const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
+
   return <GestureHandlerRootView style={{ flex: 1 }}>
     <PinchGestureHandler
       ref={pinchGestureHandlerRef}
@@ -243,7 +246,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
         {document === undefined ? undefined :
           <ScrollView
             ref={scrollViewComponent}
-            waitFor={pinchGestureHandlerRef}
+            waitFor={isIOS ? undefined : pinchGestureHandlerRef}
             onScroll={onScrollViewScroll}
             onTouchStart={onScrollViewTouchStart}
             onTouchMove={onScrollViewTouchMove}
