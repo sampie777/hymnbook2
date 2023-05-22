@@ -203,8 +203,8 @@ const SettingsScreen: React.FC = () => {
                                   description={"Show this button in the bottom right corner."}
                                   keyName={"showJumpToNextVerseButton"}
                                   isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Use native list component for song verses"}
-                                  description={"Try to enable this if pinch-to-zoom or scrolling glitches."}
+          <SettingSwitchComponent title={"Use native list component for song verses and documents"}
+                                  description={"Try to toggle this if pinch-to-zoom or scrolling glitches."}
                                   keyName={"useNativeFlatList"}
                                   isVisible={showAdvancedSettings} />
 
