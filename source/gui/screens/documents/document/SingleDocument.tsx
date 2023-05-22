@@ -14,7 +14,7 @@ import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { keepScreenAwake } from "../../../../logic/utils";
+import { isIOS, keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
   GestureEvent,
@@ -246,7 +246,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
         {document === undefined ? undefined :
           <ScrollView
             ref={scrollViewComponent}
-            waitFor={pinchGestureHandlerRef}
+            waitFor={isIOS ? undefined : pinchGestureHandlerRef}
             onScroll={onScrollViewScroll}
             onTouchStart={onScrollViewTouchStart}
             onTouchMove={onScrollViewTouchMove}
