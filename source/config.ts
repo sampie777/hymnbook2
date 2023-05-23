@@ -47,6 +47,10 @@ const config = {
     "4b1ee687836a55e7", // Google emulator
   ],
 
-  featuresWaitForDatabaseMaxTries: 10
+  featuresWaitForDatabaseMaxTries: 10,
+
+  authWaitForAuthenticationDelayMs: 500,
+  authWaitForAuthenticationTimeoutMs: 60000,
+  authReauthenticateMaxRetries: 3,
 };
 export default config;

@@ -497,7 +497,7 @@ describe("test authentication", () => {
     );
 
     // When
-    const result = await ServerAuth.fetchWithJwt((jwt) => (mockFetch()(jwt)));
+    const result = await ServerAuth.fetchWithJwt((jwt) => (mockFetch()(jwt)), 1);
 
     expect(mockFetch.mock.calls.length).toBe(2);
     expect((authApi.auth.requestAccess as Mock).mock.calls.length).toBe(1);
