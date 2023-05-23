@@ -3,6 +3,7 @@ import { AbcClef, KeySignature, TuneObject, VoiceItem, VoiceItemNote } from "./a
 import { validate } from "../../utils";
 import { Verse } from "../../db/models/Songs";
 import { AbcMelody, AbcSubMelody } from "../../db/models/AbcMelodies";
+import { rollbar } from "../../rollbar";
 
 // See also https://abcnotation.com/examples
 
@@ -182,7 +183,7 @@ export namespace ABC {
       validate(object[0].lines[0].staff!![0].voices!!.length > 0, "Voices may not be empty");
       validate(object[0].lines[0].staff!![0].voices!!.some(it => it.length > 0), "Voices are all empty");
     } catch (e) {
-      console.warn(e);
+      rollbar.warning("ABC tune doesn't validate", { error: e, abc: abc });
       return undefined;
     }
 
