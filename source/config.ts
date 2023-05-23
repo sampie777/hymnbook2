@@ -37,7 +37,14 @@ const config = {
     "b534682214912d2b", // Google emulator
     "bc632a4839066590", // Google emulator
     "86f801c52e501cda", // Google emulator
-    "55977ff9d8e98eff" // Google emulator
+    "55977ff9d8e98eff", // Google emulator
+    "92ca931d4902fe2a", // Google emulator
+    "ccb588f59fc353b7", // Google emulator
+    "7150a8ec2be97954", // Google emulator
+    "d80b7ba66c87b72f", // Google emulator
+    "bcedc1583abdaf37", // Google emulator
+    "4d1bcf73ab062899", // Google emulator
+    "4b1ee687836a55e7", // Google emulator
   ],
 
   featuresWaitForDatabaseMaxTries: 10
