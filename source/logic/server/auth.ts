@@ -34,24 +34,19 @@ export namespace ServerAuth {
 
   export const authenticate = (): Promise<string> => {
     _isAuthenticating = true;
-    console.debug(Date.now() + " Auth phase started");
 
     let authenticationProcess;
     if (Settings.authRequestId === undefined || Settings.authRequestId === "") {
-      console.debug(Date.now() + " Auth phase: requestAccess");
       authenticationProcess = _requestAccess();
     } else if (Settings.authJwt === undefined || Settings.authJwt === "") {
-      console.debug(Date.now() + " Auth phase: retrieveAccessJWT");
       authenticationProcess = _retrieveAccessJWT();
     } else {
       // Already authenticated
-      console.debug(Date.now() + " Auth phase: Already authenticated");
       authenticationProcess = emptyPromiseWithValue(getJwt());
     }
 
     return authenticationProcess
       .finally(() => {
-        console.debug(Date.now() + " Auth phase done");
         _isAuthenticating = false;
       });
   };
@@ -110,7 +105,7 @@ export namespace ServerAuth {
         Settings.store();
 
         if (accessRequestResponse.status === AccessRequestStatus.DENIED) {
-          console.warn(`Access request is denied: ${accessRequestResponse.reason}`);
+          console.info(`Access request is denied: ${accessRequestResponse.reason}`);
           return "";
         }
 
@@ -160,7 +155,7 @@ export namespace ServerAuth {
         Settings.store();
 
         if (accessRequestResponse.status === AccessRequestStatus.DENIED) {
-          console.warn(`Access request is denied: ${accessRequestResponse.reason}`);
+          console.info(`Access request is denied: ${accessRequestResponse.reason}`);
           return "";
         }
 
@@ -203,7 +198,7 @@ export namespace ServerAuth {
     // If still busy authenticating, wait for authentication process to complete
     if (_isAuthenticating) {
       if (maxWaitForAuthRetries <= 0) {
-        rollbar.error(Date.now() + " Waiting for authentication to finish timed out", {
+        rollbar.error("Waiting for authentication to finish has timed out", {
           authWaitForAuthenticationTimeoutMs: config.authWaitForAuthenticationTimeoutMs,
           authWaitForAuthenticationDelayMs: config.authWaitForAuthenticationDelayMs,
           maxWaitForAuthRetries: maxWaitForAuthRetries,
@@ -216,7 +211,6 @@ export namespace ServerAuth {
         });
       }
 
-      console.debug(Date.now() + " Authentication is busy, waiting for request");
       return new Promise((resolve => setTimeout(() =>
           resolve(
             fetchWithJwt(callback, resetAuthIfInvalidRetries, maxWaitForAuthRetries - 1)
@@ -238,7 +232,6 @@ export namespace ServerAuth {
         authStatus: Settings.authStatus
       });
     }
-    console.debug(Date.now() + " Authentication finished, continue with request");
 
     return callback(getJwt())
       .then(response => {
