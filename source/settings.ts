@@ -37,7 +37,6 @@ class SettingsClass extends SettingsBaseClass {
   documentsUseExperimentalViewer = true;
 
   // Server authentication
-  useAuthentication = true;
   authClientName = "";
   authRequestId = "";
   authJwt = "";

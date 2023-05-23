@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -24,6 +24,7 @@ import {
   VersePickerRoute
 } from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
+import { ServerAuth } from "./logic/server/auth";
 import {
   closeDatabases,
   initDocumentDatabase,
@@ -181,7 +182,15 @@ const AppRoot: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    runAsync(() => initSettingsDatabase(theme).finally(() => setIsSettingsDbLoading(false)));
+    runAsync(() => initSettingsDatabase(theme)
+      .then(() => {
+        ServerAuth.authenticate()
+          .catch(error => Alert.alert(
+            "Authenticating error",
+            "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
+          ));
+      })
+      .finally(() => setIsSettingsDbLoading(false)));
     runAsync(() => initSongDatabase().finally(() => setIsSongDbLoading(false)));
     runAsync(() => initDocumentDatabase().finally(() => setIsDocumentDbLoading(false)));
   };
