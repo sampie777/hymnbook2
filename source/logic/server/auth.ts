@@ -3,8 +3,9 @@ import { authApi } from "./authApi";
 import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
-import { HttpError, throwErrorsIfNotOk } from "../apiUtils";
-import { emptyPromiseWithValue } from "../utils";
+import { HttpCode, HttpError, throwErrorsIfNotOk } from "../apiUtils";
+import { emptyPromise, emptyPromiseWithValue } from "../utils";
+import config from "../../config";
 
 export class AccessRequestResponse {
   status: AccessRequestStatus;
@@ -25,61 +26,74 @@ export class AccessRequestResponse {
 }
 
 export namespace ServerAuth {
-  export const isAuthenticated = (): boolean  => {
-    return Settings.authJwt !== undefined && Settings.authJwt !== "";
-  }
+  let _isAuthenticating = false;
 
-  export const authenticate = (): Promise<string>  => {
+  export const isAuthenticated = (): boolean => {
+    return Settings.authJwt !== undefined && Settings.authJwt !== "";
+  };
+
+  export const authenticate = (): Promise<string> => {
+    _isAuthenticating = true;
+    console.debug(Date.now() + " Auth phase started");
+
+    let authenticationProcess;
     if (Settings.authRequestId === undefined || Settings.authRequestId === "") {
-      return _requestAccess();
+      console.debug(Date.now() + " Auth phase: requestAccess");
+      authenticationProcess = _requestAccess();
     } else if (Settings.authJwt === undefined || Settings.authJwt === "") {
-      return _retrieveAccessJWT();
+      console.debug(Date.now() + " Auth phase: retrieveAccessJWT");
+      authenticationProcess = _retrieveAccessJWT();
     } else {
       // Already authenticated
-      return emptyPromiseWithValue(getJwt());
+      console.debug(Date.now() + " Auth phase: Already authenticated");
+      authenticationProcess = emptyPromiseWithValue(getJwt());
     }
-  }
 
-  export const getJwt = (): string  => {
+    return authenticationProcess
+      .finally(() => {
+        console.debug(Date.now() + " Auth phase done");
+        _isAuthenticating = false;
+      });
+  };
+
+  export const getJwt = (): string => {
     if (!isAuthenticated()) {
-      rollbar.warning("Trying to get JWT but I'm not authenticated yet");
+      rollbar.info("Trying to get JWT but I'm not authenticated yet");
     }
     return Settings.authJwt;
-  }
+  };
 
-  export const fetchWithJwt = (callback: (jwt: string) => Promise<Response>, resetAuthIfInvalidRetries: number = 1): Promise<Response>  => {
-    if (!Settings.useAuthentication) {
-      return callback("");
-    }
-
-    return authenticate()
-      .then(jwt => callback(jwt))
-      .then(response => {
-        // After the request has been made, check if it was successful or if there was an authentication problem.
-
-        if (resetAuthIfInvalidRetries <= 0) return response;
-        if (!(response.status == 401 || response.status == 403)) return response;
-
-        rollbar.info(`Resetting credentials due to authentication error`, {
-          invalidJwt: getJwt(),
-          httpStatus: response.status,
-          url: response.url,
-        });
-
-        // Reset authentication to regain new rights and try again
-        forgetCredentials();
-
-        return fetchWithJwt(callback, resetAuthIfInvalidRetries - 1);
-      });
-  }
-
-  export const forgetCredentials = ()  => {
+  export const forgetCredentials = () => {
     Settings.authJwt = "";
     Settings.authRequestId = "";
     Settings.authStatus = AccessRequestStatus.UNKNOWN;
-  }
+  };
 
-  export const _requestAccess = (): Promise<string>  => {
+  const reAuthenticate = (reason: any) => {
+    if (_isAuthenticating) {
+      rollbar.info("Can't reauthenticate, as it is still/already authenticating", {
+        reason: reason,
+        isAuthenticating: _isAuthenticating,
+        authJwt: Settings.authJwt,
+        authRequestId: Settings.authRequestId,
+        authStatus: Settings.authStatus
+      });
+      return emptyPromise();
+    }
+
+    rollbar.info(`Resetting credentials due to authentication error`, {
+      invalidJwt: getJwt(),
+      reason: reason,
+      isAuthenticating: _isAuthenticating
+    });
+
+    // Reset authentication to regain new rights and try again
+    forgetCredentials();
+
+    return authenticate();
+  };
+
+  export const _requestAccess = (): Promise<string> => {
     forgetCredentials();
 
     return authApi.auth.requestAccess(getDeviceId())
@@ -116,14 +130,17 @@ export namespace ServerAuth {
       })
       .catch(error => {
         rollbar.error(`Error requesting access token.`, error);
+        if (error.toString().includes("Too many request")) {
+          throw new HttpError(`You're trying to authenticate way too often. Take a break and try again later.`);
+        }
         throw error;
       });
-  }
+  };
 
   /**
    * Returns promise with <JWT string or empty if failed>
    */
-  export const _retrieveAccessJWT = (): Promise<string>  => {
+  export const _retrieveAccessJWT = (): Promise<string> => {
     if (Settings.authRequestId == null || Settings.authRequestId === "") {
       rollbar.error("Cannot retrieve JWT if requestId is null or empty");
       return emptyPromiseWithValue("");
@@ -163,16 +180,79 @@ export namespace ServerAuth {
       })
       .catch(error => {
         rollbar.error(`Error retrieving access token.`, error);
+        if (error.toString().includes("resource is gone")) {
+          throw new HttpError(`You've already completed authentication. If not, go to Advanced Settings and reset authentication.`);
+        }
         throw error;
       });
-  }
+  };
 
-  export const getDeviceId = (): string  => {
+  export const getDeviceId = (): string => {
     if (Settings.authClientName === "") {
       Settings.authClientName = getUniqueId();
       Settings.store();
     }
 
     return Settings.authClientName;
-  }
+  };
+
+  export const fetchWithJwt = (callback: (jwt: string) => Promise<Response>,
+                               resetAuthIfInvalidRetries: number = config.authReauthenticateMaxRetries,
+                               maxWaitForAuthRetries: number = config.authWaitForAuthenticationTimeoutMs / config.authWaitForAuthenticationDelayMs): Promise<Response> => {
+
+    // If still busy authenticating, wait for authentication process to complete
+    if (_isAuthenticating) {
+      if (maxWaitForAuthRetries <= 0) {
+        rollbar.error(Date.now() + " Waiting for authentication to finish timed out", {
+          authWaitForAuthenticationTimeoutMs: config.authWaitForAuthenticationTimeoutMs,
+          authWaitForAuthenticationDelayMs: config.authWaitForAuthenticationDelayMs,
+          maxWaitForAuthRetries: maxWaitForAuthRetries,
+          authReauthenticateMaxRetries: config.authReauthenticateMaxRetries,
+          resetAuthIfInvalidRetries: resetAuthIfInvalidRetries,
+          isAuthenticating: _isAuthenticating,
+          authJwt: Settings.authJwt,
+          authRequestId: Settings.authRequestId,
+          authStatus: Settings.authStatus
+        });
+      }
+
+      console.debug(Date.now() + " Authentication is busy, waiting for request");
+      return new Promise((resolve => setTimeout(() =>
+          resolve(
+            fetchWithJwt(callback, resetAuthIfInvalidRetries, maxWaitForAuthRetries - 1)
+          ),
+        config.authWaitForAuthenticationDelayMs
+      )));
+    }
+
+    if (maxWaitForAuthRetries < 0) {
+      rollbar.debug("Waiting for authentication took too long", {
+        authWaitForAuthenticationTimeoutMs: config.authWaitForAuthenticationTimeoutMs,
+        authWaitForAuthenticationDelayMs: config.authWaitForAuthenticationDelayMs,
+        maxWaitForAuthRetries: maxWaitForAuthRetries,
+        authReauthenticateMaxRetries: config.authReauthenticateMaxRetries,
+        resetAuthIfInvalidRetries: resetAuthIfInvalidRetries,
+        isAuthenticating: _isAuthenticating,
+        authJwt: Settings.authJwt,
+        authRequestId: Settings.authRequestId,
+        authStatus: Settings.authStatus
+      });
+    }
+    console.debug(Date.now() + " Authentication finished, continue with request");
+
+    return callback(getJwt())
+      .then(response => {
+        // After the request has been made, check if it was successful or if there was an authentication problem.
+
+        if (resetAuthIfInvalidRetries <= 0) return response;
+        if (!(response.status == HttpCode.Unauthorized || response.status == HttpCode.Forbidden)) return response;
+
+        // Re authenticate and try again
+        return reAuthenticate({
+          httpStatus: response.status,
+          url: response.url
+        })
+          .then(() => fetchWithJwt(callback, resetAuthIfInvalidRetries - 1, maxWaitForAuthRetries));
+      });
+  };
 }
