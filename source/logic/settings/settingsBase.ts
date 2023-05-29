@@ -47,7 +47,9 @@ class SettingsProvider {
       return undefined;
     }
 
-    return +stringValue;
+    const numberValue = +stringValue;
+    if (isNaN(numberValue)) return undefined;
+    return numberValue;
   }
 
   static getBoolean(key: string): boolean | undefined {

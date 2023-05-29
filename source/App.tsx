@@ -184,6 +184,7 @@ const AppRoot: React.FC = () => {
   const onLaunch = () => {
     runAsync(() => initSettingsDatabase(theme)
       .then(() => {
+        // Don't return, as that will hold up the app loading. Authentication should be done async.
         ServerAuth.authenticate()
           .catch(error => Alert.alert(
             "Authenticating error",

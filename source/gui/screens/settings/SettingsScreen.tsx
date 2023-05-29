@@ -9,8 +9,11 @@ import { SongSearch } from "../../../logic/songs/songSearch";
 import { capitalize, isAndroid } from "../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import { Platform, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
-import { SettingComponent, SettingsSliderComponent, SettingSwitchComponent } from "./SettingComponent";
+import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { SettingComponent } from "./components/SettingComponent";
+import { OptionalBoolean } from "../../../logic/settings/OptionalBoolean";
+import SettingSwitchComponent from "./components/SettingSwitchComponent";
+import SettingsSliderComponent from "./components/SettingsSliderComponent";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
   const styles = createStyles(useTheme());
