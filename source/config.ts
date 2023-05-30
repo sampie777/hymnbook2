@@ -10,7 +10,7 @@ const config = {
 
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSetqgPvuLh9K0m2nbonauXxrHiaFGpZz8_AUXOc9NcCpjnUUg/viewform?usp=sf_link",
   whatsappFeedbackGroupUrl: Config.WHATSAPP_USER_GROUP_LINK,
-  homepage: "https://hymnbook.sajansen.nl#download",
+  homepage: "https://hymnbook.sajansen.nl#downloads",
 
   debugEmulators: [
     "77975543a8268cd4", // local emulator API 30
