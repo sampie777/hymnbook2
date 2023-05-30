@@ -5,7 +5,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import { openLink } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
 
-const SurveyComponent: React.FC<{
+const SurveyModal: React.FC<{
   onCompleted?: () => void,
   onDenied?: () => void
 }> = ({
@@ -39,7 +39,7 @@ const SurveyComponent: React.FC<{
   </ConfirmationModal>;
 };
 
-export default SurveyComponent;
+export default SurveyModal;
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   popupContent: {},

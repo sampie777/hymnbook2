@@ -1,9 +1,28 @@
 import React from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
-import ConfirmationModal from "./ConfirmationModal";
+import config from "../../../config";
+import { Survey } from "../../../logic/survey";
 import { openLink } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
-import config from "../../../config";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ConfirmationModal from "./ConfirmationModal";
+
+const SurveyComponent: React.FC<{ onCompleted?: () => void }> = ({ onCompleted }) => {
+  const styles = createStyles(useTheme());
+
+  const openSurvey = () => {
+    openLink(Survey.url())
+      .then(Survey.complete)
+      .catch(e => Alert.alert("Error opening link", e.message))
+      .finally(onCompleted);
+  };
+
+  return <TouchableOpacity style={styles.surveyButton}
+                           onPress={openSurvey}>
+    <Text style={styles.surveyText}>
+      Complete the questionnaire
+    </Text>
+  </TouchableOpacity>;
+};
 
 const FeedbackComponent: React.FC<{
   onCompleted?: () => void,
@@ -47,6 +66,8 @@ const FeedbackComponent: React.FC<{
       <Text style={styles.contentText}>
         If you don't want to get involved, you can just fill out the feedback form (anonymously).
       </Text>
+
+      {Survey.isCompleted() ? null : <SurveyComponent onCompleted={onCompleted} />}
     </View>
   </ConfirmationModal>;
 };
@@ -58,5 +79,20 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   contentText: {
     paddingTop: 10,
     color: colors.text
+  },
+
+  surveyButton: {
+    marginTop: 25,
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: colors.primaryVariant,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center"
+  },
+  surveyText: {
+    color: colors.onPrimary,
+    textAlign: "center"
   }
 });
