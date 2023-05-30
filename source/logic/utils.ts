@@ -77,22 +77,16 @@ export function openLink(url?: string): Promise<any> {
     });
   }
 
-  return Linking.canOpenURL(url)
-    .then(isSupported => {
-      if (isSupported) {
-        return Linking.openURL(url);
-      } else {
-        Clipboard.setString(url);
-        throw new Error("Your device can't open these type of URLs. The URL is copied to your clipboard so you can open it on your own.");
-      }
-    })
+  return Linking.openURL(url)
     .catch(error => {
       if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Your device can't open these type of URLs.")) {
-        rollbar.info(error);
+        rollbar.info("Failed to open URL", { error: error, url: url });
       } else {
-        rollbar.warning(error);
+        rollbar.warning("Failed to open URL", { error: error, url: url });
       }
-      throw error;
+
+      Clipboard.setString(url);
+      throw new Error("Your device can't open these type of URLs. The URL is copied to your clipboard so you can open it on your own.");
     });
 }
 
