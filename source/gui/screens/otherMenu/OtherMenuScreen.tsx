@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Types } from "../downloads/TypeSelectBar";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
+import { shareApp } from "../../../logic/utils";
 import { AboutRoute, DatabasesRoute, OtherMenuRoute, ParamList, SettingsRoute } from "../../../navigation";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { ScrollView } from "react-native-gesture-handler";
@@ -37,6 +38,11 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
       {
         route: AboutRoute,
         icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="info" style={style} />
+      },
+      {
+        name: "Share app with friends",
+        icon: (style?: StyleProp<TextStyle> | undefined) => <Icon name="share" style={style} />,
+        onPress: shareApp
       }
     ];
 
@@ -52,9 +58,9 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
         <FeedbackComponent onCompleted={() => setShowFeedbackPopup(false)}
                            onDenied={() => setShowFeedbackPopup(false)} />
       }
-      <ScrollView contentContainerStyle={styles.container}>
-        {oShowRoute.map(it => <MenuItem
-          key={it.name || it.route}
+      <ScrollView style={styles.container} contentContainerStyle={styles.scrollView}>
+        {oShowRoute.map((it, index) => <MenuItem
+          key={index.toString() + (it.name || it.route)}
           name={it.name || it.route || ""}
           icon={it.icon}
           onPress={it.onPress ? it.onPress : () => onPress(it.route)} />)}
@@ -68,6 +74,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 1
+  },
+  scrollView: {
+    paddingTop: 1,
+    paddingBottom: 20,
   }
 });

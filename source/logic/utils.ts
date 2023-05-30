@@ -1,8 +1,8 @@
-import { Alert, Linking, Platform, ScaledSize } from "react-native";
+import { Alert, Linking, Platform, ScaledSize, Share } from "react-native";
 import KeepAwake from "react-native-keep-awake";
 import Clipboard from "@react-native-clipboard/clipboard";
-import Settings from "../settings";
 import { rollbar } from "./rollbar";
+import config from "../config";
 
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
@@ -130,3 +130,12 @@ export const runAsync = (f: () => any) => setTimeout(f, 0);
 
 export const emptyPromise = (): Promise<null> => new Promise((resolve => resolve(null)));
 export const emptyPromiseWithValue = <T>(value: T): Promise<T> => new Promise((resolve => resolve(value)));
+
+export const shareApp = () => {
+  return Share.share({
+    message: `Hey, you should try this new app!
+${config.homepage}`
+  })
+    .then(r => rollbar.debug("App shared.", r))
+    .catch(e => rollbar.warning("Failed to share app", { error: e }));
+};

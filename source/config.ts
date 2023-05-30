@@ -10,6 +10,7 @@ const config = {
 
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSetqgPvuLh9K0m2nbonauXxrHiaFGpZz8_AUXOc9NcCpjnUUg/viewform?usp=sf_link",
   whatsappFeedbackGroupUrl: Config.WHATSAPP_USER_GROUP_LINK,
+  homepage: "https://hymnbook.sajansen.nl#download",
 
   debugEmulators: [
     "77975543a8268cd4", // local emulator API 30
@@ -44,13 +45,13 @@ const config = {
     "d80b7ba66c87b72f", // Google emulator
     "bcedc1583abdaf37", // Google emulator
     "4d1bcf73ab062899", // Google emulator
-    "4b1ee687836a55e7", // Google emulator
+    "4b1ee687836a55e7" // Google emulator
   ],
 
   featuresWaitForDatabaseMaxTries: 10,
 
   authWaitForAuthenticationDelayMs: 500,
   authWaitForAuthenticationTimeoutMs: 60000,
-  authReauthenticateMaxRetries: 3,
+  authReauthenticateMaxRetries: 3
 };
 export default config;
