@@ -12,11 +12,13 @@ export namespace Survey {
         (date.getHours() >= 9 && date.getHours() < 12) ||
         (date.getHours() >= 18 && date.getHours() < 20)
       );
-    return !Settings.surveyCompleted &&
+    return !isCompleted() &&
       Settings.appOpenedTimes >= config.surveyMinimumAppOpenedTimes &&
       (Settings.appOpenedTimes - config.surveyMinimumAppOpenedTimes) % config.surveyDisplayInterval === 0 &&
       !isDuringSundayService;
   };
+
+  export const isCompleted = () => Settings.surveyCompleted;
 
   export const complete = () => {
     Settings.surveyCompleted = true;

@@ -6,7 +6,7 @@ import { SongSchema } from "../../../logic/db/models/SongsSchema";
 import { Survey } from "../../../logic/survey";
 import { StyleSheet, View } from "react-native";
 import InitDatabaseComponent from "./InitDatabaseComponent";
-import SurveyComponent from "./SurveyComponent";
+import SurveyModal from "./SurveyModal";
 
 interface ComponentProps {
   navigation: BottomTabNavigationProp<ParamList>,
@@ -36,8 +36,8 @@ const PopupsComponent: React.FC<ComponentProps> = ({ navigation }) => {
     }
 
     {!showSurvey || showInitDatabasePopup ? undefined :
-      <SurveyComponent onCompleted={() => setShowSurvey(false)}
-                       onDenied={() => setShowSurvey(false)} />
+      <SurveyModal onCompleted={() => setShowSurvey(false)}
+                   onDenied={() => setShowSurvey(false)} />
     }
   </View>);
 };
@@ -47,6 +47,6 @@ export default PopupsComponent;
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-  },
+    position: "absolute"
+  }
 });
