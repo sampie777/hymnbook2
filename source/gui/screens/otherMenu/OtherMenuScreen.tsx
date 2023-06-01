@@ -43,7 +43,7 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
         name: "Give feedback",
         icon: (style) => <Icon name="comment" style={style} />,
         onPress: () => setShowFeedbackPopup(true),
-        hasNotification: !Survey.isCompleted()
+        hasNotification: Survey.mayBeShown()
       },
       {
         route: AboutRoute,

@@ -67,7 +67,7 @@ const FeedbackComponent: React.FC<{
         If you don't want to get involved, you can just fill out the feedback form (anonymously).
       </Text>
 
-      {Survey.isCompleted() ? null : <SurveyComponent onCompleted={onCompleted} />}
+      {!Survey.mayBeShown() ? null : <SurveyComponent onCompleted={onCompleted} />}
     </View>
   </ConfirmationModal>;
 };
