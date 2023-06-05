@@ -1,5 +1,5 @@
 import Db from "../db/db";
-import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
+import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName } from "../utils";
@@ -218,8 +218,8 @@ export const createCopyright = (song?: Song) => {
   }
 
   let result = "";
-  let author = song.author;
-  let copyright = song.copyright;
+  let author = song.metadata.find(it => it.type === SongMetadataType.Author)?.value ?? "";
+  let copyright = song.metadata.find(it => it.type === SongMetadataType.Copyright)?.value ?? "";
 
   const songBundle = Song.getSongBundle(song);
   if (songBundle !== undefined) {
