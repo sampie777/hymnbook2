@@ -12,6 +12,7 @@ export namespace SongSearch {
     song: Song;
     points: number;
     isTitleMatch: boolean;
+    isMetadataMatch: boolean;
     isVerseMatch: boolean;
   }
 
@@ -28,10 +29,12 @@ export namespace SongSearch {
 
     if (searchInTitles) {
       findByTitle(text).forEach(it => {
+        const points = calculateMatchPointsForTitleMatch(it, text);
         results.push({
           song: it,
-          points: calculateMatchPointsForTitleMatch(it, text),
-          isTitleMatch: true,
+          points: points,
+          isTitleMatch: points === titleMatchPoints,
+          isMetadataMatch: points !== titleMatchPoints,
           isVerseMatch: false
         });
       });
@@ -57,6 +60,7 @@ export namespace SongSearch {
             song: it,
             points: points,
             isTitleMatch: false,
+            isMetadataMatch: false,
             isVerseMatch: true
           });
         }

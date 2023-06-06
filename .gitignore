@@ -75,3 +75,7 @@ ios/assets
 names_apple_store.txt
 /coverage/
 tmp/
+
+# Realm test databases
+hymnbook_songs
+hymnbook_songs.lock
