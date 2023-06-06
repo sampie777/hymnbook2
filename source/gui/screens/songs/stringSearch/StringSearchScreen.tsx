@@ -120,7 +120,9 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
         immediateSearchText: immediateSearchText.current,
         searchInTitles: searchInTitles,
         searchInVerses: searchInVerses,
-        isMounted: isMounted
+        isMounted: isMounted,
+        dbIsConnected: Db.songs.isConnected(),
+        dbIsClosed: Db.songs.realm().isClosed
       });
     }
 

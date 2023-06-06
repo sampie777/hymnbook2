@@ -1,11 +1,12 @@
 import Db from "../db/db";
-import { Song, Verse } from "../db/models/Songs";
+import { Song, SongMetadataType, Verse } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { InterruptedError } from "../InterruptedError";
 
 export namespace SongSearch {
-  const titleMatchPoints = 2;
-  const verseMatchPoints = 1;
+  export const titleMatchPoints = 2;
+  export const alternativeTitleMatchPoints = 1.9;
+  export const verseMatchPoints = 1;
 
   export interface SearchResult {
     song: Song;
@@ -66,7 +67,8 @@ export namespace SongSearch {
   };
 
   export const findByTitle = (text: string): Song[] => {
-    const query = `name LIKE[c] "*${text}*"`;
+    const metadataQuery = `SUBQUERY(metadata, $it, $it.type = "${SongMetadataType.AlternativeTitle}" AND $it.value LIKE[c] "*${text}*").@count > 0`;
+    const query = `name LIKE[c] "*${text}*" OR ${metadataQuery}`;
 
     const results = Db.songs.realm().objects<Song>(SongSchema.name)
       .sorted("name")
@@ -97,8 +99,16 @@ export namespace SongSearch {
     return Array.from(results);
   };
 
+  /**
+   * A main title match returns full points. An alternative title match slightly less.
+   * @param song
+   * @param text
+   */
   export const calculateMatchPointsForTitleMatch = (song: Song, text: string): number => {
-    return titleMatchPoints;
+    const regexText = makeSearchTextRegexable(text);
+    if (RegExp(regexText, "i").test(song.name))
+      return titleMatchPoints;
+    return alternativeTitleMatchPoints;
   };
 
   export const calculateMatchPointsForVerseMatch = (song: Song, text: string): number => {
