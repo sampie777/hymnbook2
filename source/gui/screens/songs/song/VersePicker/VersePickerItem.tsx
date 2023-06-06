@@ -42,18 +42,24 @@ const VersePickerItem: React.FC<ComponentProps> = ({
     .replace(/intro */gi, "I")
     .replace(/end */gi, "E");
 
-  return (<TouchableOpacity style={[
+  return <TouchableOpacity style={[
     styles.container,
     styleForVerseType(getVerseType(verse)),
     (!isSelected ? {} : styles.containerSelected),
     { marginHorizontal: horizontalMargin }
   ]}
-                            onPress={() => onPress?.(verse)}
-                            onLongPress={() => onLongPress?.(verse)}>
+                           onPress={() => onPress?.(verse)}
+                           onLongPress={() => onLongPress?.(verse)}
+                           hitSlop={{
+                             top: styles.container.marginVertical,
+                             bottom: styles.container.marginVertical,
+                             left: horizontalMargin,
+                             right: horizontalMargin
+                           }}>
     <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}>
       {displayName}
     </Text>
-  </TouchableOpacity>);
+  </TouchableOpacity>;
 };
 
 export default VersePickerItem;
