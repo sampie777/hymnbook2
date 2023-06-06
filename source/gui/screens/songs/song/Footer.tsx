@@ -19,7 +19,7 @@ const Footer: React.FC<Props> = ({ song, scale }) => {
       paddingBottom: Animated.multiply(scale, styles.container.paddingBottom)
     },
     divider: {
-      marginBottom: Animated.multiply(scale, styles.divider.marginBottom),
+      marginBottom: Animated.multiply(scale, styles.divider.marginBottom)
     },
     text: {
       lineHeight: Animated.multiply(scale, styles.text.lineHeight),
@@ -31,21 +31,25 @@ const Footer: React.FC<Props> = ({ song, scale }) => {
   return <Animated.View
     style={[styles.container, animatedStyle.container, { minHeight: windowDimension.height - useHeaderHeight() - 200 }]}>
     <Animated.View style={[styles.divider, animatedStyle.divider]}></Animated.View>
-    {createCopyright(song).map(it => <Animated.Text style={[styles.text, animatedStyle.text]}>{it}</Animated.Text>)}
+    {createCopyright(song).map((it, i) =>
+      <Animated.Text key={i} style={[styles.text, animatedStyle.text]}>
+        {it}
+      </Animated.Text>
+    )}
   </Animated.View>;
 };
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingTop: 100,
-    paddingBottom: 100,
+    paddingBottom: 100
   },
   divider: {
     marginBottom: 30,
     width: "50%",
     alignSelf: "center",
     borderTopColor: colors.border,
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   text: {
     textAlign: "center",
