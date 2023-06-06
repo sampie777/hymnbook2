@@ -11,7 +11,7 @@ describe("creating copyright for song", () => {
   });
 
   it("returns nothing if song is undefined", () => {
-    expect(createCopyright(undefined)).toBe("");
+    expect(createCopyright(undefined)).toStrictEqual([]);
   });
 
   it("returns the priority values as copyright", () => {
@@ -19,7 +19,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "";
     songBundle.copyright = "";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name");
+    expect(createCopyright(song)).toStrictEqual(["name"]);
   });
 
   it("includes the language if these are different as copyright", () => {
@@ -27,7 +27,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "";
     songBundle.copyright = "";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nAfrikaans");
+    expect(createCopyright(song)).toStrictEqual(["Afrikaans","name"]);
   });
 
   it("includes the author if specified", () => {
@@ -35,7 +35,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "author";
     songBundle.copyright = "";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nauthor");
+    expect(createCopyright(song)).toStrictEqual(["name","author"]);
   });
 
   it("includes the song author if specified", () => {
@@ -44,7 +44,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "author";
     songBundle.copyright = "";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nsongauthor");
+    expect(createCopyright(song)).toStrictEqual(["songauthor","name"]);
   });
 
   it("includes the song author if specified but no bundle author is specified", () => {
@@ -53,7 +53,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "";
     songBundle.copyright = "";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nsongauthor");
+    expect(createCopyright(song)).toStrictEqual(["songauthor","name"]);
   });
 
   it("includes the copyright if specified", () => {
@@ -61,7 +61,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "";
     songBundle.copyright = "copyright";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\ncopyright");
+    expect(createCopyright(song)).toStrictEqual(["name","copyright"]);
   });
 
   it("includes the song copyright if specified", () => {
@@ -70,7 +70,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "";
     songBundle.copyright = "copyright";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nsongcopyright");
+    expect(createCopyright(song)).toStrictEqual(["songcopyright","name"]);
   });
 
   it("includes the song copyright if specified but no bundle copyright is specified", () => {
@@ -79,7 +79,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "";
     songBundle.copyright = "";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nsongcopyright");
+    expect(createCopyright(song)).toStrictEqual(["songcopyright","name"]);
   });
 
   it("includes all specified information", () => {
@@ -87,7 +87,7 @@ describe("creating copyright for song", () => {
     songBundle.author = "author";
     songBundle.copyright = "copyright";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nauthor\ncopyright");
+    expect(createCopyright(song)).toStrictEqual(["name","author","copyright"]);
   });
 
   it("includes all specified information if different", () => {
@@ -97,12 +97,12 @@ describe("creating copyright for song", () => {
     songBundle.author = "author";
     songBundle.copyright = "copyright";
     songBundle.language = "EN";
-    expect(createCopyright(song)).toBe("name\nsongauthor\nsongcopyright\nAfrikaans");
+    expect(createCopyright(song)).toStrictEqual(["songauthor","songcopyright","Afrikaans","name"]);
   });
 
   it("includes nothing if no song bundle is specified", () => {
     const song2 = new Song("", "", new Date(), new Date(), "", [], [], [], 0, 1);
-    expect(createCopyright(song2)).toBe("");
+    expect(createCopyright(song2)).toStrictEqual([]);
   });
 
   it("includes song specified information if no song bundle is specified", () => {
@@ -110,6 +110,6 @@ describe("creating copyright for song", () => {
       new SongMetadata(SongMetadataType.Author, "songauthor", 0),
       new SongMetadata(SongMetadataType.Copyright, "songcopyright", 0),
     ], 0, 1);
-    expect(createCopyright(song2)).toBe("songauthor\nsongcopyright");
+    expect(createCopyright(song2)).toStrictEqual(["songauthor","songcopyright"]);
   });
 });
