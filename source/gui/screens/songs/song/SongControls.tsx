@@ -6,10 +6,11 @@ import { ParamList, SongRoute } from "../../../../navigation";
 import Settings from "../../../../settings";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { getNextVerseIndex } from "../../../../logic/songs/utils";
+import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ComponentProps {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -100,7 +101,8 @@ const SongControls: React.FC<ComponentProps> =
 
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
-                          onPress={() => goToSongListSong(previousSong)}>
+                          onPress={() => goToSongListSong(previousSong)}
+                          hitSlop={RectangularInset(10)}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
@@ -119,7 +121,8 @@ const SongControls: React.FC<ComponentProps> =
         ]}
                           activeOpacity={canJumpToNextVerse() ? 0.7 : 1}
                           onPress={jumpToNextVerse}
-                          onLongPress={jumpToLastVerse}>
+                          onLongPress={jumpToLastVerse}
+                          hitSlop={RectangularInset(10)}>
           <Icon name={"chevron-down"}
                 style={[
                   styles.buttonText,
@@ -132,7 +135,8 @@ const SongControls: React.FC<ComponentProps> =
       {nextSong === undefined ?
         (songListIndex === undefined ? undefined : <View style={styles.buttonBase} />) :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
-                          onPress={() => goToSongListSong(nextSong)}>
+                          onPress={() => goToSongListSong(nextSong)}
+                          hitSlop={RectangularInset(10)}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}

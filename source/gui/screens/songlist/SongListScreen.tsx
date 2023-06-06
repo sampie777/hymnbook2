@@ -11,8 +11,8 @@ import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
 import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
-import DeleteModeButton from "./DeleteModeButton";
 import SongItem from "./SongItem";
+import ScreenHeader from "./ScreenHeader";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -33,9 +33,9 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
 
     React.useLayoutEffect(() => {
       navigation.setOptions({
-        headerRight: () => <DeleteModeButton onPress={toggleDeleteMode}
-                                             onLongPress={clearAll}
-                                             isActivated={isDeleteMode} />
+        headerRight: () => <ScreenHeader toggleDeleteMode={toggleDeleteMode}
+                                         clearAll={clearAll}
+                                         isDeleteMode={isDeleteMode} />
       });
     }, [navigation, isDeleteMode]);
 
