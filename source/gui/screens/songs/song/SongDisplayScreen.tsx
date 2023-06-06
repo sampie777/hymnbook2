@@ -37,6 +37,7 @@ import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
 import MelodyHelpModal from "./melody/MelodyHelpModal";
+import Header from "./Header";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -438,7 +439,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               selectedVerses: route.params.selectedVerses?.map(it => it.name),
               isFocused: _isFocused.current
             })}
-            ListFooterComponent={<Footer song={song} />} />
+            ListHeaderComponent={<Header song={song} scale={animatedScale} />}
+            ListFooterComponent={<Footer song={song} scale={animatedScale} />} />
         </ReAnimated.View>
 
         <LoadingOverlay text={null}

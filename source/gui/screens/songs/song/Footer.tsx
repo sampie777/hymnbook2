@@ -7,31 +7,53 @@ import { useHeaderHeight } from "@react-navigation/elements";
 
 interface Props {
   song?: Song;
+  scale: Animated.Value;
 }
 
-const Footer: React.FC<Props> = ({ song }) => {
+const Footer: React.FC<Props> = ({ song, scale }) => {
   const styles = createStyles(useTheme());
   const windowDimension = useWindowDimensions();
+  const animatedStyle = {
+    container: {
+      paddingTop: Animated.multiply(scale, styles.container.paddingTop),
+      paddingBottom: Animated.multiply(scale, styles.container.paddingBottom)
+    },
+    divider: {
+      marginBottom: Animated.multiply(scale, styles.divider.marginBottom),
+    },
+    text: {
+      lineHeight: Animated.multiply(scale, styles.text.lineHeight),
+      fontSize: Animated.multiply(scale, styles.text.fontSize),
+      paddingBottom: Animated.multiply(scale, styles.text.paddingBottom)
+    }
+  };
 
-  return <Animated.View style={[styles.container, { minHeight: windowDimension.height - useHeaderHeight() - 200 }]}>
-    <Animated.Text style={[styles.copyright]}>{createCopyright(song)}</Animated.Text>
+  return <Animated.View
+    style={[styles.container, animatedStyle.container, { minHeight: windowDimension.height - useHeaderHeight() - 200 }]}>
+    <Animated.View style={[styles.divider, animatedStyle.divider]}></Animated.View>
+    {createCopyright(song).map(it => <Animated.Text style={[styles.text, animatedStyle.text]}>{it}</Animated.Text>)}
   </Animated.View>;
 };
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
-    borderTopColor: colors.border,
-    borderTopWidth: 1,
-    width: "50%",
     paddingTop: 100,
     paddingBottom: 100,
-    alignSelf: "center"
   },
-  copyright: {
+  divider: {
+    marginBottom: 30,
+    width: "50%",
+    alignSelf: "center",
+    borderTopColor: colors.border,
+    borderTopWidth: 1,
+  },
+  text: {
     textAlign: "center",
     color: colors.textLighter,
     fontFamily: fontFamily.sansSerifLight,
-    lineHeight: 25
+    lineHeight: 20,
+    fontSize: 14,
+    paddingBottom: 5
   }
 });
 
