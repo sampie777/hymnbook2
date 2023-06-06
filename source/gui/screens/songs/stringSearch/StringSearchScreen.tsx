@@ -161,6 +161,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                                   disable={isLoading}
                                   song={item.song}
                                   isTitleMatch={item.isTitleMatch}
+                                  isMetadataMatch={item.isMetadataMatch}
                                   isVerseMatch={item.isVerseMatch} />;
   }, [isLoading]);
 
