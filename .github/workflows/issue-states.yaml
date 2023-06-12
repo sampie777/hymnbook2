@@ -17,3 +17,4 @@ jobs:
         with:
           open-issue-columns: 'New, Backlog, Ready'
           closed-issue-columns: 'Done'
+          log-output: true
