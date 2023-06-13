@@ -1,5 +1,13 @@
 import * as ABCJS from "abcjs";
-import { AbcClef, KeySignature, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
+import {
+  AbcClef,
+  AbcLyric,
+  AbcPitchStartSlur,
+  KeySignature,
+  TuneObject,
+  VoiceItem,
+  VoiceItemNote
+} from "./abcjsTypes";
 import { validate } from "../../utils";
 import { Verse } from "../../db/models/Songs";
 import { AbcMelody, AbcSubMelody } from "../../db/models/AbcMelodies";
@@ -70,11 +78,90 @@ export namespace ABC {
       return undefined;
     }
 
-    song.melody = tuneObject.lines!![0].staff!![0].voices!![0];
+    // Get the first staff only (thus in case of multiple instrument play, only take the first instrument)
     song.clef = tuneObject.lines!![0].staff!![0].clef || song.clef;
     song.keySignature = tuneObject.lines!![0].staff!![0].key || song.keySignature;
+    song.melody = tuneObject.lines!![0].staff!![0].voices!![0];
+
+    processSlurs(song);
 
     return song;
+  };
+
+  const processSlurs = (song: ABC.Song) => {
+    const emptyLyric = (): AbcLyric[] => [{ divider: " ", syllable: "" }];
+
+    const shiftLyrics = (notes: VoiceItemNote[], fromIndex: number) => {
+      let shiftedLyric: AbcLyric[] | undefined = undefined;
+      notes.forEach((note, index) => {
+        if (index < fromIndex) return;
+        if (shiftedLyric === undefined) {
+          shiftedLyric = note.lyric;
+          note.lyric = emptyLyric();
+          return;
+        }
+
+        const nextShiftedLyric = note.lyric;
+        note.lyric = shiftedLyric;
+        shiftedLyric = nextShiftedLyric;
+      });
+    };
+
+    const notes = song.melody
+      .filter(it => it.el_type == "note")
+      .map(it => it as VoiceItemNote)
+      .filter(it => it.pitches);
+
+    let slurLyric: AbcLyric[] | undefined = undefined;
+    notes.forEach((note, index) => {
+      const endSlurPitches = note.pitches!!.filter(it => it.endSlur);
+      const startSlurPitches = note.pitches!!.filter(it => it.startSlur);
+
+      // Search for an increased startSlur identifier (101 -> 102, not 101 -> 201)
+      // to identify ABC melodies as '(D)' which ends and starts a slur with itself.
+      // Due to buggy ABC parser behavior, the slur doesn't first start and end with
+      // itself (having the same identifier), but ends first and start a new slur (with increased identifier).
+      // Of course, it is possible that the note is in an actual slur (like '(a (b) c)'),
+      // but then the `slurLyric` would be set.
+      if (slurLyric === undefined && endSlurPitches.length && startSlurPitches.length) {
+        const endSlurIds = endSlurPitches
+          .filter(it => it.endSlur)
+          .flatMap(it => it.endSlur!!);
+
+        const startSlurIds = startSlurPitches
+          .filter(it => it.startSlur)
+          .flatMap(it => it.startSlur as AbcPitchStartSlur[])
+          .map(it => it.label);
+
+        const hasUpFollowingId = startSlurIds.some(it => endSlurIds.includes(it - 1));
+
+        if (hasUpFollowingId) {
+          return;
+        }
+      }
+
+      // When inside a slur
+      if (slurLyric) {
+        // Check if lyric is a spacer ('*'). These are shown as lyrics with zero length syllables.
+        // If it's a spacer, ignore the shift, as the spacer already does this job for us.
+        const lyricIsSpacer = note.lyric
+          && note.lyric.every(it => it.syllable == "" && it.divider == " ");
+
+        if (!lyricIsSpacer) {
+          shiftLyrics(notes, index);
+        }
+      }
+
+      // When slur ends
+      if (endSlurPitches.length && !startSlurPitches.length) {
+        slurLyric = undefined;
+      }
+
+      // When slur starts
+      if (startSlurPitches.length && !endSlurPitches.length) {
+        slurLyric = note.lyric;
+      }
+    });
   };
 
   export const getField = (abc: string, field: string, _default?: string): (string | undefined) => {
