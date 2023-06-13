@@ -1,4 +1,5 @@
 import Db from "../db";
+import config from "../../../config";
 import { AbcMelodySchema, AbcSubMelodySchema } from "./AbcMelodiesSchema";
 import { Verse, VerseProps } from "./Songs";
 
@@ -27,13 +28,13 @@ export class AbcSubMelody {
 
 export class AbcMelody {
   id: number;
-  name: string = "Default";
+  name: string = config.defaultMelodyName;
   melody: string = "";
   uuid: string = "";
   subMelodies: AbcSubMelody[];
 
   constructor(
-    name: string = "Default",
+    name: string = config.defaultMelodyName,
     melody: string = "",
     uuid: string = "",
     subMelodies: AbcSubMelody[],

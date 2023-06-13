@@ -3,6 +3,7 @@ import Config from "react-native-config";
 const config = {
   maxSearchInputLength: 4,
   maxSearchResultsLength: 200,
+  defaultMelodyName: "Default",
 
   surveyMinimumAppOpenedTimes: 6,
   surveyDisplayInterval: 4,
