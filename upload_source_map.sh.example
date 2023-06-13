@@ -53,7 +53,13 @@ function createAndUploadSourceMapIOS {
   uploadSourceMapIOS
 }
 
+function cleanUp {
+    rm sourcemap.android.js
+    rm sourcemap.ios.js
+}
+
 createAndUploadSourceMapAndroid
 createAndUploadSourceMapIOS
+cleanUp
 
 echo "Done creating and uploading source maps"
