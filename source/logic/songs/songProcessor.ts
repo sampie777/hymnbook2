@@ -1,5 +1,6 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
+import config from "../../config";
 import { dateFrom, Result } from "../utils";
 import { Song, SongBundle, Verse } from "../db/models/Songs";
 import {
@@ -133,8 +134,8 @@ export namespace SongProcessor {
   };
 
   export const sortSongMelodyByName = (a: (ServerAbcMelody | AbcMelody), b: (ServerAbcMelody | AbcMelody)): number => {
-    if (a.name == "Default") return -1;
-    if (b.name == "Default") return 1;
+    if (a.name == config.defaultMelodyName) return -1;
+    if (b.name == config.defaultMelodyName) return 1;
     if (RegExp("^(Eerste|First)", "").test(a.name)) return -1;
     if (RegExp("^(Eerste|First)", "").test(b.name)) return 1;
     if (RegExp("^(Tweede|Second)", "").test(a.name)) return -1;

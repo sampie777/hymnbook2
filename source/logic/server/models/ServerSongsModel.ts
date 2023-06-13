@@ -1,3 +1,5 @@
+import config from "../../../config";
+
 export class AbcSubMelody {
   id: number;
   melody: string = "";
@@ -19,7 +21,7 @@ export class AbcSubMelody {
 
 export class AbcMelody {
   id: number;
-  name: string = "Default";
+  name: string = config.defaultMelodyName;
   melody: string = "";
   uuid: string = "";
   song: Song | null;
@@ -27,7 +29,7 @@ export class AbcMelody {
 
   constructor(
     id: number,
-    name: string = "Default",
+    name: string = config.defaultMelodyName,
     melody: string = "",
     uuid: string = "",
     song: Song | null,

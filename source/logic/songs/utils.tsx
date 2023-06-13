@@ -1,4 +1,5 @@
 import Db from "../db/db";
+import config from "../../config";
 import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
@@ -250,11 +251,15 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   if (song.lastUsedMelody != null && song.abcMelodies.some(it => it.id == song.lastUsedMelody?.id))
     return song.lastUsedMelody;
 
-  const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
+  const defaultMelody = song.abcMelodies.find(it => it.name == config.defaultMelodyName);
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
 
-export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): { length: number; offset: number; index: number } => {
+export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): {
+  length: number;
+  offset: number;
+  index: number
+} => {
   if (Object.keys(verseHeights).length == 0) {
     return {
       length: 0,
