@@ -115,12 +115,23 @@ export namespace SongProcessor {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
       });
     } catch (e: any) {
-      rollbar.error(`Failed to update/import songs: ${e}`, {
+      rollbar.error(`Failed to save new song bundle`, {
         error: e,
         serverBundle: { ...bundle, songs: null },
         newBundle: { ...songBundle, songs: null }
       });
       return new Result({ success: false, message: `Failed to update songs: ${e}`, error: e as Error });
+    }
+
+    if (existingBundle.length > 0) {
+      try {
+        copyUserSettingsToExistingSongBundles(songBundle);
+      } catch (e: any) {
+        rollbar.error(`Failed to copy user settings to new song bundle`, {
+          error: e,
+          bundle: { ...songBundle, songs: null }
+        });
+      }
     }
 
     if (existingBundle.length > 0) {
@@ -131,6 +142,40 @@ export namespace SongProcessor {
     }
 
     return new Result({ success: true, message: `${bundle.name} updated!` });
+  };
+
+  /**
+   * Some songs have user settings, like lastUsedMelody. Copy the old settings to the new songs so the user won't
+   * have to set these settings again. This to provide a seamless update.
+   *
+   * @param songBundle The newly created song bundle. Used for fetching the bundle from the database by ID
+   * and used for error logging context.
+   */
+  export const copyUserSettingsToExistingSongBundles = (songBundle: SongBundle) => {
+    const localSongBundle = Db.songs.realm().objectForPrimaryKey<SongBundle>(SongBundleSchema.name, songBundle.id);
+    if (!localSongBundle) {
+      rollbar.error("Could not find newly created song bundle in database", {
+        bundle: { ...songBundle, songs: null }
+      });
+      return;
+    }
+
+    localSongBundle.songs.forEach(song => {
+      const existingSong = Db.songs.realm()
+        .objects<Song>(SongSchema.name)
+        .filtered(`id != ${song.id} AND uuid = "${song.uuid}"`);
+      if (existingSong.length === 0) return;
+
+      const lastUsedMelody = existingSong[0].lastUsedMelody;
+      if (!lastUsedMelody || lastUsedMelody.name == config.defaultMelodyName) return;
+
+      const newMelody = song.abcMelodies.find(it => it.uuid == lastUsedMelody.uuid);
+      if (!newMelody) return;
+
+      Db.songs.realm().write(() => {
+        song.lastUsedMelody = newMelody;
+      });
+    });
   };
 
   export const sortSongMelodyByName = (a: (ServerAbcMelody | AbcMelody), b: (ServerAbcMelody | AbcMelody)): number => {
@@ -268,10 +313,18 @@ export namespace SongProcessor {
     const songCount = bundle.songs.length;
     const bundleName = bundle.name;
 
-    Db.songs.realm().write(() => {
-      Db.songs.realm().delete(bundle.songs);
-      Db.songs.realm().delete(bundle);
-    });
+    try {
+      Db.songs.realm().write(() => {
+        Db.songs.realm().delete(bundle.songs);
+        Db.songs.realm().delete(bundle);
+      });
+    } catch (e: any) {
+      rollbar.error("Failed to delete song bundle", {
+        error: e,
+        bundle: { ...bundle, songs: null }
+      });
+      return new Result({ success: false, message: `Could not delete (outdated) songs for ${bundleName}` });
+    }
 
     SongList.cleanUpAllSongLists();
 
