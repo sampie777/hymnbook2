@@ -1,7 +1,10 @@
 #!/bin/bash
 # See also: https://docs.rollbar.com/docs/react-native#source-maps
 
+# SERVERKEY should be defined in a file called upload_source_map_secrets.txt
 SERVERKEY=""
+
+source upload_source_map_secrets.txt
 VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
 
 
