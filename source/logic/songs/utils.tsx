@@ -1,5 +1,6 @@
 import Db from "../db/db";
-import { Song, SongBundle, Verse, VerseProps } from "../db/models/Songs";
+import config from "../../config";
+import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName } from "../utils";
@@ -212,30 +213,60 @@ export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: Song
   return song.language !== bundle.language;
 };
 
-export const createCopyright = (song?: Song) => {
+export const createHeader = (song?: Song) => {
   if (song === undefined) {
     return "";
   }
 
-  let result = "";
-  let author = song.author;
-  let copyright = song.copyright;
+  const result: string[] = [];
 
-  const songBundle = Song.getSongBundle(song);
-  if (songBundle !== undefined) {
-    result += songBundle.name + "\n";
-    if (author.length === 0) author = songBundle.author;
-    if (copyright.length === 0) copyright = songBundle.copyright;
+  song.metadata.filter(it => it.type === SongMetadataType.Superscription)
+    .map(it => result.push(it.value));
+
+  return result.filter(it => it.length > 0).join("\n").trim();
+};
+
+export const createCopyright = (song?: Song): string[] => {
+  if (song === undefined) {
+    return [];
   }
 
-  result += author.length === 0 ? "" : author + "\n";
-  result += copyright.length === 0 ? "" : copyright + "\n";
+  const result: string[] = [];
+  const songBundle = Song.getSongBundle(song);
+  const songHasAuthor = song.metadata.some(it => it.type === SongMetadataType.Author);
+  const songHasCopyright = song.metadata.some(it => it.type === SongMetadataType.Copyright);
+
+  song.metadata.filter(it => it.type === SongMetadataType.AlternativeTitle)
+    .map(it => result.push(it.value));
+  song.metadata.filter(it => it.type === SongMetadataType.TextSource)
+    .map(it => result.push(it.value));
+  song.metadata.filter(it => it.type === SongMetadataType.ScriptureReference)
+    .map(it => result.push(it.value));
+  song.metadata.filter(it => it.type === SongMetadataType.Year)
+    .map(it => result.push(it.value));
+
+  if (songHasAuthor) {
+    song.metadata.filter(it => it.type === SongMetadataType.Author)
+      .map(it => result.push(it.value));
+  }
+
+  if (songHasCopyright) {
+    song.metadata.filter(it => it.type === SongMetadataType.Copyright)
+      .map(it => result.push(it.value));
+  }
 
   if (isSongLanguageDifferentFromSongBundle(song, songBundle)) {
-    result += languageAbbreviationToFullName(song.language);
+    result.push(languageAbbreviationToFullName(song.language));
   }
 
-  return result.trim();
+  // Add song bundle info
+  if (songBundle !== undefined) {
+    result.push(songBundle.name);
+    if (!songHasAuthor) result.push(songBundle.author);
+    if (!songHasCopyright) result.push(songBundle.copyright);
+  }
+
+  return result.filter(it => it.length > 0);
 };
 
 export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
@@ -250,11 +281,15 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   if (song.lastUsedMelody != null && song.abcMelodies.some(it => it.id == song.lastUsedMelody?.id))
     return song.lastUsedMelody;
 
-  const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
+  const defaultMelody = song.abcMelodies.find(it => it.name == config.defaultMelodyName);
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
 
-export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): { length: number; offset: number; index: number } => {
+export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): {
+  length: number;
+  offset: number;
+  index: number
+} => {
   if (Object.keys(verseHeights).length == 0) {
     return {
       length: 0,

@@ -10,6 +10,7 @@ import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navig
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
+import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { ScrollView, View, Text, StyleSheet, BackHandler } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
@@ -170,7 +171,9 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   return (<View style={styles.container}>
     <View style={styles.pageHeader}>
       {group === undefined ? undefined :
-        <HeaderIconButton onPress={previousLevel} icon={"arrow-left"} />}
+        <HeaderIconButton onPress={previousLevel}
+                          icon={"arrow-left"}
+                          hitSlop={RectangularInset(10)} />}
 
       <Text style={styles.pageTitle}>
         {group?.name || "Browse"}
