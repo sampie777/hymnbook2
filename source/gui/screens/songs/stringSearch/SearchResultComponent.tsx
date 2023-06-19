@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
@@ -16,6 +16,7 @@ interface Props {
   showSongBundle?: boolean;
   disable?: boolean;
   isTitleMatch?: boolean;
+  isMetadataMatch?: boolean;
   isVerseMatch?: boolean;
 }
 
@@ -26,6 +27,7 @@ const SearchResultComponent: React.FC<Props> = ({
                                                   showSongBundle,
                                                   disable = false,
                                                   isTitleMatch = false,
+                                                  isMetadataMatch = false,
                                                   isVerseMatch = false
                                                 }) => {
   if (searchRegex.length === 0) return null;
@@ -54,6 +56,12 @@ const SearchResultComponent: React.FC<Props> = ({
     });
   };
 
+  const alternativeTitle = !isMetadataMatch ? null
+    : song.metadata.find(it =>
+      it.type === SongMetadataType.AlternativeTitle
+      && RegExp(searchRegex, "i").test(it.value)
+    )?.value;
+
   const createHighlightedTextComponent = useCallback((text: string, index: number) =>
     <Text key={index} style={styles.textHighlighted}>
       {text}
@@ -68,6 +76,12 @@ const SearchResultComponent: React.FC<Props> = ({
           renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
         }
       </Text>
+
+      {alternativeTitle == null ? undefined :
+        <Text style={styles.songBundleName}>
+          {renderTextWithCustomReplacements(alternativeTitle, searchRegex, createHighlightedTextComponent)}
+        </Text>
+      }
 
       {!showSongBundle ? undefined :
         <Text style={styles.songBundleName}>

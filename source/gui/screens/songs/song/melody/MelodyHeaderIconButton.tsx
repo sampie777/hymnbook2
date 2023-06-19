@@ -36,7 +36,8 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
 
   return <TouchableOpacity style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
                            onPress={() => Settings.longPressForMelodyMenu ? toggleShowMelody() : setShowMelodySettings(true)}
-                           onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : toggleShowMelody()}>
+                           onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : toggleShowMelody()}
+                           hitSlop={{top: 10, right: 0, bottom: 10, left: 10}}>
     <Icon name={"music"} style={styles.icon} />
     {!showMelody ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
 

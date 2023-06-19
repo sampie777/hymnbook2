@@ -3,9 +3,9 @@ import { hasMelodyToShow } from "../../../../source/logic/songs/utils";
 import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
 
 describe("test if song has a melody to show", () => {
-  const verse1 = new Verse(0, "", "", "", "", [], 0)
-  const verse2 = new Verse(1, "", "", "", "", [], 1)
-  const song = new Song("", "", "", "", new Date(), new Date(), "", [verse1, verse2], [], 0, 1);
+  const verse1 = new Verse(0, "", "", "", "", [], 0);
+  const verse2 = new Verse(1, "", "", "", "", [], 1);
+  const song = new Song("", "", new Date(), new Date(), "", [verse1, verse2], [], [],0, 1);
 
   const abcMelody = new AbcMelody("", "", "", [], 0);
 

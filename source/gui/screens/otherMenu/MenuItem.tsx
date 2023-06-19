@@ -56,7 +56,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   badge: {
     position: "absolute",
-    backgroundColor: "#ff2f00",
+    backgroundColor: colors.badge.medium,
     width: 8,
     height: 8,
     borderRadius: 8,

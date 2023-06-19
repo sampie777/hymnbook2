@@ -8,7 +8,8 @@ interface Props {
 
 const HeaderIconVersePicker: React.FC<Props> = ({ onPress }) => {
   return <HeaderIconButton icon={"list-ol"}
-                           onPress={onPress} />;
+                           onPress={onPress}
+                           hitSlop={{top: 10, right: 15, bottom: 10, left: 0}} />;
 };
 
 export default HeaderIconVersePicker;
