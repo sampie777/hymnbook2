@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { RectangularInset } from "../../components/utils";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { isIOS } from "../../../logic/utils";
 
 interface Props {
   onPress: () => void,
@@ -14,7 +14,7 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
   return <TouchableOpacity onPress={onPress}
                            onLongPress={onLongPress}
                            style={styles.deleteModeButton}
-                           hitSlop={RectangularInset(10)}>
+                           hitSlop={{ top: 10, right: 10, bottom: isIOS ? 5 : 10, left: 10 }}>
     <Icon name={"trash-alt"}
           solid={isActivated}
           size={styles.deleteModeButton.fontSize}
