@@ -2,14 +2,14 @@ import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import config from "../../config";
 import { dateFrom, Result } from "../utils";
-import { Song, SongBundle, Verse } from "../db/models/Songs";
+import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../db/models/Songs";
 import {
   SongBundle as ServerSongBundle,
   Song as ServerSong,
   SongVerse as ServerVerse,
   AbcMelody as ServerAbcMelody
 } from "../server/models/ServerSongsModel";
-import { SongBundleSchema, SongSchema, VerseSchema } from "../db/models/SongsSchema";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../db/models/SongsSchema";
 import { AbcMelody, AbcSubMelody } from "../db/models/AbcMelodies";
 import { AbcMelodySchema, AbcSubMelodySchema } from "../db/models/AbcMelodiesSchema";
 import SongList from "./songList";
@@ -200,6 +200,7 @@ export namespace SongProcessor {
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
     let melodyId = Db.songs.getIncrementedPrimaryKey(AbcMelodySchema);
     let subMelodyId = Db.songs.getIncrementedPrimaryKey(AbcSubMelodySchema);
+    let metadataId = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema);
 
     const getSubMelodiesFromVerses = (verses: ServerVerse[], newVerses: Verse[], parentMelody: ServerAbcMelody): AbcSubMelody[] => {
       return verses.map(verse => {
@@ -226,8 +227,6 @@ export namespace SongProcessor {
     const convertServerSongToLocalSong = (song: ServerSong): Song => {
       const newSong = new Song(
         song.name,
-        song.author,
-        song.copyright,
         song.language,
         dateFrom(song.createdAt),
         dateFrom(song.modifiedAt),
@@ -244,6 +243,10 @@ export namespace SongProcessor {
             verse.abcLyrics
           )) || [],
         [],
+        song.metadata
+          ?.sort((a, b) => a.id - b.id)
+          ?.filter(it => Object.values(SongMetadataType).includes(it.type))
+          ?.map(it => new SongMetadata(it.type, it.value, metadataId++)) || [],
         songId++,
         song.number
       );
