@@ -1,4 +1,5 @@
 import Db from "../db/db";
+import config from "../../config";
 import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
@@ -280,7 +281,7 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   if (song.lastUsedMelody != null && song.abcMelodies.some(it => it.id == song.lastUsedMelody?.id))
     return song.lastUsedMelody;
 
-  const defaultMelody = song.abcMelodies.find(it => it.name == "Default");
+  const defaultMelody = song.abcMelodies.find(it => it.name == config.defaultMelodyName);
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
 

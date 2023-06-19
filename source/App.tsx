@@ -137,7 +137,8 @@ const HomeNavigation: React.FC = () => {
                                tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
                                tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
                                headerStyle: styles.tabBarHeader,
-                               headerTitleStyle: styles.tabBarHeaderTitle
+                               headerTitleStyle: styles.tabBarHeaderTitle,
+                               tabBarItemStyle: styles.tabBarItem
                              }}>
     <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
                     options={{
@@ -235,8 +236,6 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   },
 
   tabBar: {
-    paddingBottom: 10,
-    paddingTop: 7,
     height: 60,
     backgroundColor: colors.surface1,
     borderTopColor: colors.background
@@ -251,6 +250,10 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     color: colors.textHeader as string
   },
 
+  tabBarItem: {
+    paddingBottom: 10,
+    paddingTop: 7
+  },
   tabBarInactiveLabel: {
     color: colors.textLighter
   },

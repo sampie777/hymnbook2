@@ -85,7 +85,7 @@ export class SettingsBaseClass {
       case "boolean":
         return SettingsProvider.getBoolean(key);
       default:
-        rollbar.error("No matching get function found for loading type of key: " + key + " of type: " + typeof value);
+        rollbar.error("No matching set function found for loading type of key.", { key: key, type: typeof value });
     }
   }
 
@@ -106,7 +106,7 @@ export class SettingsBaseClass {
           case "boolean":
             return SettingsProvider.setBoolean(key, value);
           default:
-            rollbar.error("No matching set function found for storing type of key: " + key + " of type: " + typeof value);
+            rollbar.error("No matching set function found for storing type of key.", { key: key, type: typeof value });
         }
       });
     } catch (error: any) {

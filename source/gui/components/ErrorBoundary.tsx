@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { rollbar } from "../../logic/rollbar";
-import { defaultFontFamilies } from "../../logic/theme";
+import { defaultFontFamilies, lightColors } from "../../logic/theme";
 
 interface ComponentProps {
   children: React.ReactNode;
@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
     fontSize: 50,
     paddingVertical: 40,
     textAlign: "center",
-    fontFamily: defaultFontFamilies.sansSerifThin
+    fontFamily: defaultFontFamilies.sansSerifThin,
+    color: lightColors.text
   },
   subheader: {
     fontSize: 25,
@@ -124,7 +125,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 10,
     paddingHorizontal: 10,
-    textAlign: "center"
+    textAlign: "center",
+    color: lightColors.text
   },
 
   resetButtonContainer: {
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
     marginVertical: 30
   },
   resetButton: {
-    backgroundColor: "dodgerblue",
+    backgroundColor: lightColors.primary,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   resetButtonText: {
-    color: "#fff",
+    color: lightColors.onPrimary,
     fontSize: 20,
     textAlign: "center"
   },
@@ -156,7 +158,8 @@ const styles = StyleSheet.create({
   },
   debugButtonText: {
     textAlign: "center",
-    fontSize: 14
+    fontSize: 14,
+    color: lightColors.text
   },
 
   details: {

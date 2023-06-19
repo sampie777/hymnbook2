@@ -6,6 +6,7 @@ import { Song } from "../../../../logic/db/models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { RectangularInset } from "../../../components/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
@@ -79,7 +80,8 @@ export const SearchResultItem: React.FC<{
 
       <TouchableOpacity onPress={addSongToSongList}
                         onLongPress={() => onAddToSongListLongPress?.(song)}
-                        style={styles.button}>
+                        style={styles.button}
+                        hitSlop={RectangularInset(styles.infoContainer.paddingVertical)}>
         <Icon name={songAddedToSongList ? "check" : "plus"}
               size={styles.button.fontSize}
               color={songAddedToSongList
@@ -137,11 +139,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 1
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-    elevation: 3,
+    elevation: 3
   },
   buttonHighlight: {
     color: colors.primary
