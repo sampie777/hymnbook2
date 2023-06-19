@@ -1,5 +1,34 @@
 import config from "../../../config";
 
+export enum SongMetadataType {
+  AlternativeTitle = "AlternativeTitle",
+  Copyright = "Copyright",
+  Author = "Author",
+  Year = "Year",
+  TextSource = "TextSource",
+  ScriptureReference = "ScriptureReference",
+  Superscription = "Superscription",
+}
+
+export class SongMetadata {
+  id: number;
+  type: SongMetadataType
+  value: string = ""
+  song: Song | null
+
+  constructor(
+    id: number,
+    type: SongMetadataType,
+    value: string = "",
+    song: Song | null,
+  ) {
+    this.id = id
+    this.type = type
+    this.value = value
+    this.song = song
+  }
+}
+
 export class AbcSubMelody {
   id: number;
   melody: string = "";
@@ -82,8 +111,6 @@ export class Song {
   id: number;
   name: string;
   number?: number;
-  author: string;
-  copyright: string;
   language: string;
   verses: Array<SongVerse> | null;
   songBundle: SongBundle | null;
@@ -91,12 +118,11 @@ export class Song {
   modifiedAt: string;
   uuid: string;
   abcMelodies?: AbcMelody[] | null;
+  metadata?: SongMetadata[] | null;
 
   constructor(
     id: number,
     name: string,
-    author: string,
-    copyright: string,
     language: string,
     verses: Array<SongVerse> | null,
     songBundle: SongBundle | null,
@@ -104,13 +130,12 @@ export class Song {
     modifiedAt: string,
     uuid: string,
     number?: number,
-    abcMelodies?: AbcMelody[] | null
+    abcMelodies?: AbcMelody[] | null,
+    metadata?: SongMetadata[] | null,
   ) {
     this.id = id;
     this.name = name;
     this.number = number;
-    this.author = author;
-    this.copyright = copyright;
     this.language = language;
     this.verses = verses;
     this.songBundle = songBundle;
@@ -118,6 +143,7 @@ export class Song {
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
     this.abcMelodies = abcMelodies;
+    this.metadata = metadata ?? [];
   }
 }
 

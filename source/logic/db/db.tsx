@@ -1,5 +1,5 @@
 import { DatabaseProvider } from "./dbProvider";
-import { SongBundleSchema, SongSchema, VerseSchema } from "./models/SongsSchema";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./models/SongsSchema";
 import {
   SongListModelSchema,
   SongListSongModelSchema,
@@ -14,10 +14,10 @@ const Db = {
     path: "hymnbook_songs",
     schemas: [
       AbcSubMelodySchema, AbcMelodySchema,
-      VerseSchema, SongSchema, SongBundleSchema,
+      SongMetadataSchema, VerseSchema, SongSchema, SongBundleSchema,
       SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema
     ],
-    schemaVersion: 10
+    schemaVersion: 11
   }),
   documents: new DatabaseProvider({
     path: "hymnbook_documents",

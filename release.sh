@@ -129,6 +129,9 @@ case $command in
     releaseMajor
     setNextDevelopmentVersion
     ;;
+  setNextDevelopmentVersion)
+    setNextDevelopmentVersion
+    ;;
   setversion)
     setVersion "$2"
     ;;

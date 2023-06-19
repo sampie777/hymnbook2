@@ -12,6 +12,7 @@ import {
   isVerseInList,
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
+import { RectangularInset } from "../../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 import {
   StyleSheet,
@@ -41,7 +42,9 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     // Set the callback function for the button in this hook,
     // so the function will use the updated values. Strange behaviour, I know..
     navigation.setOptions({
-      headerRight: () => <HeaderIconButton icon={"check"} onPress={submit} />
+      headerRight: () => <HeaderIconButton icon={"check"}
+                                           onPress={submit}
+                                           hitSlop={RectangularInset(10)} />
     });
   }, [selectedVerses]);
 

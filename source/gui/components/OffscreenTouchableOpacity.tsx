@@ -15,7 +15,7 @@ interface Props extends TouchableOpacityProps {
 const OffscreenTouchableOpacity: React.FC<Props> = (props) => {
   const opacity = useRef(new Animated.Value(1));
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-  return <AnimatedPressable onPressIn={() => opacity.current.setValue(0.5)}
+  return <AnimatedPressable onPressIn={() => opacity.current.setValue(props.activeOpacity ?? 0.5)}
                             onPressOut={() => opacity.current.setValue(1)}
                             {...props}
                             style={[props.style, { opacity: opacity.current }]}
