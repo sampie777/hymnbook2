@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { rollbar } from "../../logic/rollbar";
-import { Animated } from "react-native";
+import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -90,3 +90,5 @@ export const mergeStyleSheets = (styles: Array<object | Array<object>>): object 
     });
   return result;
 };
+
+export const RectangularInset = (size: number): Insets => ({ top: size, right: size, bottom: size, left: size });

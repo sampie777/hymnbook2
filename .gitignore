@@ -67,7 +67,7 @@ build (copy)/
 
 sourcemap.android.js
 sourcemap.ios.js
-upload_source_map.sh
+upload_source_map_secrets.txt
 index.android.bundle
 ios/assets
 
@@ -75,3 +75,7 @@ ios/assets
 names_apple_store.txt
 /coverage/
 tmp/
+
+# Realm test databases
+hymnbook_songs
+hymnbook_songs.lock

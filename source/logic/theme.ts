@@ -29,6 +29,9 @@ export interface ThemeColors {
   notesLines: ColorValue,
   switchComponentThumb: ColorValue,
   switchComponentBackground?: ColorValue,
+  badge: {
+    medium: "#ff9100"
+  }
 }
 
 export const lightColors: ThemeColors = {
@@ -59,6 +62,9 @@ export const lightColors: ThemeColors = {
   notesLines: "#444",
   switchComponentThumb: isIOS ? "#fff" : "dodgerblue",
   switchComponentBackground: isIOS ? "#eee" : undefined,
+  badge: {
+    medium: "#ff9100"
+  }
 };
 
 export const darkColors: ThemeColors = {
@@ -89,6 +95,9 @@ export const darkColors: ThemeColors = {
   notesLines: "#888",
   switchComponentThumb: isIOS ? "#fff" : "dodgerblue",
   switchComponentBackground: undefined,
+  badge: {
+    medium: "#ff9100"
+  }
 };
 
 export interface ThemeFontFamilies {
@@ -100,5 +109,5 @@ export interface ThemeFontFamilies {
 export const defaultFontFamilies: ThemeFontFamilies = {
   sansSerif: "Roboto",
   sansSerifLight: "Roboto-Light",
-  sansSerifThin: "Roboto-Thin",
-}
+  sansSerifThin: "Roboto-Thin"
+};

@@ -1,6 +1,32 @@
 import Db from "../db";
-import { SongBundleSchema, SongSchema, VerseSchema } from "./SongsSchema";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./SongsSchema";
 import { AbcMelody } from "./AbcMelodies";
+
+export enum SongMetadataType {
+  AlternativeTitle = "AlternativeTitle",
+  Copyright = "Copyright",
+  Author = "Author",
+  Year = "Year",
+  TextSource = "TextSource",
+  ScriptureReference = "ScriptureReference",
+  Superscription = "Superscription",
+}
+
+export class SongMetadata {
+  id: number;
+  type: SongMetadataType
+  value: string = ""
+
+  constructor(
+    type: SongMetadataType,
+    value: string = "",
+    id = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema),
+  ) {
+    this.id = id
+    this.type = type
+    this.value = value
+  }
+}
 
 export interface VerseProps {
   id: number;
@@ -55,27 +81,25 @@ export class Song {
   id: number;
   name: string;
   number?: number;
-  author: string;
-  copyright: string;
   language: string;
   verses: Array<Verse>;
   createdAt: Date;
   modifiedAt: Date;
   uuid: string;
   abcMelodies: AbcMelody[];
+  metadata: SongMetadata[];
   lastUsedMelody?: AbcMelody;
   _songBundles?: SongBundle[];
 
   constructor(
     name: string,
-    author: string,
-    copyright: string,
     language: string,
     createdAt: Date,
     modifiedAt: Date,
     uuid: string,
     verses: Array<Verse> = [],
     abcMelodies: AbcMelody[] = [],
+    metadata: SongMetadata[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
     number?: number,
     songBundle?: SongBundle,
@@ -84,14 +108,13 @@ export class Song {
     this.id = id;
     this.name = name;
     this.number = number;
-    this.author = author;
-    this.copyright = copyright;
     this.language = language;
     this.verses = verses;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
     this.abcMelodies = abcMelodies;
+    this.metadata = metadata;
     this.lastUsedMelody = lastUsedMelody;
     this._songBundles = songBundle === undefined ? [] : [songBundle];
   }
