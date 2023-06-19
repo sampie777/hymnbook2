@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import { Document } from "../../../../logic/db/models/Documents";
+import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -33,7 +34,7 @@ const DocumentControls: React.FC<Props> =
     const styles = createStyles(useTheme());
     const animatedStyleButtonBase = useAnimatedStyle(() => ({
       transform: [
-        { scale: animatedScale.current.value },
+        { scale: animatedScale.current.value }
       ],
       opacity: animatedScale.current.value
     }));
@@ -124,7 +125,8 @@ const DocumentControls: React.FC<Props> =
     return <View style={styles.container} pointerEvents={"box-none"}>
       {previousDocument === undefined ? undefined :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
-                                  onPress={() => goToDocument(previousDocument)}>
+                                  onPress={() => goToDocument(previousDocument)}
+                                  hitSlop={RectangularInset(10)}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
@@ -139,7 +141,8 @@ const DocumentControls: React.FC<Props> =
             <View style={styles.buttonBase} />
         ) :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
-                                  onPress={() => goToDocument(nextDocument)}>
+                                  onPress={() => goToDocument(nextDocument)}
+                                  hitSlop={RectangularInset(10)}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
