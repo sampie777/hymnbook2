@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
-import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import { Insets, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface ComponentProps {
   icon: string | ReactElement;
@@ -9,6 +9,7 @@ interface ComponentProps {
   onPress?: () => void;
   onLongPress?: () => void;
   buttonStyle?: StyleProp<ViewStyle> | undefined;
+  hitSlop?: Insets;
 }
 
 const HeaderIconButton: React.FC<ComponentProps> = ({
@@ -16,7 +17,8 @@ const HeaderIconButton: React.FC<ComponentProps> = ({
                                                       iconOverlay,
                                                       onPress,
                                                       onLongPress,
-                                                      buttonStyle
+                                                      buttonStyle,
+                                                      hitSlop
                                                     }) => {
   const styles = createStyles(useTheme());
 
@@ -29,7 +31,8 @@ const HeaderIconButton: React.FC<ComponentProps> = ({
 
   return <TouchableOpacity onPress={onPress}
                            onLongPress={onLongPress}
-                           style={[styles.container, buttonStyle]}>
+                           style={[styles.container, buttonStyle]}
+                           hitSlop={hitSlop}>
     {icon}
     {iconOverlay}
   </TouchableOpacity>;
