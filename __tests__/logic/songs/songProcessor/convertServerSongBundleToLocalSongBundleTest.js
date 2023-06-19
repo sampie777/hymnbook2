@@ -4,9 +4,11 @@ import {
   SongBundle as ServerSongBundle,
   AbcMelody as ServerAbcMelody,
   AbcSubMelody as ServerAbcSubMelody,
+  SongMetadata as ServerSongMetadata,
+  SongMetadataType as ServerSongMetadataType,
 } from "../../../../source/logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
-import { Song, SongBundle, Verse } from "../../../../source/logic/db/models/Songs";
+import { Song, SongBundle, SongMetadataType, Verse } from "../../../../source/logic/db/models/Songs";
 import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
 import Db from "../../../../source/logic/db/db";
 
@@ -27,8 +29,6 @@ describe("test convert server songbundle to local songbundle", () => {
     const songs = [
       new ServerSong(0,
         "name0",
-        "author",
-        "copyright",
         "language",
         [
           new ServerVerse(0, "name0", "content", "language", 0, "verse0", null,
@@ -58,11 +58,19 @@ describe("test convert server songbundle to local songbundle", () => {
             null,
           ),
         ],
+        [
+          new ServerSongMetadata(1, ServerSongMetadataType.Author, "author0"),
+          new ServerSongMetadata(1, ServerSongMetadataType.Copyright, "copyright0"),
+        ],
       ),
 
-      new ServerSong(1, "name1", "author", "copyright", "language", [
-        new ServerVerse(2, "name2", "content", "language", 0, "", null, [], "abcLyrics"),
-        new ServerVerse(3, "name3", "content", "language", 1, "", null, [], "abcLyrics")], null, new Date(), new Date(), "", 2, null),
+      new ServerSong(1, "name1", "language", [
+          new ServerVerse(2, "name2", "content", "language", 0, "", null, [], "abcLyrics"),
+          new ServerVerse(3, "name3", "content", "language", 1, "", null, [], "abcLyrics")], null, new Date(), new Date(), "", 2, null,
+        [
+          new ServerSongMetadata(1, ServerSongMetadataType.Author, "author1"),
+          new ServerSongMetadata(1, ServerSongMetadataType.Copyright, "copyright1"),
+        ]),
     ];
     const bundle = new ServerSongBundle(1,
       "abbreviation",
@@ -95,8 +103,6 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].id).toBe(1);
     expect(result.songs[0].name).toBe("name0");
     expect(result.songs[0].number).toBe(1);
-    expect(result.songs[0].author).toBe("author");
-    expect(result.songs[0].copyright).toBe("copyright");
     expect(result.songs[0].language).toBe("language");
     expect(result.songs[0].createdAt).toBe(bundle.songs[0].createdAt);
     expect(result.songs[0].modifiedAt).toBe(bundle.songs[0].modifiedAt);
@@ -104,6 +110,9 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].lastUsedMelody).toBe(undefined);
     expect(result.songs[0].abcMelodies.length).toBe(2);
     expect(result.songs[0].verses.length).toBe(2);
+    expect(result.songs[0].metadata.length).toBe(2);
+    expect(result.songs[0].metadata.find(it => it.type === SongMetadataType.Author).value).toBe("author0");
+    expect(result.songs[0].metadata.find(it => it.type === SongMetadataType.Copyright).value).toBe("copyright0");
 
     expect(result.songs[0].abcMelodies[0]).toBeInstanceOf(AbcMelody);
     expect(result.songs[0].abcMelodies[0].id).toBe(1);
@@ -148,14 +157,15 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[1].id).toBe(2);
     expect(result.songs[1].name).toBe("name1");
     expect(result.songs[1].number).toBe(2);
-    expect(result.songs[1].author).toBe("author");
-    expect(result.songs[1].copyright).toBe("copyright");
     expect(result.songs[1].language).toBe("language");
     expect(result.songs[1].createdAt).toBe(bundle.songs[1].createdAt);
     expect(result.songs[1].modifiedAt).toBe(bundle.songs[1].modifiedAt);
     expect(result.songs[1].lastUsedMelody).toBe(undefined);
     expect(result.songs[1].abcMelodies.length).toBe(0);
     expect(result.songs[1].verses.length).toBe(2);
+    expect(result.songs[1].metadata.length).toBe(2);
+    expect(result.songs[1].metadata.find(it => it.type === SongMetadataType.Author).value).toBe("author1");
+    expect(result.songs[1].metadata.find(it => it.type === SongMetadataType.Copyright).value).toBe("copyright1");
 
     expect(result.songs[1].verses[0]).toBeInstanceOf(Verse);
     expect(result.songs[1].verses[0].id).toBe(3);
