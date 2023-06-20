@@ -249,6 +249,10 @@ const SettingsScreen: React.FC = () => {
                                     "the whole search phrase. This will yield more results."}
                                   keyName={"documentsMultiKeywordSearch"}
                                   isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Reset search path"}
+                                  description={"After viewing a document, start browsing from the upper root instead of from where you left."}
+                                  keyName={"documentsResetPathToRoot"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Other"} isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Share usage data"}
