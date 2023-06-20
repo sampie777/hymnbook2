@@ -224,7 +224,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   pageTitle: {
     flex: 1,
     fontSize: 20,
-    color: colors.text,
+    color: colors.text.default,
     paddingHorizontal: 15,
     paddingVertical: 15
   }

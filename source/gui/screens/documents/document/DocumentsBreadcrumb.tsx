@@ -37,7 +37,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "row",
   },
   text: {
-    color: colors.textLight
+    color: colors.text.light
   }
 });
 

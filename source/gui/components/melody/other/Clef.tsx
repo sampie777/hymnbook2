@@ -70,7 +70,7 @@ const Clef: React.FC<Props> = ({ animatedScale, clef }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notesColor
+  color: colors.notes.color
 });
 
 export default Clef;

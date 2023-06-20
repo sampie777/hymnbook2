@@ -146,19 +146,19 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   },
   titleColoredSelected: {
     fontStyle: "normal",
-    color: colors.primary,
+    color: colors.primary.default,
     fontWeight: "bold"
   },
   titleColoredNoSelection: {
     fontStyle: "normal",
-    color: colors.primary
+    color: colors.primary.default
   },
 
   text: {
-    color: colors.text
+    color: colors.text.default
   },
   textHighlighted: {
-    color: colors.textHighlightedForeground,
-    backgroundColor: colors.textHighlightedBackground
+    color: colors.text.highlighted.foreground,
+    backgroundColor: colors.text.highlighted.background
   }
 });

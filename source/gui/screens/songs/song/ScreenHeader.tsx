@@ -49,7 +49,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   loadIcon: {
     fontSize: 26,
-    color: colors.text,
+    color: colors.text.default,
     paddingHorizontal: 7
   }
 });

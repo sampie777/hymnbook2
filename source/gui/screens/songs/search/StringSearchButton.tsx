@@ -101,7 +101,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   icon: {
-    color: colors.textLighter
+    color: colors.text.lighter
   },
   iconTopLeft: { fontSize: 20 },
   iconTopRight: { fontSize: 20 },

@@ -29,10 +29,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingVertical: 7,
   },
   containerActive: {
-    backgroundColor: colors.primaryVariant
+    backgroundColor: colors.primary.variant
   },
   title: {
-    color: colors.text,
+    color: colors.text.default,
   },
   titleActive: {
     color: colors.onPrimary

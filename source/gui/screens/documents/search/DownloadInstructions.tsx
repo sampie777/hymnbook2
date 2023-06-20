@@ -40,20 +40,20 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
-    color: colors.text,
+    color: colors.text.default,
     marginBottom: 10
   },
   text: {
     fontSize: 16,
     textAlign: "center",
-    color: colors.text
+    color: colors.text.default
   },
   button: {
     marginTop: 25,
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: colors.primaryVariant,
+    backgroundColor: colors.primary.variant,
     justifyContent: "center",
     alignItems: "center",
   },

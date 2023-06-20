@@ -75,7 +75,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     lineHeight: 25,
     marginBottom: 30,
     paddingHorizontal: 30,
-    color: colors.text,
+    color: colors.text.default,
   },
   webpageLink: {
     textAlign: "center",

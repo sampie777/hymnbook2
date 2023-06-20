@@ -45,6 +45,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   popupContent: {},
   contentText: {
     paddingTop: 10,
-    color: colors.text
+    color: colors.text.default
   }
 });

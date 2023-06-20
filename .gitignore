@@ -79,3 +79,4 @@ tmp/
 # Realm test databases
 hymnbook_songs
 hymnbook_songs.lock
+hymnbook_songs.management/

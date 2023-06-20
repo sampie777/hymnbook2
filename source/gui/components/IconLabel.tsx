@@ -32,11 +32,11 @@ const createStyles = ({ colors }: ThemeContextProps, iconSize = 60) => StyleShee
     width: iconSize,
     backgroundColor: "#d7dcfa",
     borderRadius: iconSize,
-    borderColor: colors.primaryLight,
+    borderColor: colors.primary.light,
     left: -(iconSize / 2)
   },
   textContainer: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primary.light,
     borderRadius: iconSize,
     paddingVertical: 15,
     paddingRight: 30,
