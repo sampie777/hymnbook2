@@ -35,6 +35,7 @@ class SettingsClass extends SettingsBaseClass {
   documentsMultiKeywordSearch = true;
   documentScale = 1.0;
   documentsUseExperimentalViewer = true;
+  documentsResetPathToRoot = false;
 
   // Server authentication
   authClientName = "";
