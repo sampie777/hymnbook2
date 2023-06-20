@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
 import { rollbar } from "../../../../logic/rollbar";
+import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
 import { runAsync } from "../../../../logic/utils";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
@@ -62,9 +63,11 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   const onBlur = () => {
     isMounted = false;
     Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).removeListener(onCollectionChange);
-    setGroup(undefined);
-    setRootGroups([]);
-    setSearchText("");
+    if (Settings.documentsResetPathToRoot) {
+      setGroup(undefined);
+      setRootGroups([]);
+      setSearchText("");
+    }
     setIsLoading(true);
   };
 
