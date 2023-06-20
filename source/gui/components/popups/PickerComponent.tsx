@@ -82,7 +82,7 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
 
   row: {
     borderTopWidth: 1,
-    borderColor: colors.border
+    borderColor: colors.border.default
   },
   rowFirstChild: {
     borderTopWidth: 0

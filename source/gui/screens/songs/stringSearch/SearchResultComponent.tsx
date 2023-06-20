@@ -106,7 +106,7 @@ const SearchResultComponent: React.FC<Props> = ({
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     paddingHorizontal: 10,
     backgroundColor: colors.surface1,
     marginBottom: 5
@@ -126,13 +126,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingTop: 2,
     paddingHorizontal: 15,
     fontSize: 18,
-    color: colors.text
+    color: colors.text.default
   },
 
   songBundleName: {
     paddingHorizontal: 15,
     fontSize: 14,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontStyle: "italic"
   },
 
@@ -143,8 +143,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   textHighlighted: {
-    color: colors.textHighlightedForeground,
-    backgroundColor: colors.textHighlightedBackground
+    color: colors.text.highlighted.foreground,
+    backgroundColor: colors.text.highlighted.background
   }
 });
 

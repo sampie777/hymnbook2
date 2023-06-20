@@ -41,18 +41,18 @@ const VerseSummary: React.FC<Props> = ({ verse, maxLines, preferredStartLine = 0
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   verseNumber: {
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontSize: 12,
     fontStyle: "italic"
   },
   text: {
-    color: colors.text,
+    color: colors.text.default,
     paddingBottom: 2
   },
 
   textHighlighted: {
-    color: colors.textHighlightedForeground,
-    backgroundColor: colors.textHighlightedBackground
+    color: colors.text.highlighted.foreground,
+    backgroundColor: colors.text.highlighted.background
   }
 });
 

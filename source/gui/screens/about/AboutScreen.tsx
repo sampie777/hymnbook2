@@ -120,7 +120,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     alignItems: "center",
     paddingTop: 80,
     paddingBottom: 80,
-    borderBottomColor: colors.border
+    borderBottomColor: colors.border.default
   },
   headerTitle: {
     alignItems: "center",
@@ -130,17 +130,17 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     flexDirection: "row"
   },
   titleIcon: {
-    color: colors.primary,
+    color: colors.primary.default,
     fontSize: 30
   },
   titleContent: {
     paddingLeft: 18,
-    color: colors.primary,
+    color: colors.primary.default,
     fontSize: 28,
     fontFamily: fontFamily.sansSerifLight
   },
   versionText: {
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontSize: 12,
     fontFamily: fontFamily.sansSerifLight
   },
@@ -151,7 +151,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     lineHeight: 25,
     marginBottom: 25,
     paddingHorizontal: 30,
-    color: colors.text
+    color: colors.text.default
   },
 
   scriptureContainer: {
@@ -165,7 +165,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontFamily: fontFamily.sansSerif,
     fontStyle: "italic",
     textAlign: "center",
-    color: colors.textLight,
+    color: colors.text.light,
     marginBottom: 10,
     fontSize: 13
   },
@@ -173,7 +173,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     textAlign: "center",
     fontStyle: "italic",
     fontFamily: fontFamily.sansSerif,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontSize: 10
   },
 

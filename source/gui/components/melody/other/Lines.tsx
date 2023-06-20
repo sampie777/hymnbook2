@@ -22,7 +22,7 @@ const Lines: React.FC<Props> = ({ width = 1000, scale = 1 }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesLines
+  color: colors.notes.lines
 });
 
 export default memo(Lines);

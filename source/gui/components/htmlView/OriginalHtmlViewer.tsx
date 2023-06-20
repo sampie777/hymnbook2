@@ -55,12 +55,12 @@ const OriginalHtmlViewer: React.FC<Props> = ({ html, onLayout }) => {
 
 const createHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   p: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20 * Settings.songScale,
     lineHeight: 30 * Settings.songScale
   },
   h1: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 38 * Settings.songScale,
     lineHeight: 50 * Settings.songScale,
     paddingTop: 10 * Settings.songScale,
@@ -68,7 +68,7 @@ const createHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontWeight: "bold"
   },
   h2: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 32 * Settings.songScale,
     lineHeight: 50 * Settings.songScale,
     paddingTop: 20 * Settings.songScale,
@@ -76,7 +76,7 @@ const createHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontWeight: "bold"
   },
   h3: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 26 * Settings.songScale,
     lineHeight: 45 * Settings.songScale,
     paddingTop: 20 * Settings.songScale,
@@ -84,7 +84,7 @@ const createHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontWeight: "bold"
   },
   h4: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20 * Settings.songScale,
     lineHeight: 40 * Settings.songScale,
     paddingTop: 15 * Settings.songScale,
@@ -92,7 +92,7 @@ const createHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontWeight: "bold"
   },
   h5: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 18 * Settings.songScale,
     lineHeight: 35 * Settings.songScale,
     paddingTop: 15 * Settings.songScale,
@@ -100,37 +100,37 @@ const createHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     fontWeight: "bold"
   },
   h6: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 12 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
     paddingTop: 10 * Settings.songScale,
     fontWeight: "bold"
   },
   ul: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
     marginVertical: 10 * Settings.songScale
   },
   ol: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
     marginVertical: 10 * Settings.songScale
   },
   pre: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 19 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
   },
 
   blockquote: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20 * Settings.songScale,
     lineHeight: 30 * Settings.songScale,
     borderLeftWidth: 5,
-    borderLeftColor: colors.borderVariant,
+    borderLeftColor: colors.border.variant,
     paddingLeft: 30,
     paddingVertical: 15 * Settings.songScale,
     marginVertical: 15 * Settings.songScale

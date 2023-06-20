@@ -56,12 +56,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   text: {
     fontSize: 20,
     paddingRight: 50,
-    color: colors.text
+    color: colors.text.default
   },
 
   icon: {
     fontSize: 24,
-    color: colors.textLight,
+    color: colors.text.light,
     position: "absolute",
     right: 30
   }

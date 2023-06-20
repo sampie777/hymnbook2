@@ -208,7 +208,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginTop: 15
   },
   resultsInfoText: {
-    color: colors.textLighter,
+    color: colors.text.lighter,
     textAlign: "center",
     fontStyle: "italic",
     marginTop: 5,
