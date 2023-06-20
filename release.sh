@@ -143,3 +143,17 @@ case $command in
     exit 1
     ;;
 esac
+
+echo "Cleaning up test databases..."
+rm hymnbook_songs 2> /dev/null
+rm hymnbook_songs.lock 2> /dev/null
+rm hymnbook_songs.note 2> /dev/null
+rm -R hymnbook_songs.management 2> /dev/null
+rm hymnbook_documents 2> /dev/null
+rm hymnbook_documents.lock 2> /dev/null
+rm hymnbook_documents.note 2> /dev/null
+rm -R hymnbook_documents.management 2> /dev/null
+rm hymnbook_settings 2> /dev/null
+rm hymnbook_settings.lock 2> /dev/null
+rm hymnbook_settings.note 2> /dev/null
+rm -R hymnbook_settings.management 2> /dev/null
