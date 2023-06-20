@@ -36,7 +36,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderBottomWidth: 1,
     flexDirection: "column",
     alignItems: "flex-start",
@@ -48,7 +48,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 19,
     flex: 1,
-    color: colors.text
+    color: colors.text.default
   },
   itemExtraPadding: {
     paddingTop: 5,
@@ -58,7 +58,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   parentName: {
     paddingHorizontal: 15,
     fontSize: 14,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontStyle: "italic"
   }
 });

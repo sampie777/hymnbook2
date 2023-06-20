@@ -38,7 +38,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     paddingBottom: 15,
   },
   text: {
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic",
     lineHeight: 20,

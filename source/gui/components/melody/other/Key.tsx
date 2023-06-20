@@ -63,7 +63,7 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notesColor
+  color: colors.notes.color
 });
 
 export default Key;

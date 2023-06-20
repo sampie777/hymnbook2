@@ -308,7 +308,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
 
   infoText: {
     fontSize: 18,
-    color: colors.text,
+    color: colors.text.default,
     paddingTop: 20,
     fontFamily: fontFamily.sansSerifLight,
     textAlign: "center"
@@ -330,7 +330,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     fontSize: 70,
     textAlign: "center",
     fontFamily: fontFamily.sansSerifLight,
-    color: colors.textLight,
+    color: colors.text.light,
     borderStyle: "solid",
     minWidth: 140
   },

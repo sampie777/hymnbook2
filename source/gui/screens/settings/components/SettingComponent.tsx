@@ -81,7 +81,7 @@ export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleShee
   },
   whiteContainer: {
     backgroundColor: isDark ? colors.background : colors.surface1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderBottomWidth: 1
   },
 
@@ -91,16 +91,16 @@ export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleShee
   },
   titleText: {
     fontSize: 16,
-    color: colors.text
+    color: colors.text.default
   },
   descriptionText: {
-    color: colors.textLight,
+    color: colors.text.light,
     fontSize: 14,
     paddingTop: 5,
     fontStyle: "italic"
   },
   valueText: {
-    color: colors.textLight,
+    color: colors.text.light,
     fontSize: 14,
     paddingTop: 5
   }

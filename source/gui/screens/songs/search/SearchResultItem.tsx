@@ -95,7 +95,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
@@ -111,7 +111,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   songBundleName: {
     paddingHorizontal: 15,
     fontSize: 14,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontStyle: "italic"
   },
 
@@ -119,7 +119,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingTop: 2,
     paddingHorizontal: 15,
     fontSize: 24,
-    color: colors.text
+    color: colors.text.default
   },
   itemExtraPadding: {
     paddingTop: 5,
@@ -131,7 +131,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     height: 45,
     width: 45,
     fontSize: 22,
-    color: colors.primaryLight,
+    color: colors.primary.light,
     backgroundColor: colors.surface2,
     borderRadius: 23,
     alignItems: "center",
@@ -146,6 +146,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     elevation: 3
   },
   buttonHighlight: {
-    color: colors.primary
+    color: colors.primary.default
   }
 });

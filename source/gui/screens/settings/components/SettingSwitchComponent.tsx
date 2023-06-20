@@ -71,8 +71,8 @@ export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleShee
     alignItems: "center"
   },
   switchComponent: {
-    color: colors.switchComponentThumb,
-    backgroundColor: colors.switchComponentBackground
+    color: colors.switchComponent.thumb,
+    backgroundColor: colors.switchComponent.background
   }
 });
 

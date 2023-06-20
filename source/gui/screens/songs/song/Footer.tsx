@@ -48,12 +48,12 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     marginBottom: 30,
     width: "50%",
     alignSelf: "center",
-    borderTopColor: colors.border,
+    borderTopColor: colors.border.default,
     borderTopWidth: 1
   },
   text: {
     textAlign: "center",
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontFamily: fontFamily.sansSerifLight,
     lineHeight: 20,
     fontSize: 14,

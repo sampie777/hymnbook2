@@ -72,13 +72,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   track: {
     borderRadius: 1,
     height: 2,
-    backgroundColor: colors.borderVariant
+    backgroundColor: colors.border.variant
   },
   trackSelected: {
-    backgroundColor: colors.primary
+    backgroundColor: colors.primary.default
   },
   marker: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary.default,
     borderRadius: 20,
     width: 20,
     height: 20,
@@ -100,7 +100,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     minHeight: 70,
     textAlign: "center",
     fontSize: 16,
-    color: colors.text
+    color: colors.text.default
   },
 
   resetContainer: {

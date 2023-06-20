@@ -114,7 +114,7 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesColor
+  color: colors.notes.color
 });
 
 const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>

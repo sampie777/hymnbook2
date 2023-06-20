@@ -311,7 +311,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 15,
     paddingBottom: 3,
-    color: colors.text
+    color: colors.text.default
   },
 
   listContainer: {},
@@ -319,10 +319,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   emptyListText: {
     padding: 20,
     textAlign: "center",
-    color: colors.text
+    color: colors.text.default
   },
 
   refreshControl: {
-    color: colors.textLighter
+    color: colors.text.lighter
   }
 });

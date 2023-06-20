@@ -59,30 +59,30 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     padding: 15,
     width: 60,
     height: 60,
     borderRadius: 50,
-    backgroundColor: colors.button
+    backgroundColor: colors.button.default
   },
   selectedContainer: {
-    borderColor: isDark ? colors.border : colors.primary
+    borderColor: isDark ? colors.border.default : colors.primary.default
   },
 
   icon: {
-    color: colors.textLight,
+    color: colors.text.light,
     fontSize: 24
   },
   selectedIcon: {
-    color: colors.primary
+    color: colors.primary.default
   },
 
   type: {
-    color: colors.text
+    color: colors.text.default
   },
   selectedType: {
-    backgroundColor: colors.buttonVariant,
-    borderColor: colors.borderVariant
+    backgroundColor: colors.button.variant,
+    borderColor: colors.border.variant
   }
 });

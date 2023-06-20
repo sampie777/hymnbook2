@@ -54,7 +54,7 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   loadIcon: {
     fontSize: 26,
-    color: colors.text,
+    color: colors.text.default,
     paddingHorizontal: 7
   },
 
@@ -72,7 +72,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: colors.text
+    color: colors.text.default
   },
   iconOverlay: {
     position: "absolute",
@@ -87,7 +87,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   countIndicatorDot: {
     opacity: 0.7,
-    borderColor: colors.text,
+    borderColor: colors.text.default,
     borderRadius: 10,
     borderWidth: 1.5,
     width: 0,

@@ -70,13 +70,13 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
   },
   icon: {
     fontSize: 80,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     opacity: 0.7
   },
   text: {
     paddingTop: 10,
     fontSize: 16,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     textAlign: "center"
   }
 });

@@ -65,6 +65,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   contentText: {
     paddingTop: 10,
     paddingBottom: 20,
-    color: colors.text
+    color: colors.text.default
   }
 });

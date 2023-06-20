@@ -45,7 +45,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
@@ -58,7 +58,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   itemName: {
     paddingHorizontal: 15,
     fontSize: 19,
-    color: colors.text
+    color: colors.text.default
   },
   itemExtraPadding: {
     paddingTop: 5,
@@ -67,14 +67,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   parentName: {
     paddingHorizontal: 15,
     fontSize: 14,
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontStyle: "italic"
   },
 
   searchListItemIcon: {
     paddingLeft: 15,
     fontSize: 20,
-    color: colors.text
+    color: colors.text.default
   },
   infoContainer: {
     paddingRight: 20,
@@ -82,6 +82,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   infoText: {
     fontSize: 13,
-    color: colors.textLighter
+    color: colors.text.lighter
   }
 });

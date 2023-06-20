@@ -40,7 +40,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface1,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderRadius: 40,
     marginBottom: 15,
     marginHorizontal: 8
@@ -51,12 +51,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     width: 45,
     textAlign: "center",
     paddingVertical: 12,
-    color: colors.textLighter
+    color: colors.text.lighter
   },
 
   input: {
     flex: 1,
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 17,
     paddingLeft: 20,
     paddingRight: 3,
@@ -64,7 +64,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignSelf: "stretch"
   },
   inputPlaceholder: {
-    color: colors.textLighter
+    color: colors.text.lighter
   }
 });
 

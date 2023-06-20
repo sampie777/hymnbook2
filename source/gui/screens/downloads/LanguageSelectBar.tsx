@@ -69,7 +69,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   label: {
     flex: 1,
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15
   },
 
@@ -82,17 +82,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   selectedLanguage: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15
   },
   arrow: {
     fontSize: 16,
     marginLeft: 7,
-    color: colors.text
+    color: colors.text.default
   },
 
   pickerRowText: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15
   },
   pickerRowTextSelected: {

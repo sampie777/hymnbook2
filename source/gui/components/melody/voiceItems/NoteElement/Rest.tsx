@@ -85,7 +85,7 @@ const Rest: React.FC<Props> = ({ note }) => {
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notesColor,
+  color: colors.notes.color,
 })
 
 export default Rest;

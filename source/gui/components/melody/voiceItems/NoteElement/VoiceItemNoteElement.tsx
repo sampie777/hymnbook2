@@ -48,7 +48,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexShrink: 1
   },
   text: {
-    color: colors.text,
+    color: colors.text.default,
     textAlign: "center"
   }
 });
