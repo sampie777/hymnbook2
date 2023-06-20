@@ -11,7 +11,7 @@ describe("test abc parse", () => {
     expect(ABC.getField(data, "X")).toBe("1");
     expect(ABC.getField(data, "T")).toBe("this is the title");
     expect(ABC.getField(data, "A")).toBe(undefined);
-  })
+  });
 
   it("get field with nonexisting value", () => {
     const data = "X:1\n" +
@@ -25,7 +25,7 @@ describe("test abc parse", () => {
     expect(ABC.getField(data, "A")).toBe(undefined);
     expect(ABC.getField(data, "r")).toBe(undefined);
     expect(ABC.getField(data, "n")).toBe(undefined);
-  })
+  });
 
   it("extracts notes and lyrics", () => {
     const data = "C2 DF E2 F2 | FG G4 A B | G8|]\n" +
@@ -34,7 +34,7 @@ describe("test abc parse", () => {
     const result = ABC.extractNotesAndLyrics(data);
     expect(result.notes).toBe("C2 DF E2 F2 | FG G4 A B | G8|]");
     expect(result.lyrics).toBe("ik ben_ ge-test of niet waar~ik dan ook end_");
-  })
+  });
   it("extracts notes and lyrics from multiline", () => {
     const data = "C2 DF E2 F2 |\n" +
       "w: ik ben_ ge-test\n" +
@@ -44,7 +44,7 @@ describe("test abc parse", () => {
     const result = ABC.extractNotesAndLyrics(data);
     expect(result.notes).toBe("C2 DF E2 F2 | FG G4 A B | G8|]");
     expect(result.lyrics).toBe("ik ben_ ge-test of niet waar~ik dan ook end_");
-  })
+  });
 
   it("converts abc notation to abcjs TuneOjbect", () => {
     const data = "X:1\n" +
@@ -63,14 +63,14 @@ describe("test abc parse", () => {
         } else {
           output.push("-------");
         }
-        return
+        return;
       }
 
       if (it.pitches[0].pitch !== it.pitches[0].verticalPos) {
         console.warn(`Pitch is not equal to verticalPos for note ${it.pitches[0].pitch}: ${it.lyric[0].syllable}`);
       }
 
-      output.push(`[${it.startChar} - ${it.endChar} - ${it.duration}] ${it.pitches[0].pitch}: ${it.lyric[0].syllable}`)
+      output.push(`[${it.startChar} - ${it.endChar} - ${it.duration}] ${it.pitches[0].pitch}: ${it.lyric[0].syllable}`);
     });
 
     expect(output.join("\n")).toBe(
@@ -95,7 +95,7 @@ describe("test abc parse", () => {
     expect(notes[3].lyric[0].syllable).toBe("ge");
     expect(notes[4].lyric[0].syllable).toBe("test");
     expect(notes[8].lyric[0].syllable).toBe("waar ik");
-  })
+  });
 
   it("parses abc to song object", () => {
     const data = "X:1\n" +
@@ -109,7 +109,7 @@ describe("test abc parse", () => {
     expect(song.melody.length).toBe(14);
     expect(song.melody[0].lyric[0].syllable).toBe("ik");
     expect(song.melody[8].lyric[0].syllable).toBe("waar ik");
-  })
+  });
 
   it("parses abc with comments to song object", () => {
     const data = "%%vocalfont Arial 14\n" +
@@ -142,7 +142,7 @@ describe("test abc parse", () => {
     expect(song.keySignature.root).toBe("F");
     expect(song.keySignature.acc).toBe("");
     expect(song.clef.type).toBe("treble");
-  })
+  });
 
   it("parses abc with headers to the right beat length with 1/8", () => {
     const data = "%%vocalfont Arial 14\n" +
@@ -168,7 +168,7 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.melody.length).toBe(67);
     expect(song.melody[2].duration).toBe(0.5);
-  })
+  });
 
   it("parses abc with headers to the right beat length with 1/8", () => {
     const data = "%%vocalfont Arial 14\n" +
@@ -194,7 +194,7 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.melody.length).toBe(67);
     expect(song.melody[2].duration).toBe(0.25);
-  })
+  });
 
   it("parses abc with fake header codes in text", () => {
     const song = new ABC.Song();
@@ -222,5 +222,90 @@ describe("test abc parse", () => {
       "yyyy A2 =G2 F A G F E2 z2\n" +
       "yyyy E2 F2 A G F2 E2 D3 yy |]\n" +
       "w: 'K: de van die hei-den-dom, gou-e⁀of-sil-wer-beel-te-nir:, waar die mens sy knie voor krom, niks as ei-e maak-sel is: daar~'s 'n mond, maar son-der taal; daar~'s 'n oog, maar son-der straal.");
-  })
-})
+  });
+
+  it("parses abc with slurs", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "A BC D (E F) G a-b c (d e f) g (A) B (C D) E (F G a) b cd e\n" +
+      "w: A BC_ D EF G a b c def g A B CD * E FGa * b cd * e";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("this is the title");
+    expect(song.melody.length).toBe(26);
+
+    const lyrics = song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable));
+    expect(lyrics).toStrictEqual(["A", "BC", "", "D", "EF", "", "G", "a", "b", "c", "def", "", "", "g", "A", "B", "CD", "", "E", "FGa", "", "", "b", "cd", "", "e"]);
+  });
+
+  it("Lyric AB_ must be spread over two notes", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "A B C D\n" +
+      "w: A BC_ D";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("this is the title");
+    expect(song.melody.length).toBe(4);
+    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+      .toStrictEqual(["A", "BC", "", "D"]);
+  });
+
+  it("Lyric AB * must be spread over two notes", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "A B C D\n" +
+      "w: A BC * D";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("this is the title");
+    expect(song.melody.length).toBe(4);
+    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+      .toStrictEqual(["A", "BC", "", "D"]);
+  });
+
+  it("Notes (A B) must share the first lyrics", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "A (B C) D\n" +
+      "w: A BC D";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("this is the title");
+    expect(song.melody.length).toBe(4);
+    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+      .toStrictEqual(["A", "BC", "", "D"]);
+  });
+
+  it("Notes (A) must do nothing special with lyrics", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "A (B) C D\n" +
+      "w: A B C D";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("this is the title");
+    expect(song.melody.length).toBe(4);
+    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+      .toStrictEqual(["A", "B", "C", "D"]);
+  });
+
+  it("Notes A-B must do nothing special with lyrics", () => {
+    const data = "X:1\n" +
+      "T: this is the title\n" +
+      "A B-C D\n" +
+      "w: A B C D";
+
+    const song = ABC.parse(data);
+    expect(song.referenceNumber).toBe("1");
+    expect(song.title).toBe("this is the title");
+    expect(song.melody.length).toBe(4);
+    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+      .toStrictEqual(["A", "B", "C", "D"]);
+  });
+});
