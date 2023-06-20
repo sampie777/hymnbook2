@@ -46,7 +46,27 @@ const config = {
     "d80b7ba66c87b72f", // Google emulator
     "bcedc1583abdaf37", // Google emulator
     "4d1bcf73ab062899", // Google emulator
-    "4b1ee687836a55e7" // Google emulator
+    "4b1ee687836a55e7", // Google emulator
+    "d118dc20948b65fa", // Google emulator
+    "0fc5d01bc0c15952", // Google emulator
+    "22e089cdffd51c78", // Google emulator
+    "b4b7db65fac66cb6", // Google emulator
+    "6545e593901dc68d", // Google emulator
+    "34b8f2f060550907", // Google emulator
+    "ba24eb96892a3e6c", // Google emulator
+    "165c00b702e87e5b", // Google emulator
+    "15a880ae841139ad", // Google emulator
+    "e6e7abf681c43f3b", // Google emulator
+    "4b1ee687836a55e7", // Google emulator
+    "c43bdc1c23eadcb5", // Google emulator
+    "d118dc20948b65fa", // Google emulator
+    "2E13AB6A-D14B-40ED-A016-C92FEA3B0C90", // iOS emulator
+    "6487ff1a70800dd4", // Google emulator
+    "f19a054707669a32", // Google emulator
+    "70a2b46739f73529", // Google emulator
+    "528e7f47a9193cb2", // Google emulator
+    "fd34fb8091942548", // Google emulator
+    "fe0545de25287c82" // Google emulator
   ],
 
   featuresWaitForDatabaseMaxTries: 10,
