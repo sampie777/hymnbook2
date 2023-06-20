@@ -67,10 +67,18 @@ export interface AbcChord {
   position: ChordPlacement;
 }
 
+export interface AbcPitchStartSlur {
+  label: number; // An identifier for this slur in the current slur sequence (if there are more than one slurs for this note)
+}
+
 export interface AbcPitch {
   pitch: number;
   verticalPos: number;
   accidental?: AccidentalName;
+  startTie?: {};
+  endTie?: boolean;
+  startSlur?: AbcPitchStartSlur[];
+  endSlur?: number[]; // An array of slur identifiers which should end here
 }
 
 export interface AbcRest {
@@ -80,7 +88,7 @@ export interface AbcRest {
 
 export interface AbcLyric {
   syllable: string;
-  divider: ' ' | '-' | '_';
+  divider: " " | "-" | "_";
 }
 
 export interface VoiceItemBar {
@@ -90,7 +98,7 @@ export interface VoiceItemBar {
   endChar: number;
 }
 
-export interface NoteProperties{
+export interface NoteProperties {
   duration: number;
   pitches?: AbcPitch[];
   lyric?: AbcLyric[];
@@ -98,7 +106,7 @@ export interface NoteProperties{
   rest?: AbcRest;
 }
 
-export interface VoiceItemNote extends NoteProperties{
+export interface VoiceItemNote extends NoteProperties {
   el_type: "note";
   startChar: number;
   endChar: number;
@@ -141,9 +149,9 @@ export interface Accidental {
 }
 
 export interface AbcClef {
-  clefPos: number
-  type: Clef
-  verticalPos: number
+  clefPos: number;
+  type: Clef;
+  verticalPos: number;
 }
 
 export interface KeySignature {
