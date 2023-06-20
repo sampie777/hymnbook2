@@ -78,7 +78,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   popupContent: {},
   contentText: {
     paddingTop: 10,
-    color: colors.text
+    color: colors.text.default
   },
 
   surveyButton: {
@@ -86,7 +86,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: colors.primaryVariant,
+    backgroundColor: colors.primary.variant,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center"

@@ -79,13 +79,13 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     paddingVertical: 10
   },
   containerSelected: {
-    backgroundColor: colors.primaryVariant
+    backgroundColor: colors.primary.variant
   },
 
   text: {
     fontSize: 16,
     textAlign: "center",
-    color: colors.text,
+    color: colors.text.default,
     opacity: 0.9
   },
   textSelected: {

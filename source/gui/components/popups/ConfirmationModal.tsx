@@ -123,7 +123,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     alignItems: "center"
   },
   headerCloseButtonText: {
-    color: colors.textLighter,
+    color: colors.text.lighter,
     fontSize: 15
   },
 
@@ -133,7 +133,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     paddingVertical: 10,
     fontWeight: "bold",
     textAlign: "center",
-    color: colors.text
+    color: colors.text.default
   },
 
   modalMessageContainer: {
@@ -147,14 +147,14 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     justifyContent: "center"
   },
   modalMessageText: {
-    color: colors.text
+    color: colors.text.default
   },
 
   buttons: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight
+    borderTopColor: colors.border.light
   },
   button: {
     flex: 1,
@@ -165,7 +165,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     paddingHorizontal: 10,
     textAlign: "center",
     backgroundColor: colors.surface2,
-    color: colors.textLight
+    color: colors.text.light
   },
 
   buttonDenyText: {
@@ -173,14 +173,14 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   },
   buttonConfirmText: {
     borderLeftWidth: 1,
-    borderLeftColor: colors.borderLight,
-    color: colors.primary,
+    borderLeftColor: colors.border.light,
+    color: colors.primary.default,
     borderBottomRightRadius: 8,
     fontWeight: "bold",
     fontFamily: fontFamily.sansSerifLight
   },
   buttonConfirmTextInvert: {
-    backgroundColor: colors.primaryVariant,
+    backgroundColor: colors.primary.variant,
     color: colors.onPrimary
   },
 

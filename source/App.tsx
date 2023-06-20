@@ -247,7 +247,7 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     elevation: isDark ? 2 : 4
   },
   tabBarHeaderTitle: {
-    color: colors.textHeader as string
+    color: colors.text.header as string
   },
 
   tabBarItem: {
@@ -255,10 +255,10 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     paddingTop: 7
   },
   tabBarInactiveLabel: {
-    color: colors.textLighter
+    color: colors.text.lighter
   },
   tabBarActiveLabel: {
-    color: colors.primary
+    color: colors.primary.default
   },
   tabIcon: {},
   tabBarBadgeStyle: {
@@ -267,7 +267,7 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     fontSize: 12,
     height: 18,
     minWidth: 18,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary.default,
     lineHeight: 17
   }
 });

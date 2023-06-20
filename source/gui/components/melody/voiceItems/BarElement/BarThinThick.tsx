@@ -49,7 +49,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "center"
   },
   bar: {
-    color: colors.notesColor
+    color: colors.notes.color
   },
   endBar: {
     flex: 4,

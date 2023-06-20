@@ -292,7 +292,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 200
   },
   footer: {
-    borderTopColor: colors.border,
+    borderTopColor: colors.border.default,
     borderTopWidth: 1,
     width: "50%",
     marginTop: 100,

@@ -164,7 +164,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginHorizontal: 10
   },
   button: {
-    backgroundColor: colors.primaryVariant,
+    backgroundColor: colors.primary.variant,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -180,11 +180,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     elevation: 5
   },
   buttonDisabled: {
-    backgroundColor: colors.buttonVariant,
+    backgroundColor: colors.button.variant,
     elevation: 2
   },
   buttonInvert: {
-    backgroundColor: colors.button
+    backgroundColor: colors.button.default
   },
 
   buttonText: {
@@ -193,10 +193,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   buttonTextDisabled: {
     opacity: 0.3,
-    color: colors.textLighter
+    color: colors.text.lighter
   },
   buttonInvertText: {
-    color: colors.textLighter
+    color: colors.text.lighter
   },
 
   horizontalGap: {

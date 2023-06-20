@@ -261,15 +261,15 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
 export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   defaultText: {
-    color: colors.text
+    color: colors.text.default
   },
   p: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20,
     lineHeight: 30
   },
   h1: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 38,
     lineHeight: 50,
     paddingTop: 10,
@@ -277,7 +277,7 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     fontWeight: "bold"
   },
   h2: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 32,
     lineHeight: 50,
     paddingTop: 25,
@@ -285,7 +285,7 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     fontWeight: "bold"
   },
   h3: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 22,
     lineHeight: 40,
     paddingTop: 30,
@@ -293,7 +293,7 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     fontWeight: "bold"
   },
   h4: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20,
     lineHeight: 35,
     paddingTop: 25,
@@ -301,7 +301,7 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     fontWeight: "bold"
   },
   h5: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 18,
     lineHeight: 30,
     paddingTop: 15,
@@ -309,7 +309,7 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     fontWeight: "bold"
   },
   h6: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 16,
     lineHeight: 25,
     paddingTop: 10,
@@ -331,23 +331,23 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     textAlign: "right"
   },
   liText: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20,
     lineHeight: 30,
     flex: 1
   },
   pre: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 19,
     lineHeight: 30,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
   },
   blockquote: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 20,
     lineHeight: 30,
     borderLeftWidth: 5,
-    borderLeftColor: colors.borderVariant,
+    borderLeftColor: colors.border.variant,
     paddingLeft: 30,
     paddingVertical: 15,
     marginVertical: 15
@@ -357,20 +357,20 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"
   },
   ins: {
-    color: colors.text,
+    color: colors.text.default,
     textDecorationLine: "underline"
   },
   del: {
-    color: colors.text,
+    color: colors.text.default,
     textDecorationLine: "line-through"
   },
   sup: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 13,
     top: -5
   },
   sub: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 13
   },
   hr: {
@@ -378,24 +378,24 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     borderBottomColor: "#555"
   },
   strong: {
-    color: colors.text,
+    color: colors.text.default,
     fontWeight: "bold"
   },
   em: {
-    color: colors.text,
+    color: colors.text.default,
     fontStyle: "italic"
   },
   u: {
-    color: colors.text,
+    color: colors.text.default,
     textDecorationLine: "underline",
     textDecorationStyle: "solid",
-    textDecorationColor: colors.text
+    textDecorationColor: colors.text.default
   },
   strike: {
-    color: colors.text,
+    color: colors.text.default,
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
-    textDecorationColor: colors.text
+    textDecorationColor: colors.text.default
   },
   div: {},
   br: {

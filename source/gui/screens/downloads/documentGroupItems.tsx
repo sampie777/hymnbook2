@@ -87,7 +87,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingRight: 20,
     paddingVertical: 14,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderBottomWidth: 1,
     backgroundColor: colors.surface1,
     flexDirection: "row",
@@ -97,7 +97,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingLeft: 20,
     fontSize: 17,
     flex: 1,
-    color: colors.text
+    color: colors.text.default
   },
   infoContainer: {
     paddingRight: 20,
@@ -106,6 +106,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   infoText: {
     fontSize: 13,
-    color: colors.textLighter
+    color: colors.text.lighter
   }
 });

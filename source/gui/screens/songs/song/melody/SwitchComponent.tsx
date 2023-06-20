@@ -61,21 +61,21 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   titleText: {
     fontSize: 16,
-    color: colors.text
+    color: colors.text.default
   },
   descriptionText: {
-    color: colors.textLight,
+    color: colors.text.light,
     fontSize: 14,
     paddingTop: 5,
     fontStyle: "italic"
   },
   valueText: {
-    color: colors.textLight,
+    color: colors.text.light,
     fontSize: 14,
     paddingTop: 5
   },
   switchComponent: {
-    color: colors.switchComponentThumb,
-    backgroundColor: colors.switchComponentBackground
+    color: colors.switchComponent.thumb,
+    backgroundColor: colors.switchComponent.background
   }
 });

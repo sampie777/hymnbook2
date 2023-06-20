@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     textAlign: "center",
     fontFamily: defaultFontFamilies.sansSerifThin,
-    color: lightColors.text
+    color: lightColors.text.default
   },
   subheader: {
     fontSize: 25,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     textAlign: "center",
-    color: lightColors.text
+    color: lightColors.text.default
   },
 
   resetButtonContainer: {
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     marginVertical: 30
   },
   resetButton: {
-    backgroundColor: lightColors.primary,
+    backgroundColor: lightColors.primary.default,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   debugButtonText: {
     textAlign: "center",
     fontSize: 14,
-    color: lightColors.text
+    color: lightColors.text.default
   },
 
   details: {

@@ -31,7 +31,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
     backgroundColor: colors.surface1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderBottomWidth: 1,
     alignItems: "center",
     paddingLeft: 15
@@ -42,7 +42,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingRight: 10,
     paddingVertical: 18,
     fontSize: 15,
-    color: colors.text
+    color: colors.text.default
   },
 
   iconContainer: {
@@ -51,7 +51,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     fontSize: 18,
-    color: colors.textLight,
+    color: colors.text.light,
     textAlign: "center"
   },
   badge: {

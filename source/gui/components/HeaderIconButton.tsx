@@ -47,7 +47,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: colors.text
+    color: colors.text.default
   },
   iconOverlay: {
     position: "absolute",

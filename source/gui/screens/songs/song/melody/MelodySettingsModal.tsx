@@ -131,7 +131,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   contentText: {
     paddingTop: 10,
-    color: colors.text
+    color: colors.text.default
   },
 
   melodyContainer: {
@@ -139,7 +139,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center"
   },
   label: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15,
     marginRight: 10
   },
@@ -155,18 +155,18 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   selectedLanguage: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15,
     textAlign: "right"
   },
   arrow: {
     fontSize: 16,
     marginLeft: 7,
-    color: colors.text
+    color: colors.text.default
   },
 
   pickerRowText: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15
   },
   pickerRowTextSelected: {
@@ -179,7 +179,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingTop: 10
   },
   scaleLabel: {
-    color: colors.text,
+    color: colors.text.default,
     fontSize: 15,
     paddingBottom: 5
   }

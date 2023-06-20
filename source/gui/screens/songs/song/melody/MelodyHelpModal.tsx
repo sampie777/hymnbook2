@@ -57,7 +57,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginBottom: -20
   },
   contentText: {
-    color: colors.text,
+    color: colors.text.default,
     alignItems: "center",
     flex: 1
   },
@@ -68,7 +68,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: colors.text,
+    color: colors.text.default,
     marginRight: 15,
     paddingVertical: 8,
     paddingHorizontal: 15,

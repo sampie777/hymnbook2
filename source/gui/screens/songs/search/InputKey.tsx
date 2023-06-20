@@ -67,7 +67,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   keyText: {
     fontSize: 40,
     fontFamily: fontFamily.sansSerifThin,
-    color: colors.textLight
+    color: colors.text.light
   },
   keyTextSmaller: {
     fontSize: 34
