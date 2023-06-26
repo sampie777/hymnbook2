@@ -46,6 +46,7 @@ export type ParamList = {
     method: VersePickerMethod
     songListIndex?: number, // Not used when method=ShowSong|AddToSongListAndShowSearch, otherwise still optional
     songId?: number;  // Required when method=ShowSong|AddToSongListAndShowSearch
+    songName?: string;
     highlightText?: string;
   },
 
