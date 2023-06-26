@@ -248,6 +248,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
             ref={scrollViewComponent}
             waitFor={isIOS ? undefined : pinchGestureHandlerRef}
             onScroll={onScrollViewScroll}
+            scrollEventThrottle={200}
             onTouchStart={onScrollViewTouchStart}
             onTouchMove={onScrollViewTouchMove}
             onTouchCancel={onScrollViewTouchCancel}
