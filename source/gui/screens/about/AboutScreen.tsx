@@ -1,5 +1,5 @@
 import React from "react";
-import { displayName, homepage } from "../../../../app.json";
+import { displayName } from "../../../../app.json";
 import Config from "react-native-config";
 import { getBuildNumber, getVersion } from "react-native-device-info";
 import { useFeatures } from "../../components/FeaturesProvider";
@@ -77,13 +77,6 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, t
         </Text>
 
         <View style={[styles.row, styles.contactLinks]}>
-          <UrlLink url={homepage}>
-            <View style={styles.row}>
-              <FontAwesome5Icon name={"globe"} style={styles.webpageLink} />
-              <Text style={styles.webpageLink}>My projects</Text>
-            </View>
-          </UrlLink>
-
           <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`}>
             <View style={styles.row}>
               <FontAwesome5Icon name={"envelope"} style={styles.webpageLink} />
