@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../../../logic/db/db";
 import { SongSchema } from "../../../../../logic/db/models/SongsSchema";
 import { rollbar } from "../../../../../logic/rollbar";
+import { generateSongTitle } from "../../../../../logic/songs/utils";
 import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
 import { Song, Verse, VerseProps } from "../../../../../logic/db/models/Songs";
 import SongList from "../../../../../logic/songs/songList";
@@ -35,7 +36,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const versePickerItemStyles = createVersePickerItemStyles(useTheme());
   const windowDimension = useWindowDimensions();
   const horizontalMargin = getMarginForVerses(windowDimension,
-    styles.verseList.paddingHorizontal,
+    styles.scrollView.paddingHorizontal,
     versePickerItemStyles.container.minWidth);
 
   React.useLayoutEffect(() => {
@@ -122,30 +123,49 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.navigate(SongSearchRoute);
   };
 
+  const songTitleWithVerses = route.params.songName == null ? undefined :
+    generateSongTitle({
+      name: route.params.songName,
+      verses: route.params.verses
+    }, selectedVerses);
+
   return <View style={styles.container}>
-    {verses !== undefined ? undefined : <Text>Failed to load verses</Text>}
-    <ScrollView contentContainerStyle={styles.verseList}>
-      {verses
-        ?.filter(hasVisibleNameForPicker)
-        ?.map((it: VerseProps) => <VersePickerItem verse={it}
-                                                   key={it.id}
-                                                   isSelected={isVerseInList(selectedVerses, it)}
-                                                   horizontalMargin={horizontalMargin}
-                                                   onPress={toggleVerse}
-                                                   onLongPress={onItemLongPress} />)}
+    <ScrollView contentContainerStyle={styles.scrollView}>
+      {songTitleWithVerses === undefined ? undefined : <Text style={styles.text}>{songTitleWithVerses}</Text>}
+      {verses !== undefined ? undefined : <Text style={styles.text}>Failed to load verses</Text>}
+      <View style={styles.verseList}>
+        {verses
+          ?.filter(hasVisibleNameForPicker)
+          ?.map((it: VerseProps) => <VersePickerItem verse={it}
+                                                     key={it.id}
+                                                     isSelected={isVerseInList(selectedVerses, it)}
+                                                     horizontalMargin={horizontalMargin}
+                                                     onPress={toggleVerse}
+                                                     onLongPress={onItemLongPress} />)}
+      </View>
     </ScrollView>
   </View>;
 };
 
 export default VersePicker;
 
-
-const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "stretch",
     backgroundColor: colors.background
+  },
+  scrollView: {
+    paddingHorizontal: 15,
+    paddingVertical: 20
+  },
+  text: {
+    color: colors.text.lighter,
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: fontFamily.sansSerifLight,
+    paddingHorizontal: 30
   },
 
   verseList: {
@@ -153,7 +173,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     flexWrap: "wrap",
-    paddingHorizontal: 15,
-    paddingVertical: 20
+    paddingTop: 10,
   }
 });

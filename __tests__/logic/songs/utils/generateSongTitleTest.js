@@ -8,6 +8,16 @@ describe("test generating song title", () => {
     expect(generateSongTitle(null, [])).toBe("");
   });
 
+  it("with non song object but matching interface generates the title with verses", () => {
+    const selectedVerses = [
+      new Verse(0, "Verse 1", "", "", "", 0),
+      new Verse(1, "Verse 2", "", "", "", 0),
+      new Verse(3, "Verse 4", "", "", "", 0),
+      new Verse(5, "Verse 6", "", "", "", 0),
+    ];
+    expect(generateSongTitle({ name: song.name, verses: song.verses }, selectedVerses)).toBe("Psalm 1: 1, 2, 4, 6");
+  });
+
   it("with non following verses generates all verses", () => {
     const selectedVerses = [
       new Verse(0, "Verse 1", "", "", "", 0),

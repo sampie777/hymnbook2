@@ -143,6 +143,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
         songId: song.id,
+        songName: song.name,
         method: VersePickerMethod.ShowSong
       });
     };
@@ -154,6 +155,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
         songId: song.id,
+        songName: song.name,
         method: VersePickerMethod.AddToSongListAndShowSearch
       });
     };

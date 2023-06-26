@@ -187,6 +187,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.navigate(VersePickerRoute, {
       verses: verseParams,
       selectedVerses: route.params.selectedVerses || [],
+      songName: song?.name,
       songListIndex: route.params.songListIndex,
       method: VersePickerMethod.UpdatePossibleSongListAndGoBackToSong
     });

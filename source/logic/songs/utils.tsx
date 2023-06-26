@@ -111,7 +111,11 @@ function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
   });
 }
 
-export const generateSongTitle = (song?: Song, selectedVerses?: Array<Verse>): string => {
+export const generateSongTitle = (song?: {
+                                    name: string,
+                                    verses: Verse[],
+                                  },
+                                  selectedVerses?: Array<Verse>): string => {
   if (song == null) {
     return "";
   }

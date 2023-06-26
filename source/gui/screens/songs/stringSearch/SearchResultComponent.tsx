@@ -51,6 +51,7 @@ const SearchResultComponent: React.FC<Props> = ({
       verses: song.verses?.map(it => Verse.toObject(it)),
       selectedVerses: getSelectedVerses(),
       songId: song.id,
+      songName: song.name,
       method: VersePickerMethod.ShowSong,
       highlightText: isVerseMatch ? searchRegex : undefined
     });
