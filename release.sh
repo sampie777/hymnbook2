@@ -157,3 +157,5 @@ rm hymnbook_settings 2> /dev/null
 rm hymnbook_settings.lock 2> /dev/null
 rm hymnbook_settings.note 2> /dev/null
 rm -R hymnbook_settings.management 2> /dev/null
+
+echo "Done"
