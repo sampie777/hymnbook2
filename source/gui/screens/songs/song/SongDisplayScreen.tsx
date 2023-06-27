@@ -100,6 +100,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   useEffect(() => {
     verseHeights.current = {};
 
+    // If song is undefined, we're probably leaving this screen,
+    // so we can ignore state and animation updates.
+    if (song === undefined) return;
+
     if (Settings.songFadeIn) {
       animateSongFadeIn();
     }
