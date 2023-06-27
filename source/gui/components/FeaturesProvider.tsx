@@ -22,7 +22,7 @@ const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children })
           setLoaded(true);
           setGoldenEgg(features.goldenEgg);
         })
-        .catch(null);
+        .catch(() => null);
     } catch (e: any) {
       rollbar.error("Failed to initiate features fetching", {
         error: e,
