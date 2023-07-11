@@ -4,6 +4,7 @@ import { throwErrorsIfNotOk } from "../apiUtils";
 import { Result } from "../utils";
 import { JsonResponse, JsonResponseType } from "../server/models";
 import { DocumentGroup as ServerDocumentGroup, DocumentGroup } from "../server/models/Documents";
+import { BackendError } from "../server/server";
 
 export namespace DocumentServer {
   export const fetchDocumentGroups = (includeOther: boolean = false): Promise<Result<Array<ServerDocumentGroup>>> => {
@@ -12,7 +13,7 @@ export namespace DocumentServer {
       .then(response => response.json())
       .then((data: JsonResponse<DocumentGroup[]>) => {
         if (data.type === JsonResponseType.ERROR) {
-          throw new Error(data.content);
+          throw new BackendError("Server response is of error type", data);
         }
 
         let groups = data.content;
@@ -38,7 +39,7 @@ export namespace DocumentServer {
       .then(response => response.json())
       .then((data: JsonResponse<DocumentGroup>) => {
         if (data.type === JsonResponseType.ERROR) {
-          throw new Error(data.content);
+          throw new BackendError("Server response is of error type", data);
         }
 
         return new Result({ success: true, data: data.content });
