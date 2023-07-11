@@ -1,5 +1,7 @@
 // See also: https://github.com/paulrosen/abcjs/blob/2616d88ddf0222e255c508f944df3089960c13dc/types/index.d.ts
 
+import { SynthOptions } from "abcjs";
+
 export type AccidentalName = "flat" | "natural" | "sharp" | "dblsharp" | "dblflat" | "quarterflat" | "quartersharp";
 export type ChordPlacement = "above" | "below" | "left" | "right" | "default";
 export type StemDirection = "up" | "down" | "auto" | "none";
@@ -230,4 +232,36 @@ export interface TuneObject {
   millisecondsPerMeasure: NumberFunction;
   lineBreaks?: Array<number>;
   visualTranspose?: number;
+  setUpAudio: (options?: SynthOptions) => AudioTracks;
+}
+
+export interface AudioTracks {
+  tempo: number;
+  instrument: number;
+  tracks: AudioTrack[][];
+  totalDuration: number;
+}
+
+export type AudioTrack = AudioTrackProgram | AudioTrackText | AudioTrackNote;
+
+export interface AudioTrackProgram {
+  cmd: "program";
+  channel: number;
+}
+
+export interface AudioTrackText {
+  cmd: "text";
+  // ...?
+}
+
+export interface AudioTrackNote {
+  cmd: "note";
+  duration: number;
+  volume: number;
+  pitch: number;
+  gap: number;
+  instrument: number;
+  start: number;
+  startChar: number;
+  endChar: number;
 }
