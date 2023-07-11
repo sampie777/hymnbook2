@@ -5,6 +5,16 @@ import { SongBundle } from "./models/ServerSongsModel";
 import { rollbar } from "../rollbar";
 import { JsonResponse, JsonResponseType } from "./models";
 
+export class BackendError extends Error {
+  name = "HttpError";
+  responseData?: object;
+
+  constructor(message?: string, responseData?: object) {
+    super(message);
+    this.responseData = responseData;
+  }
+}
+
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<Result<Array<SongBundle>>> => {
     return api.songBundles.list()
@@ -12,7 +22,7 @@ export namespace Server {
       .then(response => response.json())
       .then((data: JsonResponse<SongBundle[]>) => {
         if (data.type === JsonResponseType.ERROR) {
-          throw new Error(data.content);
+          throw new BackendError("Server response is of error type", data);
         }
 
         let bundles = data.content;
@@ -38,7 +48,7 @@ export namespace Server {
       .then(response => response.json())
       .then((data: JsonResponse<SongBundle>) => {
         if (data.type === JsonResponseType.ERROR) {
-          throw new Error(data.content);
+          throw new BackendError("Server response is of error type", data);
         }
 
         return new Result({ success: true, data: data.content });

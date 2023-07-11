@@ -4,6 +4,7 @@ import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
 import { rollbar } from "../rollbar";
 import { HttpCode, HttpError, throwErrorsIfNotOk } from "../apiUtils";
+import { BackendError } from "./server";
 import { emptyPromise, emptyPromiseWithValue } from "../utils";
 import config from "../../config";
 
@@ -96,7 +97,7 @@ export namespace ServerAuth {
       .then(response => response.json())
       .then((data: JsonResponse<AccessRequestResponse>) => {
         if (data.type === JsonResponseType.ERROR) {
-          throw new Error(data.content);
+          throw new BackendError("Server response is of error type", data);
         }
 
         const accessRequestResponse = data.content;
@@ -146,7 +147,7 @@ export namespace ServerAuth {
       .then(response => response.json())
       .then((data: JsonResponse<AccessRequestResponse>) => {
         if (data.type === JsonResponseType.ERROR) {
-          throw new Error(data.content);
+          throw new BackendError("Server response is of error type", data);
         }
 
         const accessRequestResponse = data.content;
