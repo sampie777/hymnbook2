@@ -21,7 +21,7 @@ export const getVerseType = (verse: Verse): VerseType => {
   if (/bridge|tussenspel\W?/i.test(verse.name)) {
     return VerseType.Bridge;
   }
-  if (/(intro|inleiding)\W?/i.test(verse.name)) {
+  if (/(intro|inleiding|voorzang)\W?/i.test(verse.name)) {
     return VerseType.Intro;
   }
   if (/(end|slot|outro)\W?/i.test(verse.name)) {
