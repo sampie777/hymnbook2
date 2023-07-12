@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { throwErrorsIfNotOk } from "../apiUtils";
+import { HttpError, throwErrorsIfNotOk } from "../apiUtils";
 import { Result } from "../utils";
 import { SongBundle } from "./models/ServerSongsModel";
 import { rollbar } from "../rollbar";
@@ -42,8 +42,12 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<Result<SongBundle>> => {
-    return api.songBundles.getWithSongs(bundle.id, true, true)
+  export const fetchSongBundle = (bundle: SongBundle | { uuid: string }, {
+    loadSongs = false,
+    loadVerses = false,
+    loadAbcMelodies = false
+  }): Promise<Result<SongBundle>> => {
+    return api.songBundles.get(bundle.uuid, loadSongs, loadVerses, loadAbcMelodies)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
       .then((data: JsonResponse<SongBundle>) => {
@@ -54,12 +58,22 @@ export namespace Server {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
-        rollbar.error(`Error fetching songs for song bundle`, {
+        rollbar.error(`Error fetching song bundle`, {
           error: error,
           errorType: error.constructor.name,
-          songBundle: bundle
+          songBundle: bundle,
+          loadSongs: loadSongs,
+          loadVerses: loadVerses,
+          loadAbcMelodies: loadAbcMelodies
         });
         throw error;
       });
   };
+
+  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<Result<SongBundle>> =>
+    fetchSongBundle(bundle, {
+      loadSongs: true,
+      loadVerses: true,
+      loadAbcMelodies: true
+    });
 }
