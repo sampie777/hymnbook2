@@ -28,7 +28,8 @@ export type ParamList = {
   PrivacyPolicy: undefined,
   OtherMenu: undefined,
   Databases: {
-    type?: Types
+    type?: Types,
+    promptForUuid?: string;
   },
 
   SongSearch: undefined,

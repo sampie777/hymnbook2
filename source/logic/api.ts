@@ -90,17 +90,17 @@ export const api = {
       get(`${databaseApiEndpoint}/songs/bundles?loadSongs=${loadSongs ? "true" : "false"}` +
         `&loadVerses=${loadVerses ? "true" : "false"}` +
         `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
-    get: (id: number,
+    get: (uuid: string,
           loadSongs = false,
           loadVerses = false,
           loadAbcMelodies = true) =>
-      get(`${databaseApiEndpoint}/songs/bundles/${id}?loadSongs=${loadSongs ? "true" : "false"}` +
+      get(`${databaseApiEndpoint}/songs/bundles/${uuid}?loadSongs=${loadSongs ? "true" : "false"}` +
         `&loadVerses=${loadVerses ? "true" : "false"}` +
         `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
-    getWithSongs: (id: number,
+    getWithSongs: (uuid: string,
                    loadVerses = true,
                    loadAbcMelodies = true) =>
-      api.songBundles.get(id, true, loadVerses, loadAbcMelodies),
+      api.songBundles.get(uuid, true, loadVerses, loadAbcMelodies),
     search: (query: string,
              page = 0,
              page_size = 50,
@@ -122,8 +122,8 @@ export const api = {
           `&loadItems=${loadItems ? "true" : "false"}` +
           `&loadContent=${loadContent ? "true" : "false"}` +
           `&page=${page}&page_size=${page_size}`),
-      get: (id: number, loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean) =>
-        get(`${databaseApiEndpoint}/documents/groups/${id}?loadGroups=${loadGroups ? "true" : "false"}` +
+      get: (uuid: string, loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean) =>
+        get(`${databaseApiEndpoint}/documents/groups/${uuid}?loadGroups=${loadGroups ? "true" : "false"}` +
           `&loadItems=${loadItems ? "true" : "false"}` +
           `&loadContent=${loadContent ? "true" : "false"}`)
     }

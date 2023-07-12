@@ -33,8 +33,12 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<Result<ServerDocumentGroup>> => {
-    return api.documents.groups.get(group.id, true, true, true)
+  export const fetchDocumentGroup = (group: DocumentGroup | { uuid: string }, {
+    loadGroups = false,
+    loadItems = false,
+    loadContent = false
+  }): Promise<Result<ServerDocumentGroup>> => {
+    return api.documents.groups.get(group.uuid, loadGroups, loadItems, loadContent)
       .then(throwErrorsIfNotOk)
       .then(response => response.json())
       .then((data: JsonResponse<DocumentGroup>) => {
@@ -45,12 +49,22 @@ export namespace DocumentServer {
         return new Result({ success: true, data: data.content });
       })
       .catch(error => {
-        rollbar.error(`Error fetching documents for document group`, {
+        rollbar.error(`Error fetching document group`, {
           error: error,
           errorType: error.constructor.name,
-          documentGroup: group
+          documentGroup: group,
+          loadGroups: loadGroups,
+          loadItems: loadItems,
+          loadContent: loadContent
         });
         throw error;
       });
   };
+
+  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<Result<ServerDocumentGroup>> =>
+    fetchDocumentGroup(group, {
+      loadGroups: true,
+      loadItems: true,
+      loadContent: true
+    });
 }

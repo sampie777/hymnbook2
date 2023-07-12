@@ -9,11 +9,11 @@ export const HttpCode = {
   Gone: 410,
   FailedDependency: 424,
   TooManyRequests: 429,
-  InternalServerError: 500,
-}
+  InternalServerError: 500
+};
 
 export class HttpError extends Error {
-  name = "HttpError"
+  name = "HttpError";
   response?: Response;
 
   constructor(message?: string, response?: Response) {
@@ -27,7 +27,12 @@ export const throwErrorsIfNotOk = (response: Response) => {
     return response;
   }
 
-  rollbar.error(`API request to '${response.url}' failed: (${response.status}) ${response.statusText}`);
+  rollbar.error(`API request failed`, {
+    url: response.url,
+    status: response.status,
+    statusText: response.statusText,
+    response: response
+  });
   switch (response.status) {
     case HttpCode.NotFound:
       throw new HttpError(`Could not find the requested data: (${response.status}) ${response.statusText}`, response);

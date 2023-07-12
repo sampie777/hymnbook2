@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { rollbar } from "../../../logic/rollbar";
 import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
@@ -19,11 +20,19 @@ import LanguageSelectBar from "./LanguageSelectBar";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
+  promptForUuid?: string;
+  dismissPromptForUuid?: () => void;
 }
 
-const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
+const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
+                                                             setIsProcessing,
+                                                             promptForUuid,
+                                                             dismissPromptForUuid
+                                                           }) => {
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(false);
+  const [isLocalGroupsLoading, setIsLocalGroupsLoading] = useState(true);
+  const [isGroupLoading, setIsGroupLoading] = useState(false);
   const [serverGroups, setServerGroups] = useState<Array<ServerDocumentGroup>>([]);
   const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup & Realm.Object>>([]);
   const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
@@ -57,8 +66,44 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     setIsProcessing?.(isLoading);
   }, [isLoading]);
 
+  useEffect(() => {
+    if (isLocalGroupsLoading) return;
+    loadAndPromptSpecificGroup();
+  }, [promptForUuid, isLocalGroupsLoading]);
+
+  const loadAndPromptSpecificGroup = () => {
+    if (!promptForUuid) return;
+    if (localGroups.find(it => it.uuid === promptForUuid)) return;
+
+    setIsGroupLoading(true);
+    DocumentServer.fetchDocumentGroup({ uuid: promptForUuid }, {})
+      .then(result => {
+        if (!isMounted) return;
+        if (result.data == null) {
+          rollbar.warning("Fetch specific document group returned no result data", {
+            result: result,
+            uuid: promptForUuid
+          });
+          throw new Error("No valid data received from the server.");
+        }
+
+        if (localGroups.find(it => it.uuid === promptForUuid)) return;
+
+        setFilterLanguage(result.data.language);
+        setRequestDownloadForGroup(result.data);
+      })
+      .catch(error => Alert.alert("Error", `Could not fetch document group.\n${error}\n\nTry again later.`))
+      .finally(() => {
+        dismissPromptForUuid?.();
+
+        if (!isMounted) return;
+        setIsGroupLoading(false);
+      });
+  };
+
   const loadLocalDocumentGroups = () => {
     setIsLoading(true);
+    setIsLocalGroupsLoading(true);
 
     const result = DocumentProcessor.loadLocalDocumentRoot();
     result.alert();
@@ -81,6 +126,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     }
 
     setIsLoading(false);
+    setIsLocalGroupsLoading(false);
   };
 
   const fetchDocumentGroups = () => {
@@ -256,14 +302,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
 
       <LanguageSelectBar languages={getAllLanguagesFromGroups(serverGroups)}
                          selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage}
-                         disabled={isLoading} />
+                         onLanguageClick={setFilterLanguage} />
 
       <ScrollView
         style={styles.listContainer}
         refreshControl={<RefreshControl onRefresh={fetchDocumentGroups}
                                         tintColor={styles.refreshControl.color}
-                                        refreshing={isLoading} />}>
+                                        refreshing={isLoading || isGroupLoading} />}>
 
         {localGroups.filter(it => it.isValid())
           .map((group: LocalDocumentGroup) =>
@@ -271,7 +316,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
                                     group={group}
                                     onPress={onLocalDocumentGroupPress}
                                     hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
-                                    disabled={isLoading} />)}
+                                    disabled={isLoading || isGroupLoading} />)}
 
         {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
@@ -279,11 +324,11 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
             <ServerDocumentGroupItem key={group.uuid + group.name}
                                      group={group}
                                      onPress={onDocumentGroupPress}
-                                     disabled={isLoading} />)}
+                                     disabled={isLoading || isGroupLoading} />)}
 
         {serverGroups.length > 0 ? undefined :
           <Text style={styles.emptyListText}>
-            {isLoading ? "Loading..." : "No online data available..."}
+            {isLoading || isGroupLoading ? "Loading..." : "No online data available..."}
           </Text>
         }
         {isLoading || serverGroups.length === 0 || serverGroups.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
