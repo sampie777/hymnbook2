@@ -1,7 +1,6 @@
 import { rollbar } from "./rollbar";
 import Db from "./db/db";
 import Settings from "../settings";
-import config from "../config";
 import { ThemeContextProps } from "../gui/components/ThemeProvider";
 
 export const closeDatabases = () => {
@@ -45,15 +44,3 @@ export const initDocumentDatabase = () =>
       rollbar.error("Could not connect to local document database: " + e.toString(), e);
       alert("Could not connect to local document database: " + e);
     });
-
-export const deepLinkValidatePath = (url: string): boolean =>
-  config.deepLinkPaths.some(path => url.startsWith(path));
-
-export const deepLinkPathToSegments = (url: string): string[] => {
-  let trimmedUrl = url.trim();
-  // Remove deep link paths from url
-  config.deepLinkPaths.forEach(path => trimmedUrl = trimmedUrl.replace(path, ""));
-  return trimmedUrl
-    .replace(/(^\/+|\/+$)*/g, "")
-    .split("/");
-};
