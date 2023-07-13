@@ -13,8 +13,8 @@ const config = {
   whatsappFeedbackGroupUrl: Config.WHATSAPP_USER_GROUP_LINK,
   homepage: "https://hymnbook.sajansen.nl#downloads",
   deepLinkPaths: [
-    "https://hymnbook.sajansen.nl/open",
-    "hymnbook://open"
+    "https://hymnbook.sajansen.nl/",
+    "hymnbook://"
   ],
 
   debugEmulators: [
