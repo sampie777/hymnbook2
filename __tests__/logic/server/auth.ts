@@ -56,6 +56,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -87,6 +88,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -121,6 +123,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -174,6 +177,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -209,6 +213,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -243,6 +248,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -296,6 +302,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -311,6 +318,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -367,6 +375,7 @@ describe("test authentication", () => {
       .mockReturnValueOnce((jwt: string) => emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue(jwt)
       } as Response));
 
@@ -395,11 +404,13 @@ describe("test authentication", () => {
       .mockReturnValueOnce(() => emptyPromiseWithValue({
         ok: true,
         status: 401,
+        headers: new Map([]) as unknown as Headers,
         json: () => emptyPromise()
       } as Response))
       .mockReturnValueOnce((jwt: string) => emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue(jwt)
       } as Response));
 
@@ -407,6 +418,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -422,6 +434,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -458,11 +471,13 @@ describe("test authentication", () => {
       .mockReturnValueOnce(() => emptyPromiseWithValue({
         ok: true,
         status: 401,
+        headers: new Map([]) as unknown as Headers,
         json: () => emptyPromise()
       } as Response))
       .mockReturnValueOnce((jwt: string) => emptyPromiseWithValue({
         ok: true,
         status: 401,
+        headers: new Map([]) as unknown as Headers,
         json: () => emptyPromiseWithValue(jwt)
       } as Response));
 
@@ -470,6 +485,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
@@ -485,6 +501,7 @@ describe("test authentication", () => {
       emptyPromiseWithValue({
         ok: true,
         status: 200,
+        headers: new Map([["content-type", "application/json;"]]) as unknown as Headers,
         json: () => emptyPromiseWithValue({
           type: JsonResponseType.SUCCESS,
           content: new AccessRequestResponse(
