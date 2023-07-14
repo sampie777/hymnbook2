@@ -102,7 +102,7 @@ export namespace DocumentProcessor {
 
   export const fetchAndUpdateDocumentGroup = (group: ServerDocumentGroup): Promise<Result> => {
     return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then((result: Result) => updateAndSaveDocumentGroup(result.data));
+      .then(updateAndSaveDocumentGroup);
   };
 
   const updateAndSaveDocumentGroup = (group: ServerDocumentGroup): Result => {

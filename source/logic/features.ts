@@ -5,7 +5,7 @@ import Settings from "../settings";
 import config from "../config";
 import Db from "./db/db";
 import { api } from "./api";
-import { throwErrorsIfNotOk } from "./apiUtils";
+import { parseHymnbookResponse } from "./apiUtils";
 import { rollbar } from "./rollbar";
 
 export namespace Features {
@@ -43,9 +43,8 @@ export namespace Features {
       Platform.OS,
       Settings.appOpenedTimes
     )
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((features: JsonProps) => {
+      .then(r => parseHymnbookResponse<JsonProps>(r))
+      .then(features => {
         return {
           loaded: true,
           goldenEgg: features.golden_egg
