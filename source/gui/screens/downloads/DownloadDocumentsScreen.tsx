@@ -86,9 +86,9 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
   const fetchDocumentGroups = () => {
     setIsLoading(true);
     DocumentServer.fetchDocumentGroups()
-      .then(result => {
+      .then(data => {
         if (!isMounted) return;
-        setServerGroups(result.data!);
+        setServerGroups(data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}\n\nTry again later.`))
       .finally(() => {
@@ -153,9 +153,9 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) 
     setIsLoading(true);
 
     DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then(result => {
+      .then(data => {
         if (!isMounted) return;
-        saveDocumentGroup(result.data!);
+        saveDocumentGroup(data);
       })
       .catch(error =>
         Alert.alert("Error", `Error downloading ${group.name}: ${error}\n\nTry again later.`))

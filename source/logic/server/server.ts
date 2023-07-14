@@ -1,36 +1,18 @@
 import { api } from "../api";
-import { throwErrorsIfNotOk } from "../apiUtils";
-import { Result } from "../utils";
-import { SongBundle } from "./models/ServerSongsModel";
 import { rollbar } from "../rollbar";
-import { JsonResponse, JsonResponseType } from "./models";
-
-export class BackendError extends Error {
-  name = "HttpError";
-  responseData?: object;
-
-  constructor(message?: string, responseData?: object) {
-    super(message);
-    this.responseData = responseData;
-  }
-}
+import { parseJscheduleResponse } from "../apiUtils";
+import { SongBundle } from "./models/ServerSongsModel";
 
 export namespace Server {
-  export const fetchSongBundles = (includeOther: boolean = false): Promise<Result<Array<SongBundle>>> => {
+  export const fetchSongBundles = (includeOther: boolean = false): Promise<SongBundle[]> => {
     return api.songBundles.list()
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((data: JsonResponse<SongBundle[]>) => {
-        if (data.type === JsonResponseType.ERROR) {
-          throw new BackendError("Server response is of error type", data);
-        }
-
-        let bundles = data.content;
+      .then(r => parseJscheduleResponse<SongBundle[]>(r))
+      .then(bundles => {
         if (!includeOther) {
           bundles = bundles.filter(it => it.name !== "Other");
         }
 
-        return new Result({ success: true, data: bundles });
+        return bundles;
       })
       .catch(error => {
         rollbar.error(`Error fetching song bundles`, {
@@ -42,17 +24,9 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<Result<SongBundle>> => {
+  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<SongBundle> => {
     return api.songBundles.getWithSongs(bundle.id, true, true)
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((data: JsonResponse<SongBundle>) => {
-        if (data.type === JsonResponseType.ERROR) {
-          throw new BackendError("Server response is of error type", data);
-        }
-
-        return new Result({ success: true, data: data.content });
-      })
+      .then(r => parseJscheduleResponse<SongBundle>(r))
       .catch(error => {
         rollbar.error(`Error fetching songs for song bundle`, {
           error: error,
