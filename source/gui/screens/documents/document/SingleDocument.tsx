@@ -17,8 +17,7 @@ import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { isIOS, keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
-  GestureEvent,
-  GestureHandlerRootView, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView as GestureScrollView, State
+  GestureEvent, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView as GestureScrollView, State
 } from "react-native-gesture-handler";
 import Animated, {
   Easing,
@@ -231,49 +230,46 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
   const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
 
-  return <GestureHandlerRootView style={{ flex: 1 }}>
-    <PinchGestureHandler
-      ref={pinchGestureHandlerRef}
-      onGestureEvent={_onPanGestureEvent}
-      onHandlerStateChange={_onPinchHandlerStateChange}>
-      <View style={styles.container}>
-        <DocumentControls navigation={navigation}
-                          document={document}
-                          forceShow={onPressed}
-                          scrollOffset={scrollOffset}
-                          bottomOffset={bottomOffset} />
+  return <PinchGestureHandler ref={pinchGestureHandlerRef}
+                              onGestureEvent={_onPanGestureEvent}
+                              onHandlerStateChange={_onPinchHandlerStateChange}>
+    <View style={styles.container}>
+      <DocumentControls navigation={navigation}
+                        document={document}
+                        forceShow={onPressed}
+                        scrollOffset={scrollOffset}
+                        bottomOffset={bottomOffset} />
 
-        {document === undefined ? undefined :
-          <ScrollView
-            ref={scrollViewComponent}
-            waitFor={isIOS ? undefined : pinchGestureHandlerRef}
-            onScroll={onScrollViewScroll}
-            scrollEventThrottle={200}
-            onTouchStart={onScrollViewTouchStart}
-            onTouchMove={onScrollViewTouchMove}
-            onTouchCancel={onScrollViewTouchCancel}
-            onTouchEnd={onScrollViewTouchEnd}
-            showsVerticalScrollIndicator={true}
-            contentContainerStyle={styles.contentSectionList}>
+      {document === undefined ? undefined :
+        <ScrollView
+          ref={scrollViewComponent}
+          waitFor={isIOS ? undefined : pinchGestureHandlerRef}
+          onScroll={onScrollViewScroll}
+          scrollEventThrottle={200}
+          onTouchStart={onScrollViewTouchStart}
+          onTouchMove={onScrollViewTouchMove}
+          onTouchCancel={onScrollViewTouchCancel}
+          onTouchEnd={onScrollViewTouchEnd}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={styles.contentSectionList}>
 
-            <DocumentBreadcrumb document={document} scale={animatedScale} />
+          <DocumentBreadcrumb document={document} scale={animatedScale} />
 
-            <Animated.View style={animatedStyle.htmlViewContainer}>
-              {HtmlView}
-            </Animated.View>
+          <Animated.View style={animatedStyle.htmlViewContainer}>
+            {HtmlView}
+          </Animated.View>
 
-            <Footer opacity={animatedOpacity} />
-          </ScrollView>
-        }
+          <Footer opacity={animatedOpacity} />
+        </ScrollView>
+      }
 
-        <LoadingOverlay text={null}
-                        isVisible={
-                          route.params.id !== undefined
-                          && (document === undefined || document.id !== route.params.id)}
-                        animate={Settings.songFadeIn} />
-      </View>
-    </PinchGestureHandler>
-  </GestureHandlerRootView>;
+      <LoadingOverlay text={null}
+                      isVisible={
+                        route.params.id !== undefined
+                        && (document === undefined || document.id !== route.params.id)}
+                      animate={Settings.songFadeIn} />
+    </View>
+  </PinchGestureHandler>;
 };
 
 export default SingleDocument;
