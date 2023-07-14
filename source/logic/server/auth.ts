@@ -1,10 +1,9 @@
 import Settings from "../../settings";
 import { authApi } from "./authApi";
 import { getUniqueId } from "react-native-device-info";
-import { AccessRequestStatus, JsonResponse, JsonResponseType } from "./models";
+import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
-import { HttpCode, HttpError, throwErrorsIfNotOk } from "../apiUtils";
-import { BackendError } from "./server";
+import { HttpCode, HttpError, parseJscheduleResponse } from "../apiUtils";
 import { emptyPromise, emptyPromiseWithValue } from "../utils";
 import config from "../../config";
 
@@ -93,14 +92,8 @@ export namespace ServerAuth {
     forgetCredentials();
 
     return authApi.auth.requestAccess(getDeviceId())
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((data: JsonResponse<AccessRequestResponse>) => {
-        if (data.type === JsonResponseType.ERROR) {
-          throw new BackendError("Server response is of error type", data);
-        }
-
-        const accessRequestResponse = data.content;
+      .then(r => parseJscheduleResponse<AccessRequestResponse>(r))
+      .then(accessRequestResponse => {
         Settings.authStatus = accessRequestResponse.status;
         Settings.authDeniedReason = accessRequestResponse.reason || "";
         Settings.store();
@@ -143,14 +136,8 @@ export namespace ServerAuth {
     }
 
     return authApi.auth.retrieveAccess(getDeviceId(), Settings.authRequestId)
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((data: JsonResponse<AccessRequestResponse>) => {
-        if (data.type === JsonResponseType.ERROR) {
-          throw new BackendError("Server response is of error type", data);
-        }
-
-        const accessRequestResponse = data.content;
+      .then(r => parseJscheduleResponse<AccessRequestResponse>(r))
+      .then(accessRequestResponse => {
         Settings.authStatus = accessRequestResponse.status;
         Settings.authDeniedReason = accessRequestResponse.reason || "";
         Settings.store();
