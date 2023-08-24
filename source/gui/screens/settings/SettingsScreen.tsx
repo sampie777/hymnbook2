@@ -76,7 +76,10 @@ const SettingsScreen: React.FC = () => {
     setEasterEggEnableDevModeCount(easterEggEnableDevModeCount + 1);
     if (easterEggEnableDevModeCount >= 9) {
       setShowDevSettings(true);
-      rollbar.info("Someone switched on developer mode: " + ServerAuth.getDeviceId());
+      rollbar.info("Someone switched on developer mode", {
+        deviceId: ServerAuth.getDeviceId(),
+        appOpenedTimes: Settings.appOpenedTimes
+      });
       if (isAndroid) {
         ToastAndroid.show("You're now a developer!", ToastAndroid.LONG);
       }
