@@ -6,7 +6,7 @@ import { rollbar } from "../rollbar";
 import { JsonResponse, JsonResponseType } from "./models";
 
 export class BackendError extends Error {
-  name = "HttpError";
+  name = "BackendError";
   responseData?: object;
 
   constructor(message?: string, responseData?: object) {
