@@ -27,7 +27,6 @@ import StringSearchButton from "./StringSearchButton";
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
   ({ navigation }) => {
-    const isNavigatingToVersePickerScreen = useRef<boolean>(false);
     const [inputValue, setInputValue] = useState("");
     const [previousInputValue, setPreviousInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
@@ -71,11 +70,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onBlur = () => {
-      if (Settings.clearSearchAfterAddedToSongList || !isNavigatingToVersePickerScreen.current) {
+      if (Settings.clearSearchAfterAddedToSongList) {
         // Use timeout to fix the bug on iOS that onLongPress doesn't get dismissed if the touch component gets unmounted
         setTimeout(() => clearScreen(), 500);
       }
-      isNavigatingToVersePickerScreen.current = false;
     };
 
     const storeSelectedSongInformation = () => {
@@ -132,34 +130,6 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       setSearchResult(results as unknown as Array<Song>);
     };
 
-    const onSearchResultItemPress = (song: Song) => {
-      storeSelectedSongInformation();
-      navigation.navigate(SongRoute, { id: song.id });
-    };
-
-    const onSearchResultItemLongPress = (song: Song) => {
-      storeSelectedSongInformation();
-      navigation.navigate(VersePickerRoute, {
-        verses: song.verses?.map(it => Verse.toObject(it)),
-        selectedVerses: [],
-        songId: song.id,
-        songName: song.name,
-        method: VersePickerMethod.ShowSong
-      });
-    };
-
-    const selectVersesAndAddToSongList = (song: Song) => {
-      storeSelectedSongInformation();
-      isNavigatingToVersePickerScreen.current = true;
-      navigation.navigate(VersePickerRoute, {
-        verses: song.verses?.map(it => Verse.toObject(it)),
-        selectedVerses: [],
-        songId: song.id,
-        songName: song.name,
-        method: VersePickerMethod.AddToSongListAndShowSearch
-      });
-    };
-
     const onAddedToSongList = () => {
       storeSelectedSongInformation();
       if (!Settings.clearSearchAfterAddedToSongList) return;
@@ -183,9 +153,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem navigation={navigation}
                         song={item}
-                        onPress={onSearchResultItemPress}
-                        onLongPress={onSearchResultItemLongPress}
-                        onAddToSongListLongPress={selectVersesAndAddToSongList}
+                        beforeNavigating={storeSelectedSongInformation}
                         onAddedToSongList={onAddedToSongList}
                         showSongBundle={isTitleSimilarToOtherSongs(item, results)} />
     );
