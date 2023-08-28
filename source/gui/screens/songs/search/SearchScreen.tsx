@@ -71,10 +71,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onBlur = () => {
-      if (Settings.clearSearchAfterAddedToSongList) {
-        // Use timeout to fix the bug on iOS that onLongPress doesn't get dismissed if the touch component gets unmounted
-        setTimeout(() => clearScreen(), 500);
-      }
+      if (!Settings.clearSearchAfterAddedToSongList) return;
+      // Use timeout to fix the bug on iOS that onLongPress doesn't get dismissed if the touch component gets unmounted
+      // This is still needed, even after #162
+      setTimeout(() => clearScreen(), 500);
     };
 
     useEffect(() => {
