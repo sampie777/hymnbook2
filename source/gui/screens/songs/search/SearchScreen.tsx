@@ -27,6 +27,7 @@ import StringSearchButton from "./StringSearchButton";
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
   ({ navigation }) => {
+    const previousInputValueRef = useRef("");
     const [inputValue, setInputValue] = useState("");
     const [previousInputValue, setPreviousInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
@@ -65,7 +66,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const onFocus = () => {
       setStringSearchButtonPlacement(Settings.stringSearchButtonPlacement);
       if (!Settings.songSearchRememberPreviousEntry) {
-        setPreviousInputValue("");
+        previousInputValueRef.current = "";
       }
     };
 
@@ -76,11 +77,17 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
       }
     };
 
+    useEffect(() => {
+      // We set the previousInputValue through the ref, as setting the state directly from within
+      // storeSelectedSongInformation, iOS will perform the longPress-won't-dismiss bug.
+      setPreviousInputValue(previousInputValueRef.current);
+    }, [previousInputValueRef.current]);
+
     const storeSelectedSongInformation = () => {
       if (!Settings.songSearchRememberPreviousEntry) {
-        setPreviousInputValue("");
+        previousInputValueRef.current = "";
       } else if (inputValue) {
-        setPreviousInputValue(inputValue);
+        previousInputValueRef.current = inputValue;
       }
     };
 
@@ -109,7 +116,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
     const onClearKeyPress = () => {
       setInputValue("");
-      setPreviousInputValue("");
+      previousInputValueRef.current = "";
     };
 
     const fetchSearchResults = () => {
