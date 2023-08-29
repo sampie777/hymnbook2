@@ -1,5 +1,6 @@
 import { rollbar } from "./rollbar";
 import { JsonResponse, JsonResponseType } from "./server/models";
+import { sanitizeErrorForRollbar } from "./utils";
 
 export const HttpCode = {
   Ok: 200,
@@ -45,12 +46,12 @@ const responseStatusToText = (response: Response): string => {
 
 const obtainResponseContent = <T>(response: Response): Promise<string | T | null> => {
   const contentType = response.headers.get("content-type");
-  if (contentType?.startsWith("application/json")) return response.json().catch(e => {
-    rollbar.error("Could not convert response to json", e);
+  if (contentType?.startsWith("application/json")) return response.json().catch(error => {
+    rollbar.error("Could not convert response to json", sanitizeErrorForRollbar(error));
     return null;
   });
-  return response.text().catch(e => {
-    rollbar.error("Could not convert response to text", e);
+  return response.text().catch(error => {
+    rollbar.error("Could not convert response to text", sanitizeErrorForRollbar(error));
     return null;
   });
 };

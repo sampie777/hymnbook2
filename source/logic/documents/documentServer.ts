@@ -2,6 +2,7 @@ import { api } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse } from "../apiUtils";
 import { DocumentGroup as ServerDocumentGroup, DocumentGroup } from "../server/models/Documents";
+import { sanitizeErrorForRollbar } from "../utils";
 
 export namespace DocumentServer {
   export const fetchDocumentGroups = (includeOther: boolean = false): Promise<ServerDocumentGroup[]> => {
@@ -16,8 +17,7 @@ export namespace DocumentServer {
       })
       .catch(error => {
         rollbar.error(`Error fetching document groups`, {
-          error: error,
-          errorType: error.constructor.name,
+          ...sanitizeErrorForRollbar(error),
           includeOther: includeOther
         });
         throw error;
@@ -29,8 +29,7 @@ export namespace DocumentServer {
       .then(r => parseJscheduleResponse<ServerDocumentGroup>(r))
       .catch(error => {
         rollbar.error(`Error fetching documents for document group`, {
-          error: error,
-          errorType: error.constructor.name,
+          ...sanitizeErrorForRollbar(error),
           documentGroup: group
         });
         throw error;

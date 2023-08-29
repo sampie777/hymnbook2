@@ -2,6 +2,7 @@ import { api } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse } from "../apiUtils";
 import { SongBundle } from "./models/ServerSongsModel";
+import { sanitizeErrorForRollbar } from "../utils";
 
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<SongBundle[]> => {
@@ -16,8 +17,7 @@ export namespace Server {
       })
       .catch(error => {
         rollbar.error(`Error fetching song bundles`, {
-          error: error,
-          errorType: error.constructor.name,
+          ...sanitizeErrorForRollbar(error),
           includeOther: includeOther
         });
         throw error;
@@ -29,8 +29,7 @@ export namespace Server {
       .then(r => parseJscheduleResponse<SongBundle>(r))
       .catch(error => {
         rollbar.error(`Error fetching songs for song bundle`, {
-          error: error,
-          errorType: error.constructor.name,
+          ...sanitizeErrorForRollbar(error),
           songBundle: bundle
         });
         throw error;

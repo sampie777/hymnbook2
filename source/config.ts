@@ -14,8 +14,7 @@ const config = {
   homepage: "https://hymnbook.sajansen.nl#downloads",
 
   debugEmulators: [
-    "77975543a8268cd4", // local emulator API 30
-    "120835e8ccec39a3" // local emulator API 33
+    "341313168cc52a9b" // local emulator API 33
   ],
 
   featuresWaitForDatabaseMaxTries: 10,

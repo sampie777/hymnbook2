@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { rollbar } from "../../logic/rollbar";
 import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
+import { sanitizeErrorForRollbar } from "../../logic/utils";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -22,9 +23,9 @@ export const debounce = (callback: (...args: any) => void, period: number): (...
     if (timeout.current != undefined) {
       try {
         clearTimeout(timeout.current);
-      } catch (e: any) {
+      } catch (error) {
         rollbar.warning("[debounce] Failed to clear timeout", {
-          error: e,
+          ...sanitizeErrorForRollbar(error),
           period: period
         });
       }
@@ -36,16 +37,16 @@ export const debounce = (callback: (...args: any) => void, period: number): (...
 
         try {
           callback(...args);
-        } catch (e: any) {
+        } catch (error) {
           rollbar.error("[debounce] Failed to execute callback", {
-            error: e,
+            ...sanitizeErrorForRollbar(error),
             period: period
           });
         }
       }, period);
-    } catch (e: any) {
+    } catch (error) {
       rollbar.error("[debounce] Failed to set timeout", {
-        error: e,
+        ...sanitizeErrorForRollbar(error),
         period: period
       });
     }

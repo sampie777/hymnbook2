@@ -10,6 +10,7 @@ import { RectangularInset } from "../../../components/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
+import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 
 export const SearchResultItem: React.FC<{
   navigation: BottomTabNavigationProp<ParamList>,
@@ -47,9 +48,9 @@ export const SearchResultItem: React.FC<{
 
       try {
         SongList.addSong(song);
-      } catch (e: any) {
-        rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${e}`, e);
-        alert("Could not add song to songlist: " + e);
+      } catch (error) {
+        rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${error}`, sanitizeErrorForRollbar(error));
+        alert("Could not add song to songlist: " + error);
         return;
       }
 

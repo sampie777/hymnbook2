@@ -2,6 +2,7 @@ import { Document, DocumentGroup } from "../db/models/Documents";
 import Db from "../db/db";
 import { rollbar } from "../rollbar";
 import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
+import { sanitizeErrorForRollbar } from "../utils";
 
 export const getParentForDocumentGroup = (group: DocumentGroup): DocumentGroup | null => {
   if (group === undefined || group.isRoot) {
@@ -33,10 +34,9 @@ export const getPathForDocument = (document: Document): Array<Document | Documen
       path.push(parent);
     }
     path.reverse();
-  } catch (error: any) {
+  } catch (error) {
     rollbar.error(`Failed to get path for document`, {
-      error: error,
-      errorType: error.constructor.name,
+      ...sanitizeErrorForRollbar(error),
       document: document
     });
   }

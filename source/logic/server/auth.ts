@@ -4,7 +4,7 @@ import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
 import { HttpCode, HttpError, parseJscheduleResponse } from "../apiUtils";
-import { emptyPromise, emptyPromiseWithValue } from "../utils";
+import { emptyPromise, emptyPromiseWithValue, sanitizeErrorForRollbar } from "../utils";
 import config from "../../config";
 
 export class AccessRequestResponse {
@@ -118,7 +118,7 @@ export namespace ServerAuth {
         return "";
       })
       .catch(error => {
-        rollbar.error(`Error requesting access token.`, error);
+        rollbar.error(`Error requesting access token.`, sanitizeErrorForRollbar(error));
         if (error.toString().includes("Too many request")) {
           throw new HttpError(`You're trying to authenticate way too often. Take a break and try again later.`);
         }
@@ -162,7 +162,7 @@ export namespace ServerAuth {
         return Settings.authJwt;
       })
       .catch(error => {
-        rollbar.error(`Error retrieving access token.`, error);
+        rollbar.error(`Error retrieving access token.`, sanitizeErrorForRollbar(error));
         if (error.toString().includes("resource is gone")) {
           throw new HttpError(`You've already completed authentication. If not, go to Advanced Settings and reset authentication.`);
         }

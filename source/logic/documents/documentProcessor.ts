@@ -1,6 +1,6 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
-import { dateFrom, Result } from "../utils";
+import { dateFrom, Result, sanitizeErrorForRollbar } from "../utils";
 import { Document, DocumentGroup } from "../db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup, Document as ServerDocument } from "../server/models/Documents";
 import { DocumentGroupSchema, DocumentSchema } from "../db/models/DocumentsSchema";
@@ -42,12 +42,19 @@ export namespace DocumentProcessor {
       Db.documents.realm().write(() => {
         Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
       });
-    } catch (e: any) {
-      rollbar.error(`Failed to import documents: ${e}`, e);
-      return new Result({ success: false, message: `Failed to import documents: ${e}`, error: e as Error });
+    } catch (error) {
+      rollbar.error(`Failed to import documents: ${error}`, sanitizeErrorForRollbar(error));
+      return new Result({
+        success: false,
+        message: `Failed to import documents: ${error}`,
+        error: error as Error
+      });
     }
 
-    return new Result({ success: true, message: `${documentGroup.name} added!` });
+    return new Result({
+      success: true,
+      message: `${documentGroup.name} added!`
+    });
   };
 
   export const convertServerDocumentGroupToLocalDocumentGroup = (group: ServerDocumentGroup, conversionState: ConversionState, isRoot: boolean = false): DocumentGroup => {
@@ -137,9 +144,9 @@ export namespace DocumentProcessor {
       Db.documents.realm().write(() => {
         Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
       });
-    } catch (e: any) {
-      rollbar.error(`Failed to update documents: ${e}`, e);
-      return new Result({ success: false, message: `Failed to update documents: ${e}`, error: e as Error });
+    } catch (error) {
+      rollbar.error(`Failed to update documents: ${error}`, sanitizeErrorForRollbar(error));
+      return new Result({ success: false, message: `Failed to update documents: ${error}`, error: error as Error });
     }
 
     if (existingGroup.length > 0) {
@@ -172,9 +179,12 @@ export namespace DocumentProcessor {
 
     return Db.documents.connect()
       .then(_ => new Result({ success: true, message: "Deleted all documents" }))
-      .catch(e => {
-        rollbar.error("Could not connect to local document database after deletions: " + e?.toString(), e);
-        return new Result({ success: false, message: "Could not reconnect to local database after deletions: " + e });
+      .catch(error => {
+        rollbar.error("Could not connect to local document database after deletions: " + error?.toString(), sanitizeErrorForRollbar(error));
+        return new Result({
+          success: false,
+          message: "Could not reconnect to local database after deletions: " + error
+        });
       });
   };
 
@@ -271,8 +281,8 @@ export namespace DocumentProcessor {
           Db.documents.realm().write(() => {
             it.uuid = serverGroup.uuid;
           });
-        } catch (e: any) {
-          rollbar.error(`Failed to update document group ${it.name} with new UUID: ${e}`, e);
+        } catch (error) {
+          rollbar.error(`Failed to update document group ${it.name} with new UUID: ${error}`, sanitizeErrorForRollbar(error));
         }
       });
   };
