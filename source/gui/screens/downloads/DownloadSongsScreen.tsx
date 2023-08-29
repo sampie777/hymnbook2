@@ -86,9 +86,9 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
   const fetchSongBundles = () => {
     setIsLoading(true);
     Server.fetchSongBundles()
-      .then(result => {
+      .then(data => {
         if (!isMounted) return;
-        setServerBundles(result.data!);
+        setServerBundles(data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}\n\nTry again later.`))
       .finally(() => {
@@ -154,9 +154,9 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing }) => {
     setIsLoading(true);
 
     Server.fetchSongBundleWithSongsAndVerses(bundle)
-      .then(result => {
+      .then(data => {
         if (!isMounted) return;
-        saveSongBundle(result.data!);
+        saveSongBundle(data);
       })
       .catch(error =>
         Alert.alert("Error", `Error downloading ${bundle.name}: ${error}\n\nTry again later.`))
