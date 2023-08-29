@@ -2,6 +2,7 @@ import { Setting } from "../db/models/Settings";
 import Db from "../db/db";
 import { SettingSchema } from "../db/models/SettingsSchema";
 import { rollbar } from "../rollbar";
+import { sanitizeErrorForRollbar } from "../utils";
 
 class SettingsProvider {
   static set(key: string, value: string) {
@@ -109,10 +110,9 @@ export class SettingsBaseClass {
             rollbar.error("No matching set function found for storing type of key.", { key: key, type: typeof value });
         }
       });
-    } catch (error: any) {
+    } catch (error) {
       rollbar.error("Failed to store settings", {
-        error: error,
-        errorType: error.constructor.name,
+        ...sanitizeErrorForRollbar(error),
         settings: this
       });
     }

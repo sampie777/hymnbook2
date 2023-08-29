@@ -5,7 +5,7 @@ import { rollbar } from "../../../../logic/rollbar";
 import { InterruptedError } from "../../../../logic/InterruptedError";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce } from "../../../components/utils";
-import { isIOS } from "../../../../logic/utils";
+import { isIOS, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
@@ -110,12 +110,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       results = SongSearch.find(text, searchInTitles, searchInVerses,
         () => text != immediateSearchText.current || isSearchEmpty(immediateSearchText.current)
       );
-    } catch (e: any) {
-      if (e instanceof InterruptedError) return;
+    } catch (error) {
+      if (error instanceof InterruptedError) return;
 
       rollbar.error("Failed to fetch search results from song database", {
-        error: e,
-        errorName: e.name,
+        ...sanitizeErrorForRollbar(error),
         searchText: text,
         immediateSearchText: immediateSearchText.current,
         searchInTitles: searchInTitles,
@@ -143,11 +142,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     // Validate regex syntax
     try {
       RegExp(searchRegex);
-    } catch (e: any) {
+    } catch (error) {
       // Invalid regex
       rollbar.warning("Failed to create safe regex for song search", {
-        error: e,
-        errorName: e.name,
+        ...sanitizeErrorForRollbar(error),
         searchText: searchText,
         immediateSearchText: immediateSearchText.current,
         searchRegex: searchRegex

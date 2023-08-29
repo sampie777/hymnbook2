@@ -25,7 +25,7 @@ import {
   getDefaultMelody,
   loadSongWithId
 } from "../../../../logic/songs/utils";
-import { isIOS, keepScreenAwake } from "../../../../logic/utils";
+import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -326,9 +326,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         index: scrollIndex || 0,
         animated: Settings.animateScrolling
       });
-    } catch (e: any) {
-      rollbar.warning(`Failed to scroll to index: ${e}`, {
-        error: e,
+    } catch (error) {
+      rollbar.warning(`Failed to scroll to index: ${error}`, {
+        ...sanitizeErrorForRollbar(error),
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
