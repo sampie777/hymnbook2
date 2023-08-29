@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
-import { ParamList } from "../../../../navigation";
-import { Song } from "../../../../logic/db/models/Songs";
+import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
+import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -14,18 +14,14 @@ import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpa
 export const SearchResultItem: React.FC<{
   navigation: BottomTabNavigationProp<ParamList>,
   song: Song,
-  onPress: (song: Song) => void,
-  onLongPress?: (song: Song) => void,
-  onAddToSongListLongPress?: (song: Song) => void,
+  beforeNavigating?: () => void,
   onAddedToSongList?: () => void,
   showSongBundle?: boolean,
 }> =
   ({
      navigation,
      song,
-     onPress,
-     onLongPress,
-     onAddToSongListLongPress,
+     beforeNavigating,
      onAddedToSongList,
      showSongBundle
    }) => {
@@ -65,9 +61,36 @@ export const SearchResultItem: React.FC<{
       }
     };
 
-    return <OffscreenTouchableOpacity onPress={() => onPress(song)}
-                             onLongPress={() => onLongPress?.(song)}
-                             style={styles.container}>
+    const navigateToSong = () => {
+      beforeNavigating?.();
+      navigation.navigate(SongRoute, { id: song.id });
+    };
+
+    const navigateToVersePicker = () => {
+      beforeNavigating?.();
+      navigation.navigate(VersePickerRoute, {
+        verses: song.verses?.map(it => Verse.toObject(it)),
+        selectedVerses: [],
+        songId: song.id,
+        songName: song.name,
+        method: VersePickerMethod.ShowSong
+      });
+    };
+
+    const navigateToVersePickerForSongList = () => {
+      beforeNavigating?.();
+      navigation.navigate(VersePickerRoute, {
+        verses: song.verses?.map(it => Verse.toObject(it)),
+        selectedVerses: [],
+        songId: song.id,
+        songName: song.name,
+        method: VersePickerMethod.AddToSongListAndShowSearch
+      });
+    };
+
+    return <OffscreenTouchableOpacity onPress={navigateToSong}
+                                      onLongPress={navigateToVersePicker}
+                                      style={styles.container}>
       <View style={styles.infoContainer}>
         <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
 
@@ -79,7 +102,7 @@ export const SearchResultItem: React.FC<{
       </View>
 
       <TouchableOpacity onPress={addSongToSongList}
-                        onLongPress={() => onAddToSongListLongPress?.(song)}
+                        onLongPress={navigateToVersePickerForSongList}
                         style={styles.button}
                         hitSlop={RectangularInset(styles.infoContainer.paddingVertical)}>
         <Icon name={songAddedToSongList ? "check" : "plus"}

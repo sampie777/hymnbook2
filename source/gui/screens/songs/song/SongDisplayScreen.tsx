@@ -4,7 +4,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   FlatList,
   GestureEvent,
-  GestureHandlerRootView,
   PinchGestureHandler, PinchGestureHandlerEventPayload,
   State
 } from "react-native-gesture-handler";
@@ -99,6 +98,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   useEffect(() => {
     verseHeights.current = {};
+
+    // If song is undefined, we're probably leaving this screen,
+    // so we can ignore state and animation updates.
+    if (song === undefined) return;
 
     if (Settings.songFadeIn) {
       animateSongFadeIn();
@@ -387,7 +390,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
-  return <GestureHandlerRootView style={{ flex: 1 }}>
+  return <View style={{ flex: 1 }}>
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
         isMelodyShown={showMelody}
@@ -451,7 +454,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>
-  </GestureHandlerRootView>;
+  </View>;
 };
 
 export default SongDisplayScreen;
