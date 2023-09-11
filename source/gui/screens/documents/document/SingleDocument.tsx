@@ -90,7 +90,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
     fadeInFallbackTimeout.current = setTimeout(() => {
       rollbar.warning("Document loading timed out", {
-        documentId: document?.id ?? "null",
+        document: { ...document, _parent: null } ?? "null",
         SettingsSongFadeIn: Settings.songFadeIn
       });
       onHtmlViewLoaded();
