@@ -111,7 +111,11 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     try {
       addedSongListSongModel = SongList.addSong(song);
     } catch (error) {
-      rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${error}`, sanitizeErrorForRollbar(error));
+      rollbar.error(`Failed to add song to songlist`, {
+        ...sanitizeErrorForRollbar(error),
+        song: song,
+        callFrom: "VersePicker"
+      });
       alert("Could not add song to songlist: " + error);
       return;
     }

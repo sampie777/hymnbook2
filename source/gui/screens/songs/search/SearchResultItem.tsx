@@ -49,7 +49,11 @@ export const SearchResultItem: React.FC<{
       try {
         SongList.addSong(song);
       } catch (error) {
-        rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${error}`, sanitizeErrorForRollbar(error));
+        rollbar.error(`Failed to add song to songlist`, {
+          ...sanitizeErrorForRollbar(error),
+          song: song,
+          callFrom: "SearchResultItem"
+        });
         alert("Could not add song to songlist: " + error);
         return;
       }
