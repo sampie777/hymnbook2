@@ -5,7 +5,7 @@ import { CollectionChangeCallback } from "realm";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
-import { runAsync } from "../../../../logic/utils";
+import { runAsync, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
@@ -97,8 +97,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
         .filtered(`isRoot = true`);
       setRootGroups(Array.from(groups));
-    } catch (e: any) {
-      rollbar.error("Failed to load document root groups from database: " + e, e);
+    } catch (error) {
+      rollbar.error("Failed to load document root groups from database: " + error, sanitizeErrorForRollbar(error));
     }
     setIsLoading(false);
   };

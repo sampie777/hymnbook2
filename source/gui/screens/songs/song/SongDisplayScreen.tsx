@@ -4,7 +4,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   FlatList,
   GestureEvent,
-  GestureHandlerRootView,
   PinchGestureHandler, PinchGestureHandlerEventPayload,
   State
 } from "react-native-gesture-handler";
@@ -26,7 +25,7 @@ import {
   getDefaultMelody,
   loadSongWithId
 } from "../../../../logic/songs/utils";
-import { isIOS, keepScreenAwake } from "../../../../logic/utils";
+import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -99,6 +98,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   useEffect(() => {
     verseHeights.current = {};
+
+    // If song is undefined, we're probably leaving this screen,
+    // so we can ignore state and animation updates.
+    if (song === undefined) return;
 
     if (Settings.songFadeIn) {
       animateSongFadeIn();
@@ -323,9 +326,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         index: scrollIndex || 0,
         animated: Settings.animateScrolling
       });
-    } catch (e: any) {
-      rollbar.warning(`Failed to scroll to index: ${e}`, {
-        error: e,
+    } catch (error) {
+      rollbar.warning(`Failed to scroll to index: ${error}`, {
+        ...sanitizeErrorForRollbar(error),
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
@@ -387,7 +390,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
-  return <GestureHandlerRootView style={{ flex: 1 }}>
+  return <View style={{ flex: 1 }}>
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
         isMelodyShown={showMelody}
@@ -451,7 +454,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>
-  </GestureHandlerRootView>;
+  </View>;
 };
 
 export default SongDisplayScreen;

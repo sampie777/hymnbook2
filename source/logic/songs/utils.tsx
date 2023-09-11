@@ -3,7 +3,7 @@ import config from "../../config";
 import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
-import { languageAbbreviationToFullName } from "../utils";
+import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
 import { AbcMelody } from "../db/models/AbcMelodies";
 
 export enum VerseType {
@@ -188,8 +188,8 @@ export const hasMelodyToShow = (song?: Song) => {
     if (!song.verses.some(it => it.abcLyrics)) {
       return false;
     }
-  } catch (e: any) {
-    rollbar.error(`Failed to determine if song (${song.name}) has displayable melody: ${e}`, e);
+  } catch (error) {
+    rollbar.error(`Failed to determine if song (${song.name}) has displayable melody: ${error}`, sanitizeErrorForRollbar(error));
     return false;
   }
   return true;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Features } from "../../logic/features";
 import { rollbar } from "../../logic/rollbar";
+import { sanitizeErrorForRollbar } from "../../logic/utils";
 
 export const FeaturesContext = React.createContext<Features.Props>({
   loaded: false,
@@ -23,10 +24,9 @@ const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children })
           setGoldenEgg(features.goldenEgg);
         })
         .catch(() => null);
-    } catch (e: any) {
+    } catch (error) {
       rollbar.error("Failed to initiate features fetching", {
-        error: e,
-        errorName: e.name
+        ...sanitizeErrorForRollbar(error),
       });
     }
   };

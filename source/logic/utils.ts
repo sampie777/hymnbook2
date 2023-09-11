@@ -80,9 +80,9 @@ export function openLink(url?: string): Promise<any> {
   return Linking.openURL(url)
     .catch(error => {
       if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Your device can't open these type of URLs.")) {
-        rollbar.info("Failed to open URL", { error: error, url: url });
+        rollbar.info("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
       } else {
-        rollbar.warning("Failed to open URL", { error: error, url: url });
+        rollbar.warning("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
       }
 
       Clipboard.setString(url);
@@ -128,8 +128,8 @@ export const languageAbbreviationToFullName = (abbreviation: string) => {
 
 export const runAsync = (f: () => any) => setTimeout(f, 0);
 
-export const emptyPromise = (): Promise<null> => new Promise((resolve => resolve(null)));
-export const emptyPromiseWithValue = <T>(value: T): Promise<T> => new Promise((resolve => resolve(value)));
+export const emptyPromise = (): Promise<null> => Promise.resolve(null);
+export const emptyPromiseWithValue = <T>(value: T): Promise<T> => Promise.resolve(value);
 
 export const shareApp = () => {
   return Share.share({
@@ -137,5 +137,36 @@ export const shareApp = () => {
 ${config.homepage}`
   })
     .then(r => rollbar.debug("App shared.", r))
-    .catch(e => rollbar.warning("Failed to share app", { error: e }));
+    .catch(error => rollbar.warning("Failed to share app", sanitizeErrorForRollbar(error)));
+};
+
+export const sanitizeErrorForRollbar = <T>(error: T): {
+  error: {
+    original: T,
+    json: string,
+    name?: string | null,
+    type?: string | null,
+    message?: string | null,
+    stack?: string | null
+  }
+} => {
+  if (!(error instanceof Error)) {
+    return {
+      error: {
+        original: error,
+        json: JSON.stringify(error)
+      }
+    };
+  }
+
+  return {
+    error: {
+      original: error,
+      name: error.name,
+      type: error.constructor.name,
+      message: error.message,
+      stack: error.stack,
+      json: JSON.stringify(error)
+    }
+  };
 };

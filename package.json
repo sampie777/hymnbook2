@@ -1,6 +1,6 @@
 {
   "name": "hymnbook2",
-  "version": "1.9.0-SNAPSHOT",
+  "version": "1.8.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -22,7 +22,7 @@
     "abcjs": "git+https://github.com/paulrosen/abcjs.git#6.2.2",
     "htmlparser2": "9.0.0",
     "react": "18.2.0",
-    "react-native": "0.70.9",
+    "react-native": "0.70.13",
     "react-native-config": "1.4.11",
     "react-native-device-info": "9.0.2",
     "react-native-gesture-handler": "2.10.0",

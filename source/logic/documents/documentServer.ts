@@ -1,32 +1,23 @@
-import { rollbar } from "../rollbar";
 import { api } from "../api";
-import { throwErrorsIfNotOk } from "../apiUtils";
-import { Result } from "../utils";
-import { JsonResponse, JsonResponseType } from "../server/models";
+import { rollbar } from "../rollbar";
+import { parseJscheduleResponse } from "../apiUtils";
 import { DocumentGroup as ServerDocumentGroup, DocumentGroup } from "../server/models/Documents";
-import { BackendError } from "../server/server";
+import { sanitizeErrorForRollbar } from "../utils";
 
 export namespace DocumentServer {
-  export const fetchDocumentGroups = (includeOther: boolean = false): Promise<Result<Array<ServerDocumentGroup>>> => {
+  export const fetchDocumentGroups = (includeOther: boolean = false): Promise<ServerDocumentGroup[]> => {
     return api.documents.groups.root()
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((data: JsonResponse<DocumentGroup[]>) => {
-        if (data.type === JsonResponseType.ERROR) {
-          throw new BackendError("Server response is of error type", data);
-        }
-
-        let groups = data.content;
+      .then(r => parseJscheduleResponse<ServerDocumentGroup[]>(r))
+      .then(groups => {
         if (!includeOther) {
           groups = groups.filter(it => it.name !== "Other");
         }
 
-        return new Result({ success: true, data: groups });
+        return groups;
       })
-      .catch((error: Error) => {
+      .catch(error => {
         rollbar.error(`Error fetching document groups`, {
-          error: error,
-          errorType: error.constructor.name,
+          ...sanitizeErrorForRollbar(error),
           includeOther: includeOther
         });
         throw error;
@@ -37,21 +28,12 @@ export namespace DocumentServer {
     loadGroups = false,
     loadItems = false,
     loadContent = false
-  }): Promise<Result<ServerDocumentGroup>> => {
+  }): Promise<ServerDocumentGroup> => {
     return api.documents.groups.get(group.uuid, loadGroups, loadItems, loadContent)
-      .then(throwErrorsIfNotOk)
-      .then(response => response.json())
-      .then((data: JsonResponse<DocumentGroup>) => {
-        if (data.type === JsonResponseType.ERROR) {
-          throw new BackendError("Server response is of error type", data);
-        }
-
-        return new Result({ success: true, data: data.content });
-      })
+      .then(r => parseJscheduleResponse<ServerDocumentGroup>(r))
       .catch(error => {
         rollbar.error(`Error fetching document group`, {
-          error: error,
-          errorType: error.constructor.name,
+          ...sanitizeErrorForRollbar(error),
           documentGroup: group,
           loadGroups: loadGroups,
           loadItems: loadItems,
@@ -61,7 +43,7 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<Result<ServerDocumentGroup>> =>
+  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<ServerDocumentGroup> =>
     fetchDocumentGroup(group, {
       loadGroups: true,
       loadItems: true,

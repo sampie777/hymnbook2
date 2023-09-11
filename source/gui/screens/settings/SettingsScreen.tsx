@@ -76,7 +76,10 @@ const SettingsScreen: React.FC = () => {
     setEasterEggEnableDevModeCount(easterEggEnableDevModeCount + 1);
     if (easterEggEnableDevModeCount >= 9) {
       setShowDevSettings(true);
-      rollbar.info("Someone switched on developer mode: " + ServerAuth.getDeviceId());
+      rollbar.info("Someone switched on developer mode", {
+        deviceId: ServerAuth.getDeviceId(),
+        appOpenedTimes: Settings.appOpenedTimes
+      });
       if (isAndroid) {
         ToastAndroid.show("You're now a developer!", ToastAndroid.LONG);
       }
@@ -190,8 +193,12 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"highlightSelectedVerses"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Remember previous song"}
-                                  description={"Show the previous song number in the search screen."}
+                                  description={"Show the previous viewed song number in the search screen."}
                                   keyName={"songSearchRememberPreviousEntry"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Clear search after adding/viewing a song"}
+                                  description={"Don't keep the previous search in the search screen."}
+                                  keyName={"clearSearchAfterAddedToSongList"}
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Animate scrolling"}
                                   description={"Disable this if scrolling isn't performing smooth."}
@@ -224,11 +231,6 @@ const SettingsScreen: React.FC = () => {
           <SettingSwitchComponent title={"Long press for menu"}
                                   description={"Long press the melody button will show the menu, instead of instant toggling the melody."}
                                   keyName={"longPressForMelodyMenu"}
-                                  isVisible={showAdvancedSettings} />
-
-          <Header title={"Song list"} isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Clear search after adding song to song list"}
-                                  keyName={"clearSearchAfterAddedToSongList"}
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"} />
