@@ -1,0 +1,27 @@
+diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
+index 953d3f3..65c1560 100644
+--- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
++++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
+@@ -31,10 +31,18 @@ class RNGestureHandlerRootView(context: Context?) : ReactViewGroup(context) {
+     rootHelper?.tearDown()
+   }
+ 
+-  override fun dispatchTouchEvent(ev: MotionEvent) =
+-    if (_enabled && rootHelper!!.dispatchTouchEvent(ev)) {
+-      true
+-    } else super.dispatchTouchEvent(ev)
++  override fun dispatchTouchEvent(ev: MotionEvent) {
++    try {
++      if (_enabled && rootHelper!!.dispatchTouchEvent(ev)) {
++        return true
++      } else if (super.dispatchTouchEvent(ev)) {
++        return true
++      }
++    } catch (IllegalArgumentException e) {
++      e.printStackTrace()
++    }
++    return false
++  }
+ 
+   override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+     if (_enabled) {
