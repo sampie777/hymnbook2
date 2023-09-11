@@ -1,7 +1,7 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import config from "../../config";
-import { dateFrom, Result } from "../utils";
+import { dateFrom, Result, sanitizeErrorForRollbar } from "../utils";
 import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../db/models/Songs";
 import {
   SongBundle as ServerSongBundle,
@@ -61,13 +61,13 @@ export namespace SongProcessor {
       Db.songs.realm().write(() => {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
       });
-    } catch (e: any) {
-      rollbar.error(`Failed to import songs: ${e}`, {
-        error: e,
+    } catch (error) {
+      rollbar.error(`Failed to import songs: ${error}`, {
+        ...sanitizeErrorForRollbar(error),
         serverBundle: { ...bundle, songs: null },
         newBundle: { ...songBundle, songs: null }
       });
-      return new Result({ success: false, message: `Failed to import songs: ${e}`, error: e as Error });
+      return new Result({ success: false, message: `Failed to import songs: ${error}`, error: error as Error });
     }
 
     return new Result({ success: true, message: `${bundle.name} added!` });
@@ -75,7 +75,7 @@ export namespace SongProcessor {
 
   export const fetchAndUpdateSongBundle = (bundle: ServerSongBundle): Promise<Result> => {
     return Server.fetchSongBundleWithSongsAndVerses(bundle)
-      .then((result: Result) => updateAndSaveSongBundle(result.data));
+      .then(updateAndSaveSongBundle);
   };
 
   const updateAndSaveSongBundle = (bundle: ServerSongBundle): Result => {
@@ -114,21 +114,25 @@ export namespace SongProcessor {
       Db.songs.realm().write(() => {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
       });
-    } catch (e: any) {
+    } catch (error) {
       rollbar.error(`Failed to save new song bundle`, {
-        error: e,
+        ...sanitizeErrorForRollbar(error),
         serverBundle: { ...bundle, songs: null },
         newBundle: { ...songBundle, songs: null }
       });
-      return new Result({ success: false, message: `Failed to update songs: ${e}`, error: e as Error });
+      return new Result({
+        success: false,
+        message: `Failed to update songs: ${error}`,
+        error: error as Error
+      });
     }
 
     if (existingBundle.length > 0) {
       try {
         copyUserSettingsToExistingSongBundles(songBundle);
-      } catch (e: any) {
+      } catch (error) {
         rollbar.error(`Failed to copy user settings to new song bundle`, {
-          error: e,
+          ...sanitizeErrorForRollbar(error),
           bundle: { ...songBundle, songs: null }
         });
       }
@@ -263,9 +267,9 @@ export namespace SongProcessor {
             getSubMelodiesFromVerses(song.verses || [], newSong.verses, melody),
             melodyId++
           ));
-      } catch (e: any) {
-        rollbar.error(`Failed to convert abc melodies to local objects: ${e}`, {
-          error: e,
+      } catch (error) {
+        rollbar.error(`Failed to convert abc melodies to local objects: ${error}`, {
+          ...sanitizeErrorForRollbar(error),
           song: song,
           melodies: song.abcMelodies
         });
@@ -297,11 +301,14 @@ export namespace SongProcessor {
 
     return Db.songs.connect()
       .then(_ => new Result({ success: true, message: "Deleted all songs" }))
-      .catch(e => {
-        rollbar.error("Could not connect to local song database after deletions: " + e?.toString(), {
-          error: e
+      .catch(error => {
+        rollbar.error("Could not connect to local song database after deletions: " + error?.toString(), {
+          ...sanitizeErrorForRollbar(error)
         });
-        return new Result({ success: false, message: "Could not reconnect to local database after deletions: " + e });
+        return new Result({
+          success: false,
+          message: "Could not reconnect to local database after deletions: " + error
+        });
       });
   };
 
@@ -321,9 +328,9 @@ export namespace SongProcessor {
         Db.songs.realm().delete(bundle.songs);
         Db.songs.realm().delete(bundle);
       });
-    } catch (e: any) {
+    } catch (error) {
       rollbar.error("Failed to delete song bundle", {
-        error: e,
+        ...sanitizeErrorForRollbar(error),
         bundle: { ...bundle, songs: null }
       });
       return new Result({ success: false, message: `Could not delete (outdated) songs for ${bundleName}` });
@@ -398,9 +405,9 @@ export namespace SongProcessor {
           Db.songs.realm().write(() => {
             it.uuid = serverBundle.uuid;
           });
-        } catch (e: any) {
-          rollbar.error(`Failed to update songbundle ${it.name} with new UUID: ${e}`, {
-            error: e,
+        } catch (error) {
+          rollbar.error(`Failed to update songbundle ${it.name} with new UUID: ${error}`, {
+            ...sanitizeErrorForRollbar(error),
             localBundle: { ...it, songs: null },
             serverBundle: { ...serverBundle, songs: null }
           });

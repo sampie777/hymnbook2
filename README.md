@@ -93,14 +93,20 @@ Output APK's will be in `android/app/build/outputs/apk/release`.
 
 #### Production build
 
-Apps should be signed for Google Play. 
-Create keystore in `<projectroot>/android/app/`.
+Apps should be signed for Google Play. See also the [React docs](https://reactnative.dev/docs/signed-apk-android?package-manager=yarn).
+
+Create keystore in `<projectroot>/android/app/`:
 ```bash
-keytool -genkey -v -storetype PKCS12 -keystore hymnbook.keystore -alias hymnbook -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -storetype PKCS12 -keystore hymnbookUploadKey.keystore -alias hymnbookUploadKey -keyalg RSA -keysize 2048 -validity 10000
 ```
 
-Make sure keystore is correctly defined in:
-`~/gradle/gradle.properties`.
+Make sure keystore is correctly defined in `~/gradle/gradle.properties`:
+```
+HYMNBOOK_UPLOAD_STORE_FILE=hymnbookUploadKey.keystore
+HYMNBOOK_UPLOAD_KEY_ALIAS=hymnbookUploadKey
+HYMNBOOK_UPLOAD_STORE_PASSWORD=<password>
+HYMNBOOK_UPLOAD_KEY_PASSWORD=<password>
+```
 
 ### IOS
 

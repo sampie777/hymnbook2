@@ -8,7 +8,7 @@ import {
   VoiceItem,
   VoiceItemNote
 } from "./abcjsTypes";
-import { validate } from "../../utils";
+import { sanitizeErrorForRollbar, validate } from "../../utils";
 import { Verse } from "../../db/models/Songs";
 import { AbcMelody, AbcSubMelody } from "../../db/models/AbcMelodies";
 import { rollbar } from "../../rollbar";
@@ -269,8 +269,8 @@ export namespace ABC {
       validate(object[0].lines[0].staff!![0].voices != null, "Voices may not be null");
       validate(object[0].lines[0].staff!![0].voices!!.length > 0, "Voices may not be empty");
       validate(object[0].lines[0].staff!![0].voices!!.some(it => it.length > 0), "Voices are all empty");
-    } catch (e) {
-      rollbar.warning("ABC tune doesn't validate", { error: e, abc: abc });
+    } catch (error) {
+      rollbar.warning("ABC tune doesn't validate", { ...sanitizeErrorForRollbar(error), abc: abc });
       return undefined;
     }
 

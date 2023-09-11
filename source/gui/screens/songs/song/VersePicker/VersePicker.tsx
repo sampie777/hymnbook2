@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
+import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VersePickerRoute> {
 }
@@ -109,9 +110,9 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     let addedSongListSongModel;
     try {
       addedSongListSongModel = SongList.addSong(song);
-    } catch (e: any) {
-      rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${e}`, e);
-      alert("Could not add song to songlist: " + e);
+    } catch (error) {
+      rollbar.error(`Failed to add song ([${song.id}] ${song.name}) to songlist: ${error}`, sanitizeErrorForRollbar(error));
+      alert("Could not add song to songlist: " + error);
       return;
     }
     if (addedSongListSongModel === undefined) {
@@ -173,6 +174,6 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     justifyContent: "flex-start",
     alignItems: "center",
     flexWrap: "wrap",
-    paddingTop: 10,
+    paddingTop: 10
   }
 });

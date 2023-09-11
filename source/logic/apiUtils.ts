@@ -1,12 +1,19 @@
 import { rollbar } from "./rollbar";
+import { JsonResponse, JsonResponseType } from "./server/models";
+import { sanitizeErrorForRollbar } from "./utils";
 
 export const HttpCode = {
-  OK: 200,
+  Ok: 200,
   Created: 201,
-  NotFound: 404,
+  NoContent: 204,
+  BadRequest: 400,
   Unauthorized: 401,
   Forbidden: 403,
+  NotFound: 404,
   Gone: 410,
+  Im_a_teapot: 418,
+  PageExpired: 419,
+  UnprocessableContent: 422,
   FailedDependency: 424,
   TooManyRequests: 429,
   InternalServerError: 500
@@ -22,31 +29,103 @@ export class HttpError extends Error {
   }
 }
 
-export const throwErrorsIfNotOk = (response: Response) => {
-  if (response.ok) {
-    return response;
+export class BackendError extends HttpError {
+  name = "BackendError";
+
+  constructor(message?: string, response?: Response) {
+    super(message, response);
   }
+}
+
+const responseStatusToText = (response: Response): string => {
+  if (response.statusText && response.statusText.length > 0) return response.statusText;
+  const httpCodePair = Object.entries(HttpCode).find(([key, value]) => value === response.status);
+  if (httpCodePair) return httpCodePair[0];
+  return "";
+};
+
+const obtainResponseContent = <T>(response: Response): Promise<string | T | null> => {
+  const contentType = response.headers.get("content-type");
+  if (contentType?.startsWith("application/json")) return response.json().catch(error => {
+    rollbar.error("Could not convert response to json", sanitizeErrorForRollbar(error));
+    return null;
+  });
+  return response.text().catch(error => {
+    rollbar.error("Could not convert response to text", sanitizeErrorForRollbar(error));
+    return null;
+  });
+};
+
+const getErrorForResponse = (response: Response, data?: any, customErrorMessage?: string): Error => {
+  let serverResponseAsText = customErrorMessage ?? "";
+  serverResponseAsText += ` (${response.status} ${responseStatusToText(response)})`;
+  serverResponseAsText = serverResponseAsText.trim();
 
   rollbar.error(`API request failed`, {
     url: response.url,
     status: response.status,
     statusText: response.statusText,
-    response: response
+    response: response,
+    content: data,
+    serverResponseAsText: serverResponseAsText
   });
+
+  const ErrorClass = data && data.type && data.type === JsonResponseType.ERROR ? BackendError : HttpError;
+
   switch (response.status) {
     case HttpCode.NotFound:
-      throw new HttpError(`Could not find the requested data: (${response.status}) ${response.statusText}`, response);
+      return new ErrorClass(`Could not find the requested data. ${serverResponseAsText}`, response);
     case HttpCode.Unauthorized:
-      throw new HttpError(`Could not retrieve the requested data: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`, response);
+      return new ErrorClass(`Could not retrieve the requested data. ${serverResponseAsText}.\n\nGo to (advanced) settings and try to reset your authentication.`, response);
     case HttpCode.Forbidden:
-      throw new HttpError(`Could not retrieve the requested data: (${response.status}) Not authorized. \n\nGo to (advanced) settings and try to reset your authentication.`, response);
+      return new ErrorClass(`Could not retrieve the requested data. ${serverResponseAsText}.\n\nGo to (advanced) settings and try to reset your authentication.`, response);
     case HttpCode.Gone:
-      throw new HttpError(`Server says resource is gone (${response.status}).\n\nTry again later.`, response);
+      return new ErrorClass(`Server says resource is gone (${response.status}).\n\nTry again later.`, response);
     case HttpCode.TooManyRequests:
-      throw new HttpError(`Too many request (${response.status}).\n\nTake a break and try again later.`, response);
+      return new ErrorClass(`Too many request (${response.status}).\n\nTake a break and try again later.`, response);
     case HttpCode.InternalServerError:
-      throw new HttpError(`Could not connect to server: (${response.status}) Internal server error`, response);
+      return new ErrorClass(`Could not connect to server. ${serverResponseAsText}`, response);
     default:
-      throw new HttpError(`Request failed: (${response.status}) ${response.statusText}`, response);
+      return new ErrorClass(`Request failed. ${serverResponseAsText}`, response);
   }
 };
+
+export const parseJscheduleResponse = <T>(response: Response): Promise<T> =>
+  obtainResponseContent<JsonResponse<T>>(response)
+    .then(data => {
+      if (response.ok && typeof data === "object" && data !== null && data.type == JsonResponseType.SUCCESS)
+        return data.content;
+
+      // Else throw error based on status code and include response
+
+      let serverResponseAsText = "";
+      if (data !== null && typeof data === "object") {
+        if (typeof data.content === "string") {
+          serverResponseAsText = data.content;
+        } else {
+          serverResponseAsText = JSON.stringify(data.content);
+        }
+      } else if (data !== null) {
+        serverResponseAsText = data;
+      }
+
+      throw getErrorForResponse(response, data, serverResponseAsText);
+    });
+
+export const parseHymnbookResponse = <T>(response: Response): Promise<T> =>
+  obtainResponseContent<T>(response)
+    .then(data => {
+      if (response.ok && data !== null)
+        return data as T;
+
+      // Else throw error based on status code and include response
+
+      let serverResponseAsText = "";
+      if (data !== null && typeof data === "string") {
+        serverResponseAsText = data;
+      } else if (data !== null) {
+        serverResponseAsText = JSON.stringify(data);
+      }
+
+      throw getErrorForResponse(response, data, serverResponseAsText);
+    });
