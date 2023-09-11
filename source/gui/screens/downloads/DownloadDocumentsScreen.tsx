@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { rollbar } from "../../../logic/rollbar";
 import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
@@ -77,20 +76,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
     setIsGroupLoading(true);
     DocumentServer.fetchDocumentGroup({ uuid: promptForUuid }, {})
-      .then(result => {
+      .then(data => {
         if (!isMounted) return;
-        if (result.data == null) {
-          rollbar.warning("Fetch specific document group returned no result data", {
-            result: result,
-            uuid: promptForUuid
-          });
-          throw new Error("No valid data received from the server.");
-        }
 
         if (localGroups.find(it => it.uuid === promptForUuid)) return;
 
-        setFilterLanguage(result.data.language);
-        setRequestDownloadForGroup(result.data);
+        setFilterLanguage(data.language);
+        setRequestDownloadForGroup(data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch document group.\n${error}\n\nTry again later.`))
       .finally(() => {
