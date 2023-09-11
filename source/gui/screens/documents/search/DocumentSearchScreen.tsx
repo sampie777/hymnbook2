@@ -191,7 +191,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       {groupsWithSearchResult()
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(it => <DocumentGroupItem
-          key={it.uuid}
+          key={it.id}
           group={it}
           searchText={searchText}
           onPress={onGroupPress} />)
@@ -200,7 +200,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       {items().map(it => it as Document)
         .sort((a, b) => a.name.localeCompare(b.name))
         .sort((a, b) => a.index - b.index)
-        .map(it => <DocumentItem key={it.uuid}
+        .map(it => <DocumentItem key={it.id}
                                  document={it}
                                  searchText={searchText}
                                  onPress={onDocumentPress} />)}
