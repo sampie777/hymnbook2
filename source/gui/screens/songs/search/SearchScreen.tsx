@@ -214,7 +214,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
           <FlatList
             data={results}
             renderItem={renderSearchResultItem}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.uuid}
             contentContainerStyle={styles.searchList} />
 
           {isStringSearchButtonsPositionTop()
