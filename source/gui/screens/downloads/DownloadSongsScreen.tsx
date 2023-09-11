@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { rollbar } from "../../../logic/rollbar";
 import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
@@ -73,20 +72,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
     setIsBundleLoading(true);
     Server.fetchSongBundle({ uuid: promptForUuid }, {})
-      .then(result => {
+      .then(data => {
         if (!isMounted) return;
-        if (result.data == null) {
-          rollbar.warning("Fetch specific song bundle returned no result data", {
-            result: result,
-            uuid: promptForUuid
-          });
-          throw new Error("No valid data received from the server.");
-        }
 
         if (localBundles.find(it => it.uuid === promptForUuid)) return;
 
-        setFilterLanguage(result.data.language);
-        setRequestDownloadForBundle(result.data);
+        setFilterLanguage(data.language);
+        setRequestDownloadForBundle(data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch the song bundle.\n${error}\n\nTry again later.`))
       .finally(() => {
