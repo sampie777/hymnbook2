@@ -57,6 +57,7 @@
 		2E8FA03AE3564085A441803C /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		338F9816F01A41E5A06F26EB /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		3543CF851DFC4B3CA641F621 /* libPods-hymnbook2-hymnbook2Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-hymnbook2-hymnbook2Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		362922ED2AAF2C070043A988 /* hymnbook2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = hymnbook2.entitlements; path = hymnbook2/hymnbook2.entitlements; sourceTree = "<group>"; };
 		385F373DC4EA4064F010E301 /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; sourceTree = "<group>"; };
 		3CBBCEB84E53429F336E8612 /* Pods-hymnbook2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2/Pods-hymnbook2.release.xcconfig"; sourceTree = "<group>"; };
 		570FF69E743A432C9B839431 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -127,6 +128,7 @@
 		13B07FAE1A68108700A75B9A /* hymnbook2 */ = {
 			isa = PBXGroup;
 			children = (
+				362922ED2AAF2C070043A988 /* hymnbook2.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -287,15 +289,6 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = H74WKN7BSC;
 						LastSwiftMigration = 1120;
-					};
-					2D02E47A1E0B4A5D006451C7 = {
-						CreatedOnToolsVersion = 8.2.1;
-						ProvisioningStyle = Automatic;
-					};
-					2D02E48F1E0B4A5D006451C7 = {
-						CreatedOnToolsVersion = 8.2.1;
-						ProvisioningStyle = Automatic;
-						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
 				};
 			};
@@ -585,6 +578,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = hymnbook2/hymnbook2.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H74WKN7BSC;
 				ENABLE_BITCODE = NO;
@@ -613,6 +607,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = hymnbook2/hymnbook2.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H74WKN7BSC;
 				INFOPLIST_FILE = hymnbook2/Info.plist;

@@ -199,3 +199,9 @@ module.exports = {
 #### Use new font
 
 Use these fonts by using there 'Full name' as shown in iOS Font Book
+
+### Deep linking
+
+Deep linking is used to share online resources between apps. Like sending a link to download a specific database (song bundle / document group).
+
+To allow access to the main website (hymnbook.sajansen.nl), deep linking must use the `/open/` endpoint. This means every deep link must start with `https://hynbook.sajansen.nl/open/` followed by the specific deep link route. E.g. `https://hynbook.sajansen.nl/open/download/songs/00000000-0000-0000-0000-000000000000` will open in the app while `https://hymnbook.sajansen.nl/download` will always open in the browser.
