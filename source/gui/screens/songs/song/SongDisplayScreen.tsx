@@ -428,7 +428,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
             renderItem={renderContentItem}
             initialNumToRender={20}
-            keyExtractor={(item: Verse) => item.id.toString()}
+            keyExtractor={(item: Verse) => item.uuid}
             getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
             contentContainerStyle={styles.contentSectionList}
             onViewableItemsChanged={onListViewableItemsChanged.current}
