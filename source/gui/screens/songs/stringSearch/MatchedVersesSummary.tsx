@@ -17,7 +17,7 @@ const MatchedVersesSummary: React.FC<Props> = ({ song, searchRegex }) => {
   const visibleVerses = matchedVerses.length === 0 && song.verses.length > 0 ? [song.verses[0]] : matchedVerses;
 
   return <>
-    {visibleVerses.map(it => <VerseSummary key={it.uuid}
+    {visibleVerses.map(it => <VerseSummary key={it.id}
                                            verse={it}
                                            preferredStartLine={Math.max(0, getFirstMatchIndex(it))}
                                            maxLines={2}

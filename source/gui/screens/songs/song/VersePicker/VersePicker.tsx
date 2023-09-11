@@ -142,7 +142,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
         {verses
           ?.filter(hasVisibleNameForPicker)
           ?.map((it: VerseProps) => <VersePickerItem verse={it}
-                                                     key={it.uuid}
+                                                     key={it.id}
                                                      isSelected={isVerseInList(selectedVerses, it)}
                                                      horizontalMargin={horizontalMargin}
                                                      onPress={toggleVerse}
