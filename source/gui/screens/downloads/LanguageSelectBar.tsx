@@ -9,10 +9,15 @@ interface ComponentProps {
   languages: Array<string>;
   selectedLanguage: string;
   onLanguageClick?: (language: string) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
-const LanguageSelectBar: React.FC<ComponentProps> = ({ languages, selectedLanguage, onLanguageClick, disabled }) => {
+const LanguageSelectBar: React.FC<ComponentProps> = ({
+                                                       languages,
+                                                       selectedLanguage,
+                                                       onLanguageClick,
+                                                       disabled = false
+                                                     }) => {
   const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
 

@@ -24,15 +24,29 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<SongBundle> => {
-    return api.songBundles.getWithSongs(bundle.id, true, true)
+  export const fetchSongBundle = (bundle: SongBundle | { uuid: string }, {
+    loadSongs = false,
+    loadVerses = false,
+    loadAbcMelodies = false
+  }): Promise<SongBundle> => {
+    return api.songBundles.get(bundle.uuid, loadSongs, loadVerses, loadAbcMelodies)
       .then(r => parseJscheduleResponse<SongBundle>(r))
       .catch(error => {
-        rollbar.error(`Error fetching songs for song bundle`, {
+        rollbar.error(`Error fetching song bundle`, {
           ...sanitizeErrorForRollbar(error),
-          songBundle: bundle
+          songBundle: bundle,
+          loadSongs: loadSongs,
+          loadVerses: loadVerses,
+          loadAbcMelodies: loadAbcMelodies
         });
         throw error;
       });
   };
+
+  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<SongBundle> =>
+    fetchSongBundle(bundle, {
+      loadSongs: true,
+      loadVerses: true,
+      loadAbcMelodies: true
+    });
 }

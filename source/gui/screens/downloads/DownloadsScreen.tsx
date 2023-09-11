@@ -12,14 +12,21 @@ interface Props extends NativeStackScreenProps<ParamList, typeof DatabasesRoute>
 
 const DownloadsScreen: React.FC<Props> = ({ route }) => {
   const [selectedType, setSelectedType] = useState(route.params.type || Types.Songs);
+  const [promptForUuid, setPromptForUuid] = useState(route.params.promptForUuid);
   const [isProcessing, setIsProcessing] = useState(false);
   const styles = createStyles(useTheme());
 
+  const dismissPromptForUuid = () => setPromptForUuid(undefined);
+
   const getSelectedContent = () => {
     if (selectedType === Types.Documents) {
-      return <DownloadDocumentsScreen setIsProcessing={setIsProcessing} />;
+      return <DownloadDocumentsScreen setIsProcessing={setIsProcessing}
+                                      promptForUuid={route.params.type === Types.Documents ? promptForUuid : undefined}
+                                      dismissPromptForUuid={dismissPromptForUuid} />;
     }
-    return <DownloadSongsScreen setIsProcessing={setIsProcessing} />;
+    return <DownloadSongsScreen setIsProcessing={setIsProcessing}
+                                promptForUuid={route.params.type === Types.Songs ? promptForUuid : undefined}
+                                dismissPromptForUuid={dismissPromptForUuid} />;
   };
 
   return <View style={styles.container}>

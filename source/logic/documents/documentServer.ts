@@ -24,15 +24,29 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<ServerDocumentGroup> => {
-    return api.documents.groups.get(group.id, true, true, true)
+  export const fetchDocumentGroup = (group: DocumentGroup | { uuid: string }, {
+    loadGroups = false,
+    loadItems = false,
+    loadContent = false
+  }): Promise<ServerDocumentGroup> => {
+    return api.documents.groups.get(group.uuid, loadGroups, loadItems, loadContent)
       .then(r => parseJscheduleResponse<ServerDocumentGroup>(r))
       .catch(error => {
-        rollbar.error(`Error fetching documents for document group`, {
+        rollbar.error(`Error fetching document group`, {
           ...sanitizeErrorForRollbar(error),
-          documentGroup: group
+          documentGroup: group,
+          loadGroups: loadGroups,
+          loadItems: loadItems,
+          loadContent: loadContent
         });
         throw error;
       });
   };
+
+  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<ServerDocumentGroup> =>
+    fetchDocumentGroup(group, {
+      loadGroups: true,
+      loadItems: true,
+      loadContent: true
+    });
 }

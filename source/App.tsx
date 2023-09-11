@@ -53,6 +53,7 @@ import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
 import FeaturesProvider from "./gui/components/FeaturesProvider";
+import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -131,15 +132,15 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
-  return (<HomeNav.Navigator initialRouteName={SongSearchRoute}
-                             screenOptions={{
-                               tabBarStyle: styles.tabBar,
-                               tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
-                               tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
-                               headerStyle: styles.tabBarHeader,
-                               headerTitleStyle: styles.tabBarHeaderTitle,
-                               tabBarItemStyle: styles.tabBarItem
-                             }}>
+  return <HomeNav.Navigator initialRouteName={SongSearchRoute}
+                            screenOptions={{
+                              tabBarStyle: styles.tabBar,
+                              tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
+                              tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
+                              headerStyle: styles.tabBarHeader,
+                              headerTitleStyle: styles.tabBarHeaderTitle,
+                              tabBarItemStyle: styles.tabBarItem
+                            }}>
     <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
                     options={{
                       title: "Songs",
@@ -167,7 +168,7 @@ const HomeNavigation: React.FC = () => {
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
                     }} />
-  </HomeNav.Navigator>);
+  </HomeNav.Navigator>;
 };
 
 const AppRoot: React.FC = () => {
@@ -208,7 +209,9 @@ const AppRoot: React.FC = () => {
 
     {isLoading ? undefined :
       <NavigationContainer>
-        <RootNavigation />
+        <DeepLinkHandler>
+          <RootNavigation />
+        </DeepLinkHandler>
       </NavigationContainer>
     }
 
