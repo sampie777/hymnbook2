@@ -6,7 +6,7 @@ import config from "../config";
 
 const uniqueId = getUniqueId();
 
-const shouldRollbarBeEnabled = !config.debugEmulators.includes(uniqueId) && uniqueId != null && uniqueId.length > 0;
+const shouldRollbarBeEnabled = !config.debugEmulators.includes(uniqueId) && uniqueId != null && uniqueId.length > 0 && process.env.NODE_ENV !== "development";
 const configuration = new Configuration(
   Config.ROLLBAR_API_KEY || "",
   {
