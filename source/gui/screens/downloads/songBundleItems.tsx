@@ -9,6 +9,7 @@ import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
 interface SongBundleItemComponentProps {
   bundle: ServerSongBundle;
   onPress: (bundle: ServerSongBundle) => void;
+  onLongPress?: (bundle: ServerSongBundle) => void;
   disabled: boolean;
 }
 
@@ -16,11 +17,13 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
   = ({
        bundle,
        onPress,
+       onLongPress,
        disabled
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
+                      onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
                       disabled={disabled}>
       <Text style={styles.titleText}>
@@ -46,6 +49,7 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
 interface LocalSongBundleItemComponentProps {
   bundle: LocalSongBundle;
   onPress: (bundle: LocalSongBundle) => void;
+  onLongPress?: (bundle: LocalSongBundle) => void;
   hasUpdate?: boolean;
   disabled: boolean;
 }
@@ -54,12 +58,14 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
   = ({
        bundle,
        onPress,
+       onLongPress,
        hasUpdate = false,
        disabled
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
+                      onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
                       disabled={disabled}>
       <Text style={styles.titleText}>
