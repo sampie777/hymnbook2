@@ -48,7 +48,7 @@ class SettingsClass extends SettingsBaseClass {
   surveyCompleted = false;
 
   // Other
-  shareUsageData = true;
+  shareUsageData = process.env.NODE_ENV !== "development";
 }
 
 const Settings = new SettingsClass();

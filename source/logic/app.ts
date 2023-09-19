@@ -3,6 +3,7 @@ import Db from "./db/db";
 import Settings from "../settings";
 import { ThemeContextProps } from "../gui/components/ThemeProvider";
 import { sanitizeErrorForRollbar } from "./utils";
+import { Security } from "./security";
 
 export const closeDatabases = () => {
   Settings.store();
@@ -27,7 +28,9 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
       Settings.appOpenedTimes++;
       Settings.store();
 
-      if (Settings.authClientName != null && Settings.authClientName.length > 0) {
+      // Set rollbar person if not yet set due to some reason, but was previously known
+      if (Security.getEncryptedDeviceId().length === 0
+        && Settings.authClientName != null && Settings.authClientName.length > 0) {
         rollbar.setPerson(Settings.authClientName);
       }
     });

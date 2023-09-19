@@ -1,11 +1,11 @@
 import Settings from "../../settings";
 import { authApi } from "./authApi";
-import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
 import { HttpCode, HttpError, parseJscheduleResponse } from "../apiUtils";
 import { emptyPromise, emptyPromiseWithValue, sanitizeErrorForRollbar } from "../utils";
 import config from "../../config";
+import { Security } from "../security";
 
 export class AccessRequestResponse {
   status: AccessRequestStatus;
@@ -172,7 +172,7 @@ export namespace ServerAuth {
 
   export const getDeviceId = (): string => {
     if (Settings.authClientName === "") {
-      Settings.authClientName = getUniqueId();
+      Settings.authClientName = Security.getEncryptedDeviceId();
       Settings.store();
     }
 

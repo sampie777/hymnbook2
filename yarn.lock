@@ -7369,10 +7369,10 @@ react-native-config@1.4.11:
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-1.4.11.tgz#f9ea08a8dffbe3fd4f2187d80d2594756526dee8"
   integrity sha512-PdBFnfR3pljUNrJu4B2wiJ9TbAiz1J1WcG5KP8AFBqZi8ve5MV/CTCDnANaGrqhOxkBDJV73D/SrMENHe7TKBg==
 
-react-native-device-info@9.0.2:
-  version "9.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-9.0.2.tgz#00c7ab139a620ac9650852cd0ef0fb69d9a4418d"
-  integrity sha512-+IfYZ/OuKjnFf7SFfgIzEqynSeFngrIHc5KgHUIfXusLDXIFJ+LhRBCD7skqnraHrfmESUOMjLbNcvy4SVdwSA==
+react-native-device-info@10.9.0:
+  version "10.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-10.9.0.tgz#5b378eea884a130db1d3ac637610f3a5ae7e8217"
+  integrity sha512-HqujZoNSkPGYZVs8ZsAwPkdY5UQt2jW0eg/wtW/kKbcAOp0KjUesgG7e1UISY4Z7Bx6LjZeKs0cqDzQI8AlOmw==
 
 react-native-gesture-handler@2.10.0:
   version "2.10.0"
@@ -7410,6 +7410,13 @@ react-native-keep-awake@4.0.0:
   resolved "https://registry.yarnpkg.com/react-native-keep-awake/-/react-native-keep-awake-4.0.0.tgz#d89fdc3fb60b3cffa979ef37dc5816196df998a2"
   integrity sha512-0Fotox+eLXQooeibVs3P60yASYUWjtRw9MZNmbuHt5UZQrgUrAKsE4jm7gTr4tPU1m1RkwGzcgUFpcOkh/ec7g==
 
+react-native-quick-md5@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-quick-md5/-/react-native-quick-md5-3.0.5.tgz#d909fb3f308f49efa8470be40825f6ce5fe58c59"
+  integrity sha512-/YLFYjdaue8bORiLKr49cSZU3CQVNhZ50xAXV242Cy9+Bow/tiLTByuvaF0lJOkWt5LOtCO1CbdRDmgtY6Sj2Q==
+  dependencies:
+    spark-md5 "^3.0.2"
+
 react-native-reanimated@2.17.0:
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.17.0.tgz#eae2308235961cdd79810e01dfdd7e88b1ae5b5c"
@@ -7421,6 +7428,11 @@ react-native-reanimated@2.17.0:
     lodash.isequal "^4.5.0"
     setimmediate "^1.0.5"
     string-hash-64 "^1.0.3"
+
+react-native-rsa-native@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-rsa-native/-/react-native-rsa-native-2.0.5.tgz#7db4aef49405bb5b5bcaea12b9dfd1b251c690ab"
+  integrity sha512-gwwvFSwGW5WKrpDyBQ/eTf1UrVABeAvMcT4YWemzPSUo6aHZs1kbBm2rXmwN5okhUzJsry5zjjz/qdx5GXRugQ==
 
 react-native-safe-area-context@4.5.2:
   version "4.5.2"
@@ -8156,6 +8168,11 @@ source-map@^0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.7.3.tgz#5302f8169031735226544092e64981f751750383"
   integrity sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==
+
+spark-md5@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/spark-md5/-/spark-md5-3.0.2.tgz#7952c4a30784347abcee73268e473b9c0167e3fc"
+  integrity sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==
 
 split-on-first@^1.0.0:
   version "1.1.0"

@@ -88,7 +88,7 @@ const SettingsScreen: React.FC = () => {
 
   function getAuthenticationStateAsMessage() {
     if (ServerAuth.isAuthenticated()) {
-      return "Approved as " + Settings.authClientName;
+      return "Authenticated";
     } else if (Settings.authStatus === AccessRequestStatus.DENIED) {
       return "Denied: " + Settings.authDeniedReason;
     } else if (Settings.authStatus === AccessRequestStatus.REQUESTED) {
@@ -109,6 +109,8 @@ const SettingsScreen: React.FC = () => {
     <SettingComponent title={"Melody showed times"}
                       keyName={"melodyShowedTimes"}
                       onPress={(setValue) => setValue(0)} />
+    <SettingComponent title={"Authentication client name"}
+                      keyName={"authClientName"} />
   </>;
 
   return (
