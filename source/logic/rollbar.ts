@@ -2,8 +2,8 @@ import { Platform } from "react-native";
 import { Callback, Client, Configuration, Extra, LogArgument, LogResult } from "rollbar-react-native";
 import { getVersion } from "react-native-device-info";
 import Config from "react-native-config";
-import config from "../config";
 import { Security } from "./security";
+import config from "../config";
 
 
 const configuration = new Configuration(
@@ -31,7 +31,7 @@ export const rollbarInit = () =>
   Security.init()
     .catch(e => rollbar.error("Could not init security", { error: e }))
     .then(() => {
-      rollbar.setPerson(Security.getEncryptedDeviceId());
+      rollbar.setPerson(Security.getDeviceId());
       checkShouldRollbarBeEnabled(Security.getDeviceId());
     })
     .catch(e => rollbar.error("Could not get unique ID", { error: e }));

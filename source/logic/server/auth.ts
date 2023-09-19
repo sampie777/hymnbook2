@@ -1,11 +1,11 @@
 import Settings from "../../settings";
+import { Security } from "../security";
 import { authApi } from "./authApi";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
 import { HttpCode, HttpError, parseJscheduleResponse } from "../apiUtils";
 import { emptyPromise, emptyPromiseWithValue, sanitizeErrorForRollbar } from "../utils";
 import config from "../../config";
-import { Security } from "../security";
 
 export class AccessRequestResponse {
   status: AccessRequestStatus;
@@ -172,7 +172,7 @@ export namespace ServerAuth {
 
   export const getDeviceId = (): string => {
     if (Settings.authClientName === "") {
-      Settings.authClientName = Security.getEncryptedDeviceId();
+      Settings.authClientName = Security.getDeviceId();
       Settings.store();
     }
 

@@ -23,5 +23,6 @@ AppRegistry.registerRunnable(appName, async initialProps => {
     rollbar.error("Failed to run App", {
       error: e,
     });
+    throw e;
   }
 });
