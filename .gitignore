@@ -80,3 +80,6 @@ tmp/
 hymnbook_songs
 hymnbook_songs.lock
 hymnbook_songs.management/
+
+rsa_key
+rsa_key.pub

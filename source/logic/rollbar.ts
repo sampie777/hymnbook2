@@ -1,18 +1,17 @@
 import { Platform } from "react-native";
 import { Callback, Client, Configuration, Extra, LogArgument, LogResult } from "rollbar-react-native";
-import { getUniqueId, getVersion } from "react-native-device-info";
+import { getVersion } from "react-native-device-info";
 import Config from "react-native-config";
+import { Security } from "./security";
 import config from "../config";
 
-const uniqueId = getUniqueId();
 
-const shouldRollbarBeEnabled = !config.debugEmulators.includes(uniqueId) && uniqueId != null && uniqueId.length > 0;
 const configuration = new Configuration(
   Config.ROLLBAR_API_KEY || "",
   {
     captureUncaught: true,
     captureUnhandledRejections: true,
-    enabled: shouldRollbarBeEnabled,
+    enabled: process.env.NODE_ENV !== "development",
     verbose: true,
     payload: {
       environment: process.env.NODE_ENV,
@@ -21,9 +20,6 @@ const configuration = new Configuration(
           source_map_enabled: true,
           code_version: getVersion() + "." + Platform.OS
         }
-      },
-      person: {
-        id: uniqueId
       }
     },
     captureDeviceInfo: true
@@ -31,7 +27,24 @@ const configuration = new Configuration(
 
 export const rollbar = new Client(configuration);
 
-if (!shouldRollbarBeEnabled) {
+export const rollbarInit = () =>
+  Security.init()
+    .catch(e => rollbar.error("Could not init security", { error: e }))
+    .then(() => {
+      rollbar.setPerson(Security.getDeviceId());
+      checkShouldRollbarBeEnabled(Security.getDeviceId());
+    })
+    .catch(e => rollbar.error("Could not get unique ID", { error: e }));
+
+const checkShouldRollbarBeEnabled = (uniqueId: string | null) => {
+  const shouldRollbarBeEnabled = uniqueId != null
+    && uniqueId.length > 0
+    && !config.debugEmulators.includes(uniqueId)
+    && process.env.NODE_ENV !== "development";
+
+  if (shouldRollbarBeEnabled) return;
+  console.debug("Rollbar is disabled");
+
   const rollbarLogLocal = (logFunction: (...data: any[]) => void, obj: LogArgument, extra?: Extra, callback?: Callback): LogResult => {
     if (extra === undefined) logFunction(obj);
     else logFunction(obj, extra);
@@ -46,4 +59,6 @@ if (!shouldRollbarBeEnabled) {
   rollbar.warning = (obj: LogArgument, extra?: Extra, callback?: Callback): LogResult => rollbarLogLocal(console.warn, obj, extra, callback);
   rollbar.error = (obj: LogArgument, extra?: Extra, callback?: Callback): LogResult => rollbarLogLocal(console.error, obj, extra, callback);
   rollbar.critical = (obj: LogArgument, extra?: Extra, callback?: Callback): LogResult => rollbarLogLocal(console.error, obj, extra, callback);
-}
+};
+
+checkShouldRollbarBeEnabled("unknown");
