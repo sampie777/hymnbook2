@@ -3,12 +3,14 @@ import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Do
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
-import { languageAbbreviationToFullName } from "../../../logic/utils";
+import { DeepLinking } from "../../../logic/deeplinking";
+import { rollbar } from "../../../logic/rollbar";
+import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
   RefreshControl,
-  ScrollView,
+  ScrollView, Share,
   StyleSheet,
   Text,
   View
@@ -141,6 +143,20 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   useEffect(applyUuidUpdateForPullRequest8, [serverGroups]);
 
   const isPopupOpen = () => requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
+
+  const shareDocumentGroup = (it: LocalDocumentGroup | ServerDocumentGroup) => {
+    return Share.share({
+      message: `Download documents for ${it.name}\n\n${DeepLinking.generateLinkForDocumentGroup(it)}`
+    })
+      .then(r => rollbar.debug("Document group shared.", {
+        shareAction: r,
+        bundle: it
+      }))
+      .catch(error => rollbar.warning("Failed to share document group", {
+        ...sanitizeErrorForRollbar(error),
+        bundle: it
+      }));
+  };
 
   const onDocumentGroupPress = (group: ServerDocumentGroup) => {
     if (isLoading || isPopupOpen()) {
@@ -307,6 +323,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
             <LocalDocumentGroupItem key={group.uuid + group.name}
                                     group={group}
                                     onPress={onLocalDocumentGroupPress}
+                                    onLongPress={shareDocumentGroup}
                                     hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
                                     disabled={isLoading || isGroupLoading} />)}
 
@@ -316,6 +333,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
             <ServerDocumentGroupItem key={group.uuid + group.name}
                                      group={group}
                                      onPress={onDocumentGroupPress}
+                                     onLongPress={shareDocumentGroup}
                                      disabled={isLoading || isGroupLoading} />)}
 
         {serverGroups.length > 0 ? undefined :

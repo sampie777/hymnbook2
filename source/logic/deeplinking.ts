@@ -119,4 +119,12 @@ export namespace DeepLinking {
       });
     }
   };
+
+  export const generateLinkForSongBundle = (bundle: { uuid: string, name: string }): string => {
+    return `https://hymnbook.sajansen.nl/open/downloads/songs/${bundle.uuid}/${encodeURIComponent(bundle.name)}`;
+  };
+
+  export const generateLinkForDocumentGroup = (group: { uuid: string, name: string }): string => {
+    return `https://hymnbook.sajansen.nl/open/downloads/documents/${group.uuid}/${encodeURIComponent(group.name)}`;
+  };
 }
