@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import { getBuildNumber } from "react-native-device-info/src";
-import { getUniqueId, getVersion } from "react-native-device-info";
+import { getVersion } from "react-native-device-info";
+import { Security } from "./security";
 import Settings from "../settings";
 import config from "../config";
 import Db from "./db/db";
@@ -39,7 +40,7 @@ export namespace Features {
     return api.features(
       getVersion(),
       +getBuildNumber(),
-      getUniqueId(),
+      Security.getDeviceId(),
       Platform.OS,
       Settings.appOpenedTimes
     )

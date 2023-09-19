@@ -1,6 +1,6 @@
 import Settings from "../../settings";
+import { Security } from "../security";
 import { authApi } from "./authApi";
-import { getUniqueId } from "react-native-device-info";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
 import { HttpCode, HttpError, parseJscheduleResponse } from "../apiUtils";
@@ -172,7 +172,7 @@ export namespace ServerAuth {
 
   export const getDeviceId = (): string => {
     if (Settings.authClientName === "") {
-      Settings.authClientName = getUniqueId();
+      Settings.authClientName = Security.getDeviceId();
       Settings.store();
     }
 
