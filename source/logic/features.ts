@@ -1,12 +1,13 @@
 import { Platform } from "react-native";
 import { getBuildNumber } from "react-native-device-info/src";
-import { getUniqueId, getVersion } from "react-native-device-info";
+import { getVersion } from "react-native-device-info";
 import Settings from "../settings";
 import config from "../config";
 import Db from "./db/db";
 import { api } from "./api";
 import { parseHymnbookResponse } from "./apiUtils";
 import { rollbar } from "./rollbar";
+import { Security } from "./security";
 
 export namespace Features {
   export interface Props {
@@ -39,7 +40,7 @@ export namespace Features {
     return api.features(
       getVersion(),
       +getBuildNumber(),
-      getUniqueId(),
+      Security.getEncryptedDeviceId(),
       Platform.OS,
       Settings.appOpenedTimes
     )

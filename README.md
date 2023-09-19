@@ -205,3 +205,13 @@ Use these fonts by using there 'Full name' as shown in iOS Font Book
 Deep linking is used to share online resources between apps. Like sending a link to download a specific database (song bundle / document group).
 
 To allow access to the main website (hymnbook.sajansen.nl), deep linking must use the `/open/` endpoint. This means every deep link must start with `https://hynbook.sajansen.nl/open/` followed by the specific deep link route. E.g. `https://hynbook.sajansen.nl/open/download/songs/00000000-0000-0000-0000-000000000000` will open in the app while `https://hymnbook.sajansen.nl/download` will always open in the browser.
+
+### RSA keys
+
+RSA is used to add an extra layer of security to the device ID's. These ID's will be hashed, but to validate the hash, we use RSA. The RSA keys are not tracked by git.
+
+To generate these keys:
+```
+openssl genrsa -out rsa_key 1024    # Generate private key
+openssl rsa -in rsa_key -outform PEM -pubout -out rsa_key.pub   # Generate public key
+```

@@ -18,7 +18,8 @@ const config = {
   ],
 
   debugEmulators: [
-    "341313168cc52a9b" // local emulator API 33
+    "341313168cc52a9b", // local emulator API 33
+    "0942d01d22087bb0", // local emulator API 33
   ],
 
   featuresWaitForDatabaseMaxTries: 10,
