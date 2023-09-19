@@ -56,12 +56,14 @@ describe("deeplinking", () => {
     const callbackABCid = () => null;
     const callbackABCname = () => null;
     const callbackABCnameId = () => null;
+    const callbackDE = () => null;
     DeepLinking.registerRoute("/a/b", callbackAB);
     DeepLinking.registerRoute("/a/b/c", callbackABC);
     DeepLinking.registerRoute("/a/b/c/d", callbackABCD);
     DeepLinking.registerRoute("/a/b/c/:id", callbackABCid);
     DeepLinking.registerRoute("/a/b/:name/d", callbackABCname);
     DeepLinking.registerRoute("/a/b/:name/:id", callbackABCnameId);
+    DeepLinking.registerRoute("/d/:e", callbackDE);
 
     expect(DeepLinking.findCallback("/a/b")?.callback).toBe(callbackAB);
     expect(DeepLinking.findCallback("/a/b/c")?.callback).toBe(callbackABC);
@@ -69,6 +71,7 @@ describe("deeplinking", () => {
     expect(DeepLinking.findCallback("/a/b/c/1")?.callback).toBe(callbackABCid);
     expect(DeepLinking.findCallback("/a/b/charlie/d")?.callback).toBe(callbackABCname);
     expect(DeepLinking.findCallback("/a/b/charlie/1")?.callback).toBe(callbackABCnameId);
+    expect(DeepLinking.findCallback("/d/1/extra")?.callback).toBe(callbackDE);
     expect(DeepLinking.findCallback("/a")).toBe(null);
     expect(DeepLinking.findCallback("/a/b/2")).toBe(null);
   });
@@ -79,6 +82,9 @@ describe("deeplinking", () => {
     expect(DeepLinking.populateRouteWithPathVariables("/a/:name/:id", "/a/charlie/1")).toStrictEqual({
       name: "charlie",
       id: "1",
+    });
+    expect(DeepLinking.populateRouteWithPathVariables("/a/:name", "/a/charlie/1")).toStrictEqual({
+      name: "charlie",
     });
   });
 

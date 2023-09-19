@@ -9,6 +9,7 @@ import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
 interface ServerDocumentGroupItemComponentProps {
   group: ServerDocumentGroup;
   onPress: (group: ServerDocumentGroup) => void;
+  onLongPress?: (group: ServerDocumentGroup) => void;
   disabled: boolean;
 }
 
@@ -16,11 +17,13 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
   = ({
        group,
        onPress,
+       onLongPress,
        disabled
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(group)}
+                      onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
       <Text style={styles.titleText}>
@@ -46,6 +49,7 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
 interface LocalDocumentGroupItemComponentProps {
   group: LocalDocumentGroup;
   onPress: (group: LocalDocumentGroup) => void;
+  onLongPress?: (group: LocalDocumentGroup) => void;
   hasUpdate?: boolean;
   disabled: boolean;
 }
@@ -54,12 +58,14 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
   = ({
        group,
        onPress,
+       onLongPress,
        hasUpdate = false,
        disabled
      }) => {
   const styles = createStyles(useTheme());
   return (
     <TouchableOpacity onPress={() => onPress(group)}
+                      onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
       <Text style={styles.titleText}>

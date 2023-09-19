@@ -3,12 +3,14 @@ import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
-import { languageAbbreviationToFullName } from "../../../logic/utils";
+import { rollbar } from "../../../logic/rollbar";
+import { DeepLinking } from "../../../logic/deeplinking";
+import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
   RefreshControl,
-  ScrollView,
+  ScrollView, Share,
   StyleSheet,
   Text,
   View
@@ -137,6 +139,20 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   useEffect(applyUuidUpdateForPullRequest8, [serverBundles]);
 
   const isPopupOpen = () => requestDeleteForBundle !== undefined || requestDownloadForBundle !== undefined;
+
+  const shareSongBundle = (it: LocalSongBundle | ServerSongBundle) => {
+    return Share.share({
+      message: `Download songs for ${it.name}\n\n${DeepLinking.generateLinkForSongBundle(it)}`
+    })
+      .then(r => rollbar.debug("Song bundle shared.", {
+        shareAction: r,
+        bundle: it
+      }))
+      .catch(error => rollbar.warning("Failed to share song bundle", {
+        ...sanitizeErrorForRollbar(error),
+        bundle: it
+      }));
+  };
 
   const onSongBundlePress = (bundle: ServerSongBundle) => {
     if (isLoading || isPopupOpen()) {
@@ -305,6 +321,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
             <LocalSongBundleItem key={bundle.uuid + bundle.name}
                                  bundle={bundle}
                                  onPress={onLocalSongBundlePress}
+                                 onLongPress={shareSongBundle}
                                  hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
                                  disabled={isLoading || isBundleLoading} />)}
 
@@ -314,6 +331,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
             <SongBundleItem key={bundle.uuid + bundle.name}
                             bundle={bundle}
                             onPress={onSongBundlePress}
+                            onLongPress={shareSongBundle}
                             disabled={isLoading || isBundleLoading} />)}
 
         {serverBundles.length > 0 ? undefined :
