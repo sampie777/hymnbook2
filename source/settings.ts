@@ -24,7 +24,7 @@ class SettingsClass extends SettingsBaseClass {
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
   useNativeFlatList = Platform.OS === "ios";
-  coloredVerseTitles = Math.random() > 0.5;
+  coloredVerseTitles = true;
   highlightSelectedVerses = true;
   animateAddedToSongList = true;
   showMelodyForAllVerses = false;
