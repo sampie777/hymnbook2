@@ -1,10 +1,15 @@
 import React from "react";
-import Settings from "../../../../../settings";
 import { Song } from "../../../../../logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuTrigger
+} from "react-native-popup-menu";
 
 interface Props {
   song: Song & Realm.Object;
@@ -34,21 +39,48 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
 
   const shouldShowMelodyCount = song.abcMelodies.length > 1;
 
-  return <TouchableOpacity style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
-                           onPress={() => Settings.longPressForMelodyMenu ? toggleShowMelody() : setShowMelodySettings(true)}
-                           onLongPress={() => Settings.longPressForMelodyMenu ? setShowMelodySettings(true) : toggleShowMelody()}
-                           hitSlop={{top: 10, right: 0, bottom: 10, left: 10}}>
-    <Icon name={"music"} style={styles.icon} />
-    {!showMelody ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
+  return <View>
+    <Menu>
+      <MenuTrigger customStyles={{
+        TriggerTouchableComponent: TouchableOpacity
+      }}>
+        <View style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
+              hitSlop={{ top: 10, right: 0, bottom: 10, left: 10 }}>
+          <Icon name={"music"} style={styles.icon} />
+          {!showMelody ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
 
-    {/* Show a dot for each available melody (if multiple), maxed at 4 dots/melodies */}
-    {!shouldShowMelodyCount ? undefined :
-      <View style={styles.countIndicator}>
-        {song.abcMelodies.slice(0, 4)
-          .map(it => <View key={it.id} style={styles.countIndicatorDot} />)}
-      </View>
-    }
-  </TouchableOpacity>;
+          {/* Show a dot for each available melody (if multiple), maxed at 4 dots/melodies */}
+          {!shouldShowMelodyCount ? undefined :
+            <View style={styles.countIndicator}>
+              {song.abcMelodies.slice(0, 4)
+                .map(it => <View key={it.id} style={styles.countIndicatorDot} />)}
+            </View>
+          }
+        </View>
+      </MenuTrigger>
+      <MenuOptions>
+        <MenuOption style={styles.popupItem} onSelect={toggleShowMelody}>
+          <Icon name={"eye"} style={styles.popupItemIcon} />
+          {!showMelody ? undefined :
+            <Icon name={"slash"} style={[styles.popupItemIcon, styles.iconOverlay, { top: 15, left: 10 }]} />}
+
+          <Text style={styles.popupItemText}>
+            {showMelody ? "Hide" : "View"}
+          </Text>
+        </MenuOption>
+
+        <MenuOption style={styles.popupItem}>
+          <Icon name={"play"} style={styles.popupItemIcon} />
+          <Text style={styles.popupItemText}>Play</Text>
+        </MenuOption>
+
+        <MenuOption style={styles.popupItem} onSelect={() => setShowMelodySettings(true)}>
+          <Icon name={"cog"} style={styles.popupItemIcon} />
+          <Text style={styles.popupItemText}>Settings</Text>
+        </MenuOption>
+      </MenuOptions>
+    </Menu>
+  </View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
@@ -68,7 +100,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     width: 44
   },
   containerSingle: {
-    paddingBottom: 10,
+    paddingBottom: 10
   },
   icon: {
     fontSize: 20,
@@ -94,6 +126,23 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     height: 0,
     marginHorizontal: 1.5,
     marginBottom: 2
+  },
+
+  popupItem: {
+    flexDirection: "row",
+    paddingHorizontal: 10,
+    paddingVertical: 15
+  },
+  popupItemIcon: {
+    fontSize: 20,
+    color: colors.text.default,
+    width: 30,
+    textAlign: "center"
+  },
+  popupItemText: {
+    paddingLeft: 10,
+    fontSize: 16,
+    color: colors.text.default
   }
 });
 

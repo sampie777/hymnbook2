@@ -54,6 +54,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
 import FeaturesProvider from "./gui/components/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
+import { MenuProvider } from "react-native-popup-menu";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -226,7 +227,9 @@ const App = () =>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <FeaturesProvider>
         <ThemeProvider>
-          <AppRoot />
+          <MenuProvider>
+            <AppRoot />
+          </MenuProvider>
         </ThemeProvider>
       </FeaturesProvider>
     </GestureHandlerRootView>
