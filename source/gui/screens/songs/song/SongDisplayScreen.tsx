@@ -320,7 +320,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         animated: Settings.animateScrolling
       });
     } catch (error) {
-      rollbar.warning(`Failed to scroll to index: ${error}`, {
+      rollbar.warning(`Failed to scroll to index`, {
         ...sanitizeErrorForRollbar(error),
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
