@@ -104,7 +104,10 @@ export namespace ServerAuth {
         }
 
         if (accessRequestResponse.requestID == null || accessRequestResponse.requestID == "") {
-          rollbar.error(`Access request for '${getDeviceId()}' requested but received no (valid) requestID but: '${accessRequestResponse.requestID}'`);
+          rollbar.error(`Access request requested but received no (valid) requestID`, {
+            deviceId: getDeviceId(),
+            response: accessRequestResponse
+          });
           return "";
         }
 
@@ -152,7 +155,10 @@ export namespace ServerAuth {
         }
 
         if (accessRequestResponse.jwt == null) {
-          rollbar.error(`Access request '${Settings.authRequestId}' approved but received no (valid) jwt but: '${accessRequestResponse.jwt}'`);
+          rollbar.error(`Access request approved but received no (valid) jwt`, {
+            authRequestId: Settings.authRequestId,
+            response: accessRequestResponse.jwt,
+          });
           return "";
         }
 

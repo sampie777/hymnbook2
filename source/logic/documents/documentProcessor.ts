@@ -43,7 +43,7 @@ export namespace DocumentProcessor {
         Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
       });
     } catch (error) {
-      rollbar.error(`Failed to import documents: ${error}`, sanitizeErrorForRollbar(error));
+      rollbar.error(`Failed to import documents`, sanitizeErrorForRollbar(error));
       return new Result({
         success: false,
         message: `Failed to import documents: ${error}`,
@@ -145,7 +145,7 @@ export namespace DocumentProcessor {
         Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
       });
     } catch (error) {
-      rollbar.error(`Failed to update documents: ${error}`, sanitizeErrorForRollbar(error));
+      rollbar.error(`Failed to update documents`, sanitizeErrorForRollbar(error));
       return new Result({ success: false, message: `Failed to update documents: ${error}`, error: error as Error });
     }
 
@@ -196,7 +196,9 @@ export namespace DocumentProcessor {
 
     const deleteGroup = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).find(it => it.id === group.id);
     if (deleteGroup === null || deleteGroup === undefined) {
-      rollbar.error(`Trying to delete document group which does not exist in database: ${group}`);
+      rollbar.error(`Trying to delete document group which does not exist in database`, {
+        group: group
+      });
       return new Result({ success: false, message: `Cannot find document group ${group.name} in database` });
     }
 
@@ -282,7 +284,10 @@ export namespace DocumentProcessor {
             it.uuid = serverGroup.uuid;
           });
         } catch (error) {
-          rollbar.error(`Failed to update document group ${it.name} with new UUID: ${error}`, sanitizeErrorForRollbar(error));
+          rollbar.error(`Failed to update document group with new UUID`, {
+            ...sanitizeErrorForRollbar(error),
+            group: { ...it, groups: null, items: null }
+          });
         }
       });
   };
