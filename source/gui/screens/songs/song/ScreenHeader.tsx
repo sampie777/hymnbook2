@@ -12,6 +12,7 @@ interface Props {
   isMelodyLoading: boolean;
   openVersePicker: () => void;
   setShowMelody: (value: boolean) => void;
+  setShowSongAudioModal: (value: boolean) => void;
   setShowMelodySettings: (value: boolean) => void;
 }
 
@@ -21,7 +22,8 @@ const ScreenHeader: React.FC<Props> = ({
                                          isMelodyLoading,
                                          openVersePicker,
                                          setShowMelody,
-                                         setShowMelodySettings
+                                         setShowSongAudioModal,
+                                         setShowMelodySettings,
                                        }) => {
   const styles = createStyles(useTheme());
 
@@ -32,6 +34,7 @@ const ScreenHeader: React.FC<Props> = ({
       <MelodyHeaderIconButton song={song}
                               showMelody={showMelody}
                               isMelodyLoading={isMelodyLoading}
+                              setShowSongAudioModal={setShowSongAudioModal}
                               setShowMelodySettings={setShowMelodySettings}
                               setShowMelody={setShowMelody} />
     }

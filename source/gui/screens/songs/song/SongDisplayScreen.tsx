@@ -36,6 +36,7 @@ import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
 import Header from "./Header";
+import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -53,6 +54,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
+  const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
@@ -158,6 +160,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       headerRight: () => <ScreenHeader song={song}
                                        showMelody={showMelody}
                                        setShowMelody={setShowMelody}
+                                       setShowSongAudioModal={setShowSongAudioModal}
                                        setShowMelodySettings={setShowMelodySettings}
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
@@ -384,6 +387,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
   return <View style={{ flex: 1 }}>
+    {!showSongAudioModal || song === undefined ? undefined :
+      <SongAudioPopup song={song}
+                      onClose={() => setShowSongAudioModal(false)} />}
+
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
         isMelodyShown={showMelody}
