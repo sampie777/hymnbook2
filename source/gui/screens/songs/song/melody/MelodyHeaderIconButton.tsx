@@ -16,6 +16,7 @@ interface Props {
   showMelody: boolean;
   isMelodyLoading: boolean;
   setShowMelody: (value: boolean) => void;
+  setShowSongAudioModal: (value: boolean) => void;
   setShowMelodySettings: (value: boolean) => void;
 }
 
@@ -24,6 +25,7 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
                                                    showMelody,
                                                    isMelodyLoading,
                                                    setShowMelody,
+                                                   setShowSongAudioModal,
                                                    setShowMelodySettings
                                                  }) => {
   if (!hasMelodyToShow(song)) return null;
@@ -59,7 +61,8 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
         </View>
       </MenuTrigger>
       <MenuOptions optionsContainerStyle={styles.popupContainer}>
-        <MenuOption style={styles.popupItem} onSelect={toggleShowMelody}>
+        <MenuOption style={styles.popupItem}
+                    onSelect={toggleShowMelody}>
           <Icon name={"eye"} style={styles.popupItemIcon} />
           {!showMelody ? undefined :
             <Icon name={"slash"} style={[styles.popupItemIcon, styles.iconOverlay, { top: 15, left: 10 }]} />}
@@ -69,12 +72,14 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
           </Text>
         </MenuOption>
 
-        <MenuOption style={styles.popupItem}>
+        <MenuOption style={styles.popupItem}
+                    onSelect={() => setShowSongAudioModal(true)}>
           <Icon name={"play"} style={styles.popupItemIcon} />
           <Text style={styles.popupItemText}>Play</Text>
         </MenuOption>
 
-        <MenuOption style={styles.popupItem} onSelect={() => setShowMelodySettings(true)}>
+        <MenuOption style={styles.popupItem}
+                    onSelect={() => setShowMelodySettings(true)}>
           <Icon name={"cog"} style={styles.popupItemIcon} />
           <Text style={styles.popupItemText}>Settings</Text>
         </MenuOption>

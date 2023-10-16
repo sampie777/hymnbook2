@@ -3,6 +3,7 @@ import { rollbar } from "../rollbar";
 import { parseJscheduleResponse } from "../apiUtils";
 import { SongBundle } from "./models/ServerSongsModel";
 import { sanitizeErrorForRollbar } from "../utils";
+import { Song, SongAudio } from "../db/models/Songs";
 
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<SongBundle[]> => {
@@ -49,4 +50,15 @@ export namespace Server {
       loadVerses: true,
       loadAbcMelodies: true
     });
+
+  export const fetchAudioFilesForSong = (song: Song): Promise<SongAudio[]> =>
+    api.songs.audio(song)
+      .then(r => parseJscheduleResponse<SongAudio[]>(r))
+      .catch(error => {
+        rollbar.error(`Error fetching audio files for song`, {
+          ...sanitizeErrorForRollbar(error),
+          song: { ...song, verses: null },
+        });
+        throw error;
+      });
 }

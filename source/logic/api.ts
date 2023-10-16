@@ -1,5 +1,6 @@
 import { ServerAuth } from "./server/auth";
 import { databaseHost, hymnbookHost } from "../../app.json";
+import { Song } from "./db/models/Songs";
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
 const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
@@ -35,6 +36,10 @@ export const api = {
                    loadVerses = true,
                    loadAbcMelodies = true) =>
       api.songBundles.get(uuid, true, loadVerses, loadAbcMelodies)
+  },
+
+  songs: {
+    audio: (song: Song) => get(`${databaseApiEndpoint}/songs/${song.uuid}/audio`)
   },
 
   documents: {
