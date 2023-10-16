@@ -58,7 +58,7 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
           }
         </View>
       </MenuTrigger>
-      <MenuOptions>
+      <MenuOptions optionsContainerStyle={styles.popupContainer}>
         <MenuOption style={styles.popupItem} onSelect={toggleShowMelody}>
           <Icon name={"eye"} style={styles.popupItemIcon} />
           {!showMelody ? undefined :
@@ -128,10 +128,15 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginBottom: 2
   },
 
+  popupContainer: {
+    backgroundColor: colors.surface2
+  },
   popupItem: {
     flexDirection: "row",
     paddingHorizontal: 10,
-    paddingVertical: 15
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light
   },
   popupItemIcon: {
     fontSize: 20,
