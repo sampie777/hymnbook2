@@ -52,7 +52,7 @@ export namespace Server {
     });
 
   export const fetchAudioFilesForSong = (song: Song): Promise<SongAudio[]> =>
-    api.songs.audio(song)
+    api.songs.audio.all(song)
       .then(r => parseJscheduleResponse<SongAudio[]>(r))
       .catch(error => {
         rollbar.error(`Error fetching audio files for song`, {

@@ -5,6 +5,9 @@ import ConfirmationModal from "../../../../../components/popups/ConfirmationModa
 import AudioItem from "./AudioItem";
 import { Song, SongAudio } from "../../../../../../logic/db/models/Songs";
 import { AudioFiles } from "../../../../../../logic/songs/audiofiles/audiofiles";
+import TrackPlayer from "react-native-track-player";
+import { ServerAuth } from "../../../../../../logic/server/auth";
+import { api } from "../../../../../../logic/api";
 
 interface Props {
   song: Song;
@@ -28,13 +31,29 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
       .finally(() => setIsLoading(false));
   };
 
-  const downloadFile = () => {
+  const downloadFile = async () => {
+    const item = selectedItem;
+    if (item === undefined) return;
+
+    const jwt = ServerAuth.getJwt();
+    const track = {
+      url: api.songs.audio.single(item),
+      headers: {
+        "Authorization": `Bearer ${jwt}`
+      },
+      title: song.name + " - " + item.name,
+      album: Song.getSongBundle(song)?.name,
+      duration: 100
+    };
+
+    await TrackPlayer.add(track);
+    await TrackPlayer.play();
     onClose();
-  }
+  };
 
   return <ConfirmationModal isOpen={true}
                             title={"Audio"}
-                            confirmText={"Download"}
+                            confirmText={"Confirm"}
                             onClose={onClose}
                             onConfirm={selectedItem === undefined ? undefined : downloadFile}
                             showCloseButton={true}>
