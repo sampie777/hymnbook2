@@ -53,7 +53,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
 
   return <ConfirmationModal isOpen={true}
                             title={"Audio"}
-                            confirmText={"Confirm"}
+                            confirmText={"Play"}
                             onClose={onClose}
                             onConfirm={selectedItem === undefined ? undefined : downloadFile}
                             showCloseButton={true}>
