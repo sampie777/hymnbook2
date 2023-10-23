@@ -11,26 +11,42 @@ import TrackPlayer, {
 import { State } from "react-native-track-player/src/constants/State";
 import { Song } from "../../../../../../logic/db/models/Songs";
 import { rollbar } from "../../../../../../logic/rollbar";
+import Animated, {
+  Easing as ReAnimatedEasing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 
 interface Props {
   song: Song;
 }
 
 const AudioPlayerControls: React.FC<Props> = ({ song }) => {
+  const progressBarUpdateIntervalMs = 250;
+
   const songUuid = useRef<string | undefined>();
   const [shouldBeVisible, setShouldBeVisible] = useState(false);
   const playerState = usePlaybackState();
-  const { position, buffered, duration } = useProgress();
-  const styles = createStyles(useTheme());
+  const { position, buffered, duration } = useProgress(progressBarUpdateIntervalMs);
+  const progressBarPosition = useSharedValue(0);
 
-  const handleError = (event: PlaybackErrorEvent) => {
-    let message = event.message;
-    switch (event.code) {
-      case "android-io-bad-http-status":
-        message = "Failed to load from the server";
-    }
-    Alert.alert("Error playing audio", message);
-  };
+  const styles = createStyles(useTheme());
+  const progressBarStyle = useAnimatedStyle(() => ({ width: `${progressBarPosition.value}%` }));
+
+  useEffect(() => {
+    if (song.uuid === songUuid.current) return;
+    songUuid.current = song.uuid;
+
+    stop();
+  }, [song.uuid]);
+
+  useEffect(() => {
+    progressBarPosition.value = withTiming(position / duration * 100, {
+      duration: progressBarUpdateIntervalMs,
+      easing: ReAnimatedEasing.linear
+    });
+  }, [position, duration]);
 
   useTrackPlayerEvents([
     Event.PlaybackError,
@@ -48,12 +64,14 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
     }
   });
 
-  useEffect(() => {
-    if (song.uuid === songUuid.current) return;
-    songUuid.current = song.uuid;
-
-    stop();
-  }, [song.uuid]);
+  const handleError = (event: PlaybackErrorEvent) => {
+    let message = event.message;
+    switch (event.code) {
+      case "android-io-bad-http-status":
+        message = "Failed to load from the server";
+    }
+    Alert.alert("Error playing audio", message);
+  };
 
   const restart = () => {
     TrackPlayer.seekTo(0);
@@ -85,7 +103,10 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   const isLoading = playerState.state == State.Loading || playerState.state == State.Buffering;
 
   return <View style={styles.container}>
-    <View style={[styles.progressBarPosition, { width: position / duration * 100 + "%" }]} />
+    <Animated.View style={[
+      styles.progressBarPosition,
+      progressBarStyle
+    ]} />
 
     <View style={styles.buttonsContainer}>
       <TouchableOpacity style={styles.button}
@@ -126,10 +147,22 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.surface1,
     borderTopWidth: 1,
     borderTopColor: colors.border.default,
-    alignItems: "stretch"
+    alignItems: "stretch",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+
+    elevation: 9,
   },
   progressBarPosition: {
-    backgroundColor: colors.surface2,
+    backgroundColor: colors.background,
+    opacity: 1,
+    marginTop: 1,
     height: "100%",
     position: "absolute"
   },
