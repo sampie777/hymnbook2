@@ -55,7 +55,7 @@ import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScr
 import FeaturesProvider from "./gui/components/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
-import AudioPlayer from "./gui/screens/songs/song/melody/audiofiles/AudioPlayer";
+import AudioPlayerRoot from "./gui/screens/songs/song/melody/audiofiles/AudioPlayerRoot";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -229,9 +229,9 @@ const App = () =>
       <FeaturesProvider>
         <ThemeProvider>
           <MenuProvider>
-            <AudioPlayer>
+            <AudioPlayerRoot>
               <AppRoot />
-            </AudioPlayer>
+            </AudioPlayerRoot>
           </MenuProvider>
         </ThemeProvider>
       </FeaturesProvider>
