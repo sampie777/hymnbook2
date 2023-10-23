@@ -61,6 +61,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   const play = () => {
     if (playerState == State.Playing) {
       TrackPlayer.pause();
+    } else if (playerState == State.Ended) {
+      restart();
     } else {
       TrackPlayer.play();
     }
