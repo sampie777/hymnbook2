@@ -84,7 +84,9 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
 
   return <View style={styles.container}>
     <TouchableOpacity style={styles.button}
-                      onPress={restart}>
+                      onPress={restart}
+                      onLongPress={() => Alert.alert("Restart audio",
+                        "Click this button to let the audio play from the beginning.")}>
       <Icon name={"undo"}
             style={styles.icon} />
     </TouchableOpacity>
@@ -95,14 +97,18 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
                          size={styles.icon.fontSize} />}
     {isLoading ? undefined :
       <TouchableOpacity style={styles.button}
-                        onPress={play}>
+                        onPress={play}
+                        onLongPress={() => Alert.alert("Play/pause audio",
+                          "Click this button to pause or resume the playing of the audio.")}>
         <Icon name={playerState == State.Playing ? "pause" : "play"}
               style={styles.icon} />
       </TouchableOpacity>
     }
 
     <TouchableOpacity style={styles.button}
-                      onPress={stop}>
+                      onPress={stop}
+                      onLongPress={() => Alert.alert("Close player",
+                        "Click this button to stop the audio and close the player.")}>
       <Icon name={"times"}
             style={styles.icon} />
     </TouchableOpacity>
