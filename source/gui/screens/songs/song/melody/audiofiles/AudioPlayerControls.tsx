@@ -2,7 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../../../components/ThemeProvider";
-import TrackPlayer, { Event, PlaybackErrorEvent, useTrackPlayerEvents } from "react-native-track-player";
+import TrackPlayer, {
+  Event,
+  PlaybackErrorEvent,
+  usePlaybackState,
+  useTrackPlayerEvents
+} from "react-native-track-player";
 import { State } from "react-native-track-player/src/constants/State";
 import { Song } from "../../../../../../logic/db/models/Songs";
 import { rollbar } from "../../../../../../logic/rollbar";
@@ -14,7 +19,7 @@ interface Props {
 const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   const songUuid = useRef<string | undefined>();
   const [shouldBeVisible, setShouldBeVisible] = useState(false);
-  const [playerState, setPlayerState] = useState<State | undefined>();
+  const playerState = usePlaybackState();
   const styles = createStyles(useTheme());
 
   const handleError = (event: PlaybackErrorEvent) => {
@@ -27,8 +32,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   };
 
   useTrackPlayerEvents([
-    Event.PlaybackState,
-    Event.PlaybackError
+    Event.PlaybackError,
+    Event.PlaybackActiveTrackChanged
   ], (event) => {
     if (event.type === Event.PlaybackError) {
       rollbar.warning("Failed to load track", {
@@ -37,9 +42,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
         playerState: playerState
       });
       handleError(event);
-    }
-    if (event.type === Event.PlaybackState) {
-      setPlayerState(event.state);
+    } else if (event.type == Event.PlaybackActiveTrackChanged) {
+      checkIfControlsShouldBeVisible();
     }
   });
 
@@ -50,18 +54,14 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
     stop();
   }, [song.uuid]);
 
-  useEffect(() => {
-    checkIfControlsShouldBeVisible();
-  }, [playerState, song.uuid]);
-
   const restart = () => {
     TrackPlayer.seekTo(0);
   };
 
   const play = () => {
-    if (playerState == State.Playing) {
+    if (playerState.state == State.Playing) {
       TrackPlayer.pause();
-    } else if (playerState == State.Ended) {
+    } else if (playerState.state == State.Ended) {
       restart();
     } else {
       TrackPlayer.play();
@@ -70,7 +70,6 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
 
   const stop = async () => {
     await TrackPlayer.reset();
-    checkIfControlsShouldBeVisible();
   };
 
   const checkIfControlsShouldBeVisible = async () => {
@@ -82,7 +81,7 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
     return null;
   }
 
-  const isLoading = playerState == State.Loading || playerState == State.Buffering;
+  const isLoading = playerState.state == State.Loading || playerState.state == State.Buffering;
 
   return <View style={styles.container}>
     <TouchableOpacity style={styles.button}
@@ -102,7 +101,7 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
                         onPress={play}
                         onLongPress={() => Alert.alert("Play/pause audio",
                           "Click this button to pause or resume the playing of the audio.")}>
-        <Icon name={playerState == State.Playing ? "pause" : "play"}
+        <Icon name={playerState.state == State.Playing ? "pause" : "play"}
               style={styles.icon} />
       </TouchableOpacity>
     }
