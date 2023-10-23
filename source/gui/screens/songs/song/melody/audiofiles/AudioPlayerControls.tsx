@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../../../components/ThemeProvider";
-import TrackPlayer, { Event, useTrackPlayerEvents } from "react-native-track-player";
+import TrackPlayer, { Event, PlaybackErrorEvent, useTrackPlayerEvents } from "react-native-track-player";
 import { State } from "react-native-track-player/src/constants/State";
 import { Song } from "../../../../../../logic/db/models/Songs";
+import { rollbar } from "../../../../../../logic/rollbar";
 
 interface Props {
   song: Song;
@@ -16,15 +17,28 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   const [playerState, setPlayerState] = useState<State | undefined>();
   const styles = createStyles(useTheme());
 
+  const handleError = (event: PlaybackErrorEvent) => {
+    let message = event.message;
+    switch (event.code) {
+      case "android-io-bad-http-status":
+        message = "Failed to load from the server";
+    }
+    Alert.alert("Error playing audio", message);
+  };
+
   useTrackPlayerEvents([
     Event.PlaybackState,
     Event.PlaybackError
   ], (event) => {
     if (event.type === Event.PlaybackError) {
-      console.warn("An error occurred while playing the current track.");
+      rollbar.warning("Failed to load track", {
+        event: event,
+        song: { ...song, verses: undefined },
+        playerState: playerState
+      });
+      handleError(event);
     }
     if (event.type === Event.PlaybackState) {
-      console.debug(event.state);
       setPlayerState(event.state);
     }
   });
@@ -59,7 +73,6 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
 
   const checkIfControlsShouldBeVisible = async () => {
     const queue = await TrackPlayer.getQueue();
-    console.debug(queue);
     setShouldBeVisible(queue.length > 0);
   };
 
