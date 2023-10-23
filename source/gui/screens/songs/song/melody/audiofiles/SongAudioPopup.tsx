@@ -60,7 +60,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
                             showCloseButton={true}>
     <View style={styles.container}>
       <Text style={styles.text}>
-        Currently, all audio files come from an online server. So mobile data/WiFi will be used to download the selected
+        Currently, all audio files come from an online server. Mobile data/WiFi will be used to download the selected
         audio file.
       </Text>
 

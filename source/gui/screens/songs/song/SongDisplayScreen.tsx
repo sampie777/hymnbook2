@@ -26,7 +26,6 @@ import {
   loadSongWithId
 } from "../../../../logic/songs/utils";
 import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import TrackPlayer from "react-native-track-player";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -38,6 +37,7 @@ import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
 import Header from "./Header";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
+import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -95,7 +95,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
-    TrackPlayer.reset();
   };
 
   useEffect(() => {
@@ -453,6 +452,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>
+
+    {song === undefined ? undefined :
+      <AudioPlayerControls song={song} />}
   </View>;
 };
 
