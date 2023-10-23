@@ -26,6 +26,7 @@ import {
   loadSongWithId
 } from "../../../../logic/songs/utils";
 import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
+import TrackPlayer from "react-native-track-player";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -94,6 +95,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
+    TrackPlayer.reset();
   };
 
   useEffect(() => {

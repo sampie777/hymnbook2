@@ -46,6 +46,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
       duration: 100
     };
 
+    await TrackPlayer.reset();
     await TrackPlayer.add(track);
     await TrackPlayer.play();
     onClose();
