@@ -5,7 +5,7 @@ import { ThemeContextProps, useTheme } from "../../../../../components/ThemeProv
 import TrackPlayer, {
   Event,
   PlaybackErrorEvent,
-  usePlaybackState,
+  usePlaybackState, useProgress,
   useTrackPlayerEvents
 } from "react-native-track-player";
 import { State } from "react-native-track-player/src/constants/State";
@@ -20,6 +20,7 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   const songUuid = useRef<string | undefined>();
   const [shouldBeVisible, setShouldBeVisible] = useState(false);
   const playerState = usePlaybackState();
+  const { position, buffered, duration } = useProgress();
   const styles = createStyles(useTheme());
 
   const handleError = (event: PlaybackErrorEvent) => {
@@ -84,35 +85,39 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   const isLoading = playerState.state == State.Loading || playerState.state == State.Buffering;
 
   return <View style={styles.container}>
-    <TouchableOpacity style={styles.button}
-                      onPress={restart}
-                      onLongPress={() => Alert.alert("Restart audio",
-                        "Click this button to let the audio play from the beginning.")}>
-      <Icon name={"undo"}
-            style={styles.icon} />
-    </TouchableOpacity>
+    <View style={[styles.progressBarPosition, { width: position / duration * 100 + "%" }]} />
 
-    {!isLoading ? undefined :
-      <ActivityIndicator style={styles.icon}
-                         color={styles.icon.color}
-                         size={styles.icon.fontSize} />}
-    {isLoading ? undefined :
+    <View style={styles.buttonsContainer}>
       <TouchableOpacity style={styles.button}
-                        onPress={play}
-                        onLongPress={() => Alert.alert("Play/pause audio",
-                          "Click this button to pause or resume the playing of the audio.")}>
-        <Icon name={playerState.state == State.Playing ? "pause" : "play"}
+                        onPress={restart}
+                        onLongPress={() => Alert.alert("Restart audio",
+                          "Click this button to let the audio play from the beginning.")}>
+        <Icon name={"undo"}
               style={styles.icon} />
       </TouchableOpacity>
-    }
 
-    <TouchableOpacity style={styles.button}
-                      onPress={stop}
-                      onLongPress={() => Alert.alert("Close player",
-                        "Click this button to stop the audio and close the player.")}>
-      <Icon name={"times"}
-            style={styles.icon} />
-    </TouchableOpacity>
+      {!isLoading ? undefined :
+        <ActivityIndicator style={styles.icon}
+                           color={styles.icon.color}
+                           size={styles.icon.fontSize} />}
+      {isLoading ? undefined :
+        <TouchableOpacity style={styles.button}
+                          onPress={play}
+                          onLongPress={() => Alert.alert("Play/pause audio",
+                            "Click this button to pause or resume the playing of the audio.")}>
+          <Icon name={playerState.state == State.Playing ? "pause" : "play"}
+                style={styles.icon} />
+        </TouchableOpacity>
+      }
+
+      <TouchableOpacity style={styles.button}
+                        onPress={stop}
+                        onLongPress={() => Alert.alert("Close player",
+                          "Click this button to stop the audio and close the player.")}>
+        <Icon name={"times"}
+              style={styles.icon} />
+      </TouchableOpacity>
+    </View>
   </View>;
 };
 
@@ -121,6 +126,15 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     backgroundColor: colors.surface1,
     borderTopWidth: 1,
     borderTopColor: colors.border.default,
+    alignItems: "stretch"
+  },
+  progressBarPosition: {
+    backgroundColor: colors.surface2,
+    height: "100%",
+    position: "absolute"
+  },
+
+  buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between"
   },
