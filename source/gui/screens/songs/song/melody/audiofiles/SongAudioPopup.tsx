@@ -42,8 +42,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
         "Authorization": `Bearer ${jwt}`
       },
       title: song.name + " - " + item.name,
-      album: Song.getSongBundle(song)?.name,
-      duration: 100
+      album: Song.getSongBundle(song)?.name
     };
 
     await TrackPlayer.reset();
