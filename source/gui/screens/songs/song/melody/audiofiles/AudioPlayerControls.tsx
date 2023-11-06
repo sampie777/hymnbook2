@@ -53,11 +53,6 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
     Event.PlaybackActiveTrackChanged
   ], (event) => {
     if (event.type === Event.PlaybackError) {
-      rollbar.warning("Failed to load track", {
-        event: event,
-        song: { ...song, verses: undefined },
-        playerState: playerState
-      });
       handleError(event);
     } else if (event.type == Event.PlaybackActiveTrackChanged) {
       checkIfControlsShouldBeVisible();
@@ -70,7 +65,13 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
       case "android-io-bad-http-status":
         message = "Failed to load from the server";
     }
-    Alert.alert("Error playing audio", message);
+    Alert.alert("Failed to load audio", message);
+    rollbar.error("Failed to load audio", {
+      event: event,
+      customMessage: message,
+      song: { ...song, verses: undefined },
+      playerState: playerState
+    });
   };
 
   const restart = () => {
@@ -152,12 +153,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 4
     },
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
 
-    elevation: 9,
+    elevation: 9
   },
   progressBarPosition: {
     backgroundColor: colors.background,
