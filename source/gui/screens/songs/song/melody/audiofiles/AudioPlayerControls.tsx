@@ -42,6 +42,13 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
   }, [song.uuid]);
 
   useEffect(() => {
+    checkIfControlsShouldBeVisible();
+    return () => {
+      stop();
+    };
+  }, []);
+
+  useEffect(() => {
     progressBarPosition.value = withTiming(position / duration * 100, {
       duration: progressBarUpdateIntervalMs,
       easing: ReAnimatedEasing.linear
