@@ -11,7 +11,6 @@ export namespace Security {
     getUniqueId()
       .then(value => {
           hashedDeviceId = hash(value);
-          console.debug("deviceId", hashedDeviceId);
         }
       )
       .catch(e => {

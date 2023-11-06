@@ -16,6 +16,7 @@ export interface ThemeColors {
     default: ColorValue,
     light: ColorValue,
     lighter: ColorValue,
+    disabled: ColorValue,
     header: ColorValue,
     highlighted: {
       foreground: ColorValue,
@@ -61,6 +62,7 @@ export const lightColors: ThemeColors = {
     default: "#000",
     light: "#555",
     lighter: "#8d8d8e",
+    disabled: "#ccc",
     header: "#1c1c1c",
     highlighted: {
       foreground: "#000",
@@ -106,6 +108,7 @@ export const darkColors: ThemeColors = {
     default: "#eee",
     light: "#ccc",
     lighter: "#ccc",
+    disabled: "#6a6a6a",
     header: "#eee",
     highlighted: {
       foreground: "#fff",
