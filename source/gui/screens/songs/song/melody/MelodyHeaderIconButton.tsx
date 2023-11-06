@@ -28,10 +28,8 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
                                                    setShowSongAudioModal,
                                                    setShowMelodySettings
                                                  }) => {
-  if (!hasMelodyToShow(song)) return null;
-
   const styles = createStyles(useTheme());
-  const toggleShowMelody = () => requestAnimationFrame(() => setShowMelody(!showMelody));
+  const toggleShowMelody = () => requestAnimationFrame(() => setShowMelody(songHasMelodyToShow && !showMelody));
 
   if (isMelodyLoading) {
     return <ActivityIndicator size={styles.loadIcon.fontSize}
@@ -39,17 +37,16 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
                               color={styles.loadIcon.color} />;
   }
 
+  const songHasMelodyToShow = hasMelodyToShow(song);
   const shouldShowMelodyCount = song.abcMelodies.length > 1;
 
   return <View>
     <Menu>
-      <MenuTrigger customStyles={{
-        TriggerTouchableComponent: TouchableOpacity
-      }}>
+      <MenuTrigger customStyles={{ TriggerTouchableComponent: TouchableOpacity }}>
         <View style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
               hitSlop={{ top: 10, right: 0, bottom: 10, left: 10 }}>
           <Icon name={"music"} style={styles.icon} />
-          {!showMelody ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
+          {!showMelody || !songHasMelodyToShow ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
 
           {/* Show a dot for each available melody (if multiple), maxed at 4 dots/melodies */}
           {!shouldShowMelodyCount ? undefined :
@@ -62,13 +59,18 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
       </MenuTrigger>
       <MenuOptions optionsContainerStyle={styles.popupContainer}>
         <MenuOption style={styles.popupItem}
+                    disabled={!songHasMelodyToShow}
                     onSelect={toggleShowMelody}>
-          <Icon name={"eye"} style={styles.popupItemIcon} />
-          {!showMelody ? undefined :
-            <Icon name={"slash"} style={[styles.popupItemIcon, styles.iconOverlay, { top: 15, left: 10 }]} />}
+          <Icon name={"eye"}
+                style={[styles.popupItemIcon, (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]} />
+          {!showMelody || !songHasMelodyToShow ? undefined :
+            <Icon name={"slash"} style={[styles.popupItemIcon,
+              styles.iconOverlay,
+              { top: 15, left: 10 },
+              (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]} />}
 
-          <Text style={styles.popupItemText}>
-            {showMelody ? "Hide" : "View"}
+          <Text style={[styles.popupItemText, (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]}>
+            {showMelody && songHasMelodyToShow ? "Hide" : "View"}
           </Text>
         </MenuOption>
 
@@ -153,6 +155,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingLeft: 10,
     fontSize: 16,
     color: colors.text.default
+  },
+  popupItemTextDisabled: {
+    color: colors.text.disabled
   }
 });
 
