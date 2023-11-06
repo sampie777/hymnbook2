@@ -117,7 +117,7 @@ const MelodySettingsModal: React.FC<Props> = ({
         </View>
 
         <View style={styles.scaleContainer}>
-          <Text style={styles.scaleLabel}>Melody size</Text>
+          <Text style={styles.scaleLabel}>Melody size:</Text>
 
           <SliderComponent value={Math.round(songMelodyScale * 100)}
                            onValueChange={isIOS && !showMelodyForAllVerses ? onScaleSliderValueChange : undefined} // iOS is more performant
@@ -129,7 +129,7 @@ const MelodySettingsModal: React.FC<Props> = ({
         </View>
 
         <View style={styles.scaleContainer}>
-          <Text style={styles.scaleLabel}>Audio playback speed</Text>
+          <Text style={styles.scaleLabel}>Audio playback speed:</Text>
 
           <SliderComponent value={songAudioPlaybackSpeed}
                            suffix={"x"}
