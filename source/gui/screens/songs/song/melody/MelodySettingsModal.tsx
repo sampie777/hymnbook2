@@ -31,7 +31,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 melodies = [],
                                                 showMelodyForAllVerses,
                                                 setShowMelodyForAllVerses,
-                                                melodyScale,
+                                                melodyScale
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [songMelodyScale, setSongMelodyScale] = useState(Settings.songMelodyScale);
@@ -57,7 +57,7 @@ const MelodySettingsModal: React.FC<Props> = ({
   const onScaleSliderValueChange = (value: number) => {
     setSongMelodyScale(value / 100);
     melodyScale.setValue(value / 100);
-  }
+  };
 
   return <>
     {!showPicker || selectedMelody === undefined || melodies?.length === 0 ? undefined :
@@ -92,19 +92,19 @@ const MelodySettingsModal: React.FC<Props> = ({
                            setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
                          }} />
 
-        {selectedMelody === undefined ? undefined : <View style={styles.melodyContainer}>
+        <View style={styles.melodyContainer}>
           <Text style={styles.label}>Melody</Text>
 
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
             <Text style={styles.selectedLanguage}>
-              {selectedMelody.name}
+              {melodies.length === 0 ? "No melodies available"
+                : (selectedMelody?.name ?? "No default set")}
             </Text>
             {melodies?.length < 2 ? undefined : <Icon name={"caret-down"} style={styles.arrow} />}
           </TouchableOpacity>
         </View>
-        }
 
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleLabel}>Melody size</Text>
