@@ -306,16 +306,19 @@ PODS:
     - react-native-config/App (= 1.4.11)
   - react-native-config/App (1.4.11):
     - React-Core
-  - react-native-get-random-values (1.8.0):
-    - React-Core
   - react-native-keep-awake (4.0.0):
     - React
+  - react-native-quick-md5 (3.0.5):
+    - React-Core
   - react-native-safe-area-context (4.5.2):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
+  - react-native-track-player (4.0.0):
+    - React-Core
+    - SwiftAudioEx (= 1.0.0)
   - React-perflogger (0.70.13)
   - React-RCTActionSheet (0.70.13):
     - React-Core/RCTActionSheetHeaders (= 0.70.13)
@@ -386,7 +389,7 @@ PODS:
     - React
   - RNCClipboard (1.11.2):
     - React-Core
-  - RNDeviceInfo (9.0.2):
+  - RNDeviceInfo (10.9.0):
     - React-Core
   - RNGestureHandler (2.10.0):
     - React-Core
@@ -429,6 +432,7 @@ PODS:
     - React-Core
     - Rollbar (~> 1.12.8)
   - SocketRocket (0.6.1)
+  - SwiftAudioEx (1.0.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -481,9 +485,10 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-config (from `../node_modules/react-native-config`)
-  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
+  - react-native-quick-md5 (from `../node_modules/react-native-quick-md5`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-track-player (from `../node_modules/react-native-track-player`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -524,6 +529,7 @@ SPEC REPOS:
     - OpenSSL-Universal
     - Rollbar
     - SocketRocket
+    - SwiftAudioEx
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -571,12 +577,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-config:
     :path: "../node_modules/react-native-config"
-  react-native-get-random-values:
-    :path: "../node_modules/react-native-get-random-values"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
+  react-native-quick-md5:
+    :path: "../node_modules/react-native-quick-md5"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-track-player:
+    :path: "../node_modules/react-native-track-player"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -658,9 +666,10 @@ SPEC CHECKSUMS:
   React-jsinspector: 73a7091c79023e28f475595c0a1d84d6ba340db7
   React-logger: 007e00696fcb7f76eee81070d005da5c9ca119be
   react-native-config: bcafda5b4c51491ee1b0e1d0c4e3905bc7b56c1b
-  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
+  react-native-quick-md5: 5928fdcedcb1b2f0e1958a38769283968b8eb850
   react-native-safe-area-context: 1d596539b05a78f2b346e954e7c577f6f9be7544
+  react-native-track-player: ec01d92e7c66d6383926e6028f4f233c7a831062
   React-perflogger: c6702b0cb84be970b5fcb230162a229195295ece
   React-RCTActionSheet: cbe5a12f5417120bbc03c105c9ea9a4c6d2b5d84
   React-RCTAnimation: ac313d82cac7b1c90dd817de5eca6d367c66d588
@@ -675,7 +684,7 @@ SPEC CHECKSUMS:
   ReactCommon: a24276ab12f11099c91af00f7cf2c89d5f55313f
   RealmJS: 43fc7bfb83229c8a2755cb34f71f769c97b7b581
   RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
-  RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
+  RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
   RNGestureHandler: e145476da655f3dbc48ef2f0a08cf7a34338c02b
   RNReanimated: bec7736122a268883bdede07f1bf9cf4b40158db
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
@@ -684,9 +693,10 @@ SPEC CHECKSUMS:
   Rollbar: 58f315609433558a82af5a54d7888bb020bec561
   RollbarReactNative: 11595d077e6e53c3dff7846f6bd53f23f68be338
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  SwiftAudioEx: 6f511018b7a0fdfd14ed1bb4081f953588245cc0
   Yoga: 445485143df46a9d5d4ef61cbbc629fec40fb9a0
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: c092081c874057520bada0e8be1249edf1e85799
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.14.2
