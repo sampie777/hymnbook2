@@ -30,6 +30,9 @@ class SettingsClass extends SettingsBaseClass {
   showMelodyForAllVerses = false;
   melodyShowedTimes = 0;
 
+  // Songs audio
+  songAudioPlaybackSpeed = 1.0;
+
   // Documents
   documentsMultiKeywordSearch = true;
   documentScale = 1.0;

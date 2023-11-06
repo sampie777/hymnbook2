@@ -3,10 +3,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MultiSlider, { LabelProps } from "@ptomasroos/react-native-multi-slider";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
-const SliderLabel: React.FC<LabelProps> = ({ oneMarkerValue, oneMarkerLeftPosition }) => {
+const SliderLabel: React.FC<LabelProps & { suffix?: string | undefined }> = ({
+                                                                               oneMarkerValue,
+                                                                               oneMarkerLeftPosition,
+                                                                               suffix
+                                                                             }) => {
   const styles = createStyles(useTheme());
   return <Text style={[styles.label, { left: oneMarkerLeftPosition - 55 / 2 + 7 }]}>
-    {oneMarkerValue} %
+    {oneMarkerValue} {suffix}
   </Text>;
 };
 
@@ -16,7 +20,9 @@ interface Props {
   onValueChange?: (value: number) => void,
   minValue?: number,
   maxValue?: number,
+  step?: number,
   onReset?: () => void;
+  suffix?: string | undefined;
 }
 
 const SliderComponent: React.FC<Props> = ({
@@ -25,7 +31,9 @@ const SliderComponent: React.FC<Props> = ({
                                             onValueChange,
                                             minValue = 50,
                                             maxValue = 200,
-                                            onReset
+                                            step = 1,
+                                            onReset,
+                                            suffix = "%"
                                           }) => {
   const [screenWidth, setScreenWidth] = useState(0);
   const styles = createStyles(useTheme());
@@ -37,16 +45,18 @@ const SliderComponent: React.FC<Props> = ({
         <MultiSlider values={[value]}
                      min={minValue}
                      max={maxValue}
+                     step={step}
                      sliderLength={screenWidth}
+                     allowOverlap={true}
                      enableLabel={true}
-                     customLabel={SliderLabel}
+                     customLabel={props => <SliderLabel {...props} suffix={suffix} />}
                      containerStyle={styles.slider}
                      trackStyle={styles.track}
                      selectedStyle={styles.trackSelected}
                      markerStyle={styles.marker}
                      pressedMarkerStyle={styles.markerPressed}
-                     onValuesChange={values => onValueChange?.(Math.round(values[0]))}
-                     onValuesChangeFinish={values => onValueChanged?.(Math.round(values[0]))} />
+                     onValuesChange={values => onValueChange?.(values[0])}
+                     onValuesChangeFinish={values => onValueChanged?.(values[0])} />
       }
     </View>
 
