@@ -28,8 +28,10 @@ class SettingsClass extends SettingsBaseClass {
   highlightSelectedVerses = true;
   animateAddedToSongList = true;
   showMelodyForAllVerses = false;
-  longPressForMelodyMenu = true;
   melodyShowedTimes = 0;
+
+  // Songs audio
+  songAudioPlaybackSpeed = 1.0;
 
   // Documents
   documentsMultiKeywordSearch = true;
