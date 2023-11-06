@@ -390,6 +390,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   return <View style={{ flex: 1 }}>
     {!showSongAudioModal || song === undefined ? undefined :
       <SongAudioPopup song={song}
+                      selectedMelody={selectedMelody}
                       onClose={() => setShowSongAudioModal(false)} />}
 
     {!showMelodySettings ? undefined :
