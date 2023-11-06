@@ -8,13 +8,15 @@ import { AudioFiles } from "../../../../../../logic/songs/audiofiles/audiofiles"
 import TrackPlayer from "react-native-track-player";
 import { ServerAuth } from "../../../../../../logic/server/auth";
 import { api } from "../../../../../../logic/api";
+import { AbcMelody } from "../../../../../../logic/db/models/AbcMelodies";
 
 interface Props {
   song: Song;
+  selectedMelody?: AbcMelody;
   onClose: () => void;
 }
 
-const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
+const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
   const styles = createStyles(useTheme());
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<SongAudio[]>([]);
@@ -23,6 +25,18 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  // Set default selection
+  useEffect(() => {
+    if (items.length == 0) return;
+
+    let defaultItem = items[0];
+    if (selectedMelody) {
+      defaultItem = items.find(it => it.name == selectedMelody.name) ?? defaultItem;
+    }
+
+    setSelectedItem(defaultItem);
+  }, [items]);
 
   const fetchItems = () => {
     setIsLoading(true);
@@ -52,7 +66,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, onClose }) => {
   };
 
   return <ConfirmationModal isOpen={true}
-                            title={"Audio"}
+                            title={"Select audio file"}
                             confirmText={"Play"}
                             onClose={onClose}
                             onConfirm={selectedItem === undefined ? undefined : downloadFile}
