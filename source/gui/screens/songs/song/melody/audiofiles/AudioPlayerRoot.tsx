@@ -24,7 +24,9 @@ const AudioPlayerRoot: React.FC<Props> = ({ children }) => {
 
   const initPlayer = async () => {
     try {
-      await TrackPlayer.setupPlayer();
+      await TrackPlayer.setupPlayer({
+        backBuffer: 120
+      });
     } catch (error) {
       if (error instanceof Error && error.message === "The player has already been initialized via setupPlayer.") {
         return;
