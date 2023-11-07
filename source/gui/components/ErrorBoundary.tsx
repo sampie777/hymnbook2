@@ -56,8 +56,8 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
   renderCodeLine({ item, index }: { item: string, index: number }) {
     return (
       <View style={styles.line} key={index}>
-        <Text style={styles.lineIndex}>{index + 1}</Text>
-        <Text style={styles.lineText}>{item}</Text>
+        <Text style={styles.lineIndex} selectable={true}>{index + 1}</Text>
+        <Text style={styles.lineText} selectable={true}>{item}</Text>
       </View>
     );
   }
@@ -85,7 +85,7 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
           <Text style={styles.debugButtonText}>Show more information</Text>
         </View>
         : <View style={styles.details}>
-          <Text style={styles.errorName}>{this.state.error && this.state.error.toString()}</Text>
+          <Text style={styles.errorName} selectable={true}>{this.state.error && this.state.error.toString()}</Text>
 
           <FlatList
             data={this.state.errorInfo.componentStack

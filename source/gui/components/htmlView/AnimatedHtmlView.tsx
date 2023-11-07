@@ -8,6 +8,7 @@ import {
   View,
   ViewStyle
 } from "react-native";
+import Settings from "../../../settings";
 import { openLink } from "../../../logic/utils";
 import { rollbar } from "../../../logic/rollbar";
 import { parseDocument } from "htmlparser2";
@@ -141,7 +142,11 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const ignoreTags = ["head", "script", "meta"];
 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
-    <Animated.Text key={index} style={[mergedStyles.defaultText, args?.["style"]]}>{node.data}</Animated.Text>;
+    <Animated.Text key={index}
+                   style={[mergedStyles.defaultText, args?.["style"]]}
+                   selectable={Settings.enableTextSelection}>
+      {node.data}
+    </Animated.Text>;
 
   const renderElementDiv = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} style={mergedStyles.div}>
@@ -149,7 +154,9 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
     </Animated.View>;
 
   const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>) =>
-    <Animated.Text key={index} style={style}>
+    <Animated.Text key={index}
+                   style={style}
+                   selectable={Settings.enableTextSelection}>
       {element.children.map((it, i) => renderNode(it, i, args))}
     </Animated.Text>;
 
@@ -175,22 +182,31 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
     const listIndex = args?.listStyleType == "ol" ? `${args?.listIndex.value}.` : "●";
     return <Animated.View key={index} style={mergedStyles.li}>
-      <Animated.Text style={[mergedStyles.liText, mergedStyles.liIndexText]}>
+      <Animated.Text style={[mergedStyles.liText, mergedStyles.liIndexText]}
+                     selectable={Settings.enableTextSelection}>
         {listIndex}
       </Animated.Text>
-      <Animated.Text style={mergedStyles.liText}>
+      <Animated.Text style={mergedStyles.liText}
+                     selectable={Settings.enableTextSelection}>
         {element.children.map((it, i) => renderNode(it, i, args))}
       </Animated.Text>
     </Animated.View>;
   };
 
   const renderElementBr = (element: Element, index: number, args?: any) =>
-    <Animated.Text key={index} style={mergedStyles.br}>{"\n"}</Animated.Text>;
+    <Animated.Text key={index}
+                   style={mergedStyles.br}
+                   selectable={Settings.enableTextSelection}>
+      {"\n"}
+    </Animated.Text>;
 
   const renderElementA = (element: Element, index: number, args?: any) => {
     const onPress = () => openLink(element.attribs.href)
       .catch(e => Alert.alert("Error opening link", e.message));
-    return <Animated.Text key={index} onPress={onPress} style={mergedStyles.a}>
+    return <Animated.Text key={index}
+                          onPress={onPress}
+                          style={mergedStyles.a}
+                          selectable={Settings.enableTextSelection}>
       {element.children.map((it, i) => renderNode(it, i, args))}
     </Animated.Text>;
   };

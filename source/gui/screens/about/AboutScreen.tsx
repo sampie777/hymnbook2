@@ -13,7 +13,9 @@ import UrlLink from "../../components/UrlLink";
 import IconLabel from "../../components/IconLabel";
 
 
-const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute> }> = ({ navigation }) => {
+const AboutScreen: React.FC<{
+  navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute>
+}> = ({ navigation }) => {
   const styles = createStyles(useTheme());
   const { goldenEgg } = useFeatures();
 
@@ -23,7 +25,10 @@ const AboutScreen: React.FC<{ navigation: NativeStackNavigationProp<ParamList, t
         <Icon name={"book-open"} size={styles.titleIcon.fontSize} color={styles.titleIcon.color as string} />
         <Text style={styles.titleContent}>{displayName}</Text>
       </View>
-      <Text style={styles.versionText}>version: {getVersion()} ({getBuildNumber()}) {process.env.NODE_ENV === "production" ? undefined : `(${process.env.NODE_ENV})`}</Text>
+      <Text style={styles.versionText}
+            selectable={true}>
+        version: {getVersion()} ({getBuildNumber()}) {process.env.NODE_ENV === "production" ? undefined : `(${process.env.NODE_ENV})`}
+      </Text>
     </View>
 
     <View style={styles.content}>

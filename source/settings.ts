@@ -8,6 +8,7 @@ class SettingsClass extends SettingsBaseClass {
   keepScreenAwake = true;
   appOpenedTimes = 0;
   theme = "";
+  enableTextSelection = true;
 
   // Song search
   clearSearchAfterAddedToSongList = true;
