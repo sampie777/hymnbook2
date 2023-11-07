@@ -144,6 +144,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
     <Animated.Text key={index}
                    style={[mergedStyles.defaultText, args?.["style"]]}
+                   dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>
       {node.data}
     </Animated.Text>;
@@ -156,6 +157,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>) =>
     <Animated.Text key={index}
                    style={style}
+                   dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>
       {element.children.map((it, i) => renderNode(it, i, args))}
     </Animated.Text>;
@@ -187,6 +189,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
         {listIndex}
       </Animated.Text>
       <Animated.Text style={mergedStyles.liText}
+                     dataDetectorType={"link"}
                      selectable={Settings.enableTextSelection}>
         {element.children.map((it, i) => renderNode(it, i, args))}
       </Animated.Text>
