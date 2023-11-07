@@ -1,4 +1,5 @@
 import React from "react";
+import Settings from "../../../../settings";
 import { Song } from "../../../../logic/db/models/Songs";
 import { createCopyright } from "../../../../logic/songs/utils";
 import { Animated, StyleSheet, useWindowDimensions } from "react-native";
@@ -32,7 +33,9 @@ const Footer: React.FC<Props> = ({ song, scale }) => {
     style={[styles.container, animatedStyle.container, { minHeight: windowDimension.height - useHeaderHeight() - 200 }]}>
     <Animated.View style={[styles.divider, animatedStyle.divider]}></Animated.View>
     {createCopyright(song).map((it, i) =>
-      <Animated.Text key={i} style={[styles.text, animatedStyle.text]}>
+      <Animated.Text key={i}
+                     style={[styles.text, animatedStyle.text]}
+                     selectable={Settings.enableTextSelection}>
         {it}
       </Animated.Text>
     )}

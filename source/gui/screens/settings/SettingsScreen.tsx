@@ -254,11 +254,14 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"documentsResetPathToRoot"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Other"} isVisible={showAdvancedSettings} />
+          <Header title={"Other"} />
+          <SettingSwitchComponent title={"Enable text selection"}
+                                  description={"Enable this to be able to select and copy text from songs and documents."}
+                                  keyName={"enableTextSelection"}
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Share usage data"}
                                   description={"Help us improve this app based on how you use the app, by sharing this app's settings with us."}
-                                  keyName={"shareUsageData"}
-                                  isVisible={showAdvancedSettings} />
+                                  keyName={"shareUsageData"} />
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingComponent title={"Authentication status with backend"}

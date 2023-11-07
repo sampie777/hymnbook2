@@ -1,5 +1,6 @@
 import React from "react";
 import { Animated, StyleSheet } from "react-native";
+import Settings from "../../../../../settings";
 import { AbcConfig } from "../../config";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
@@ -29,7 +30,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animat
       fontSize: Animated.multiply(animatedScaleText, AbcConfig.textSize),
       lineHeight: Animated.multiply(animatedScaleText, AbcConfig.textLineHeight),
       paddingHorizontal: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? 1 : 5),
-      right: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? -3: 0)
+      right: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? -3 : 0)
     }
   };
 
@@ -37,7 +38,10 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animat
     <NoteElement showMelodyLines={showMelodyLines}
                  note={note}
                  animatedScale={animatedScaleMelody} />
-    <Animated.Text style={[styles.text, animatedStyle.text]}>{lyrics}</Animated.Text>
+    <Animated.Text style={[styles.text, animatedStyle.text]}
+                   selectable={Settings.enableTextSelection}>
+      {lyrics}
+    </Animated.Text>
   </Animated.View>;
 };
 

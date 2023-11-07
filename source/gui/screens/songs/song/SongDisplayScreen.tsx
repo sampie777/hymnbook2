@@ -443,7 +443,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               isFocused: _isFocused.current
             })}
             ListHeaderComponent={<Header song={song} scale={animatedScale} />}
-            ListFooterComponent={<Footer song={song} scale={animatedScale} />} />
+            ListFooterComponent={<Footer song={song} scale={animatedScale} />}
+            removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
+          />
         </ReAnimated.View>
 
         <LoadingOverlay text={null}
