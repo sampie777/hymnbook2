@@ -113,7 +113,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
     {isMelodyLoaded && isMelodyAvailable() ? undefined :
       <Animated.Text style={[styles.text, animatedStyle.text]}
-                     selectable={Settings.enableTextSelection}>
+                     selectable={Settings.enableTextSelection}
+                     textBreakStrategy={"balanced"}>
         {highlightText == null
           ? verse.content
           : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
