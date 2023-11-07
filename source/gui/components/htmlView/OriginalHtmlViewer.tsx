@@ -48,6 +48,7 @@ const OriginalHtmlViewer: React.FC<Props> = ({ html, onLayout }) => {
     <HTMLView value={html.replace(/\n/gi, "")}
               paragraphBreak={""}
               renderNode={renderNode}
+              textComponentProps={{ selectable: Settings.enableTextSelection }}
               stylesheet={htmlStyles} />
   </View>;
 };
