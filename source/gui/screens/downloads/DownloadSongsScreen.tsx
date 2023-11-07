@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Config from "react-native-config";
 import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
@@ -18,6 +19,7 @@ import {
 import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar from "./LanguageSelectBar";
+import UrlLink from "../../components/UrlLink";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -304,6 +306,17 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                          message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
 
 
+      <Text style={[styles.informationText, styles.subtleInformationText]}>We are still sorting out all the song
+        licenses, so we trust that you take the
+        responsibility to make sure you have the correct licenses for the songs you download.</Text>
+
+      <Text style={[styles.informationText, styles.subtleInformationText]}>
+        If you want to download a song bundle which is not displayed, please feel free to
+        <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`} textOnly={true}>
+          <Text style={styles.webpageLink}> contact us</Text>
+        </UrlLink>.
+      </Text>
+
       <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
 
       <LanguageSelectBar languages={getAllLanguagesFromBundles(serverBundles)}
@@ -366,6 +379,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 3,
     color: colors.text.default
   },
+  subtleInformationText: {
+    color: colors.text.lighter
+  },
 
   listContainer: {},
 
@@ -377,5 +393,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   refreshControl: {
     color: colors.text.lighter
+  },
+
+  webpageLink: {
+    color: colors.url
   }
 });
