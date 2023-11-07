@@ -4,7 +4,7 @@ import Db from "./db/db";
 import Settings from "../settings";
 import { ThemeContextProps } from "../gui/components/ThemeProvider";
 import { sanitizeErrorForRollbar } from "./utils";
-import TrackPlayer from "react-native-track-player";
+import { AudioFiles } from "./songs/audiofiles/audiofiles";
 
 export const closeDatabases = () => {
   Settings.store();
@@ -35,14 +35,7 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
         rollbar.setPerson(Settings.authClientName);
       }
 
-      try {
-        TrackPlayer.setRate(Settings.songAudioPlaybackSpeed);
-      } catch (error) {
-        rollbar.error("Failed to set rate for TrackPlayer on app start", {
-          ...sanitizeErrorForRollbar(error),
-          rate: Settings.songAudioPlaybackSpeed
-        });
-      }
+      AudioFiles.initPlayer();
     });
 
 export const initSongDatabase = () =>
