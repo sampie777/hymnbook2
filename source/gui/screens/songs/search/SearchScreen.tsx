@@ -165,6 +165,10 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                         showSongBundle={isTitleSimilarToOtherSongs(item, results)} />
     );
 
+    const onInputTextPress = () => {
+      setInputValue(previousInputValue);
+    }
+
     return (
       <View style={[styles.container, isPortraitMode(windowDimension) ? {} : stylesLandscape.container]}>
         <PopupsComponent navigation={navigation} />
@@ -187,7 +191,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
               <View style={styles.inputTextView}>
                 <View style={styles.inputTextViewContainer}>
-                  <Text
+                  <Text onPress={onInputTextPress}
                     style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
                     {inputValue ? inputValue
                       : (!Settings.songSearchRememberPreviousEntry ? " " :
