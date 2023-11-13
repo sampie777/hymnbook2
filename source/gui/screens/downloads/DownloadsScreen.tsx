@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DatabasesRoute, ParamList } from "../../../navigation";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import TypeSelectBar, { Types } from "./TypeSelectBar";
 import DownloadSongsScreen from "./DownloadSongsScreen";
@@ -34,7 +34,9 @@ const DownloadsScreen: React.FC<Props> = ({ route }) => {
                    onTypeClick={setSelectedType}
                    isProcessing={isProcessing} />
 
-    {getSelectedContent()}
+    <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true}>
+      {getSelectedContent()}
+    </ScrollView>
   </View>;
 };
 
