@@ -143,7 +143,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light
+    borderBottomColor: colors.border.light,
+    alignItems: "center"
   },
   popupItemIcon: {
     fontSize: 20,
