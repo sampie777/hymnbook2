@@ -9,7 +9,7 @@ const SliderLabel: React.FC<LabelProps & { suffix?: string | undefined }> = ({
                                                                                suffix
                                                                              }) => {
   const styles = createStyles(useTheme());
-  return <Text style={[styles.label, { left: oneMarkerLeftPosition - 55 / 2 + 7 }]}>
+  return <Text style={[styles.label]}>
     {oneMarkerValue} {suffix}
   </Text>;
 };
@@ -55,6 +55,7 @@ const SliderComponent: React.FC<Props> = ({
                      selectedStyle={styles.trackSelected}
                      markerStyle={styles.marker}
                      pressedMarkerStyle={styles.markerPressed}
+                     markerHitSlop={{ top: 40, right: 75, bottom: 20, left: 75 }}
                      onValuesChange={values => onValueChange?.(values[0])}
                      onValuesChangeFinish={values => onValueChanged?.(values[0])} />
       }
@@ -106,7 +107,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     height: 25
   },
   label: {
-    width: 60,
     minHeight: 70,
     textAlign: "center",
     fontSize: 16,
