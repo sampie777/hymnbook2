@@ -115,8 +115,11 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const onClearKeyPress = () => {
+      if (inputValue == "") {
+        previousInputValueRef.current = "";
+        setPreviousInputValue("");
+      }
       setInputValue("");
-      previousInputValueRef.current = "";
     };
 
     const fetchSearchResults = () => {
