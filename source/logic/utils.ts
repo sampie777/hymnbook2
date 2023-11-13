@@ -1,4 +1,4 @@
-import { Alert, Linking, Platform, ScaledSize, Share } from "react-native";
+import { Alert, AppState, Linking, Platform, ScaledSize, Share } from "react-native";
 import KeepAwake from "react-native-keep-awake";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { rollbar } from "./rollbar";
@@ -170,3 +170,16 @@ export const sanitizeErrorForRollbar = <T>(error: T): {
     }
   };
 };
+
+export const executeInForeGround = <T>(callback: () => Promise<T>): Promise<T> => new Promise(resolve => {
+  if (AppState.currentState == "active") {
+    return resolve(callback());
+  }
+
+  const listener = AppState.addEventListener("change", newState => {
+    if (newState == "active") {
+      listener.remove();
+      resolve(callback());
+    }
+  });
+});
