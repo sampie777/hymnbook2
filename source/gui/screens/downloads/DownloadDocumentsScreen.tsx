@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
-import LanguageSelectBar from "./LanguageSelectBar";
+import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -287,6 +287,9 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     return languages;
   };
 
+  const isOfSelectedLanguage = (it: { language: string }) =>
+    filterLanguage === ShowAllLanguagesValue || it.language.toUpperCase() === filterLanguage.toUpperCase();
+
   return (
     <View style={styles.container}>
       <ConfirmationModal isOpen={requestDownloadForGroup !== undefined}
@@ -319,6 +322,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                         refreshing={isLoading || isGroupLoading} />}>
 
         {localGroups.filter(it => it.isValid())
+          .filter(isOfSelectedLanguage)
           .map((group: LocalDocumentGroup) =>
             <LocalDocumentGroupItem key={group.uuid + group.name}
                                     group={group}
@@ -328,7 +332,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                     disabled={isLoading || isGroupLoading} />)}
 
         {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
-          .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
+          .filter(isOfSelectedLanguage)
           .map((group: ServerDocumentGroup) =>
             <ServerDocumentGroupItem key={group.uuid + group.name}
                                      group={group}
@@ -341,7 +345,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
             {isLoading || isGroupLoading ? "Loading..." : "No online data available..."}
           </Text>
         }
-        {isLoading || serverGroups.length === 0 || serverGroups.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
+        {isLoading || serverGroups.length === 0 || serverGroups.filter(isOfSelectedLanguage).length > 0 ? undefined :
           <Text style={styles.emptyListText}>
             No documents found for language "{languageAbbreviationToFullName(filterLanguage)}"...
           </Text>
