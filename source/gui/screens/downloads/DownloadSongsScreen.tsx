@@ -328,11 +328,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                          onLanguageClick={setFilterLanguage}
                          itemCountPerLanguage={itemCountPerLanguage(localBundles)} />
 
-      <ScrollView
-        style={styles.listContainer}
-        refreshControl={<RefreshControl onRefresh={fetchSongBundles}
-                                        tintColor={styles.refreshControl.color}
-                                        refreshing={isLoading || isBundleLoading} />}>
+      <ScrollView nestedScrollEnabled={true}
+                  style={styles.listContainer}
+                  refreshControl={<RefreshControl onRefresh={fetchSongBundles}
+                                                  tintColor={styles.refreshControl.color}
+                                                  refreshing={isLoading || isBundleLoading} />}>
 
         {localBundles.filter(it => it.isValid())
           .filter(isOfSelectedLanguage)
@@ -389,7 +389,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text.lighter
   },
 
-  listContainer: {},
+  listContainer: { flex: 1 },
 
   emptyListText: {
     padding: 20,

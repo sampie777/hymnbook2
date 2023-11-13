@@ -315,13 +315,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       <LanguageSelectBar languages={getAllLanguagesFromGroups(serverGroups)}
                          selectedLanguage={filterLanguage}
                          onLanguageClick={setFilterLanguage}
-                         itemCountPerLanguage={itemCountPerLanguage(localGroups)}  />
+                         itemCountPerLanguage={itemCountPerLanguage(localGroups)} />
 
-      <ScrollView
-        style={styles.listContainer}
-        refreshControl={<RefreshControl onRefresh={fetchDocumentGroups}
-                                        tintColor={styles.refreshControl.color}
-                                        refreshing={isLoading || isGroupLoading} />}>
+      <ScrollView nestedScrollEnabled={true}
+                  style={styles.listContainer}
+                  refreshControl={<RefreshControl onRefresh={fetchDocumentGroups}
+                                                  tintColor={styles.refreshControl.color}
+                                                  refreshing={isLoading || isGroupLoading} />}>
 
         {localGroups.filter(it => it.isValid())
           .filter(isOfSelectedLanguage)
@@ -375,7 +375,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text.default
   },
 
-  listContainer: {},
+  listContainer: { flex: 1 },
 
   emptyListText: {
     padding: 20,
