@@ -15,6 +15,8 @@ Hymnbook is an app developed for Christian believers who want to carry hymns wit
 
 Copy the file `.env.template` to `.env` and update the values a needed.
 
+We start to move to the use of [asdf](https://asdf-vm.com/) as version manager for the build tools, like node. If you don't want to use this tool, you can see the required version in the [`.tool-versions`](./.tool-versions) file.
+
 Run `yarn install`.
 
 > Don't use node v19 as Realm installation will [hang](https://github.com/realm/realm-js/issues/5136)
