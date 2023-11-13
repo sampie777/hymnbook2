@@ -229,10 +229,17 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            if (project.hasProperty('HYMNBOOK_UPLOAD_STORE_FILE')) {
+                storeFile file(HYMNBOOK_UPLOAD_STORE_FILE)
+                storePassword HYMNBOOK_UPLOAD_STORE_PASSWORD
+                keyAlias HYMNBOOK_UPLOAD_KEY_ALIAS
+                keyPassword HYMNBOOK_UPLOAD_KEY_PASSWORD
+            } else {
+                storeFile file('debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
         }
         release {
             if (project.hasProperty('HYMNBOOK_UPLOAD_STORE_FILE')) {
