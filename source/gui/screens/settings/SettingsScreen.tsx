@@ -7,6 +7,7 @@ import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
 import { capitalize, isAndroid } from "../../../logic/utils";
+import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
@@ -105,11 +106,15 @@ const SettingsScreen: React.FC = () => {
                             keyName={"surveyCompleted"} />
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}
-                      onPress={(setValue) => setValue(0)} />
+                      onLongPress={(setValue) => setValue(0)} />
     <SettingComponent title={"Melody showed times"}
                       keyName={"melodyShowedTimes"}
-                      onPress={(setValue) => setValue(0)} />
-    <SettingComponent title={"Authentication client name"}
+                      onLongPress={(setValue) => setValue(0)} />
+    <SettingComponent title={"App user ID"}
+                      description={"This secure ID is used for analytic purposes, such as crash logs."}
+                      value={Security.getDeviceId()} />
+    <SettingComponent title={"Backend user ID"}
+                      description={"This ID is used for authentication with our online database."}
                       keyName={"authClientName"} />
   </>;
 
@@ -149,6 +154,7 @@ const SettingsScreen: React.FC = () => {
                               setValue(newValue);
                               theme.reload();
                             }}
+                            onLongPress={(setValue) => setValue("")}  // Set default
                             valueRender={it => {
                               if (it === "") {
                                 return "System (auto)";
@@ -174,6 +180,7 @@ const SettingsScreen: React.FC = () => {
 
               setValue(newValue);
             }}
+            onLongPress={(setValue) => setValue(SongSearch.StringSearchButtonPlacement.BottomRight)}  // Set default
             valueRender={(it) => {
               switch (it) {
                 case SongSearch.StringSearchButtonPlacement.TopLeft:
@@ -271,9 +278,9 @@ const SettingsScreen: React.FC = () => {
                               if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
                                 return it;
                               }
-                              return it + " (tap to reset)";
+                              return it + " (hold to reset)";
                             }}
-                            onPress={(setValue) =>
+                            onLongPress={(setValue) =>
                               setConfirmModalCallback(
                                 "Reset/forget authentication?",
                                 (isConfirmed) => {

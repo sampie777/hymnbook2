@@ -16,6 +16,7 @@ export interface BaseSettingProps<T> {
 
 export interface GenericSettingProps<T> extends BaseSettingProps<T> {
   onPress?: (setValue: <T>(newValue: T) => void, key: string | undefined, newValue: T) => void;
+  onLongPress?: (setValue: <T>(newValue: T) => void, key: string | undefined, newValue: T) => void;
 }
 
 export function SettingComponent<T = string>({
@@ -24,6 +25,7 @@ export function SettingComponent<T = string>({
                                                keyName,
                                                value,
                                                onPress,
+                                               onLongPress,
                                                valueRender,
                                                isVisible = true,
                                                lessObviousStyling = false
@@ -62,7 +64,8 @@ export function SettingComponent<T = string>({
   return (
     <TouchableOpacity
       style={[styles.container, (lessObviousStyling ? {} : styles.whiteContainer)]}
-      onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName, _value)}>
+      onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName, _value)}
+      onLongPress={onLongPress === undefined ? undefined : () => onLongPress(setValue, keyName, _value)}>
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>{title}</Text>
       </View>
