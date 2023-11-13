@@ -6,6 +6,7 @@ import { DocumentServer } from "../../../logic/documents/documentServer";
 import { DeepLinking } from "../../../logic/deeplinking";
 import { rollbar } from "../../../logic/rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -313,7 +314,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
       <LanguageSelectBar languages={getAllLanguagesFromGroups(serverGroups)}
                          selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage} />
+                         onLanguageClick={setFilterLanguage}
+                         itemCountPerLanguage={itemCountPerLanguage(localGroups)}  />
 
       <ScrollView
         style={styles.listContainer}

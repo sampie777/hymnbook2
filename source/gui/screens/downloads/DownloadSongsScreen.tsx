@@ -7,6 +7,7 @@ import { Server } from "../../../logic/server/server";
 import { rollbar } from "../../../logic/rollbar";
 import { DeepLinking } from "../../../logic/deeplinking";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -324,7 +325,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
       <LanguageSelectBar languages={getAllLanguagesFromBundles(serverBundles)}
                          selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage} />
+                         onLanguageClick={setFilterLanguage}
+                         itemCountPerLanguage={itemCountPerLanguage(localBundles)} />
 
       <ScrollView
         style={styles.listContainer}

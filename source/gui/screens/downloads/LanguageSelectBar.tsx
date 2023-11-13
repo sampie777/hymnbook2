@@ -10,6 +10,7 @@ interface ComponentProps {
   selectedLanguage: string;
   onLanguageClick?: (language: string) => void;
   disabled?: boolean;
+  itemCountPerLanguage: Map<string, number>;
 }
 
 export const ShowAllLanguagesValue = "Show all";
@@ -18,7 +19,8 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
                                                        languages,
                                                        selectedLanguage,
                                                        onLanguageClick,
-                                                       disabled = false
+                                                       disabled = false,
+                                                       itemCountPerLanguage
                                                      }) => {
   const [showPicker, setShowPicker] = useState(false);
   const styles = createStyles(useTheme());
@@ -46,6 +48,7 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
                        rowContentRenderer={(item, isSelected) =>
                          <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
                            {languageAbbreviationToFullName(item)}
+                           {itemCountPerLanguage.get(item) ? ` (${itemCountPerLanguage.get(item)})` : undefined}
                          </Text>
                        } />
     }
