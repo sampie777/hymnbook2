@@ -2,7 +2,7 @@ import { Song, SongAudio } from "../../db/models/Songs";
 import { Server } from "../../server/server";
 import TrackPlayer, { AppKilledPlaybackBehavior, Capability, RepeatMode } from "react-native-track-player";
 import { rollbar } from "../../rollbar";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { executeInForeGround, sanitizeErrorForRollbar } from "../../utils";
 import Settings from "../../../settings";
 
 export namespace AudioFiles {
@@ -15,7 +15,7 @@ export namespace AudioFiles {
   export const initPlayer = async () => {
     if (!isInitialized) {
       try {
-        isInitialized = await setupPlayer();
+        isInitialized = await executeInForeGround(setupPlayer);
       } catch (error) {
         rollbar.error("Failed to init track player", sanitizeErrorForRollbar(error));
       }
