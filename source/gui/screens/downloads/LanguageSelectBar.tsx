@@ -12,6 +12,8 @@ interface ComponentProps {
   disabled?: boolean;
 }
 
+export const ShowAllLanguagesValue = "Show all";
+
 const LanguageSelectBar: React.FC<ComponentProps> = ({
                                                        languages,
                                                        selectedLanguage,
@@ -37,7 +39,7 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
   return <View style={styles.container}>
     {!showPicker ? undefined :
       <PickerComponent selectedValue={selectedLanguage}
-                       values={languages.sort()}
+                       values={[ShowAllLanguagesValue, ...languages.sort()]}
                        keyExtractor={item => item}
                        onDenied={closePicker}
                        onCompleted={it => setLanguage(it)}

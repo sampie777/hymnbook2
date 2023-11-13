@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
-import LanguageSelectBar from "./LanguageSelectBar";
+import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
 
 interface ComponentProps {
@@ -286,6 +286,9 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     return languages;
   };
 
+  const isOfSelectedLanguage = (it: { language: string }) =>
+    filterLanguage === ShowAllLanguagesValue || it.language.toUpperCase() === filterLanguage.toUpperCase();
+
   return (
     <View style={styles.container}>
       <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
@@ -330,6 +333,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                         refreshing={isLoading || isBundleLoading} />}>
 
         {localBundles.filter(it => it.isValid())
+          .filter(isOfSelectedLanguage)
           .map((bundle: LocalSongBundle) =>
             <LocalSongBundleItem key={bundle.uuid + bundle.name}
                                  bundle={bundle}
@@ -339,7 +343,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                  disabled={isLoading || isBundleLoading} />)}
 
         {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
-          .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
+          .filter(isOfSelectedLanguage)
           .map((bundle: ServerSongBundle) =>
             <SongBundleItem key={bundle.uuid + bundle.name}
                             bundle={bundle}
@@ -352,7 +356,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
             {isLoading || isBundleLoading ? "Loading..." : "No online data available..."}
           </Text>
         }
-        {isLoading || serverBundles.length === 0 || serverBundles.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
+        {isLoading || serverBundles.length === 0 || serverBundles.filter(isOfSelectedLanguage).length > 0 ? undefined :
           <Text style={styles.emptyListText}>
             No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
           </Text>
