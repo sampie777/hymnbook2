@@ -104,6 +104,8 @@ const SettingsScreen: React.FC = () => {
     <Header title={"Developer"} />
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
+    <SettingSwitchComponent title={"Track song audio downloads"}
+                            keyName={"trackDownloads"} />
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}
                       onLongPress={(setValue) => setValue(0)} />
