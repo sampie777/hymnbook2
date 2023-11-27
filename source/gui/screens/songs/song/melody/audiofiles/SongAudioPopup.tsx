@@ -68,13 +68,13 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
   return <ConfirmationModal isOpen={true}
                             title={"Select audio file"}
                             confirmText={"Play"}
+                            invertConfirmColor={true}
                             onClose={onClose}
                             onConfirm={selectedItem === undefined ? undefined : downloadFile}
                             showCloseButton={true}>
     <View style={styles.container}>
       <Text style={styles.text}>
-        Currently, all audio files come from an online server. Mobile data/WiFi will be used to download the selected
-        audio file.
+        Currently, all audio files come from an online server. Mobile data/WiFi will be used to download and play the selected audio file.
       </Text>
 
       {!isLoading ? undefined :
