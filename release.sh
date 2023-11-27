@@ -27,8 +27,8 @@ function setVersion() {
     echo "$(sed -e '/<key>CFBundleShortVersionString<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     echo "$(sed -e '/<key>CFBundleVersion<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     # Add new version tag
-    echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a \\\t<string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
-    echo "$(sed "/<key>CFBundleVersion<\/key>/a \\\t<string>${buildVersion}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a \\\t\\\t<string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed "/<key>CFBundleVersion<\/key>/a \\\t\\\t<string>${buildVersion}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
 function releasePatch {

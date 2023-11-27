@@ -1,29 +1,13 @@
 {
+  "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "react",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "strict": true,
-    "target": "esnext",
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+//    "lib": [
+//      "es6",
+//      "dom"
+//    ],
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "resolveJsonModule": true,
+//    "module": "esnext",
     "noImplicitThis": false                /* Raise error on 'this' expressions with an implied 'any' type. */
-  },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js"
-  ]
+  }
 }
