@@ -92,8 +92,16 @@ function pushAndRelease {
   git tag "v${RELEASE_VERSION}" || exit 1
   git push -u origin master --tags || exit 1
 
-  yarn bundle || exit 1
   yarn build || exit 1
+  echo
+  echo "BUILD DONE"
+  echo
+  echo
+  yarn bundle || exit 1
+  echo
+  echo "BUNDLE DONE"
+  echo
+  echo
 
   ./upload_source_map.sh
 }
