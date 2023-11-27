@@ -30,7 +30,7 @@ function uploadSourceMapAndroid {
 
 function createAndUploadSourceMapAndroid {
   echo 'Creating source map (Android)'
-  react-native bundle --platform android --dev false --entry-file index.js --bundle-output \
+  npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output \
   android/index.android.bundle --assets-dest android/app/src/main/res/ --sourcemap-output \
   sourcemap.android.js --sourcemap-sources-root ./ || return
 
@@ -50,7 +50,7 @@ function uploadSourceMapIOS {
 
 function createAndUploadSourceMapIOS {
   echo "Creating source map (iOS)"
-  react-native bundle --platform ios --entry-file index.js --dev false --bundle-output \
+  npx react-native bundle --platform ios --entry-file index.js --dev false --bundle-output \
   ios/main.jsbundle --assets-dest ios --sourcemap-output sourcemap.ios.js --sourcemap-sources-root ./ || return
 
   uploadSourceMapIOS
