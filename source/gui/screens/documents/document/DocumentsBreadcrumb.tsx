@@ -1,4 +1,5 @@
 import React from "react";
+import Settings from "../../../../settings";
 import { Document } from "../../../../logic/db/models/Documents";
 import { getPathForDocument } from "../../../../logic/documents/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -26,7 +27,8 @@ const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
   const path = getPathForDocument(document);
 
   return <Animated.View style={[styles.container, animatedStyles.container]}>
-    <Animated.Text style={[styles.text, animatedStyles.text]}>
+    <Animated.Text style={[styles.text, animatedStyles.text]}
+                   selectable={Settings.enableTextSelection}>
       {path.map(it => it.name).join("  >  ")}
     </Animated.Text>
   </Animated.View>;
@@ -34,7 +36,7 @@ const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: "row"
   },
   text: {
     color: colors.text.light

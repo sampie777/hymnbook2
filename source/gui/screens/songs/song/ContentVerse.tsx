@@ -91,7 +91,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const displayName = SongProcessor.verseShortName(verse);
 
   const createHighlightedTextComponent = (text: string, index: number) =>
-    <Animated.Text key={index} style={styles.textHighlighted}>
+    <Animated.Text key={index}
+                   style={styles.textHighlighted}
+                   selectable={Settings.enableTextSelection}>
       {text}
     </Animated.Text>;
 
@@ -110,9 +112,11 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     }
 
     {isMelodyLoaded && isMelodyAvailable() ? undefined :
-      <Animated.Text style={[styles.text, animatedStyle.text]}>
+      <Animated.Text style={[styles.text, animatedStyle.text]}
+                     selectable={Settings.enableTextSelection}
+                     textBreakStrategy={"balanced"}>
         {highlightText == null
-          ? verse.content
+          ? verse.content + (Settings.debug_addWhitespaceAfterVerse ? " " : "")
           : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
       </Animated.Text>
     }

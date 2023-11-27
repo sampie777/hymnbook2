@@ -35,8 +35,9 @@ import SongControls from "./SongControls";
 import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
-import MelodyHelpModal from "./melody/MelodyHelpModal";
 import Header from "./Header";
+import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
+import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -54,8 +55,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
+  const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
-  const [showMelodyHelp, setShowMelodyHelp] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
@@ -127,11 +128,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   useEffect(() => {
     if (!showMelody) return;
-
-    if (Settings.melodyShowedTimes == 0) {
-      setShowMelodyHelp(true);
-    }
-
     Settings.melodyShowedTimes++;
   }, [showMelody]);
 
@@ -165,6 +161,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       headerRight: () => <ScreenHeader song={song}
                                        showMelody={showMelody}
                                        setShowMelody={setShowMelody}
+                                       setShowSongAudioModal={setShowSongAudioModal}
                                        setShowMelodySettings={setShowMelodySettings}
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
@@ -327,7 +324,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         animated: Settings.animateScrolling
       });
     } catch (error) {
-      rollbar.warning(`Failed to scroll to index: ${error}`, {
+      rollbar.warning(`Failed to scroll to index`, {
         ...sanitizeErrorForRollbar(error),
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
@@ -391,6 +388,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
 
   return <View style={{ flex: 1 }}>
+    {!showSongAudioModal || song === undefined ? undefined :
+      <SongAudioPopup song={song}
+                      selectedMelody={selectedMelody}
+                      onClose={() => setShowSongAudioModal(false)} />}
+
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
         isMelodyShown={showMelody}
@@ -402,9 +404,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelodyForAllVerses={showMelodyForAllVerses}
         setShowMelodyForAllVerses={setShowMelodyForAllVerses}
         melodyScale={melodyScale} />}
-
-    {!showMelodyHelp || showMelodySettings ? undefined :
-      <MelodyHelpModal onClose={() => setShowMelodyHelp(false)} />}
 
     <PinchGestureHandler
       ref={pinchGestureHandlerRef}
@@ -444,7 +443,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               isFocused: _isFocused.current
             })}
             ListHeaderComponent={<Header song={song} scale={animatedScale} />}
-            ListFooterComponent={<Footer song={song} scale={animatedScale} />} />
+            ListFooterComponent={<Footer song={song} scale={animatedScale} />}
+            removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
+          />
         </ReAnimated.View>
 
         <LoadingOverlay text={null}
@@ -454,6 +455,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>
+
+    {song === undefined ? undefined :
+      <AudioPlayerControls song={song} />}
   </View>;
 };
 

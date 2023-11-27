@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { ShowAllLanguagesValue } from "./LanguageSelectBar";
 
 export const DownloadIcon: React.FC = () => {
   const styles = createStyles(useTheme());
@@ -56,3 +57,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     bottom: -2
   }
 });
+
+export const itemCountPerLanguage = (bundles: { language: string }[]): Map<string, number> => {
+  const result = new Map<string, number>();
+  bundles.forEach(it => {
+    result.set(it.language, (result.get(it.language) ?? 0) + 1);
+    result.set(ShowAllLanguagesValue, (result.get(ShowAllLanguagesValue) ?? 0) + 1);
+  });
+  return result;
+};

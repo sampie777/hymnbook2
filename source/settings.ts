@@ -8,6 +8,7 @@ class SettingsClass extends SettingsBaseClass {
   keepScreenAwake = true;
   appOpenedTimes = 0;
   theme = "";
+  enableTextSelection = true;
 
   // Song search
   clearSearchAfterAddedToSongList = true;
@@ -24,12 +25,15 @@ class SettingsClass extends SettingsBaseClass {
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
   useNativeFlatList = Platform.OS === "ios";
-  coloredVerseTitles = Math.random() > 0.5;
+  coloredVerseTitles = true;
   highlightSelectedVerses = true;
   animateAddedToSongList = true;
   showMelodyForAllVerses = false;
-  longPressForMelodyMenu = true;
   melodyShowedTimes = 0;
+
+  // Songs audio
+  songAudioPlaybackSpeed = 1.0;
+  trackDownloads = process.env.NODE_ENV !== "development";
 
   // Documents
   documentsMultiKeywordSearch = true;
@@ -49,6 +53,7 @@ class SettingsClass extends SettingsBaseClass {
 
   // Other
   shareUsageData = process.env.NODE_ENV !== "development";
+  debug_addWhitespaceAfterVerse = false;
 }
 
 const Settings = new SettingsClass();

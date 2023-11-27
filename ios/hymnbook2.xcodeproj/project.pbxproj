@@ -13,6 +13,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3669D40F2AF8FACA0085C0A2 /* dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3669D40E2AF8FACA0085C0A2 /* dummy.swift */; };
 		3BCC7AC8EA8D4D36B251D61A /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC6E3C149CF043C3AE4294C1 /* Roboto-BoldItalic.ttf */; };
 		60C9AD8BD81849FA91D874E9 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10EFBBBE56A24CDD90F5D0E5 /* Roboto-Medium.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -58,6 +59,8 @@
 		338F9816F01A41E5A06F26EB /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		3543CF851DFC4B3CA641F621 /* libPods-hymnbook2-hymnbook2Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-hymnbook2-hymnbook2Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		362922ED2AAF2C070043A988 /* hymnbook2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = hymnbook2.entitlements; path = hymnbook2/hymnbook2.entitlements; sourceTree = "<group>"; };
+		3669D40D2AF8FAC90085C0A2 /* hymnbook2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hymnbook2-Bridging-Header.h"; sourceTree = "<group>"; };
+		3669D40E2AF8FACA0085C0A2 /* dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dummy.swift; sourceTree = "<group>"; };
 		385F373DC4EA4064F010E301 /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; sourceTree = "<group>"; };
 		3CBBCEB84E53429F336E8612 /* Pods-hymnbook2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2/Pods-hymnbook2.release.xcconfig"; sourceTree = "<group>"; };
 		570FF69E743A432C9B839431 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -135,6 +138,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				3669D40E2AF8FACA0085C0A2 /* dummy.swift */,
+				3669D40D2AF8FAC90085C0A2 /* hymnbook2-Bridging-Header.h */,
 			);
 			name = hymnbook2;
 			sourceTree = "<group>";
@@ -288,7 +293,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = H74WKN7BSC;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1500;
 					};
 				};
 			};
@@ -506,6 +511,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				3669D40F2AF8FACA0085C0A2 /* dummy.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -525,6 +531,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7273A82B143F778C8FF64A7A /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -552,6 +559,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 385F373DC4EA4064F010E301 /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = hymnbook2Tests/Info.plist;
@@ -594,6 +602,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = nl.sajansen.hymnbook2;
 				PRODUCT_NAME = hymnbook2;
+				SWIFT_OBJC_BRIDGING_HEADER = "hymnbook2-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -622,6 +631,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = nl.sajansen.hymnbook2;
 				PRODUCT_NAME = hymnbook2;
+				SWIFT_OBJC_BRIDGING_HEADER = "hymnbook2-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

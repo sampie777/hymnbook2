@@ -26,7 +26,8 @@ const VerseSummary: React.FC<Props> = ({ verse, maxLines, preferredStartLine = 0
       {text}
     </Text>, []);
 
-  return <Text style={styles.text}>
+  return <Text style={styles.text}
+               textBreakStrategy={"balanced"}>
     {displayName.length === 0 ? undefined :
       <Text style={styles.verseNumber}>{displayName}  </Text>
     }
