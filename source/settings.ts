@@ -33,6 +33,7 @@ class SettingsClass extends SettingsBaseClass {
 
   // Songs audio
   songAudioPlaybackSpeed = 1.0;
+  trackDownloads = process.env.NODE_ENV !== "development";
 
   // Documents
   documentsMultiKeywordSearch = true;
