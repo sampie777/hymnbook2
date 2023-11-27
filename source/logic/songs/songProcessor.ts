@@ -62,7 +62,7 @@ export namespace SongProcessor {
         Db.songs.realm().create(SongBundleSchema.name, songBundle);
       });
     } catch (error) {
-      rollbar.error(`Failed to import songs: ${error}`, {
+      rollbar.error(`Failed to import songs`, {
         ...sanitizeErrorForRollbar(error),
         serverBundle: { ...bundle, songs: null },
         newBundle: { ...songBundle, songs: null }
@@ -268,7 +268,7 @@ export namespace SongProcessor {
             melodyId++
           ));
       } catch (error) {
-        rollbar.error(`Failed to convert abc melodies to local objects: ${error}`, {
+        rollbar.error(`Failed to convert abc melodies to local objects`, {
           ...sanitizeErrorForRollbar(error),
           song: song,
           melodies: song.abcMelodies
@@ -406,7 +406,7 @@ export namespace SongProcessor {
             it.uuid = serverBundle.uuid;
           });
         } catch (error) {
-          rollbar.error(`Failed to update songbundle ${it.name} with new UUID: ${error}`, {
+          rollbar.error(`Failed to update songbundle with new UUID`, {
             ...sanitizeErrorForRollbar(error),
             localBundle: { ...it, songs: null },
             serverBundle: { ...serverBundle, songs: null }

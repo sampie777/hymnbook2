@@ -21,7 +21,7 @@ const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
     <Text style={styles.titleText}>Nothing to show</Text>
     <Text style={styles.text}>You need to download some documents first before you can use them.</Text>
     <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Text style={styles.downloadText}>Take me to downloads</Text>
+      <Text style={styles.downloadText}>Take me to downloads </Text>
     </TouchableOpacity>
   </View>);
 };

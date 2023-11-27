@@ -189,7 +189,10 @@ export const hasMelodyToShow = (song?: Song) => {
       return false;
     }
   } catch (error) {
-    rollbar.error(`Failed to determine if song (${song.name}) has displayable melody: ${error}`, sanitizeErrorForRollbar(error));
+    rollbar.error(`Failed to determine if song has displayable melody`, {
+      ...sanitizeErrorForRollbar(error),
+      song: song
+    });
     return false;
   }
   return true;

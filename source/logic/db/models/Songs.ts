@@ -2,6 +2,31 @@ import Db from "../db";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./SongsSchema";
 import { AbcMelody } from "./AbcMelodies";
 
+export class SongAudio {
+  id: number
+  file: string = ""
+  name: string = ""
+  type: string = ""
+  uuid: string | null
+  downloadCount: number = 0
+
+  constructor(
+    id: number,
+    file: string,
+    name: string,
+    type: string,
+    uuid: string | null,
+    downloadCount: number = 0,
+  ) {
+    this.id = id
+    this.file = file
+    this.name = name
+    this.type = type
+    this.uuid = uuid
+    this.downloadCount = downloadCount
+  }
+}
+
 export enum SongMetadataType {
   AlternativeTitle = "AlternativeTitle",
   Copyright = "Copyright",

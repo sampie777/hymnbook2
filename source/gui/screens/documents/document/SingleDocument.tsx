@@ -251,7 +251,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
           onTouchCancel={onScrollViewTouchCancel}
           onTouchEnd={onScrollViewTouchEnd}
           showsVerticalScrollIndicator={true}
-          contentContainerStyle={styles.contentSectionList}>
+          contentContainerStyle={styles.contentSectionList}
+          removeClippedSubviews={false}>
 
           <DocumentBreadcrumb document={document} scale={animatedScale} />
 

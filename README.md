@@ -15,6 +15,8 @@ Hymnbook is an app developed for Christian believers who want to carry hymns wit
 
 Copy the file `.env.template` to `.env` and update the values a needed.
 
+We start to move to the use of [asdf](https://asdf-vm.com/) as version manager for the build tools, like node. If you don't want to use this tool, you can see the required version in the [`.tool-versions`](./.tool-versions) file.
+
 Run `yarn install`.
 
 > Don't use node v19 as Realm installation will [hang](https://github.com/realm/realm-js/issues/5136)
@@ -36,7 +38,7 @@ gem install --user-install ffi -- --enable-libffi-alloc
 ```
 [Source](https://stackoverflow.com/questions/68553842/error-installing-a-pod-bus-error-at-0x00000001045b8000?answertab=scoredesc#tab-top)
 
-You might also need to exclude simulator build for arm64 in xcode: [source](https://stackoverflow.com/questions/63607158/xcode-building-for-ios-simulator-but-linking-in-an-object-file-built-for-ios-f?answertab=scoredesc#tab-top). This is already done in de Podfile.
+You might also need to exclude simulator build for arm64 in xcode: [source](https://stackoverflow.com/questions/63607158/xcode-building-for-ios-simulator-but-linking-in-an-object-file-built-for-ios-f?answertab=scoredesc#tab-top). This is already done in the Podfile.
 
 
 ### Development server

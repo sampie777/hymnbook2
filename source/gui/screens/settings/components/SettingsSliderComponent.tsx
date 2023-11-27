@@ -8,16 +8,17 @@ interface NumberSettingProps extends GenericSettingProps<number> {
 }
 
 const SettingsSliderComponent: React.FC<NumberSettingProps> = ({
-                                          title,
-                                          description,
-                                          keyName,
-                                          value,
-                                          onPress,
-                                          valueRender,
-                                          isVisible = true,
-                                          lessObviousStyling = false,
-                                          defaultValue
-                                        }) => {
+                                                                 title,
+                                                                 description,
+                                                                 keyName,
+                                                                 value,
+                                                                 onPress,
+                                                                 onLongPress,
+                                                                 valueRender,
+                                                                 isVisible = true,
+                                                                 lessObviousStyling = false,
+                                                                 defaultValue
+                                                               }) => {
   if (!isVisible) {
     return null;
   }
@@ -65,9 +66,10 @@ const SettingsSliderComponent: React.FC<NumberSettingProps> = ({
                               value={_value}
                               isVisible={isVisible}
                               onPress={onPress === undefined ? defaultOnPress : onPress}
+                              onLongPress={onLongPress === undefined ? defaultOnPress : onLongPress}
                               valueRender={valueRender === undefined ? undefined : () => valueRender?.(_value)}
                               lessObviousStyling={lessObviousStyling} />
   </>);
-}
+};
 
 export default SettingsSliderComponent;

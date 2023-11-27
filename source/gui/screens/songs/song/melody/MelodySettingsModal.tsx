@@ -9,6 +9,7 @@ import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
 import PickerComponent from "../../../../components/popups/PickerComponent";
 import SliderComponent from "../../../../components/SliderComponent";
+import TrackPlayer from "react-native-track-player";
 
 interface Props {
   isMelodyShown: boolean;
@@ -31,15 +32,21 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 melodies = [],
                                                 showMelodyForAllVerses,
                                                 setShowMelodyForAllVerses,
-                                                melodyScale,
+                                                melodyScale
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [songMelodyScale, setSongMelodyScale] = useState(Settings.songMelodyScale);
+  const [songAudioPlaybackSpeed, setSongAudioPlaybackSpeed] = useState(Settings.songAudioPlaybackSpeed);
   const styles = createStyles(useTheme());
 
   useEffect(() => {
     Settings.songMelodyScale = songMelodyScale;
   }, [songMelodyScale]);
+
+  useEffect(() => {
+    Settings.songAudioPlaybackSpeed = songAudioPlaybackSpeed;
+    TrackPlayer.setRate(songAudioPlaybackSpeed);
+  }, [songAudioPlaybackSpeed]);
 
   const openPicker = () => {
     setShowPicker(true);
@@ -57,7 +64,7 @@ const MelodySettingsModal: React.FC<Props> = ({
   const onScaleSliderValueChange = (value: number) => {
     setSongMelodyScale(value / 100);
     melodyScale.setValue(value / 100);
-  }
+  };
 
   return <>
     {!showPicker || selectedMelody === undefined || melodies?.length === 0 ? undefined :
@@ -76,7 +83,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                        title={"Melody"}
                        closeText={"Close"}
                        invertConfirmColor={false}
-                       onClose={onClose}
+                       onClose={() => {
+                         Settings.store();
+                         onClose?.();
+                       }}
                        showCloseButton={true}>
 
       <View style={styles.popupContent}>
@@ -92,22 +102,22 @@ const MelodySettingsModal: React.FC<Props> = ({
                            setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
                          }} />
 
-        {selectedMelody === undefined ? undefined : <View style={styles.melodyContainer}>
+        <View style={styles.melodyContainer}>
           <Text style={styles.label}>Melody</Text>
 
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
             <Text style={styles.selectedLanguage}>
-              {selectedMelody.name}
+              {melodies.length === 0 ? "No melodies available"
+                : (selectedMelody?.name ?? "No default set")}
             </Text>
             {melodies?.length < 2 ? undefined : <Icon name={"caret-down"} style={styles.arrow} />}
           </TouchableOpacity>
         </View>
-        }
 
         <View style={styles.scaleContainer}>
-          <Text style={styles.scaleLabel}>Melody size</Text>
+          <Text style={styles.scaleLabel}>Melody size:</Text>
 
           <SliderComponent value={Math.round(songMelodyScale * 100)}
                            onValueChange={isIOS && !showMelodyForAllVerses ? onScaleSliderValueChange : undefined} // iOS is more performant
@@ -115,6 +125,20 @@ const MelodySettingsModal: React.FC<Props> = ({
                            onReset={() => {
                              setSongMelodyScale(1.0);
                              melodyScale.setValue(1.0);
+                           }} />
+        </View>
+
+        <View style={styles.scaleContainer}>
+          <Text style={styles.scaleLabel}>Audio playback speed:</Text>
+
+          <SliderComponent value={songAudioPlaybackSpeed}
+                           suffix={"x"}
+                           minValue={0.5}
+                           maxValue={2.0}
+                           step={0.25}
+                           onValueChanged={setSongAudioPlaybackSpeed}
+                           onReset={() => {
+                             setSongAudioPlaybackSpeed(1.0);
                            }} />
         </View>
       </View>

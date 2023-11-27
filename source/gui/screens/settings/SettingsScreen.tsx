@@ -7,6 +7,7 @@ import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
 import { capitalize, isAndroid } from "../../../logic/utils";
+import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
@@ -101,15 +102,24 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
+    <SettingSwitchComponent title={"Add whitespace after verse"}
+                            description={"On some devices, some verses won't display their last line. Enable this toggle to see if this fixes that problem."}
+                            keyName={"debug_addWhitespaceAfterVerse"} />
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
+    <SettingSwitchComponent title={"Track song audio downloads"}
+                            keyName={"trackDownloads"} />
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}
-                      onPress={(setValue) => setValue(0)} />
+                      onLongPress={(setValue) => setValue(0)} />
     <SettingComponent title={"Melody showed times"}
                       keyName={"melodyShowedTimes"}
-                      onPress={(setValue) => setValue(0)} />
-    <SettingComponent title={"Authentication client name"}
+                      onLongPress={(setValue) => setValue(0)} />
+    <SettingComponent title={"App user ID"}
+                      description={"This secure ID is used for analytic purposes, such as crash logs."}
+                      value={Security.getDeviceId()} />
+    <SettingComponent title={"Backend user ID"}
+                      description={"This ID is used for authentication with our online database."}
                       keyName={"authClientName"} />
   </>;
 
@@ -149,6 +159,7 @@ const SettingsScreen: React.FC = () => {
                               setValue(newValue);
                               theme.reload();
                             }}
+                            onLongPress={(setValue) => setValue("")}  // Set default
                             valueRender={it => {
                               if (it === "") {
                                 return "System (auto)";
@@ -174,6 +185,7 @@ const SettingsScreen: React.FC = () => {
 
               setValue(newValue);
             }}
+            onLongPress={(setValue) => setValue(SongSearch.StringSearchButtonPlacement.BottomRight)}  // Set default
             valueRender={(it) => {
               switch (it) {
                 case SongSearch.StringSearchButtonPlacement.TopLeft:
@@ -230,10 +242,6 @@ const SettingsScreen: React.FC = () => {
                                   description={"Show melody for all verses instead of the first (selected) verse."}
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Long press for menu"}
-                                  description={"Long press the melody button will show the menu, instead of instant toggling the melody."}
-                                  keyName={"longPressForMelodyMenu"}
-                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"} />
           <SettingSwitchComponent title={"Enable zoom (experimental)"}
@@ -258,11 +266,14 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"documentsResetPathToRoot"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Other"} isVisible={showAdvancedSettings} />
+          <Header title={"Other"} />
+          <SettingSwitchComponent title={"Enable text selection"}
+                                  description={"Enable this to be able to select and copy text from songs and documents."}
+                                  keyName={"enableTextSelection"}
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Share usage data"}
                                   description={"Help us improve this app based on how you use the app, by sharing this app's settings with us."}
-                                  keyName={"shareUsageData"}
-                                  isVisible={showAdvancedSettings} />
+                                  keyName={"shareUsageData"} />
 
           <Header title={"Backend"} isVisible={showAdvancedSettings} />
           <SettingComponent title={"Authentication status with backend"}
@@ -272,9 +283,9 @@ const SettingsScreen: React.FC = () => {
                               if (Settings.authStatus === AccessRequestStatus.UNKNOWN) {
                                 return it;
                               }
-                              return it + " (tap to reset)";
+                              return it + " (hold to reset)";
                             }}
-                            onPress={(setValue) =>
+                            onLongPress={(setValue) =>
                               setConfirmModalCallback(
                                 "Reset/forget authentication?",
                                 (isConfirmed) => {

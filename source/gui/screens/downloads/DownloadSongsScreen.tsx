@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Config from "react-native-config";
 import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
@@ -6,6 +7,7 @@ import { Server } from "../../../logic/server/server";
 import { rollbar } from "../../../logic/rollbar";
 import { DeepLinking } from "../../../logic/deeplinking";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import {
   Alert,
@@ -17,7 +19,8 @@ import {
 } from "react-native";
 import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
-import LanguageSelectBar from "./LanguageSelectBar";
+import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
+import UrlLink from "../../components/UrlLink";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -284,6 +287,9 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     return languages;
   };
 
+  const isOfSelectedLanguage = (it: { language: string }) =>
+    filterLanguage === ShowAllLanguagesValue || it.language.toUpperCase() === filterLanguage.toUpperCase();
+
   return (
     <View style={styles.container}>
       <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
@@ -304,19 +310,32 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                          message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
 
 
+      <Text style={[styles.informationText, styles.subtleInformationText]}>We are still sorting out all the song
+        licenses, so we trust that you take the
+        responsibility to make sure you have the correct licenses for the songs you download.</Text>
+
+      <Text style={[styles.informationText, styles.subtleInformationText]}>
+        If you want to download a song bundle which is not displayed, please feel free to
+        <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`} textOnly={true}>
+          <Text style={styles.webpageLink}> contact us</Text>
+        </UrlLink>.
+      </Text>
+
       <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
 
       <LanguageSelectBar languages={getAllLanguagesFromBundles(serverBundles)}
                          selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage} />
+                         onLanguageClick={setFilterLanguage}
+                         itemCountPerLanguage={itemCountPerLanguage(localBundles)} />
 
-      <ScrollView
-        style={styles.listContainer}
-        refreshControl={<RefreshControl onRefresh={fetchSongBundles}
-                                        tintColor={styles.refreshControl.color}
-                                        refreshing={isLoading || isBundleLoading} />}>
+      <ScrollView nestedScrollEnabled={true}
+                  style={styles.listContainer}
+                  refreshControl={<RefreshControl onRefresh={fetchSongBundles}
+                                                  tintColor={styles.refreshControl.color}
+                                                  refreshing={isLoading || isBundleLoading} />}>
 
         {localBundles.filter(it => it.isValid())
+          .filter(isOfSelectedLanguage)
           .map((bundle: LocalSongBundle) =>
             <LocalSongBundleItem key={bundle.uuid + bundle.name}
                                  bundle={bundle}
@@ -326,7 +345,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                  disabled={isLoading || isBundleLoading} />)}
 
         {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
-          .filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase())
+          .filter(isOfSelectedLanguage)
           .map((bundle: ServerSongBundle) =>
             <SongBundleItem key={bundle.uuid + bundle.name}
                             bundle={bundle}
@@ -339,7 +358,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
             {isLoading || isBundleLoading ? "Loading..." : "No online data available..."}
           </Text>
         }
-        {isLoading || serverBundles.length === 0 || serverBundles.filter(it => it.language.toUpperCase() === filterLanguage.toUpperCase()).length > 0 ? undefined :
+        {isLoading || serverBundles.length === 0 || serverBundles.filter(isOfSelectedLanguage).length > 0 ? undefined :
           <Text style={styles.emptyListText}>
             No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
           </Text>
@@ -366,8 +385,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 3,
     color: colors.text.default
   },
+  subtleInformationText: {
+    color: colors.text.lighter
+  },
 
-  listContainer: {},
+  listContainer: { flex: 1 },
 
   emptyListText: {
     padding: 20,
@@ -377,5 +399,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
 
   refreshControl: {
     color: colors.text.lighter
+  },
+
+  webpageLink: {
+    color: colors.url
   }
 });

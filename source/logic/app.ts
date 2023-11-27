@@ -4,6 +4,7 @@ import Db from "./db/db";
 import Settings from "../settings";
 import { ThemeContextProps } from "../gui/components/ThemeProvider";
 import { sanitizeErrorForRollbar } from "./utils";
+import { AudioFiles } from "./songs/audiofiles/audiofiles";
 
 export const closeDatabases = () => {
   Settings.store();
@@ -33,6 +34,8 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
         && Settings.authClientName != null && Settings.authClientName.length > 0) {
         rollbar.setPerson(Settings.authClientName);
       }
+
+      AudioFiles.initPlayer();
     });
 
 export const initSongDatabase = () =>
