@@ -1,14 +1,13 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { Alert, View, TouchableOpacity, Text } from "react-native";
 import { openLink } from "../../logic/utils";
 
-const UrlLink: React.FC<{
+const UrlLink: React.FC<PropsWithChildren<{
   url: string,
   style?: Array<Object> | Object,
   onOpened?: () => void,
-  children: React.ReactNode,
   textOnly?: boolean,
-}> =
+}>> =
   ({
      children,
      url,

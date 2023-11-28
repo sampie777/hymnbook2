@@ -341,7 +341,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     verseHeights.current[verse.index] = event.nativeEvent.layout.height;
   };
 
-  const calculateVerseLayout = (data: Array<Verse> | null | undefined, index: number): {
+  const calculateVerseLayout = (data: ArrayLike<Verse> | null | undefined, index: number): {
     length: number;
     offset: number;
     index: number
