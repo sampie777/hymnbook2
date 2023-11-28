@@ -1,10 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, PropsWithChildren } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { rollbar } from "../../logic/rollbar";
 import { defaultFontFamilies, lightColors } from "../../logic/theme";
 
-interface ComponentProps {
-  children: React.ReactNode;
+interface ComponentProps extends PropsWithChildren {
 }
 
 interface ComponentState {
@@ -43,7 +42,7 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
     this.setState({
       error: null,
       errorInfo: null,
-      showDebugInfo: false,
+      showDebugInfo: false
     });
   }
 
