@@ -23,7 +23,10 @@ Run `yarn android`.
 
 ##### Fixes 
 
-In the case of an `FBReactNativeSpec - command phasescriptexecution failed with a nonzero exit code` error in xCode during the build: [add a `.xcode.env.local` file](https://stackoverflow.com/a/74861250/2806723).
+In the case of an `FBReactNativeSpec - command phasescriptexecution failed with a nonzero exit code` error in xCode during the build: [add a `.xcode.env.local` file](https://stackoverflow.com/a/74861250/2806723):
+```bash
+echo export NODE_BINARY="$(which node)" > ios/.xcode.env.local
+```
 
 **Pod install on ARM**
 
