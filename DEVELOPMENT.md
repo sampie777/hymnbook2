@@ -21,7 +21,11 @@ Run `yarn android`.
 1. Run `pod install` in `ios/`.
 2. Run `yarn ios` to fire up the simulator.
 
-##### Pod install on ARM
+##### Fixes 
+
+In the case of an `FBReactNativeSpec - command phasescriptexecution failed with a nonzero exit code` error in xCode during the build: [add a `.xcode.env.local` file](https://stackoverflow.com/a/74861250/2806723).
+
+**Pod install on ARM**
 
 When using a M1 Mac (with ARM instead of Intel), you'll probably get a Ruby error when running `pod install`. Solve this by installing the following:
 ```
