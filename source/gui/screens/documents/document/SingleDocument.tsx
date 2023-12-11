@@ -46,8 +46,8 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
-  const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>();
-  const fadeInFallbackTimeout = useRef<number | undefined>();
+  const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>(null);
+  const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
   const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
 
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);

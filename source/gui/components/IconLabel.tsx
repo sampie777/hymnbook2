@@ -18,7 +18,8 @@ const IconLabel: React.FC<Props> = ({ text, iconSource, iconSize = 60, iconStyle
         {text}
       </Text>
     </View>
-    <Image source={iconSource} style={[styles.icon, iconStyle]} />
+    {iconSource == undefined ? null :
+      <Image source={iconSource} style={[styles.icon, iconStyle]} />}
   </View>;
 };
 
