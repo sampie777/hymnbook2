@@ -18,34 +18,34 @@ import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import { DataNode, Document, Element, Node } from "domhandler/lib/node";
 
 interface HtmlStyles {
-  defaultText?: StyleProp<StyleProp<TextStyle>>,
-  p?: StyleProp<StyleProp<TextStyle>>,
-  h1?: StyleProp<StyleProp<TextStyle>>,
-  h2?: StyleProp<StyleProp<TextStyle>>,
-  h3?: StyleProp<StyleProp<TextStyle>>,
-  h4?: StyleProp<StyleProp<TextStyle>>,
-  h5?: StyleProp<StyleProp<TextStyle>>,
-  h6?: StyleProp<StyleProp<TextStyle>>,
-  ul?: StyleProp<StyleProp<ViewStyle>>,
-  ol?: StyleProp<StyleProp<ViewStyle>>,
-  li?: StyleProp<StyleProp<ViewStyle>>,
-  liIndexText?: StyleProp<StyleProp<TextStyle>>,
-  liText?: StyleProp<StyleProp<TextStyle>>,
-  pre?: StyleProp<StyleProp<TextStyle>>,
-  blockquote?: StyleProp<StyleProp<TextStyle>>,
-  code?: StyleProp<StyleProp<TextStyle>>,
-  ins?: StyleProp<StyleProp<TextStyle>>,
-  del?: StyleProp<StyleProp<TextStyle>>,
-  sup?: StyleProp<StyleProp<TextStyle>>,
-  sub?: StyleProp<StyleProp<TextStyle>>,
-  hr?: StyleProp<StyleProp<TextStyle>>,
-  strong?: StyleProp<StyleProp<TextStyle>>,
-  em?: StyleProp<StyleProp<TextStyle>>,
-  u?: StyleProp<StyleProp<TextStyle>>,
-  strike?: StyleProp<StyleProp<TextStyle>>,
-  div?: StyleProp<StyleProp<ViewStyle>>,
-  br?: StyleProp<StyleProp<TextStyle>>,
-  a?: StyleProp<StyleProp<TextStyle>>,
+  defaultText?: StyleProp<TextStyle>,
+  p?: StyleProp<TextStyle>,
+  h1?: StyleProp<TextStyle>,
+  h2?: StyleProp<TextStyle>,
+  h3?: StyleProp<TextStyle>,
+  h4?: StyleProp<TextStyle>,
+  h5?: StyleProp<TextStyle>,
+  h6?: StyleProp<TextStyle>,
+  ul?: StyleProp<ViewStyle>,
+  ol?: StyleProp<ViewStyle>,
+  li?: StyleProp<ViewStyle>,
+  liIndexText?: StyleProp<TextStyle>,
+  liText?: StyleProp<TextStyle>,
+  pre?: StyleProp<TextStyle>,
+  blockquote?: StyleProp<TextStyle>,
+  code?: StyleProp<TextStyle>,
+  ins?: StyleProp<TextStyle>,
+  del?: StyleProp<TextStyle>,
+  sup?: StyleProp<TextStyle>,
+  sub?: StyleProp<TextStyle>,
+  hr?: StyleProp<TextStyle>,
+  strong?: StyleProp<TextStyle>,
+  em?: StyleProp<TextStyle>,
+  u?: StyleProp<TextStyle>,
+  strike?: StyleProp<TextStyle>,
+  div?: StyleProp<ViewStyle>,
+  br?: StyleProp<TextStyle>,
+  a?: StyleProp<TextStyle>,
 }
 
 interface Props {
@@ -152,7 +152,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
       {element.children.map((it, i) => renderNode(it, i, args))}
     </Animated.View>;
 
-  const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<StyleProp<TextStyle>>) =>
+  const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<TextStyle>) =>
     <Animated.Text key={index}
                    style={style}
                    dataDetectorType={"link"}

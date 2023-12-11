@@ -1,16 +1,16 @@
 import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { RectangularInset } from "../../../components/utils";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
-import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 
 export const SearchResultItem: React.FC<{
   navigation: BottomTabNavigationProp<ParamList>,
@@ -54,7 +54,7 @@ export const SearchResultItem: React.FC<{
           song: song,
           callFrom: "SearchResultItem"
         });
-        alert("Could not add song to songlist: " + error);
+        Alert.alert("Could not add song to songlist: " + error);
         return;
       }
 
