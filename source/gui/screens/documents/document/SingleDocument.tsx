@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated as RNAnimated,
   StyleSheet,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -45,8 +46,8 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
-  const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>(null);
-  const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
+  const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>();
+  const fadeInFallbackTimeout = useRef<number | undefined>();
   const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
 
   const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
@@ -54,7 +55,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = useSharedValue(0);
-  const animatedScale = Animated.useValue<number>(0.95 * Settings.documentScale);
+  const animatedScale = new RNAnimated.Value(0.95 * Settings.documentScale);
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -86,7 +87,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
     // Set fallback timer for fading in document screen
     if (fadeInFallbackTimeout.current !== undefined) {
-      clearTimeout(fadeInFallbackTimeout.current);
+      clearTimeout(fadeInFallbackTimeout.current!);
     }
     fadeInFallbackTimeout.current = setTimeout(() => {
       rollbar.warning("Document loading timed out", {
@@ -146,7 +147,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
   const onHtmlViewLoaded = () => {
     if (fadeInFallbackTimeout.current !== undefined) {
-      clearTimeout(fadeInFallbackTimeout.current);
+      clearTimeout(fadeInFallbackTimeout.current!);
     }
 
     const afterDisplay = () => {
@@ -219,14 +220,12 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
   };
 
-  const HtmlView = useMemo(() =>
-      Settings.documentsUseExperimentalViewer
-        ? <AnimatedHtmlView html={document?.html ?? ""}
-                            scale={animatedScale}
-                            onLayout={onHtmlViewLoaded} />
-        : <OriginalHtmlViewer html={document?.html ?? ""}
-                              onLayout={onHtmlViewLoaded} />,
-    [document?.id]);
+  const HtmlView = Settings.documentsUseExperimentalViewer
+    ? <AnimatedHtmlView html={document?.html ?? ""}
+                        scale={animatedScale}
+                        onLayout={onHtmlViewLoaded} />
+    : <OriginalHtmlViewer html={document?.html ?? ""}
+                          onLayout={onHtmlViewLoaded} />;
 
   const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
 
