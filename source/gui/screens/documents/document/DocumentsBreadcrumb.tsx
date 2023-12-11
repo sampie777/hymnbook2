@@ -3,12 +3,11 @@ import Settings from "../../../../settings";
 import { Document } from "../../../../logic/db/models/Documents";
 import { getPathForDocument } from "../../../../logic/documents/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { StyleSheet } from "react-native";
-import Animated from "react-native-reanimated";
+import { Animated, StyleSheet } from "react-native";
 
 interface Props {
   document?: Document;
-  scale: Animated.Value<number>;
+  scale: Animated.Value;
 }
 
 const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
