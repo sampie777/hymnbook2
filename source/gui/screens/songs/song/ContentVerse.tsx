@@ -116,7 +116,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                      selectable={Settings.enableTextSelection}
                      textBreakStrategy={"balanced"}>
         {highlightText == null
-          ? verse.content + (Settings.debug_addWhitespaceAfterVerse ? " " : "")
+          ? (Settings.debug_addWhitespaceAfterVerse ? verse.content.replace(/\n/g, " \n") : verse.content)
           : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
       </Animated.Text>
     }
