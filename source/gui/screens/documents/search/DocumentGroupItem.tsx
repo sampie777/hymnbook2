@@ -5,13 +5,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 
-interface ScreenProps {
-  group: DocumentGroup;
-  onPress?: (group: DocumentGroup) => void;
+interface ScreenProps<T extends DocumentGroup> {
+  group: T;
+  onPress?: (group: T) => void;
   searchText?: string;
 }
 
-const DocumentGroupItem: React.FC<ScreenProps> = ({ group, onPress, searchText }) => {
+const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object>> = ({ group, onPress, searchText }) => {
   const styles = createStyles(useTheme());
 
   return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>
