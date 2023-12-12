@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollectionChangeCallback } from "realm";
@@ -11,7 +11,7 @@ import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navig
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
-import { RectangularInset } from "../../../components/utils";
+import { RectangularInset, useIsMounted } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { ScrollView, View, Text, StyleSheet, BackHandler } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
@@ -22,7 +22,7 @@ import SearchInput from "./SearchInput";
 
 
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
-  let isMounted = true;
+  const isMounted = useIsMounted({ trackFocus: true });
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<(DocumentGroup & Realm.Object) | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentGroup & Realm.Object>>([]);
@@ -35,33 +35,28 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   }, []);
 
   const onLaunch = () => {
-    isMounted = true;
   };
 
   const onExit = () => {
-    // This is needed, as the removeListener doesn't seem to correctly work.
-    isMounted = false;
     setGroup(undefined);  // Throw away these in case of live reload of the app
     setRootGroups([]);
   };
 
-  useFocusEffect(React.useCallback(() => {
+  useFocusEffect(useCallback(() => {
     BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
   }, [group, searchText]));
 
-  useFocusEffect(React.useCallback(() => {
+  useFocusEffect(useCallback(() => {
     onFocus();
     return onBlur;
   }, []));
 
   const onFocus = () => {
-    isMounted = true;
     Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).addListener(onCollectionChange);
   };
 
   const onBlur = () => {
-    isMounted = false;
     Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).removeListener(onCollectionChange);
     if (Settings.documentsResetPathToRoot) {
       setGroup(undefined);
@@ -86,6 +81,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   };
 
   const onCollectionChange: CollectionChangeCallback<DocumentGroup> = () => {
+    // This is needed, as the removeListener doesn't seem to correctly work.
     if (!isMounted) {
       return;
     }
