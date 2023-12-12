@@ -8,6 +8,7 @@ import { rollbar } from "../../../logic/rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { useIsMounted } from "../../components/utils";
 import {
   Alert,
   RefreshControl,
@@ -31,7 +32,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                                              promptForUuid,
                                                              dismissPromptForUuid
                                                            }) => {
-  let isMounted = true;
+  const isMounted = useIsMounted();
   const [isLoading, setIsLoading] = useState(false);
   const [isLocalGroupsLoading, setIsLocalGroupsLoading] = useState(true);
   const [isGroupLoading, setIsGroupLoading] = useState(false);
@@ -49,13 +50,11 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   }, []);
 
   const onOpen = () => {
-    isMounted = true;
     loadLocalDocumentGroups();
     fetchDocumentGroups();
   };
 
   const onClose = () => {
-    isMounted = false;
   };
 
   useEffect(() => {

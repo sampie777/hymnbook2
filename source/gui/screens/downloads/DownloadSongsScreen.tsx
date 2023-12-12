@@ -9,6 +9,7 @@ import { DeepLinking } from "../../../logic/deeplinking";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { useIsMounted } from "../../components/utils";
 import {
   Alert,
   RefreshControl,
@@ -29,7 +30,7 @@ interface ComponentProps {
 }
 
 const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, promptForUuid, dismissPromptForUuid }) => {
-  let isMounted = true;
+  const isMounted = useIsMounted();
   const [isLoading, setIsLoading] = useState(false);
   const [isLocalBundlesLoading, setIsLocalBundlesLoading] = useState(true);
   const [isBundleLoading, setIsBundleLoading] = useState(false);
@@ -47,13 +48,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   }, []);
 
   const onOpen = () => {
-    isMounted = true;
     loadLocalSongBundles();
     fetchSongBundles();
   };
 
   const onClose = () => {
-    isMounted = false;
   };
 
   useEffect(() => {

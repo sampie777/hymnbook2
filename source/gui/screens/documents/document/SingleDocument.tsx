@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated as RNAnimated,
   StyleSheet,
@@ -66,12 +66,10 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }))
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      onFocus();
-      return onBlur;
-    }, [route.params.id])
-  );
+  useFocusEffect(useCallback(() => {
+    onFocus();
+    return onBlur;
+  }, [route.params.id]));
 
   const onFocus = () => {
     keepScreenAwake(Settings.keepScreenAwake);
@@ -99,7 +97,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }, 3000);
   }, [document?.id]);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (document === undefined) {
       navigation.setOptions({
         title: ""

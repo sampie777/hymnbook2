@@ -29,6 +29,7 @@ import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../log
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
@@ -44,7 +45,7 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRo
 }
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
-  const isMounted = useRef(true);
+  const isMounted = useIsMounted({ trackFocus: true });
   const _isFocused = useRef(false); // todo: Temporary value to analyze "Failed to scroll to index" cause
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
@@ -70,13 +71,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   useFocusEffect(
     React.useCallback(() => {
       onFocus();
@@ -85,7 +79,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   );
 
   const onFocus = () => {
-    isMounted.current = true;
     _isFocused.current = true;
     keepScreenAwake(Settings.keepScreenAwake);
     loadSong();
@@ -176,7 +169,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (useSong === undefined) {
       rollbar.warning("Can't open versepicker for undefined song.", {
         "route.params.id": route.params.id,
-        isMounted: isMounted.current,
+        isMounted: isMounted,
         isFocused: _isFocused.current
       });
       return;
@@ -208,7 +201,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       fadeInTimeout.current = undefined;
     }
 
-    if (!isMounted.current || song == null) return;
+    if (!isMounted || song == null) return;
 
     if (maxTries > 0 && (verseHeights.current == null || Object.keys(verseHeights.current).length == 0)) {
       // Wait for the verses to load before fading song in, otherwise the screen will look glitchy.
@@ -220,7 +213,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       rollbar.warning("Max song load animation tries elapsed", {
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted.current,
+        isMounted: isMounted,
         maxTries: maxTries,
         SettingsSongFadeIn: Settings.songFadeIn,
         showMelody: showMelody,
@@ -274,13 +267,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       scrollTimeout.current = undefined;
     }
 
-    if (!isMounted.current || song == null) return;
+    if (!isMounted || song == null) return;
 
     if (maxTries <= 0) {
       rollbar.warning("Max scroll tries elapsed.", {
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted.current,
+        isMounted: isMounted,
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
@@ -301,7 +294,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const scrollToFirstVerse = () => {
-    if (!isMounted.current) return;
+    if (!isMounted) return;
 
     if (song === undefined
       || song?.verses === undefined || song?.verses.length === 0
@@ -329,7 +322,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted.current,
+        isMounted: isMounted,
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
         isFocused: _isFocused.current
       });
@@ -437,7 +430,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               info: info,
               songName: song?.name ?? "null",
               verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-              isMounted: isMounted.current,
+              isMounted: isMounted,
               viewIndex: viewIndex,
               selectedVerses: route.params.selectedVerses?.map(it => it.name),
               isFocused: _isFocused.current

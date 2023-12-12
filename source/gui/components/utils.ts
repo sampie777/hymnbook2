@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { rollbar } from "../../logic/rollbar";
 import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { sanitizeErrorForRollbar } from "../../logic/utils";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -93,3 +94,24 @@ export const mergeStyleSheets = (styles: Array<object | Array<object>>): object 
 };
 
 export const RectangularInset = (size: number): Insets => ({ top: size, right: size, bottom: size, left: size });
+
+export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: false }) => {
+  const isMounted = useRef(false);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  if (options.trackFocus) {
+    useFocusEffect(useCallback(() => {
+      isMounted.current = true;
+      return () => {
+        isMounted.current = false;
+      };
+    }, []));
+  }
+
+  return () => isMounted.current;
+};
