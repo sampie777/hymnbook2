@@ -10,7 +10,7 @@ export const getParentForDocumentGroup = (group: DocumentGroup): (DocumentGroup 
   }
 
   const parent = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
-    .filtered("groups.uuid = $0", group.uuid);
+    .filtered("groups.id = $0", group.id);
 
   if (parent === undefined || parent === null || parent.length === 0) {
     return null;
