@@ -24,8 +24,8 @@ import SearchInput from "./SearchInput";
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
   let isMounted = true;
   const [isLoading, setIsLoading] = useState(true);
-  const [group, setGroup] = useState<DocumentGroup | undefined>(undefined);
-  const [rootGroups, setRootGroups] = useState<Array<DocumentGroup>>([]);
+  const [group, setGroup] = useState<(DocumentGroup & Realm.Object) | undefined>(undefined);
+  const [rootGroups, setRootGroups] = useState<Array<DocumentGroup & Realm.Object>>([]);
   const [searchText, setSearchText] = useState("");
   const styles = createStyles(useTheme());
 
@@ -113,7 +113,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     setSearchText("");
   };
 
-  const onGroupPress = (group: DocumentGroup) => {
+  const onGroupPress = (group: DocumentGroup & Realm.Object) => {
     setGroup(group);
     setSearchText("");
   };
@@ -122,7 +122,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     navigation.navigate(DocumentRoute, { id: document.id });
   };
 
-  const groups = (): Array<DocumentGroup> => {
+  const groups = (): Array<DocumentGroup & Realm.Object> => {
     if (group === undefined) {
       return rootGroups;
     }
@@ -131,7 +131,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       return [];
     }
 
-    return Array.from(group.groups);
+    return Array.from(group.groups as (DocumentGroup & Realm.Object)[]);
   };
 
   const groupsForSearch = () => {
@@ -141,9 +141,9 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     return DocumentSearch.searchForGroups([group], searchText);
   };
 
-  const groupsWithSearchResult = (): Array<DocumentGroup> => {
+  const groupsWithSearchResult = (): Array<DocumentGroup & Realm.Object> => {
     if (searchText.length > 0) {
-      return groupsForSearch();
+      return groupsForSearch() as (DocumentGroup & Realm.Object)[];
     }
     return groups();
   };
@@ -171,6 +171,31 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     return DocumentSearch.searchForItems([group], searchText);
   };
 
+  const hasInvalidObjects = (): boolean => {
+    if (rootGroups.length > 0 && rootGroups.some(it => !it.isValid())) {
+      rollbar.debug("Some root groups are invalid");
+      setGroup(undefined);
+      setRootGroups([]);
+      return true;
+    } else if (group && !group.isValid()) {
+      // We know this one will occur very often, so we don't want to log it. We just want to know about the others
+      // rollbar.debug("The selected group is invalid")
+      setGroup(undefined);
+      return true;
+    } else if (group && (group.groups as (DocumentGroup & Realm.Object)[]).some(it => !it.isValid())) {
+      rollbar.debug("Some sub groups are invalid");
+      setGroup(undefined);
+      return true;
+    }
+    return false;
+  };
+
+  if (hasInvalidObjects()) {
+    return <View style={styles.container}>
+      <Text style={styles.pageTitle}>Please reload this screen</Text>
+    </View>;
+  }
+
   return (<View style={styles.container}>
     <View style={styles.pageHeader}>
       {group === undefined ? undefined :
@@ -197,7 +222,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
           onPress={onGroupPress} />)
       }
 
-      {items().map(it => it as Document)
+      {items()
+        .map(it => it as Document)
         .sort((a, b) => a.name.localeCompare(b.name))
         .sort((a, b) => a.index - b.index)
         .map(it => <DocumentItem key={it.id}
