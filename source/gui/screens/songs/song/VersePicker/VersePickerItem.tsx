@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Verse } from "../../../../../logic/db/models/Songs";
-import { getVerseType, VerseType } from "../../../../../logic/songs/utils";
+import { getVerseShortName, getVerseType, VerseType } from "../../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 
 interface ComponentProps {
@@ -23,6 +23,7 @@ const VersePickerItem: React.FC<ComponentProps> = ({
 
   const styleForVerseType = (type: VerseType) => {
     switch (type) {
+      case VerseType.PreChorus:
       case VerseType.Chorus:
         return styles.chorus;
       case VerseType.Bridge:
@@ -33,14 +34,6 @@ const VersePickerItem: React.FC<ComponentProps> = ({
         return styles.end;
     }
   };
-
-  // Shorten names
-  const displayName = verse.name.trim()
-    .replace(/verse */gi, "")
-    .replace(/chorus */gi, "C")
-    .replace(/bridge */gi, "B")
-    .replace(/intro */gi, "I")
-    .replace(/end */gi, "E");
 
   return <TouchableOpacity style={[
     styles.container,
@@ -57,7 +50,7 @@ const VersePickerItem: React.FC<ComponentProps> = ({
                              right: horizontalMargin
                            }}>
     <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}>
-      {displayName}
+      {getVerseShortName(verse.name)}
     </Text>
   </TouchableOpacity>;
 };
