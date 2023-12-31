@@ -8,9 +8,15 @@ Copy the file `.env.template` to `.env` and update the values a needed.
 
 We start to move to the use of [asdf](https://asdf-vm.com/) as version manager for the build tools, like node. If you don't want to use this tool, you can see the required version in the [`.tool-versions`](./.tool-versions) file.
 
+**In case gradle whines about the wrong Java version**: we use the Java bundled with Android Studio. So before each `yarn build` or `yarn bundle` etc. commands, you need to make sure your `JAVA_HOME` is set to the right path:
+```shell
+export JAVA_HOME="${HOME}/.local/share/JetBrains/Toolbox/apps/android-studio/jbr" # Or similar
+```
+
 Run `yarn install`.
 
 > Don't use node v19 as Realm installation will [hang](https://github.com/realm/realm-js/issues/5136)
+
 
 #### Android
 
