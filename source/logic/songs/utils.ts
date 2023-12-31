@@ -16,7 +16,7 @@ export enum VerseType {
 }
 
 export const getVerseType = (verse: Verse): VerseType => {
-  if (/^(pre-chorus|prechorus|pre chorus)\W?/i.test(verse.name)) {
+  if (/^(pre[\-_ ]?chorus)\W?/i.test(verse.name)) {
     return VerseType.PreChorus;
   }
   if (/(chorus|refrein|refrain)\W?/i.test(verse.name)) {
@@ -37,7 +37,7 @@ export const getVerseType = (verse: Verse): VerseType => {
 
 export const getVerseShortName = (name: string): string => name.trim()
   .replace(/(verse|vers) */gi, "")
-  .replace(/(pre-chorus|prechorus|pre chorus) */gi, "PC")
+  .replace(/(pre[\-_ ]?chorus) */gi, "PC")
   .replace(/(chorus|refrein|refrain) */gi, "C")
   .replace(/(bridge|tussenspel) */gi, "B")
   .replace(/(intro|inleiding|voorzang) */gi, "I")
