@@ -8,6 +8,7 @@ import { AbcMelody } from "../db/models/AbcMelodies";
 
 export enum VerseType {
   Verse,
+  PreChorus,
   Chorus,
   Bridge,
   Intro,
@@ -15,10 +16,13 @@ export enum VerseType {
 }
 
 export const getVerseType = (verse: Verse): VerseType => {
+  if (/^(pre-chorus|prechorus|pre chorus)\W?/i.test(verse.name)) {
+    return VerseType.PreChorus;
+  }
   if (/(chorus|refrein|refrain)\W?/i.test(verse.name)) {
     return VerseType.Chorus;
   }
-  if (/bridge|tussenspel\W?/i.test(verse.name)) {
+  if (/(bridge|tussenspel)\W?/i.test(verse.name)) {
     return VerseType.Bridge;
   }
   if (/(intro|inleiding|voorzang)\W?/i.test(verse.name)) {
@@ -30,6 +34,14 @@ export const getVerseType = (verse: Verse): VerseType => {
 
   return VerseType.Verse;
 };
+
+export const getVerseShortName = (name: string): string => name.trim()
+  .replace(/(verse|vers) */gi, "")
+  .replace(/(pre-chorus|prechorus|pre chorus) */gi, "PC")
+  .replace(/(chorus|refrein|refrain) */gi, "C")
+  .replace(/(bridge|tussenspel) */gi, "B")
+  .replace(/(intro|inleiding|voorzang) */gi, "I")
+  .replace(/(end|slot|outro) */gi, "E");
 
 // Creates string like "1-3, 5" or "1, 2, 5" or similar based on the selected verses
 function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
