@@ -83,7 +83,8 @@ export namespace SongSearch {
   };
 
   export const findByVerse = (text: string): Song[] => {
-    let query = `verses.content LIKE[c] "*${text}*"`;
+    let query = `verses.content LIKE[c] $0`;
+    const args = [`*${text}*`];
 
     // Add wildcards to ignore some punctuation (max 1 at the moment)
     // ("ab, cd" will match "ab cd")
@@ -91,14 +92,15 @@ export namespace SongSearch {
       for (let i = 0; i < text.length; i++) {
         if (text[i] != " ") continue;
         const regex = text.slice(0, i) + "?" + text.slice(i);
-        query += ` or verses.content LIKE[c] "*${regex}*"`;
+        query += ` or verses.content LIKE[c] $${args.length}`;
+        args.push(`*${regex}*`);
       }
     }
 
     const results = Db.songs.realm().objects<Song>(SongSchema.name)
       .sorted("name")
       .sorted("number")
-      .filtered(query);
+      .filtered(query, ...args);
 
     return Array.from(results);
   };
