@@ -1,9 +1,8 @@
-import React, { useRef } from "react";
+import React, { PropsWithChildren, useRef } from "react";
 import { Animated, Pressable, TouchableOpacityProps } from "react-native";
 import { isAndroid } from "../../logic/utils";
 
-interface Props extends TouchableOpacityProps {
-  children: React.ReactNode;
+interface Props extends PropsWithChildren<TouchableOpacityProps> {
 }
 
 /**

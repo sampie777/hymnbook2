@@ -20,7 +20,7 @@ import {
   View,
   Text,
   ScrollView,
-  useWindowDimensions
+  useWindowDimensions, Alert
 } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
@@ -116,7 +116,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
         song: song,
         callFrom: "VersePicker"
       });
-      alert("Could not add song to songlist: " + error);
+      Alert.alert("Could not add song to songlist: " + error);
       return;
     }
     if (addedSongListSongModel === undefined) {

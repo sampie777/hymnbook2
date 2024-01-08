@@ -1,11 +1,10 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { objectToArrayIfNotAlready } from "../../../../logic/utils";
 
-interface KeyProps {
-  children: React.ReactNode,
+interface KeyProps extends PropsWithChildren{
   onPress: () => void;
   onLongPress?: () => void,
   extraStyle?: Object;

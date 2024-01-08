@@ -1,8 +1,8 @@
 diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
-index 953d3f3..9174d93 100644
+index 36fb783..991609b 100644
 --- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
 +++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
-@@ -32,9 +32,14 @@ class RNGestureHandlerRootView(context: Context?) : ReactViewGroup(context) {
+@@ -33,14 +33,24 @@ class RNGestureHandlerRootView(context: Context?) : ReactViewGroup(context) {
    }
  
    override fun dispatchTouchEvent(ev: MotionEvent) =
@@ -13,6 +13,19 @@ index 953d3f3..9174d93 100644
 +      if (_enabled && rootHelper!!.dispatchTouchEvent(ev)) {
 +        true
 +      } else super.dispatchTouchEvent(ev)
++    } catch (e: IllegalArgumentException) {
++      e.printStackTrace()
++      false
++    }
+ 
+   override fun dispatchGenericMotionEvent(event: MotionEvent) =
+-    if (_enabled && rootHelper!!.dispatchTouchEvent(event)) {
+-      true
+-    } else super.dispatchGenericMotionEvent(event)
++    try {
++        if (_enabled && rootHelper!!.dispatchTouchEvent(event)) {
++          true
++        } else super.dispatchGenericMotionEvent(event)
 +    } catch (e: IllegalArgumentException) {
 +      e.printStackTrace()
 +      false
