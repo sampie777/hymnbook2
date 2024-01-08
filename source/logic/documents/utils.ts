@@ -4,7 +4,7 @@ import { rollbar } from "../rollbar";
 import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
 import { sanitizeErrorForRollbar } from "../utils";
 
-export const getParentForDocumentGroup = (group: DocumentGroup): DocumentGroup | null => {
+export const getParentForDocumentGroup = (group: DocumentGroup): (DocumentGroup & Realm.Object) | null => {
   if (group === undefined || group.isRoot) {
     return null;
   }
@@ -16,7 +16,7 @@ export const getParentForDocumentGroup = (group: DocumentGroup): DocumentGroup |
     return null;
   }
 
-  return parent[0] as unknown as DocumentGroup;
+  return parent[0];
 };
 
 export const getParentForDocumentOrDocumentGroup = (item: Document | DocumentGroup): DocumentGroup | undefined => {

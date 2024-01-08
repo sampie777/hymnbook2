@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
+  Animated as RNAnimated,
   StyleSheet,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -54,7 +55,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
   const animatedOpacity = useSharedValue(0);
-  const animatedScale = Animated.useValue<number>(0.95 * Settings.documentScale);
+  // Wrapping this value in a ref helps to fire the animation properties to the underlying elements, even if they're memoized
+  const animatedScale = useRef(new RNAnimated.Value(0.95 * Settings.documentScale));
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -64,12 +66,10 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }))
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      onFocus();
-      return onBlur;
-    }, [route.params.id])
-  );
+  useFocusEffect(useCallback(() => {
+    onFocus();
+    return onBlur;
+  }, [route.params.id]));
 
   const onFocus = () => {
     keepScreenAwake(Settings.keepScreenAwake);
@@ -86,7 +86,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
     // Set fallback timer for fading in document screen
     if (fadeInFallbackTimeout.current !== undefined) {
-      clearTimeout(fadeInFallbackTimeout.current);
+      clearTimeout(fadeInFallbackTimeout.current!);
     }
     fadeInFallbackTimeout.current = setTimeout(() => {
       rollbar.warning("Document loading timed out", {
@@ -97,7 +97,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }, 3000);
   }, [document?.id]);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (document === undefined) {
       navigation.setOptions({
         title: ""
@@ -146,7 +146,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
   const onHtmlViewLoaded = () => {
     if (fadeInFallbackTimeout.current !== undefined) {
-      clearTimeout(fadeInFallbackTimeout.current);
+      clearTimeout(fadeInFallbackTimeout.current!);
     }
 
     const afterDisplay = () => {
@@ -208,24 +208,23 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     if (!Settings.documentsUseExperimentalViewer) return;
-    animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
+    animatedScale.current.setValue(Settings.documentScale * event.nativeEvent.scale);
   };
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     if (!Settings.documentsUseExperimentalViewer) return;
     if (event.nativeEvent.state === State.END) {
-      animatedScale.setValue(Settings.documentScale * event.nativeEvent.scale);
+      animatedScale.current.setValue(Settings.documentScale * event.nativeEvent.scale);
       Settings.documentScale *= event.nativeEvent.scale;
     }
   };
 
-  const HtmlView = useMemo(() =>
-      Settings.documentsUseExperimentalViewer
-        ? <AnimatedHtmlView html={document?.html ?? ""}
-                            scale={animatedScale}
-                            onLayout={onHtmlViewLoaded} />
-        : <OriginalHtmlViewer html={document?.html ?? ""}
-                              onLayout={onHtmlViewLoaded} />,
+  const HtmlView = useMemo(() => Settings.documentsUseExperimentalViewer
+      ? <AnimatedHtmlView html={document?.html ?? ""}
+                          scale={animatedScale.current}
+                          onLayout={onHtmlViewLoaded} />
+      : <OriginalHtmlViewer html={document?.html ?? ""}
+                            onLayout={onHtmlViewLoaded} />,
     [document?.id]);
 
   const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
@@ -254,7 +253,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
           contentContainerStyle={styles.contentSectionList}
           removeClippedSubviews={false}>
 
-          <DocumentBreadcrumb document={document} scale={animatedScale} />
+          <DocumentBreadcrumb document={document} scale={animatedScale.current} />
 
           <Animated.View style={animatedStyle.htmlViewContainer}>
             {HtmlView}

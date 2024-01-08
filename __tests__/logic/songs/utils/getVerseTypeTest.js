@@ -21,11 +21,11 @@ describe("test getting verse type", () => {
     expect(getVerseType(mockVerse("chorus 2x"))).toBe(VerseType.Chorus);
     expect(getVerseType(mockVerse("chorus (2x)"))).toBe(VerseType.Chorus);
     expect(getVerseType(mockVerse("Chorus"))).toBe(VerseType.Chorus);
-    expect(getVerseType(mockVerse("prechorus"))).toBe(VerseType.Chorus);
-    expect(getVerseType(mockVerse("pre-chorus"))).toBe(VerseType.Chorus);
-    expect(getVerseType(mockVerse("Pre-Chorus"))).toBe(VerseType.Chorus);
-    expect(getVerseType(mockVerse("pre chorus"))).toBe(VerseType.Chorus);
-    expect(getVerseType(mockVerse("pre_chorus"))).toBe(VerseType.Chorus);
+    expect(getVerseType(mockVerse("prechorus"))).toBe(VerseType.PreChorus);
+    expect(getVerseType(mockVerse("pre-chorus"))).toBe(VerseType.PreChorus);
+    expect(getVerseType(mockVerse("Pre-Chorus"))).toBe(VerseType.PreChorus);
+    expect(getVerseType(mockVerse("pre chorus"))).toBe(VerseType.PreChorus);
+    expect(getVerseType(mockVerse("pre_chorus"))).toBe(VerseType.PreChorus);
     expect(getVerseType(mockVerse("postchorus"))).toBe(VerseType.Chorus);
     expect(getVerseType(mockVerse("post-chorus"))).toBe(VerseType.Chorus);
     expect(getVerseType(mockVerse("Post-Chorus"))).toBe(VerseType.Chorus);

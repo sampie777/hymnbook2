@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import React, { PropsWithChildren, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DatabasesRoute, ParamList } from "../../navigation";
 import { Types } from "../screens/downloads/TypeSelectBar";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DeepLinking } from "../../logic/deeplinking";
 
-interface Props {
-  children: React.ReactNode;
+interface Props extends PropsWithChildren {
 }
 
 const DeepLinkHandler: React.FC<Props> = ({ children }) => {

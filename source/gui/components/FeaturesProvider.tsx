@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import { Features } from "../../logic/features";
 import { rollbar } from "../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../logic/utils";
@@ -8,7 +8,7 @@ export const FeaturesContext = React.createContext<Features.Props>({
   goldenEgg: false
 });
 
-const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [loaded, setLoaded] = useState(false);
   const [goldenEgg, setGoldenEgg] = useState(false);
 

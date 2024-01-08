@@ -28,30 +28,31 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
       {
         route: DatabasesRoute,
         name: "Song databases",
-        icon: (style) => <Icon name="music" style={style} />
+        icon: (style) => <Icon name="music"
+                               style={style as StyleProp<any> /* Set this type as TypeScript does weird things... */} />
       },
       {
         name: "Document databases",
-        icon: (style) => <Icon name="file-alt" style={style} />,
+        icon: (style) => <Icon name="file-alt" style={style as StyleProp<any>} />,
         onPress: () => navigation.navigate(DatabasesRoute, { type: Types.Documents })
       },
       {
         route: SettingsRoute,
-        icon: (style) => <Icon name="cog" style={style} />
+        icon: (style) => <Icon name="cog" style={style as StyleProp<any>} />
       },
       {
         name: "Give feedback",
-        icon: (style) => <Icon name="comment" style={style} />,
+        icon: (style) => <Icon name="comment" style={style as StyleProp<any>} />,
         onPress: () => setShowFeedbackPopup(true),
         hasNotification: Survey.mayBeShown()
       },
       {
         route: AboutRoute,
-        icon: (style) => <Icon name="info" style={style} />
+        icon: (style) => <Icon name="info" style={style as StyleProp<any>} />
       },
       {
         name: "Share app with friends",
-        icon: (style) => <Icon name="share" style={style} />,
+        icon: (style) => <Icon name="share" style={style as StyleProp<any>} />,
         onPress: shareApp
       }
     ];

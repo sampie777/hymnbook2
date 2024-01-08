@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Alert,
+  Alert, Animated,
   Platform,
   StyleProp,
   StyleSheet,
@@ -16,48 +16,46 @@ import { mergeStyleSheets } from "../utils";
 import { ElementType } from "domelementtype";
 import { ThemeContextProps, useTheme } from "../ThemeProvider";
 import { DataNode, Document, Element, Node } from "domhandler/lib/node";
-import Animated, { AnimateStyle } from "react-native-reanimated";
 
 interface HtmlStyles {
-  defaultText?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  p?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  h1?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  h2?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  h3?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  h4?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  h5?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  h6?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  ul?: StyleProp<AnimateStyle<StyleProp<ViewStyle>>>,
-  ol?: StyleProp<AnimateStyle<StyleProp<ViewStyle>>>,
-  li?: StyleProp<AnimateStyle<StyleProp<ViewStyle>>>,
-  liIndexText?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  liText?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  pre?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  blockquote?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  code?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  ins?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  del?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  sup?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  sub?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  hr?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  strong?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  em?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  u?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  strike?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  div?: StyleProp<AnimateStyle<StyleProp<ViewStyle>>>,
-  br?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
-  a?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>,
+  defaultText?: StyleProp<TextStyle>,
+  p?: StyleProp<TextStyle>,
+  h1?: StyleProp<TextStyle>,
+  h2?: StyleProp<TextStyle>,
+  h3?: StyleProp<TextStyle>,
+  h4?: StyleProp<TextStyle>,
+  h5?: StyleProp<TextStyle>,
+  h6?: StyleProp<TextStyle>,
+  ul?: StyleProp<ViewStyle>,
+  ol?: StyleProp<ViewStyle>,
+  li?: StyleProp<ViewStyle>,
+  liIndexText?: StyleProp<TextStyle>,
+  liText?: StyleProp<TextStyle>,
+  pre?: StyleProp<TextStyle>,
+  blockquote?: StyleProp<TextStyle>,
+  code?: StyleProp<TextStyle>,
+  ins?: StyleProp<TextStyle>,
+  del?: StyleProp<TextStyle>,
+  sup?: StyleProp<TextStyle>,
+  sub?: StyleProp<TextStyle>,
+  hr?: StyleProp<TextStyle>,
+  strong?: StyleProp<TextStyle>,
+  em?: StyleProp<TextStyle>,
+  u?: StyleProp<TextStyle>,
+  strike?: StyleProp<TextStyle>,
+  div?: StyleProp<ViewStyle>,
+  br?: StyleProp<TextStyle>,
+  a?: StyleProp<TextStyle>,
 }
 
 interface Props {
   html: string;
   styles?: HtmlStyles | HtmlStyles[];
-  scale: Animated.Value<number>;
+  scale: Animated.Value;
   onLayout?: () => void;
 }
 
 const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout }) => {
-  const start = new Date();
   const sanitizedHtml = html
     .replace(/\n/g, "")
     .replace(/ +/g, " ")
@@ -154,7 +152,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
       {element.children.map((it, i) => renderNode(it, i, args))}
     </Animated.View>;
 
-  const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<AnimateStyle<StyleProp<TextStyle>>>) =>
+  const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<TextStyle>) =>
     <Animated.Text key={index}
                    style={style}
                    dataDetectorType={"link"}

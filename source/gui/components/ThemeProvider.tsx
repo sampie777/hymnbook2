@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { Appearance, NativeEventSubscription } from "react-native";
 import { darkColors, lightColors, ThemeColors, ThemeFontFamilies, defaultFontFamilies } from "../../logic/theme";
 import Settings from "../../settings";
@@ -17,7 +17,7 @@ export const ThemeContext = React.createContext<ThemeContextProps>({
   fontFamily: defaultFontFamilies
 });
 
-const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const appearanceEventSubscription = useRef<NativeEventSubscription>();
 
   const getDefaultTheme = () => {

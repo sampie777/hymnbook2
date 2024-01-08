@@ -1,9 +1,8 @@
-import React, { cloneElement, ReactElement } from "react";
+import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "./ThemeProvider";
 
-interface Props {
-  children: React.ReactNode | React.ReactNode[];
+interface Props extends PropsWithChildren {
 }
 
 /**

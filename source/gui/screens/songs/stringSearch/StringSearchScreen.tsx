@@ -4,9 +4,8 @@ import Settings from "../../../../settings";
 import { rollbar } from "../../../../logic/rollbar";
 import { InterruptedError } from "../../../../logic/InterruptedError";
 import { SongSearch } from "../../../../logic/songs/songSearch";
-import { debounce } from "../../../components/utils";
+import { debounce, useIsMounted } from "../../../components/utils";
 import { isIOS, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
@@ -22,7 +21,7 @@ interface Props {
 type FetchSearchResultsFunction = (text: string) => void;
 
 const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
-  let isMounted = true;
+  const isMounted = useIsMounted({ trackFocus: true });
   const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
   const [searchText, setSearchText] = useState("");
   const [searchInTitles, setSearchInTitles] = useState(Settings.songSearchInTitles);
@@ -38,25 +37,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const onLaunch = () => {
-    isMounted = true;
   };
 
   const onExit = () => {
-    isMounted = false;
     setSearchText("");
-  };
-
-  useFocusEffect(useCallback(() => {
-    onFocus();
-    return onBlur;
-  }, []));
-
-  const onFocus = () => {
-    isMounted = true;
-  };
-
-  const onBlur = () => {
-    isMounted = false;
   };
 
   useEffect(useCallback(() => {
