@@ -2,8 +2,9 @@
 
 #import <React/RCTBundleURLProvider.h>
 
-#import "ReactNativeConfig.h"
+#import "RNCConfig.h"
 #import <RollbarReactNative/RollbarReactNative.h>
+#import <React/RCTLinkingManager.h>
 
 @implementation AppDelegate
 
@@ -14,7 +15,7 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
-  NSString *rollbarKey = [ReactNativeConfig envFor:@"ROLLBAR_API_KEY"];
+  NSString *rollbarKey = [RNCConfig envFor:@"ROLLBAR_API_KEY"];
   [RollbarReactNative initWithAccessToken:rollbarKey];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
