@@ -5,6 +5,7 @@ import { SongSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
 import { AbcMelody } from "../db/models/AbcMelodies";
+import { distance } from "fastest-levenshtein";
 
 export enum VerseType {
   Verse,
@@ -178,12 +179,16 @@ export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) =>
 };
 
 export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean => {
-  const firstWord = item.name.split(" ")[0];
+  // Remove any arbitrary information, like song number, 1e/2e beryming, (english), ...
+  const stripNameDownToEssentials = (it: string) => it.replace(/ [0-9(\[].*$/g, "").trim();
+
   const songBundle = Song.getSongBundle(item);
+  const nameWithoutNumber = stripNameDownToEssentials(item.name)
   return songs.some(it =>
     it.id !== item.id
     && Song.getSongBundle(it)?.id !== songBundle?.id
-    && it.name.startsWith(firstWord)
+    // Names are the same if there's at max only 1 character different
+    && distance(nameWithoutNumber, stripNameDownToEssentials(it.name)) <= 1
   );
 };
 
