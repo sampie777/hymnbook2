@@ -76,6 +76,11 @@ const SearchResultComponent: React.FC<Props> = ({
         {!isTitleMatch ? song.name :
           renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
         }
+        {!showSongBundle ? undefined :
+          <Text style={styles.songBundleName}>
+            {"  -  "}{Song.getSongBundle(song)?.name}
+          </Text>
+        }
       </Text>
 
       {alternativeTitle == null ? undefined :
@@ -84,11 +89,6 @@ const SearchResultComponent: React.FC<Props> = ({
         </Text>
       }
 
-      {!showSongBundle ? undefined :
-        <Text style={styles.songBundleName}>
-          {Song.getSongBundle(song)?.name}
-        </Text>
-      }
     </View>
 
     {song.verses == null || song.verses.length === 0 ? undefined :
@@ -131,7 +131,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   songBundleName: {
-    paddingHorizontal: 15,
     fontSize: 14,
     color: colors.text.lighter,
     fontStyle: "italic"
