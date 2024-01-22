@@ -18,6 +18,12 @@ describe("test if title is similar to other songs", () => {
     expect(isTitleSimilarToOtherSongs(mockSong("Song 1", 1, 1), songs)).toBe(true);
     expect(isTitleSimilarToOtherSongs(mockSong("Song 2", 2, 1), songs)).toBe(true);
     expect(isTitleSimilarToOtherSongs(mockSong("Song 1", 1, 2), songs)).toBe(true);
+    expect(isTitleSimilarToOtherSongs(mockSong("Song 58", 1, 2), songs)).toBe(true);
+  });
+
+  it("is not similar if name is different", () => {
+    expect(isTitleSimilarToOtherSongs(mockSong("Song 1", 1, 1), songs)).toBe(true);
+    expect(isTitleSimilarToOtherSongs(mockSong("Book 1", 1, 2), songs)).toBe(false);
   });
 
   it("is similar if exact name doesn't exist in songs list but starts the same", () => {
