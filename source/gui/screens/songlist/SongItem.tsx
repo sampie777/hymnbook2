@@ -90,8 +90,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   button: {
     padding: 15,
     paddingRight: 22,
-    fontSize: 21,
-    color: "#f17c7c"
+    fontSize: 20,
+    color: colors.delete
   }
 });
 

@@ -43,8 +43,9 @@ export interface ThemeColors {
     background?: ColorValue,
   },
   badge: {
-    medium: "#ff9100"
-  }
+    medium: ColorValue,
+  },
+  delete: ColorValue,
 }
 
 export const lightColors: ThemeColors = {
@@ -90,7 +91,8 @@ export const lightColors: ThemeColors = {
   },
   badge: {
     medium: "#ff9100"
-  }
+  },
+  delete: "#f17c7c",
 };
 
 export const darkColors: ThemeColors = {
@@ -136,7 +138,8 @@ export const darkColors: ThemeColors = {
   },
   badge: {
     medium: "#ff9100"
-  }
+  },
+  delete: "#f17c7c",
 };
 
 export interface ThemeFontFamilies {
