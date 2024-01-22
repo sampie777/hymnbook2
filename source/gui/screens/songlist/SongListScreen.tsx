@@ -13,6 +13,7 @@ import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
+import DeleteAllButton from "./DeleteAllButton";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -121,7 +122,8 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
           data={list}
           renderItem={renderSongListItem}
           keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.songList} />
+          contentContainerStyle={styles.songList}
+          ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined} />
       </View>
     );
   };
