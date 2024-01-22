@@ -5,6 +5,7 @@ import { rollbar } from "../../../../logic/rollbar";
 import { InterruptedError } from "../../../../logic/InterruptedError";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce, useIsMounted } from "../../../components/utils";
+import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { isIOS, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
@@ -139,7 +140,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
     return <SearchResultComponent navigation={navigation}
                                   searchRegex={searchRegex}
-                                  showSongBundle={false}
+                                  showSongBundle={isTitleSimilarToOtherSongs(item.song, searchResults.map(it => it.song))}
                                   disable={isLoading}
                                   song={item.song}
                                   isTitleMatch={item.isTitleMatch}
