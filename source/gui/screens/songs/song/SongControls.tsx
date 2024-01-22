@@ -102,7 +102,7 @@ const SongControls: React.FC<ComponentProps> =
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(previousSong)}
-                          hitSlop={RectangularInset(10)}>
+                          hitSlop={RectangularInset(20)}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
@@ -122,7 +122,7 @@ const SongControls: React.FC<ComponentProps> =
                           activeOpacity={canJumpToNextVerse() ? 0.7 : 1}
                           onPress={jumpToNextVerse}
                           onLongPress={jumpToLastVerse}
-                          hitSlop={RectangularInset(10)}>
+                          hitSlop={RectangularInset(20)}>
           <Icon name={"chevron-down"}
                 style={[
                   styles.buttonText,
@@ -136,7 +136,7 @@ const SongControls: React.FC<ComponentProps> =
         (songListIndex === undefined ? undefined : <View style={styles.buttonBase} />) :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(nextSong)}
-                          hitSlop={RectangularInset(10)}>
+                          hitSlop={{...RectangularInset(20), left: 10}}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
