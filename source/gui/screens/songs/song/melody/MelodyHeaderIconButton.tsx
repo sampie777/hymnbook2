@@ -38,7 +38,7 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
   }
 
   const songHasMelodyToShow = hasMelodyToShow(song);
-  const shouldShowMelodyCount = song.abcMelodies.length > 1;
+  const shouldShowMelodyCount = song.abcMelodies.length > 0;
 
   return <View>
     <Menu>
