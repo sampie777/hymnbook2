@@ -24,6 +24,11 @@ export namespace SongSearch {
     Length
   }
 
+  export enum OrderBy {
+    Relevance = "Relevance",
+    SongBundle = "SongBundle",
+  }
+
   export const find = (text: string, searchInTitles: boolean, searchInVerses: boolean, shouldCancel?: () => boolean): SearchResult[] => {
     const results: SearchResult[] = [];
 
@@ -143,4 +148,17 @@ export namespace SongSearch {
     .replace(/\?/g, ".?")  // Allow user to use "?" as wildcard
     .replace(/\*/g, ".*")  // Allow user to use "*" as wildcard
     .replace(/(.+?) (.+?)/g, "$1.? $2");  // Allow for matching over punctuation ("ab, cd" will match "ab cd")
+
+  export const sort = (results: SongSearch.SearchResult[], order: OrderBy): SongSearch.SearchResult[] => {
+    switch (order) {
+      case SongSearch.OrderBy.Relevance:
+        return results.sort((a, b) => b.points - a.points);
+      case SongSearch.OrderBy.SongBundle:
+        return results
+          .sort((a, b) => a.song.name.localeCompare(b.song.name))
+          .sort((a, b) => (a.song.number ?? 0) - (b.song.number ?? 0))
+          .sort((a, b) => (Song.getSongBundle(a.song)?.name ?? "").localeCompare(Song.getSongBundle(b.song)?.name ?? ""))
+    }
+    return results;
+  };
 }

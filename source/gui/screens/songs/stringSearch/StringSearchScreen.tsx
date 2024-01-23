@@ -27,6 +27,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
   const [searchInTitles, setSearchInTitles] = useState(Settings.songSearchInTitles);
   const [searchInVerses, setSearchInVerses] = useState(Settings.songSearchInVerses);
+  const [sortOrder, setSortOrder] = useState<SongSearch.OrderBy>(Settings.songSearchSortOrder);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SongSearch.SearchResult[]>([]);
 
@@ -46,14 +47,16 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(useCallback(() => {
     if (Settings.songSearchInTitles == searchInTitles
-      && Settings.songSearchInVerses == searchInVerses) {
+      && Settings.songSearchInVerses == searchInVerses
+      && Settings.songSearchSortOrder == sortOrder) {
       return;
     }
 
     Settings.songSearchInTitles = searchInTitles;
     Settings.songSearchInVerses = searchInVerses;
+    Settings.songSearchSortOrder = sortOrder;
     Settings.store();
-  }, [searchInTitles, searchInVerses]), [searchInTitles, searchInVerses]);
+  }, [searchInTitles, searchInVerses, sortOrder]), [searchInTitles, searchInVerses, sortOrder]);
 
   const isSearchEmpty = (text: string) => text.length === 0 || (!searchInTitles && !searchInVerses);
 
@@ -82,6 +85,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     requestAnimationFrame(() => fetchSearchResultsDebounced(escapedSearchText));
   }, [searchText, searchInTitles, searchInVerses]);
 
+  useEffect(() => {
+    setSearchResults(SongSearch.sort([...searchResults], sortOrder));
+  }, [sortOrder]);
+
   const fetchSearchResults: FetchSearchResultsFunction = (text: string) => {
     if (!isMounted) return;
 
@@ -104,6 +111,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
         immediateSearchText: immediateSearchText.current,
         searchInTitles: searchInTitles,
         searchInVerses: searchInVerses,
+        sortOrder: sortOrder,
         isMounted: isMounted,
         dbIsConnected: Db.songs.isConnected(),
         dbIsClosed: Db.songs.realm().isClosed
@@ -114,11 +122,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     if (text != immediateSearchText.current) return;
     if (!isMounted) return;
 
-    setSearchResults(results.sort((a, b) => b.points - a.points));
+    setSearchResults(SongSearch.sort(results, sortOrder));
     setIsLoading(false);
   };
 
-  const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 500);
+  const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 750);
 
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
     // Use the ref, as the state will cause unnecessary updates
@@ -154,8 +162,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                  autoFocus={true} />
     <SearchOptions isTitleActive={searchInTitles}
                    isVerseActive={searchInVerses}
+                   sortOrder={sortOrder}
                    onTitlePress={() => setSearchInTitles(!searchInTitles)}
-                   onVersePress={() => setSearchInVerses(!searchInVerses)} />
+                   onVersePress={() => setSearchInVerses(!searchInVerses)}
+                   onSortOrderChange={setSortOrder} />
 
     <FlatList style={styles.listContainer}
               onRefresh={isIOS || isLoading ? () => undefined : undefined} // Hack to show loading icon only when loading and disabling pull to refresh
