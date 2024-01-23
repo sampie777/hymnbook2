@@ -9,12 +9,12 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
-  position?: SongSearch.StringSearchButtonPlacement;
+  position: SongSearch.StringSearchButtonPlacement;
 }
 
 const StringSearchButton: React.FC<Props> = ({
                                                navigation,
-                                               position = SongSearch.StringSearchButtonPlacement.TopLeft
+                                               position
                                              }) => {
   const styles = createStyles(useTheme());
 
@@ -28,11 +28,6 @@ const StringSearchButton: React.FC<Props> = ({
         return {
           containerPositionStyle: styles.containerTopLeft,
           iconPositionStyle: styles.iconTopLeft
-        };
-      case SongSearch.StringSearchButtonPlacement.TopRight:
-        return {
-          containerPositionStyle: styles.containerTopRight,
-          iconPositionStyle: styles.iconTopRight
         };
       case SongSearch.StringSearchButtonPlacement.BottomRight:
         return {
@@ -80,12 +75,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     height: 50,
     width: 50,
     alignSelf: "flex-start"
-  },
-  containerTopRight: {
-    margin: 15,
-    height: 50,
-    width: 50,
-    alignSelf: "flex-end"
   },
   containerBottomRight: {
     margin: 25,

@@ -147,8 +147,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const isStringSearchButtonsPositionTop = () => {
-      return stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopLeft
-        || stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopRight;
+      return stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopLeft;
     };
 
     const isStringSearchButtonsPosition = (position: SongSearch.StringSearchButtonPlacement) => {
