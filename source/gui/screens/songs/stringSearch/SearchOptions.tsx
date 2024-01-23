@@ -4,28 +4,28 @@ import SearchOption from "./SearchOption";
 import FilterButton from "./filters/FilterButton";
 import OrderByComponent from "./filters/OrderByComponent";
 import { SongSearch } from "../../../../logic/songs/songSearch";
+import SongBundleSelect from "./filters/SongBundleSelect";
 
 interface Props {
   isTitleActive?: boolean;
-  isVerseActive?: boolean;
-  isBundleActive?: boolean;
-  sortOrder: SongSearch.OrderBy;
-
   onTitlePress?: () => void;
+  isVerseActive?: boolean;
   onVersePress?: () => void;
-  onBundlePress?: () => void;
+  sortOrder: SongSearch.OrderBy;
   onSortOrderChange: (value: SongSearch.OrderBy) => void;
+  selectedBundleUuids: string[];
+  onSelectedBundleUuidsChange: (value: string[]) => void;
 }
 
 const SearchOptions: React.FC<Props> = ({
                                           isTitleActive,
-                                          isVerseActive,
-                                          isBundleActive,
-                                          sortOrder,
                                           onTitlePress,
+                                          isVerseActive,
                                           onVersePress,
-                                          onBundlePress,
-                                          onSortOrderChange
+                                          sortOrder,
+                                          onSortOrderChange,
+                                          selectedBundleUuids,
+                                          onSelectedBundleUuidsChange
                                         }) => {
   const [showOrder, setShowOrder] = useState(false);
 
@@ -33,14 +33,15 @@ const SearchOptions: React.FC<Props> = ({
     <View style={styles.row}>
       <SearchOption title={"Titles"} active={isTitleActive} onPress={onTitlePress} />
       <SearchOption title={"Verses"} active={isVerseActive} onPress={onVersePress} />
-      {/*<SearchOption title={"Bundles"} active={isBundleActive} onPress={onBundlePress} />*/}
       <FilterButton onPress={() => setShowOrder(prev => !prev)} isOpen={showOrder} />
     </View>
 
     {!showOrder ? null :
       <View style={styles.column}>
         <OrderByComponent value={sortOrder}
-                          onSortOrderChange={onSortOrderChange} />
+                          onChange={onSortOrderChange} />
+        <SongBundleSelect value={selectedBundleUuids}
+                          onChange={onSelectedBundleUuidsChange} />
       </View>
     }
   </View>;

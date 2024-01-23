@@ -94,7 +94,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
         .filtered(`isRoot = true`);
       setRootGroups(Array.from(groups));
     } catch (error) {
-      rollbar.error("Failed to load document root groups from database: " + error, sanitizeErrorForRollbar(error));
+      rollbar.error("Failed to load document root groups from database.", sanitizeErrorForRollbar(error));
     }
     setIsLoading(false);
   };
