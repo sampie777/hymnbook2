@@ -6,16 +6,16 @@ import { SongSearch } from "../../../../../logic/songs/songSearch";
 
 interface Props {
   value: SongSearch.OrderBy;
-  onSortOrderChange: (value: SongSearch.OrderBy) => void;
+  onChange: (value: SongSearch.OrderBy) => void;
 }
 
-const OrderByComponent: React.FC<Props> = ({ value, onSortOrderChange }) => {
+const OrderByComponent: React.FC<Props> = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styles = createStyles(useTheme());
 
-  const onChange = (newValue: SongSearch.OrderBy) => {
+  const _onChange = (newValue: SongSearch.OrderBy) => {
     setIsOpen(false);
-    onSortOrderChange(newValue);
+    onChange(newValue);
   };
 
   const toText = (value: SongSearch.OrderBy): string => {
@@ -34,7 +34,7 @@ const OrderByComponent: React.FC<Props> = ({ value, onSortOrderChange }) => {
                        values={Object.keys(SongSearch.OrderBy) as SongSearch.OrderBy[]}
                        keyExtractor={item => item}
                        onDenied={() => setIsOpen(false)}
-                       onCompleted={onChange}
+                       onCompleted={_onChange}
                        rowContentRenderer={(item, isSelected) =>
                          <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
                            {toText(item)}

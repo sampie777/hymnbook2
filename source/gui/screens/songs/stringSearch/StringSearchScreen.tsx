@@ -28,6 +28,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const [searchInTitles, setSearchInTitles] = useState(Settings.songSearchInTitles);
   const [searchInVerses, setSearchInVerses] = useState(Settings.songSearchInVerses);
   const [sortOrder, setSortOrder] = useState<SongSearch.OrderBy>(Settings.songSearchSortOrder);
+  const [selectedBundleUuids, setSelectedBundleUuids] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SongSearch.SearchResult[]>([]);
 
@@ -83,7 +84,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
     setIsLoading(true);
     requestAnimationFrame(() => fetchSearchResultsDebounced(escapedSearchText));
-  }, [searchText, searchInTitles, searchInVerses]);
+  }, [searchText, searchInTitles, searchInVerses, selectedBundleUuids]);
 
   useEffect(() => {
     setSearchResults(SongSearch.sort([...searchResults], sortOrder));
@@ -99,7 +100,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
     let results: Array<SongSearch.SearchResult> = [];
     try {
-      results = SongSearch.find(text, searchInTitles, searchInVerses,
+      results = SongSearch.find(text,
+        searchInTitles,
+        searchInVerses,
+        selectedBundleUuids,
         () => text != immediateSearchText.current || isSearchEmpty(immediateSearchText.current)
       );
     } catch (error) {
@@ -161,11 +165,13 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                  onChange={setSearchText}
                  autoFocus={true} />
     <SearchOptions isTitleActive={searchInTitles}
-                   isVerseActive={searchInVerses}
-                   sortOrder={sortOrder}
                    onTitlePress={() => setSearchInTitles(!searchInTitles)}
+                   isVerseActive={searchInVerses}
                    onVersePress={() => setSearchInVerses(!searchInVerses)}
-                   onSortOrderChange={setSortOrder} />
+                   sortOrder={sortOrder}
+                   onSortOrderChange={setSortOrder}
+                   selectedBundleUuids={selectedBundleUuids}
+                   onSelectedBundleUuidsChange={setSelectedBundleUuids} />
 
     <FlatList style={styles.listContainer}
               onRefresh={isIOS || isLoading ? () => undefined : undefined} // Hack to show loading icon only when loading and disabling pull to refresh
