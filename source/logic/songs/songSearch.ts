@@ -2,6 +2,7 @@ import Db from "../db/db";
 import { Song, SongMetadataType, Verse } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { InterruptedError } from "../InterruptedError";
+import config from "../../config";
 
 export namespace SongSearch {
   export const titleMatchPoints = 2;
@@ -28,6 +29,17 @@ export namespace SongSearch {
     Relevance = "Relevance",
     SongBundle = "SongBundle",
   }
+
+  const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
+
+  export const findByNumber = (number: number, selectedBundleUuids: string[]) => {
+    const songBundleQuery = selectedBundleUuids.length == 0 ? ""
+      : `AND ${createSongBundleFilterQuery(selectedBundleUuids)}`;
+
+    return Db.songs.realm().objects<Song>(SongSchema.name)
+      .sorted("name")
+      .filtered(`number = ${number} ${songBundleQuery} LIMIT(${config.maxSearchResultsLength})`);
+  };
 
   export const find = (text: string,
                        searchInTitles: boolean,
@@ -78,8 +90,6 @@ export namespace SongSearch {
 
     return results;
   };
-
-  const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
 
   export const findByTitle = (text: string, selectedBundleUuids: string[] = []): Song[] => {
     const metadataQuery = `SUBQUERY(metadata, $it, $it.type = "${SongMetadataType.AlternativeTitle}" AND $it.value LIKE[c] "*${text}*").@count > 0`;

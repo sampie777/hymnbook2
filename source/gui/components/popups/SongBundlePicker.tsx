@@ -1,0 +1,67 @@
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import MultiPickerComponent from "./MultiPickerComponent";
+import { SongBundle } from "../../../logic/db/models/Songs";
+import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { languageAbbreviationToFullName } from "../../../logic/utils";
+
+interface Props {
+  bundles: SongBundle[];
+  selectedBundles: SongBundle[];
+  onConfirm: (value: SongBundle[]) => void;
+  onDenied: () => void;
+}
+
+const SongBundlePicker: React.FC<Props> = ({ bundles, selectedBundles, onConfirm, onDenied }) => {
+  const styles = createStyles(useTheme());
+  const showLanguage = bundles.some(it => it.language != bundles[0].language);
+  return <MultiPickerComponent selectedValues={selectedBundles.length == 0 ? bundles : selectedBundles}
+                               values={bundles.sort((a, b) => a.name.localeCompare(b.name))}
+                               invertConfirmColor={true}
+                               keyExtractor={item => item.uuid}
+                               onDenied={onDenied}
+                               onCompleted={onConfirm}
+                               rowContentRenderer={(item, isSelected) =>
+                                 <View style={styles.container}>
+                                   <Text style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}>
+                                     {item.name}
+                                   </Text>
+
+                                   {!showLanguage ? null :
+                                     <View style={styles.infoContainer}>
+                                       {item.language === undefined || item.language === "" ? undefined :
+                                         <Text style={styles.infoText}>
+                                           {languageAbbreviationToFullName(item.language)}
+                                         </Text>
+                                       }
+                                     </View>
+                                   }
+                                 </View>} />;
+};
+
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  titleText: {
+    flex: 1,
+    fontSize: 17,
+    color: colors.text.default
+  },
+  titleTextSelected: {
+    fontWeight: "bold"
+  },
+  infoContainer: {
+    paddingLeft: 5,
+    marginRight: -20,
+    alignItems: "flex-end"
+  },
+  infoText: {
+    fontSize: 13,
+    color: colors.text.lighter
+  }
+});
+
+export default SongBundlePicker;
