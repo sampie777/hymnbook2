@@ -179,10 +179,9 @@ const SettingsScreen: React.FC = () => {
             keyName={"stringSearchButtonPlacement"}
             description={"Tap here to change the location of the song search button."}
             onPress={(setValue) => {
-              let newValue = ++Settings.stringSearchButtonPlacement;
-              if (newValue >= SongSearch.StringSearchButtonPlacement.Length)
-                newValue = 0;
-
+              const keys = Object.keys(SongSearch.StringSearchButtonPlacement);
+              const currentIndex = keys.indexOf(Settings.stringSearchButtonPlacement);
+              const newValue = keys[(currentIndex + 1) % keys.length];
               setValue(newValue);
             }}
             onLongPress={(setValue) => setValue(SongSearch.StringSearchButtonPlacement.BottomRight)}  // Set default
@@ -190,8 +189,6 @@ const SettingsScreen: React.FC = () => {
               switch (it) {
                 case SongSearch.StringSearchButtonPlacement.TopLeft:
                   return "Top left";
-                case SongSearch.StringSearchButtonPlacement.TopRight:
-                  return "Top right";
                 case SongSearch.StringSearchButtonPlacement.BottomRight:
                   return "Bottom right";
                 case SongSearch.StringSearchButtonPlacement.BottomLeft:

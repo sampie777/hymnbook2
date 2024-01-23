@@ -3,6 +3,7 @@ import Db from "../db/db";
 import { SettingSchema } from "../db/models/SettingsSchema";
 import { rollbar } from "../rollbar";
 import { sanitizeErrorForRollbar } from "../utils";
+import { applyPatch_ConvertingStringSearchButtonPlacementEnumToStringIndexed } from "./patches/20240123_b1bf14d7";
 
 class SettingsProvider {
   static set(key: string, value: string) {
@@ -121,5 +122,9 @@ export class SettingsBaseClass {
   get(key: string): any {
     // @ts-ignore
     return this[key];
+  }
+
+  patch() {
+    applyPatch_ConvertingStringSearchButtonPlacementEnumToStringIndexed();
   }
 }

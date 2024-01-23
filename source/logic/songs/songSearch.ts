@@ -18,11 +18,9 @@ export namespace SongSearch {
   }
 
   export enum StringSearchButtonPlacement {
-    TopLeft = 0,
-    TopRight,
-    BottomRight,
-    BottomLeft,
-    Length
+    TopLeft = "TopLeft",
+    BottomRight = "BottomRight",
+    BottomLeft = "BottomLeft",
   }
 
   export enum OrderBy {
