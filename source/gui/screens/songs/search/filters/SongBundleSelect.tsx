@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
 import { SongBundle } from "../../../../../logic/db/models/Songs";
 import Db from "../../../../../logic/db/db";
 import { rollbar } from "../../../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
 import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 
 interface Props {
@@ -38,10 +39,9 @@ const SongBundleSelect: React.FC<Props> = ({ value, onChange }) => {
 
   const selectedBundles = bundles.filter(it => value.includes(it.uuid));
 
-  const selectedBundlesText = () => {
-    if (selectedBundles.length == bundles.length || selectedBundles.length == 0) return "All";
-    return selectedBundles.map(it => it.name).join(", ");
-  };
+  if (bundles.length <= 1) {
+    return null;
+  }
 
   return <View style={styles.container}>
     {!isOpen ? null : <SongBundlePicker bundles={bundles}
@@ -51,19 +51,21 @@ const SongBundleSelect: React.FC<Props> = ({ value, onChange }) => {
 
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
-      <Text style={styles.text} numberOfLines={2}>
-        Song bundles:
-      </Text>
-      <Text style={[styles.text, styles.value]} numberOfLines={2}>
-        {selectedBundlesText()}
-      </Text>
-
+      <Icon name={"filter"} style={styles.icon} />
+      <Icon name={isOpen ? "sort-up" : "sort-down"} style={styles.icon} />
     </TouchableOpacity>
   </View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
-  container: {},
+  container: {
+    bottom: 20,
+    height: 50,
+    width: 50,
+    flex: 1,
+    alignSelf: "flex-start",
+    justifyContent: "flex-end"
+  },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -78,6 +80,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flex: 1,
     fontWeight: "bold"
   },
+
+  icon: {
+    fontSize: 18,
+    textAlign: "center",
+    color: colors.text.lighter
+  }
 });
 
 export default SongBundleSelect;
