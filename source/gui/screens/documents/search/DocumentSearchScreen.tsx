@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import { CollectionChangeCallback } from "realm";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
-import { runAsync, sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
-import { RectangularInset, useIsMounted } from "../../../components/utils";
+import { RectangularInset, useCollectionListener } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
 import { ScrollView, View, Text, StyleSheet, BackHandler } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
@@ -22,7 +21,6 @@ import SearchInput from "./SearchInput";
 
 
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
-  const isMounted = useIsMounted({ trackFocus: true });
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<(DocumentGroup & Realm.Object) | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentGroup & Realm.Object>>([]);
@@ -53,11 +51,9 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   }, []));
 
   const onFocus = () => {
-    Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).addListener(onCollectionChange);
   };
 
   const onBlur = () => {
-    Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).removeListener(onCollectionChange);
     if (Settings.documentsResetPathToRoot) {
       setGroup(undefined);
       setRootGroups([]);
@@ -80,15 +76,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     return false;
   };
 
-  const onCollectionChange: CollectionChangeCallback<DocumentGroup> = () => {
-    // This is needed, as the removeListener doesn't seem to correctly work.
-    if (!isMounted) {
-      return;
-    }
-    runAsync(reloadRootGroups);
-  };
-
-  const reloadRootGroups = () => {
+  useCollectionListener<DocumentGroup>(Db.documents.realm().objects(DocumentGroupSchema.name), () => {
     try {
       const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
         .filtered(`isRoot = true`);
@@ -97,7 +85,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       rollbar.error("Failed to load document root groups from database.", sanitizeErrorForRollbar(error));
     }
     setIsLoading(false);
-  };
+  });
 
   const previousLevel = () => {
     if (group === undefined) {
