@@ -28,6 +28,11 @@ class SettingsProvider {
     return this.set(key, stringValue);
   }
 
+  static setObject(key: string, value: boolean) {
+    const stringValue = JSON.stringify(value);
+    return this.set(key, stringValue);
+  }
+
   static get(key: string): string | undefined {
     if (!Db.settings.isConnected()) {
       return undefined;
@@ -62,6 +67,15 @@ class SettingsProvider {
 
     return stringValue.toString() == "true";
   }
+
+  static getObject(key: string): any | undefined {
+    const stringValue = this.get(key);
+    if (stringValue === undefined) {
+      return undefined;
+    }
+
+    return JSON.parse(stringValue);
+  }
 }
 
 export class SettingsBaseClass {
@@ -86,6 +100,8 @@ export class SettingsBaseClass {
         return SettingsProvider.getNumber(key);
       case "boolean":
         return SettingsProvider.getBoolean(key);
+      case "object":
+        return SettingsProvider.getObject(key);
       default:
         rollbar.error("No matching set function found for loading type of key.", { key: key, type: typeof value });
     }
@@ -107,6 +123,8 @@ export class SettingsBaseClass {
             return SettingsProvider.setNumber(key, value);
           case "boolean":
             return SettingsProvider.setBoolean(key, value);
+          case "object":
+            return SettingsProvider.setObject(key, value);
           default:
             rollbar.error("No matching set function found for storing type of key.", { key: key, type: typeof value });
         }

@@ -32,7 +32,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const [inputValue, setInputValue] = useState("");
     const [previousInputValue, setPreviousInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
-    const [selectedBundleUuids, setSelectedBundleUuids] = useState<string[]>([]);
+    const [selectedBundleUuids, setSelectedBundleUuids] = useState<string[]>(Settings.songSearchSelectedBundlesUuids);
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
     // Use a state for this, so the GUI will be updated when the setting changes in the settings screen
     const [stringSearchButtonPlacement, setStringSearchButtonPlacement] = useState(Settings.stringSearchButtonPlacement);
@@ -205,7 +205,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
             </View>
 
             <View style={styles.topContainerSide}>
-              <SongBundleSelect value={selectedBundleUuids} onChange={setSelectedBundleUuids} />
+              <SongBundleSelect selectedBundleUuids={selectedBundleUuids} onChange={setSelectedBundleUuids} />
             </View>
           </View>
 

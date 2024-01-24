@@ -7,13 +7,14 @@ import { rollbar } from "../../../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
 import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
+import Settings from "../../../../../settings";
 
 interface Props {
-  value: string[];
+  selectedBundleUuids: string[];
   onChange: (value: string[]) => void;
 }
 
-const SongBundleSelect: React.FC<Props> = ({ value, onChange }) => {
+const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [bundles, setBundles] = useState<SongBundle[]>([]);
   const styles = createStyles(useTheme());
@@ -33,14 +34,20 @@ const SongBundleSelect: React.FC<Props> = ({ value, onChange }) => {
 
   const _onChange = (selectedBundles: SongBundle[]) => {
     setIsOpen(false);
-    onChange(selectedBundles.map(it => it.uuid));
+
+    const uuids = selectedBundles.map(it => it.uuid);
+    onChange(uuids);
+    Settings.songStringSearchSelectedBundlesUuids = uuids;
+    Settings.store();
   };
 
-  const selectedBundles = bundles.filter(it => value.includes(it.uuid));
+  const selectedBundles = bundles.filter(it => selectedBundleUuids.includes(it.uuid));
 
   const selectedBundlesText = () => {
     if (selectedBundles.length == bundles.length || selectedBundles.length == 0) return "All";
-    return selectedBundles.map(it => it.name).join(", ");
+    return selectedBundles
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(it => it.name).join(", ");
   };
 
   return <View style={styles.container}>
@@ -77,7 +84,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   value: {
     flex: 1,
     fontWeight: "bold"
-  },
+  }
 });
 
 export default SongBundleSelect;
