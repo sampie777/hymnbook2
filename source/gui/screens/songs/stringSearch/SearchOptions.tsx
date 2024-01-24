@@ -40,7 +40,7 @@ const SearchOptions: React.FC<Props> = ({
       <View style={styles.column}>
         <OrderByComponent value={sortOrder}
                           onChange={onSortOrderChange} />
-        <SongBundleSelect value={selectedBundleUuids}
+        <SongBundleSelect selectedBundleUuids={selectedBundleUuids}
                           onChange={onSelectedBundleUuidsChange} />
       </View>
     }

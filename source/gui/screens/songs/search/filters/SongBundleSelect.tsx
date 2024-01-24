@@ -1,27 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
-import { SongBundle } from "../../../../../logic/db/models/Songs";
 import Db from "../../../../../logic/db/db";
 import { rollbar } from "../../../../../logic/rollbar";
-import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
-import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
+import { runAsync, sanitizeErrorForRollbar } from "../../../../../logic/utils";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
+import Settings from "../../../../../settings";
+import { CollectionChangeCallback } from "realm";
+import { useFocusEffect } from "@react-navigation/native";
+import { useIsMounted } from "../../../../components/utils";
+import { SongBundle } from "../../../../../logic/db/models/Songs";
+import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
 
 interface Props {
-  value: string[];
+  selectedBundleUuids: string[];
   onChange: (value: string[]) => void;
 }
 
-const SongBundleSelect: React.FC<Props> = ({ value, onChange }) => {
+const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) => {
+  const isMounted = useIsMounted({ trackFocus: true });
   const [isOpen, setIsOpen] = useState(false);
   const [bundles, setBundles] = useState<SongBundle[]>([]);
   const styles = createStyles(useTheme());
 
   useEffect(() => {
-    reloadBundles();
+    onLaunch();
+    return onExit;
   }, []);
+
+  const onLaunch = () => {
+  };
+
+  const onExit = () => {
+    setBundles([]);
+  };
+
+  useFocusEffect(useCallback(() => {
+    onFocus();
+    return onBlur;
+  }, []));
+
+  const onFocus = () => {
+    Db.songs.realm().objects<SongBundle>(SongBundleSchema.name).addListener(onCollectionChange);
+  };
+
+  const onBlur = () => {
+    Db.songs.realm().objects<SongBundle>(SongBundleSchema.name).removeListener(onCollectionChange);
+  };
+
+  const onCollectionChange: CollectionChangeCallback<SongBundle> = () => {
+    // This is needed, as the removeListener doesn't seem to correctly work.
+    if (!isMounted) {
+      return;
+    }
+    runAsync(reloadBundles);
+
+    // This settings will also be updated, but the home page doesn't refresh,
+    // so we need to manually send the update
+    onChange(Settings.songSearchSelectedBundlesUuids);
+  };
 
   const reloadBundles = () => {
     try {
@@ -34,10 +72,14 @@ const SongBundleSelect: React.FC<Props> = ({ value, onChange }) => {
 
   const _onChange = (selectedBundles: SongBundle[]) => {
     setIsOpen(false);
-    onChange(selectedBundles.map(it => it.uuid));
+
+    const uuids = selectedBundles.map(it => it.uuid);
+    onChange(uuids);
+    Settings.songSearchSelectedBundlesUuids = uuids;
+    Settings.store();
   };
 
-  const selectedBundles = bundles.filter(it => value.includes(it.uuid));
+  const selectedBundles = bundles.filter(it => selectedBundleUuids.includes(it.uuid));
 
   if (bundles.length <= 1) {
     return null;

@@ -28,7 +28,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const [searchInTitles, setSearchInTitles] = useState(Settings.songSearchInTitles);
   const [searchInVerses, setSearchInVerses] = useState(Settings.songSearchInVerses);
   const [sortOrder, setSortOrder] = useState<SongSearch.OrderBy>(Settings.songSearchSortOrder);
-  const [selectedBundleUuids, setSelectedBundleUuids] = useState<string[]>([]);
+  const [selectedBundleUuids, setSelectedBundleUuids] = useState<string[]>(Settings.songStringSearchSelectedBundlesUuids);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SongSearch.SearchResult[]>([]);
 
