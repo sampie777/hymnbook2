@@ -12,3 +12,13 @@ export class Setting {
     this.value = value;
   }
 }
+
+export class SettingPatch {
+  id: number;
+  createdAt: Date;
+
+  constructor(id: number, createdAt: Date = new Date()) {
+    this.id = id;
+    this.createdAt = createdAt;
+  }
+}
