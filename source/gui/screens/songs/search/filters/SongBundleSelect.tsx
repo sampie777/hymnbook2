@@ -58,7 +58,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
       <Icon name={"filter"} style={styles.icon} />
-      <Icon name={isOpen ? "sort-up" : "sort-down"} style={styles.icon} />
+      <Icon name={isOpen ? "caret-left" : "sort-down"} style={styles.icon} />
     </TouchableOpacity>
   </View>;
 };
@@ -88,9 +88,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   icon: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
-    color: colors.text.lighter
+    color: colors.text.lighter,
+    opacity: 0.8
   }
 });
 
