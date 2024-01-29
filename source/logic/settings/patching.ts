@@ -8,7 +8,7 @@ import { patch2_PreFillSettingsSongSearchSelectedSongBundleUuids } from "./patch
 
 const patches: { [key: number]: () => any } = {
   1: patch1_ConvertingStringSearchButtonPlacementEnumToStringIndexed,
-  2: patch2_PreFillSettingsSongSearchSelectedSongBundleUuids,
+  2: patch2_PreFillSettingsSongSearchSelectedSongBundleUuids
 };
 
 const isPatchIdApplied = (appliedPatches: Realm.Results<SettingPatch & Realm.Object>, id: number) =>
@@ -48,7 +48,8 @@ export const applyPatches = async () => {
 
   const missingPatches = Object.keys(patches)
     .map(id => +id)
-    .filter(id => !isPatchIdApplied(appliedPatches, id));
+    .filter(id => !isPatchIdApplied(appliedPatches, id))
+    .sort((a, b) => a - b);
 
   for (const id of missingPatches) {
     await applyPatch(id);
