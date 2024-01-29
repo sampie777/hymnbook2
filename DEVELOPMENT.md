@@ -216,7 +216,8 @@ To allow access to the main website (hymnbook.sajansen.nl), deep linking must us
 
 If you add a setting, you'll be fine. If you remove a setting, you'll probably be fine. If you change a setting type or default value, you probably want to apply a patch:
 
-1. Create the patch file in `source/logic/settings/patches/` and name it `<date>_<last commit>.ts`. This way we know exactly in which order to apply the patches (this is not checked automatically, but is handy for the human).
-2. Create the patch function inside the file, with a name describing the patch. Make sure the patch will only be run once using some sort of check.
-3. Add the patch function to the `patch()` method in the `SettingsBaseClass` class in `source/logic/settings/settingsBase.ts`.
+1. Create the patch file in `source/logic/settings/patches/` and name it the with the next incrementing integer. This way we know exactly in which order to apply the patches (this is not checked automatically, but is handy for the human).
+2. Create the patch function inside the file, with a name describing the patch. 
+3. Add the patch function to the `patches` object in the in `source/logic/settings/patching.ts` with the same integer key as you used for the file name. This order will be checked automatically and applied in numeric order.
+4. Once a patch is applied, it's ID is stored in the database to prevent the patch from being applied again.
 
