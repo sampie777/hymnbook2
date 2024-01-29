@@ -299,15 +299,15 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     flexDirection: "row",
     justifyContent: "center",
     borderBottomWidth: 2,
-    borderBottomColor: isDark ? "#404040" : "#ddd"
+    borderBottomColor: isDark ? "#404040" : "#ddd",
+    minWidth: 140
   },
   inputTextField: {
     fontSize: 70,
     textAlign: "center",
     fontFamily: fontFamily.sansSerifLight,
     color: colors.text.light,
-    borderStyle: "solid",
-    minWidth: 140
+    borderStyle: "solid"
   },
   inputTextFieldPlaceholder: {
     color: isDark ? (isIOS ? "#303030" : "#2a2a2a00") : "#e5e5e5",
