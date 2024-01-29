@@ -2,7 +2,7 @@ import Settings from "../../../settings";
 import { SongSearch } from "../../songs/songSearch";
 import StringSearchButtonPlacement = SongSearch.StringSearchButtonPlacement;
 
-export const applyPatch_ConvertingStringSearchButtonPlacementEnumToStringIndexed = () => {
+export const patch1_ConvertingStringSearchButtonPlacementEnumToStringIndexed = () => {
   if (isNaN(+Settings.stringSearchButtonPlacement)) return; // Patch already applied
 
   switch (Settings.stringSearchButtonPlacement as unknown as number) {

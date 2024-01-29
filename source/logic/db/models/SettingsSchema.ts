@@ -8,3 +8,12 @@ export const SettingSchema: Realm.ObjectSchema = {
     value: "string"
   }
 };
+
+export const SettingPatchSchema: Realm.ObjectSchema = {
+  name: "SettingPatch",
+  primaryKey: "id",
+  properties: {
+    id: "int",
+    createdAt: "date",
+  }
+}

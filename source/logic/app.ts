@@ -21,11 +21,11 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
       Alert.alert("Could not connect to local settings database: " + error);
     })
     .then(() => Settings.load())
-    .then(() => Settings.patch())
     .catch(error => {
       rollbar.error("Could not load settings from database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not load settings from database: " + error);
     })
+    .then(() => Settings.patch())
     .then(() => {
       theme?.reload();
       Settings.appOpenedTimes++;
