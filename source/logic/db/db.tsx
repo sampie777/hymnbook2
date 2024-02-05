@@ -5,7 +5,7 @@ import {
   SongListSongModelSchema,
   SongListVerseModelSchema
 } from "./models/SongListModelSchema";
-import { SettingSchema } from "./models/SettingsSchema";
+import { SettingPatchSchema, SettingSchema } from "./models/SettingsSchema";
 import { DocumentGroupSchema, DocumentSchema } from "./models/DocumentsSchema";
 import { AbcMelodySchema, AbcSubMelodySchema } from "./models/AbcMelodiesSchema";
 
@@ -28,8 +28,8 @@ const Db = {
   }),
   settings: new DatabaseProvider({
     path: "hymnbook_settings",
-    schemas: [SettingSchema],
-    schemaVersion: 1
+    schemas: [SettingSchema, SettingPatchSchema],
+    schemaVersion: 2
   })
 };
 

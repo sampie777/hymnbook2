@@ -28,7 +28,7 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        title,
                                                        message,
                                                        showCloseButton = false,
-                                                       children,
+                                                       children
                                                      }) => {
   const styles = createStyles(useTheme());
   if (onDeny === undefined) {
@@ -114,11 +114,15 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
 
   modalHeader: {
     flexDirection: "row",
-    paddingTop: 10
+    paddingTop: 10,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    maxWidth: "100%"
   },
 
   headerCloseButton: {
     width: 45,
+    top: 10,
     justifyContent: "center",
     alignItems: "center"
   },
@@ -128,7 +132,10 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   },
 
   modalTitle: {
-    flex: 1,
+    minWidth: "70%",    // Setting the width and flex like this will prevent words from disappearing
+    flexBasis: "70%",
+    flexShrink: 1,
+
     paddingHorizontal: 30,
     paddingVertical: 10,
     fontWeight: "bold",
@@ -137,7 +144,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
   },
 
   modalMessageContainer: {
-    flexGrow: 0,
+    flexGrow: 0
   },
   modalMessage: {
     paddingHorizontal: 30,

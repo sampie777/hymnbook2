@@ -4,16 +4,17 @@ import config from "../../config";
 import { dateFrom, Result, sanitizeErrorForRollbar } from "../utils";
 import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../db/models/Songs";
 import {
-  SongBundle as ServerSongBundle,
+  AbcMelody as ServerAbcMelody,
   Song as ServerSong,
-  SongVerse as ServerVerse,
-  AbcMelody as ServerAbcMelody
+  SongBundle as ServerSongBundle,
+  SongVerse as ServerVerse
 } from "../server/models/ServerSongsModel";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../db/models/SongsSchema";
 import { AbcMelody, AbcSubMelody } from "../db/models/AbcMelodies";
 import { AbcMelodySchema, AbcSubMelodySchema } from "../db/models/AbcMelodiesSchema";
 import SongList from "./songList";
 import { Server } from "../server/server";
+import Settings from "../../settings";
 
 export namespace SongProcessor {
 
@@ -31,6 +32,18 @@ export namespace SongProcessor {
     return new Result({ success: true, data: bundles });
   };
 
+  const getExistingBundle = (bundle: { uuid: string }) => {
+    return Db.songs.realm()
+      .objects<SongBundle>(SongBundleSchema.name)
+      .filtered(`uuid = "${bundle.uuid}"`);
+  };
+
+  const writeBundleToDatabase = (bundle: SongBundle) => {
+    Db.songs.realm().write(() => {
+      Db.songs.realm().create(SongBundleSchema.name, bundle);
+    });
+  };
+
   export const saveSongBundleToDatabase = (bundle: ServerSongBundle): Result => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot save local song bundle to database: song database is not connected");
@@ -44,9 +57,7 @@ export namespace SongProcessor {
       return new Result({ success: false, message: "Song bundle contains no songs" });
     }
 
-    const existingBundle = Db.songs.realm()
-      .objects<SongBundle>(SongBundleSchema.name)
-      .filtered(`uuid = "${bundle.uuid}"`);
+    const existingBundle = getExistingBundle(bundle);
     if (existingBundle.length > 0) {
       rollbar.warning("New song bundle already exists locally", {
         bundle: { ...bundle, songs: null },
@@ -58,9 +69,7 @@ export namespace SongProcessor {
     const songBundle = convertServerSongBundleToLocalSongBundle(bundle);
 
     try {
-      Db.songs.realm().write(() => {
-        Db.songs.realm().create(SongBundleSchema.name, songBundle);
-      });
+      writeBundleToDatabase(songBundle);
     } catch (error) {
       rollbar.error(`Failed to import songs`, {
         ...sanitizeErrorForRollbar(error),
@@ -69,6 +78,10 @@ export namespace SongProcessor {
       });
       return new Result({ success: false, message: `Failed to import songs: ${error}`, error: error as Error });
     }
+
+    Settings.songSearchSelectedBundlesUuids.push(songBundle.uuid);
+    Settings.songStringSearchSelectedBundlesUuids.push(songBundle.uuid);
+    Settings.store();
 
     return new Result({ success: true, message: `${bundle.name} added!` });
   };
@@ -96,9 +109,7 @@ export namespace SongProcessor {
 
     const songBundle = convertServerSongBundleToLocalSongBundle(bundle);
 
-    const existingBundle = Db.songs.realm()
-      .objects<SongBundle>(SongBundleSchema.name)
-      .filtered(`uuid = "${bundle.uuid}"`);
+    const existingBundle = getExistingBundle(bundle);
     if (existingBundle.length === 0) {
       rollbar.warning("To-be-updated song bundle doesn't exists locally", {
         bundle: { ...bundle, songs: null }
@@ -111,9 +122,7 @@ export namespace SongProcessor {
     }
 
     try {
-      Db.songs.realm().write(() => {
-        Db.songs.realm().create(SongBundleSchema.name, songBundle);
-      });
+      writeBundleToDatabase(songBundle);
     } catch (error) {
       rollbar.error(`Failed to save new song bundle`, {
         ...sanitizeErrorForRollbar(error),
@@ -138,12 +147,19 @@ export namespace SongProcessor {
       }
     }
 
+    const isInSongSearchSelectedBundlesUuids = Settings.songSearchSelectedBundlesUuids.includes(songBundle.uuid);
+    const isInSongStringSearchSelectedBundlesUuids = Settings.songStringSearchSelectedBundlesUuids.includes(songBundle.uuid);
+
     if (existingBundle.length > 0) {
       const deleteResult = deleteSongBundle(existingBundle[0]);
       if (!deleteResult.success) {
         return deleteResult;
       }
     }
+
+    if (isInSongSearchSelectedBundlesUuids) Settings.songSearchSelectedBundlesUuids.push(songBundle.uuid);
+    if (isInSongStringSearchSelectedBundlesUuids) Settings.songStringSearchSelectedBundlesUuids.push(songBundle.uuid);
+    Settings.store();
 
     return new Result({ success: true, message: `${bundle.name} updated!` });
   };
@@ -322,6 +338,7 @@ export namespace SongProcessor {
 
     const songCount = bundle.songs.length;
     const bundleName = bundle.name;
+    const bundleUuid = bundle.uuid;
 
     try {
       Db.songs.realm().write(() => {
@@ -337,6 +354,10 @@ export namespace SongProcessor {
     }
 
     SongList.cleanUpAllSongLists();
+
+    Settings.songSearchSelectedBundlesUuids = Settings.songSearchSelectedBundlesUuids.filter(it => it != bundleUuid);
+    Settings.songStringSearchSelectedBundlesUuids = Settings.songStringSearchSelectedBundlesUuids.filter(it => it != bundleUuid);
+    Settings.store();
 
     return new Result({ success: true, message: `Deleted all ${songCount} songs for ${bundleName}` });
   };

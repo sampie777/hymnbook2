@@ -1,38 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import SearchOption from "./SearchOption";
+import FilterButton from "./filters/FilterButton";
+import OrderByComponent from "./filters/OrderByComponent";
+import { SongSearch } from "../../../../logic/songs/songSearch";
+import SongBundleSelect from "./filters/SongBundleSelect";
 
 interface Props {
   isTitleActive?: boolean;
+  onTitlePress?: () => void;
   isVerseActive?: boolean;
-  isBundleActive?: boolean;
-
-  onTitlePress?(): void;
-
-  onVersePress?(): void;
-
-  onBundlePress?(): void;
+  onVersePress?: () => void;
+  sortOrder: SongSearch.OrderBy;
+  onSortOrderChange: (value: SongSearch.OrderBy) => void;
+  selectedBundleUuids: string[];
+  onSelectedBundleUuidsChange: (value: string[]) => void;
 }
 
 const SearchOptions: React.FC<Props> = ({
                                           isTitleActive,
-                                          isVerseActive,
-                                          isBundleActive,
                                           onTitlePress,
+                                          isVerseActive,
                                           onVersePress,
-                                          onBundlePress
+                                          sortOrder,
+                                          onSortOrderChange,
+                                          selectedBundleUuids,
+                                          onSelectedBundleUuidsChange
                                         }) => {
+  const [showOrder, setShowOrder] = useState(false);
+
   return <View style={styles.container}>
-    <SearchOption title={"Titles"} active={isTitleActive} onPress={onTitlePress} />
-    <SearchOption title={"Verses"} active={isVerseActive} onPress={onVersePress} />
-    {/*<SearchOption title={"Bundles"} active={isBundleActive} onPress={onBundlePress} />*/}
+    <View style={styles.row}>
+      <SearchOption title={"Titles"} active={isTitleActive} onPress={onTitlePress} />
+      <SearchOption title={"Verses"} active={isVerseActive} onPress={onVersePress} />
+      <FilterButton onPress={() => setShowOrder(prev => !prev)} isOpen={showOrder} />
+    </View>
+
+    {!showOrder ? null :
+      <View style={styles.column}>
+        <OrderByComponent value={sortOrder}
+                          onChange={onSortOrderChange} />
+        <SongBundleSelect selectedBundleUuids={selectedBundleUuids}
+                          onChange={onSelectedBundleUuidsChange} />
+      </View>
+    }
   </View>;
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: {},
+  row: {
     flexDirection: "row",
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
+    alignItems: "center"
+  },
+  column: {
+    flexDirection: "column",
+    paddingHorizontal: 5,
+    alignItems: "stretch",
+    paddingTop: 10
   }
 });
 

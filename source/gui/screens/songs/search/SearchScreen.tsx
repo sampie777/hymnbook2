@@ -23,6 +23,7 @@ import PopupsComponent from "../../../components/popups/PopupsComponent";
 import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 import StringSearchButton from "./StringSearchButton";
+import SongBundleSelect from "./filters/SongBundleSelect";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -31,6 +32,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const [inputValue, setInputValue] = useState("");
     const [previousInputValue, setPreviousInputValue] = useState("");
     const [results, setSearchResult] = useState<Array<Song>>([]);
+    const [selectedBundleUuids, setSelectedBundleUuids] = useState<string[]>(Settings.songSearchSelectedBundlesUuids);
     const [useSmallerFontSize, setUseSmallerFontSize] = useState(false);
     // Use a state for this, so the GUI will be updated when the setting changes in the settings screen
     const [stringSearchButtonPlacement, setStringSearchButtonPlacement] = useState(Settings.stringSearchButtonPlacement);
@@ -46,7 +48,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     useEffect(() => {
       requestAnimationFrame(fetchSearchResults);
       return () => undefined;
-    }, [inputValue]);
+    }, [inputValue, selectedBundleUuids]);
 
     useFocusEffect(
       React.useCallback(() => {
@@ -133,9 +135,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
         return;
       }
 
-      const results = Db.songs.realm().objects<Song>(SongSchema.name)
-        .sorted("name")
-        .filtered(`number = ${+query} LIMIT(${config.maxSearchResultsLength})`);
+      const results = SongSearch.findByNumber(+query, selectedBundleUuids);
 
       setSearchResult(results as unknown as Array<Song>);
     };
@@ -147,8 +147,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     };
 
     const isStringSearchButtonsPositionTop = () => {
-      return stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopLeft
-        || stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopRight;
+      return stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopLeft;
     };
 
     const isStringSearchButtonsPosition = (position: SongSearch.StringSearchButtonPlacement) => {
@@ -170,7 +169,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
     const onInputTextPress = () => {
       setInputValue(previousInputValue);
-    }
+    };
 
     return (
       <View style={[styles.container, isPortraitMode(windowDimension) ? {} : stylesLandscape.container]}>
@@ -178,15 +177,13 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
 
         <View style={[styles.inputAndResults, isPortraitMode(windowDimension) ? {} : stylesLandscape.inputAndResults]}>
           <View style={styles.topContainer}>
-            {!isStringSearchButtonsPositionTop() ? undefined :
-              <View style={styles.topContainerSide}>
-                {!isStringSearchButtonsPosition(SongSearch.StringSearchButtonPlacement.TopLeft)
-                || inputValue.length > 0 || results.length > 0 ? undefined :
-                  <StringSearchButton navigation={navigation}
-                                      position={stringSearchButtonPlacement} />
-                }
-              </View>
-            }
+            <View style={styles.topContainerSide}>
+              {!isStringSearchButtonsPosition(SongSearch.StringSearchButtonPlacement.TopLeft)
+              || inputValue.length > 0 || results.length > 0 ? undefined :
+                <StringSearchButton navigation={navigation}
+                                    position={stringSearchButtonPlacement} />
+              }
+            </View>
 
             <View style={styles.topContainerCenter}>
               <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
@@ -195,7 +192,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
               <View style={styles.inputTextView}>
                 <View style={styles.inputTextViewContainer}>
                   <Text onPress={onInputTextPress}
-                    style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
+                        style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
                     {inputValue ? inputValue
                       : (!Settings.songSearchRememberPreviousEntry ? " " :
                           <>{isIOS ? "" : " "}<Text
@@ -207,15 +204,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
               </View>
             </View>
 
-            {!isStringSearchButtonsPositionTop() ? undefined :
-              <View style={styles.topContainerSide}>
-                {!isStringSearchButtonsPosition(SongSearch.StringSearchButtonPlacement.TopRight)
-                || inputValue.length > 0 || results.length > 0 ? undefined :
-                  <StringSearchButton navigation={navigation}
-                                      position={stringSearchButtonPlacement} />
-                }
-              </View>
-            }
+            <View style={styles.topContainerSide}>
+              <SongBundleSelect selectedBundleUuids={selectedBundleUuids} onChange={setSelectedBundleUuids} />
+            </View>
           </View>
 
           <FlatList
@@ -308,15 +299,15 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     flexDirection: "row",
     justifyContent: "center",
     borderBottomWidth: 2,
-    borderBottomColor: isDark ? "#404040" : "#ddd"
+    borderBottomColor: isDark ? "#404040" : "#ddd",
+    minWidth: 140
   },
   inputTextField: {
     fontSize: 70,
     textAlign: "center",
     fontFamily: fontFamily.sansSerifLight,
     color: colors.text.light,
-    borderStyle: "solid",
-    minWidth: 140
+    borderStyle: "solid"
   },
   inputTextFieldPlaceholder: {
     color: isDark ? (isIOS ? "#303030" : "#2a2a2a00") : "#e5e5e5",

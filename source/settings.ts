@@ -15,6 +15,9 @@ class SettingsClass extends SettingsBaseClass {
   stringSearchButtonPlacement = SongSearch.StringSearchButtonPlacement.BottomRight;
   songSearchInTitles = true;
   songSearchInVerses = true;
+  songSearchSortOrder = SongSearch.OrderBy.Relevance;
+  songSearchSelectedBundlesUuids: string[] = [];
+  songStringSearchSelectedBundlesUuids: string[] = [];
   songSearchRememberPreviousEntry = true;
 
   // Songs

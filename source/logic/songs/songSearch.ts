@@ -2,6 +2,7 @@ import Db from "../db/db";
 import { Song, SongMetadataType, Verse } from "../db/models/Songs";
 import { SongSchema } from "../db/models/SongsSchema";
 import { InterruptedError } from "../InterruptedError";
+import config from "../../config";
 
 export namespace SongSearch {
   export const titleMatchPoints = 2;
@@ -17,18 +18,36 @@ export namespace SongSearch {
   }
 
   export enum StringSearchButtonPlacement {
-    TopLeft = 0,
-    TopRight,
-    BottomRight,
-    BottomLeft,
-    Length
+    TopLeft = "TopLeft",
+    BottomRight = "BottomRight",
+    BottomLeft = "BottomLeft",
   }
 
-  export const find = (text: string, searchInTitles: boolean, searchInVerses: boolean, shouldCancel?: () => boolean): SearchResult[] => {
+  export enum OrderBy {
+    Relevance = "Relevance",
+    SongBundle = "SongBundle",
+  }
+
+  const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
+
+  export const findByNumber = (number: number, selectedBundleUuids: string[]) => {
+    const songBundleQuery = selectedBundleUuids.length == 0 ? ""
+      : `AND ${createSongBundleFilterQuery(selectedBundleUuids)}`;
+
+    return Db.songs.realm().objects<Song>(SongSchema.name)
+      .sorted("name")
+      .filtered(`number = ${number} ${songBundleQuery} LIMIT(${config.maxSearchResultsLength})`);
+  };
+
+  export const find = (text: string,
+                       searchInTitles: boolean,
+                       searchInVerses: boolean,
+                       selectedBundleUuids: string[],
+                       shouldCancel?: () => boolean): SearchResult[] => {
     const results: SearchResult[] = [];
 
     if (searchInTitles) {
-      findByTitle(text).forEach(it => {
+      findByTitle(text, selectedBundleUuids).forEach(it => {
         const points = calculateMatchPointsForTitleMatch(it, text);
         results.push({
           song: it,
@@ -44,7 +63,7 @@ export namespace SongSearch {
 
     // Add verse results to results
     if (searchInVerses) {
-      findByVerse(text).forEach((it) => {
+      findByVerse(text, selectedBundleUuids).forEach((it) => {
         if (shouldCancel?.()) throw new InterruptedError();
 
         const existingResult = results.find(result => result.song.id === it.id);
@@ -70,9 +89,11 @@ export namespace SongSearch {
     return results;
   };
 
-  export const findByTitle = (text: string): Song[] => {
+  export const findByTitle = (text: string, selectedBundleUuids: string[] = []): Song[] => {
     const metadataQuery = `SUBQUERY(metadata, $it, $it.type = "${SongMetadataType.AlternativeTitle}" AND $it.value LIKE[c] "*${text}*").@count > 0`;
-    const query = `name LIKE[c] "*${text}*" OR ${metadataQuery}`;
+    const songBundleQuery = selectedBundleUuids.length == 0 ? ""
+      : `AND ${createSongBundleFilterQuery(selectedBundleUuids)}`;
+    const query = `(name LIKE[c] "*${text}*" OR ${metadataQuery}) ${songBundleQuery}`;
 
     const results = Db.songs.realm().objects<Song>(SongSchema.name)
       .sorted("name")
@@ -82,9 +103,9 @@ export namespace SongSearch {
     return Array.from(results);
   };
 
-  export const findByVerse = (text: string): Song[] => {
+  export const findByVerse = (text: string, selectedBundleUuids: string[] = []): Song[] => {
     let query = `verses.content LIKE[c] $0`;
-    const args = [`*${text}*`];
+    const args: any[] = [`*${text}*`];
 
     // Add wildcards to ignore some punctuation (max 1 at the moment)
     // ("ab, cd" will match "ab cd")
@@ -95,6 +116,10 @@ export namespace SongSearch {
         query += ` or verses.content LIKE[c] $${args.length}`;
         args.push(`*${regex}*`);
       }
+    }
+
+    if (selectedBundleUuids.length > 0) {
+      query = `(${query}) AND ${createSongBundleFilterQuery(selectedBundleUuids)}`;
     }
 
     const results = Db.songs.realm().objects<Song>(SongSchema.name)
@@ -143,4 +168,17 @@ export namespace SongSearch {
     .replace(/\?/g, ".?")  // Allow user to use "?" as wildcard
     .replace(/\*/g, ".*")  // Allow user to use "*" as wildcard
     .replace(/(.+?) (.+?)/g, "$1.? $2");  // Allow for matching over punctuation ("ab, cd" will match "ab cd")
+
+  export const sort = (results: SongSearch.SearchResult[], order: OrderBy): SongSearch.SearchResult[] => {
+    switch (order) {
+      case SongSearch.OrderBy.Relevance:
+        return results.sort((a, b) => b.points - a.points);
+      case SongSearch.OrderBy.SongBundle:
+        return results
+          .sort((a, b) => a.song.name.localeCompare(b.song.name))
+          .sort((a, b) => (a.song.number ?? 0) - (b.song.number ?? 0))
+          .sort((a, b) => (Song.getSongBundle(a.song)?.name ?? "").localeCompare(Song.getSongBundle(b.song)?.name ?? ""));
+    }
+    return results;
+  };
 }

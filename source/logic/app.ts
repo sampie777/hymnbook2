@@ -25,6 +25,7 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
       rollbar.error("Could not load settings from database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not load settings from database: " + error);
     })
+    .then(() => Settings.patch())
     .then(() => {
       theme?.reload();
       Settings.appOpenedTimes++;

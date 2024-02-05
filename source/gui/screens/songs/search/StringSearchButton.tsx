@@ -4,17 +4,17 @@ import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
 import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
-  position?: SongSearch.StringSearchButtonPlacement;
+  position: SongSearch.StringSearchButtonPlacement;
 }
 
 const StringSearchButton: React.FC<Props> = ({
                                                navigation,
-                                               position = SongSearch.StringSearchButtonPlacement.TopLeft
+                                               position
                                              }) => {
   const styles = createStyles(useTheme());
 
@@ -22,26 +22,24 @@ const StringSearchButton: React.FC<Props> = ({
     navigation.navigate(SongStringSearchRoute);
   };
 
-  const { containerPositionStyle, iconPositionStyle } = useCallback(() => {
+  const { containerPositionStyle, buttonPositionStyle, iconPositionStyle } = useCallback(() => {
     switch (position) {
       case SongSearch.StringSearchButtonPlacement.TopLeft:
         return {
           containerPositionStyle: styles.containerTopLeft,
+          buttonPositionStyle: styles.buttonTopLeft,
           iconPositionStyle: styles.iconTopLeft
-        };
-      case SongSearch.StringSearchButtonPlacement.TopRight:
-        return {
-          containerPositionStyle: styles.containerTopRight,
-          iconPositionStyle: styles.iconTopRight
         };
       case SongSearch.StringSearchButtonPlacement.BottomRight:
         return {
           containerPositionStyle: styles.containerBottomRight,
+          buttonPositionStyle: styles.buttonBottomRight,
           iconPositionStyle: styles.iconBottomRight
         };
       case SongSearch.StringSearchButtonPlacement.BottomLeft:
         return {
           containerPositionStyle: styles.containerBottomLeft,
+          buttonPositionStyle: styles.buttonBottomLeft,
           iconPositionStyle: styles.iconBottomLeft
         };
       default:
@@ -52,19 +50,38 @@ const StringSearchButton: React.FC<Props> = ({
     }
   }, [position])();
 
-  return <TouchableOpacity style={[styles.containerBase, containerPositionStyle]}
-                           onPress={onPress}>
-    <Icon name={"search"} style={[styles.icon, iconPositionStyle]} />
-  </TouchableOpacity>;
+  return <View style={[styles.containerBase, containerPositionStyle]}>
+    <TouchableOpacity style={[styles.button, buttonPositionStyle]}
+                      onPress={onPress}>
+      <Icon name={"search"} style={[styles.icon, iconPositionStyle]} />
+    </TouchableOpacity>
+  </View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   containerBase: {
+    bottom: 20,
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  containerTopLeft: {
+    alignSelf: "flex-end"
+  },
+  containerBottomRight: {
+    alignSelf: "flex-end"
+  },
+  containerBottomLeft: {
+    alignSelf: "flex-start"
+  },
+
+  button: {
     flexDirection: "row",
-    backgroundColor: colors.surface1,
-    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.surface1,
+    borderRadius: 50,
+    height: 50,
+    width: 50,
 
     elevation: 2,
     shadowColor: "#000",
@@ -75,30 +92,23 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 1.00
   },
-  containerTopLeft: {
-    margin: 15,
+  buttonTopLeft: {
     height: 50,
-    width: 50,
-    alignSelf: "flex-start"
+    width: 50
   },
-  containerTopRight: {
-    margin: 15,
-    height: 50,
-    width: 50,
-    alignSelf: "flex-end"
-  },
-  containerBottomRight: {
-    margin: 25,
+  buttonBottomRight: {
+    marginRight: 25,
+    marginBottom: 5,
     height: 55,
-    width: 55,
-    alignSelf: "flex-end"
+    width: 55
   },
-  containerBottomLeft: {
-    margin: 25,
+  buttonBottomLeft: {
+    marginLeft: 25,
+    marginBottom: 5,
     height: 55,
-    width: 55,
-    alignSelf: "flex-start"
+    width: 55
   },
+
 
   icon: {
     color: colors.text.lighter

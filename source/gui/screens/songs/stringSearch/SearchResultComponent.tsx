@@ -84,7 +84,7 @@ const SearchResultComponent: React.FC<Props> = ({
       </Text>
 
       {alternativeTitle == null ? undefined :
-        <Text style={styles.songBundleName}>
+        <Text style={styles.alternativeTitle}>
           {renderTextWithCustomReplacements(alternativeTitle, searchRegex, createHighlightedTextComponent)}
         </Text>
       }
@@ -131,6 +131,13 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
 
   songBundleName: {
+    fontSize: 14,
+    color: colors.text.lighter,
+    fontStyle: "italic"
+  },
+
+  alternativeTitle: {
+    paddingHorizontal: 15,
     fontSize: 14,
     color: colors.text.lighter,
     fontStyle: "italic"
