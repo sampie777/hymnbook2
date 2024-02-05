@@ -211,3 +211,13 @@ Use these fonts by using there 'Full name' as shown in iOS Font Book
 Deep linking is used to share online resources between apps. Like sending a link to download a specific database (song bundle / document group).
 
 To allow access to the main website (hymnbook.sajansen.nl), deep linking must use the `/open/` endpoint. This means every deep link must start with `https://hynbook.sajansen.nl/open/` followed by the specific deep link route. E.g. `https://hynbook.sajansen.nl/open/download/songs/00000000-0000-0000-0000-000000000000` will open in the app while `https://hymnbook.sajansen.nl/download` will always open in the browser.
+
+### Changing settings
+
+If you add a setting, you'll be fine. If you remove a setting, you'll probably be fine. If you change a setting type or default value, you probably want to apply a patch:
+
+1. Create the patch file in `source/logic/settings/patches/` and name it the with the next incrementing integer. This way we know exactly in which order to apply the patches (this is not checked automatically, but is handy for the human).
+2. Create the patch function inside the file, with a name describing the patch. 
+3. Add the patch function to the `patches` object in the in `source/logic/settings/patching.ts` with the same integer key as you used for the file name. This order will be checked automatically and applied in numeric order.
+4. Once a patch is applied, it's ID is stored in the database to prevent the patch from being applied again.
+
