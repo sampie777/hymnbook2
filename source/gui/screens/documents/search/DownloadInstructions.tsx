@@ -59,6 +59,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   downloadText: {
     fontSize: 16,
-    color: colors.onPrimary
+    color: colors.onPrimary,
+    textAlign: "center"
   }
 });
