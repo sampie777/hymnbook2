@@ -54,7 +54,8 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
     {!isOpen ? null : <SongBundlePicker bundles={bundles}
                                         selectedBundles={selectedBundles}
                                         onConfirm={_onChange}
-                                        onDenied={() => setIsOpen(false)} />}
+                                        onDenied={() => setIsOpen(false)}
+                                        title={"Search only in the selected bundles"} />}
 
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
