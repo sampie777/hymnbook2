@@ -10,15 +10,17 @@ interface Props {
   selectedBundles: SongBundle[];
   onConfirm: (value: SongBundle[]) => void;
   onDenied: () => void;
+  title?: string;
 }
 
-const SongBundlePicker: React.FC<Props> = ({ bundles, selectedBundles, onConfirm, onDenied }) => {
+const SongBundlePicker: React.FC<Props> = ({ bundles, selectedBundles, onConfirm, onDenied, title }) => {
   const styles = createStyles(useTheme());
   const showLanguage = bundles.some(it => it.language != bundles[0].language);
   return <MultiPickerComponent selectedValues={selectedBundles.length == 0 ? bundles : selectedBundles}
                                values={bundles.sort((a, b) => a.name.localeCompare(b.name))}
                                invertConfirmColor={true}
                                keyExtractor={item => item.uuid}
+                               title={title}
                                onDenied={onDenied}
                                onCompleted={onConfirm}
                                rowContentRenderer={(item, isSelected) =>
