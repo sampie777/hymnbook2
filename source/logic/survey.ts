@@ -1,9 +1,16 @@
 import Settings from "../settings";
 import config from "../config";
+import { Security } from "./security";
+import { rollbar } from "./rollbar";
 
 export namespace Survey {
   export const url = () => {
-    return config.surveyUrl;
+    if (Security.getDeviceId().trim().length == 0) {
+      rollbar.error("Got empty device ID while creating survey url", {
+        getDeviceId: Security.getDeviceId()
+      });
+    }
+    return `https://hymnbook.sajansen.nl/feedback/features/${Security.getDeviceId()}`;
   };
 
   export const needToShow = (date = new Date()) => {
