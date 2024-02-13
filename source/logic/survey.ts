@@ -17,7 +17,7 @@ export namespace Survey {
     const isDuringSundayService = date.getDay() === 0 &&
       (
         (date.getHours() >= 9 && date.getHours() < 12) ||
-        (date.getHours() >= 18 && date.getHours() < 20)
+        (date.getHours() >= 16 && date.getHours() < 20)
       );
     return mayBeShown() &&
       (Settings.appOpenedTimes - config.surveyMinimumAppOpenedTimes) % config.surveyDisplayInterval === 0 &&
