@@ -33,7 +33,7 @@ const SurveyModal: React.FC<{
         To improve your experience with this app, we would like to get some feedback from our users.
       </Text>
       <Text style={styles.contentText}>
-        Are you willing to answer two simple questions?
+        Are you willing to help us decide what we should work on next?
       </Text>
     </View>
   </ConfirmationModal>;
