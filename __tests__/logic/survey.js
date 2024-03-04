@@ -70,7 +70,8 @@ describe("test survey", () => {
     expect(Survey.needToShow(new Date(date.setHours(10)))).toBe(false);  // Sunday 10:30
     expect(Survey.needToShow(new Date(date.setHours(11)))).toBe(false);  // Sunday 11:30
     expect(Survey.needToShow(new Date(date.setHours(12)))).toBe(true);  // Sunday 12:30
-    expect(Survey.needToShow(new Date(date.setHours(17)))).toBe(true);  // Sunday 17:30
+    expect(Survey.needToShow(new Date(date.setHours(15)))).toBe(true);  // Sunday 15:30
+    expect(Survey.needToShow(new Date(date.setHours(17)))).toBe(false);  // Sunday 17:30
     expect(Survey.needToShow(new Date(date.setHours(18)))).toBe(false);  // Sunday 18:30
     expect(Survey.needToShow(new Date(date.setHours(19)))).toBe(false);  // Sunday 19:30
     expect(Survey.needToShow(new Date(date.setHours(20)))).toBe(true);  // Sunday 20:30
