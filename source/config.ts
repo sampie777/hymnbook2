@@ -5,8 +5,8 @@ const config = {
   maxSearchResultsLength: 200,
   defaultMelodyName: "Default",
 
-  surveyMinimumAppOpenedTimes: 6,
-  surveyDisplayInterval: 3,
+  surveyMinimumAppOpenedTimes: 10,
+  surveyDisplayInterval: 4,
 
   feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSetqgPvuLh9K0m2nbonauXxrHiaFGpZz8_AUXOc9NcCpjnUUg/viewform?usp=sf_link",
   whatsappFeedbackGroupUrl: Config.WHATSAPP_USER_GROUP_LINK,
