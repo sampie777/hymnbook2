@@ -2,6 +2,7 @@
  * @format
  */
 
+import 'react-native-gesture-handler';  // First import to prevent crashes in iOS (https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation#ios)
 import { AppRegistry } from "react-native";
 import { name as appName } from "./app.json";
 import App from "./source/App";
