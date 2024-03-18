@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MultiSlider, { LabelProps } from "@ptomasroos/react-native-multi-slider";
-import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 
 const SliderLabel: React.FC<LabelProps & { suffix?: string | undefined }> = ({
                                                                                oneMarkerValue,

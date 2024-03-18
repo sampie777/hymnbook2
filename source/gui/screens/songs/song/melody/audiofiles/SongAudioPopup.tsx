@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, ActivityIndicator, ScrollView } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import ConfirmationModal from "../../../../../components/popups/ConfirmationModal";
 import AudioItem from "./AudioItem";
 import { Song, SongAudio } from "../../../../../../logic/db/models/Songs";

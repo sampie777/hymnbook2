@@ -3,7 +3,7 @@ import { Song } from "../../../logic/db/models/Songs";
 import { SongListSongModel } from "../../../logic/db/models/SongListModel";
 import { generateSongTitle } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {

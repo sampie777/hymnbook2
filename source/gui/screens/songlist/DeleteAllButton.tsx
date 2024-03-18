@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 
 interface Props {
   onPress: () => void;

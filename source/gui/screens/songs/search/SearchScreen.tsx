@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
 import { ParamList, SongSearchRoute } from "../../../../navigation";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { getFontScale } from "react-native-device-info";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";

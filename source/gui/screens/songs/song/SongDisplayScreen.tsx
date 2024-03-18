@@ -28,7 +28,7 @@ import {
 import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";

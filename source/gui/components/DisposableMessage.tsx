@@ -1,7 +1,7 @@
 import React  from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 
 interface ComponentProps {
   message: string;
