@@ -9,7 +9,7 @@ import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { isIOS, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import SearchInput from "../../documents/search/SearchInput";
 import SearchOptions from "./SearchOptions";

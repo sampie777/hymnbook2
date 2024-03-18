@@ -10,7 +10,7 @@ import { SongListSongModel } from "../../../logic/db/models/SongListModel";
 import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
 import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
 import DeleteAllButton from "./DeleteAllButton";

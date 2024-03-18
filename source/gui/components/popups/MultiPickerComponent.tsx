@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import {
   ScrollView,
   StyleSheet,

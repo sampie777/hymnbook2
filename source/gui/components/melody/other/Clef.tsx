@@ -3,7 +3,7 @@ import { AbcConfig } from "../config";
 import { AbcClef } from "../../../../logic/songs/abc/abcjsTypes";
 import { Animated } from "react-native";
 import { G, Path } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
 import Lines from "./Lines";
 import { AnimatedG, AnimatedSvg } from "../../utils";
 

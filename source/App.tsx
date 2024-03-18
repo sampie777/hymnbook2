@@ -31,7 +31,7 @@ import {
   initSettingsDatabase,
   initSongDatabase
 } from "./logic/app";
-import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/ThemeProvider";
+import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 import { runAsync } from "./logic/utils";
 import SongList from "./logic/songs/songList";
@@ -52,7 +52,7 @@ import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
-import FeaturesProvider from "./gui/components/FeaturesProvider";
+import FeaturesProvider from "./gui/components/providers/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 
