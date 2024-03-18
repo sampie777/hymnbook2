@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
+import { Animated, LayoutChangeEvent, StyleSheet, Text } from "react-native";
 import { Verse } from "../../../../logic/db/models/Songs";
 import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
 import Settings from "../../../../settings";
@@ -10,6 +10,8 @@ import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import MelodyView from "../../../components/melody/MelodyView";
+import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
+import { rollbar } from "../../../../logic/rollbar";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -42,16 +44,16 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       paddingBottom: Animated.multiply(scale, 35)
     },
     title: {
-      fontSize: Animated.multiply(scale, 19),
-      paddingBottom: Animated.multiply(scale, 5)
+      fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 19) : 19,
+      paddingBottom: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 5) : 5
     },
     titleLarge: {
-      fontSize: Animated.multiply(scale, 30),
-      paddingBottom: Animated.multiply(scale, 5)
+      fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 30) : 30,
+      paddingBottom: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 5) : 5
     },
     text: {
-      fontSize: Animated.multiply(scale, 20),
-      lineHeight: Animated.multiply(scale, 30)
+      fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 20) : 20,
+      lineHeight: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 30) : 30
     }
   };
 
@@ -99,44 +101,101 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const memoizedAbc = useMemo(() => ABC.generateAbcForVerse(verse, activeMelody), [activeMelody?.id]);
 
+  const renderContent = () => {
+    if (highlightText != null) {
+      return renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent);
+    }
+
+    const content = Settings.debug_addWhitespaceAfterEachVerseLine ? verse.content.replace(/\n/g, " \n") : verse.content;
+    const TextComponent = Settings.debug_useAnimatedTextComponentForExtraComponents ? Animated.Text : Text;
+    let resultComponent = <>{content}</>;
+
+    if (!Settings.debug_renderEachVerseLineAsTextComponent) {
+      resultComponent = <>{
+        content
+          .split("\n")
+          .map((it, i) => <TextComponent key={i + it}>{it}</TextComponent>)
+      }</>;
+    }
+
+    if (Settings.debug_addWhitespacesAfterVerse) {
+      resultComponent = <>{resultComponent}<TextComponent>{" "}{" "}{" "}{" "}{" "}{" "}{" "}{" "}{" "}{" "}</TextComponent></>;
+    }
+
+    if (Settings.debug_addInvisibleCharactersAfterVerse) {
+      resultComponent = <>{resultComponent}<TextComponent>{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}</TextComponent></>;
+    }
+
+    if (Settings.debug_addInvisibleTextAfterVerse) {
+      resultComponent = <>{resultComponent}<TextComponent style={{ color: "#fff0" }}> . . . . . . . . . .</TextComponent></>;
+    }
+
+    return resultComponent;
+  };
+
+  const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) => {
+    rollbar.debug("onTextLayout", {
+      verse: verse,
+      event: e,
+      lines: JSON.stringify(e.nativeEvent.lines),
+      songs: verse._songs ? verse._songs[0].name : undefined
+    });
+  };
+
+  const MainTextComponent = Settings.debug_useAnimatedTextComponentForVerse ? Animated.Text : Text;
+
   return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
     {displayName.length === 0 ? undefined :
-      <Animated.Text style={[
+      <MainTextComponent style={[
         styles.title,
         specificStyleForTitle(),
         animatedStyle.title,
         styleForVerseType(getVerseType(verse))
       ]}>
         {displayName}
-      </Animated.Text>
+      </MainTextComponent>
     }
 
-    {isMelodyLoaded && isMelodyAvailable() ? undefined :
-      <Animated.Text style={[styles.text, animatedStyle.text]}
-                     selectable={Settings.enableTextSelection}
-                     textBreakStrategy={"balanced"}>
-        {highlightText == null
-          ? (Settings.debug_addWhitespaceAfterVerse ? verse.content.replace(/\n/g, " \n") : verse.content)
-          : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
-      </Animated.Text>
+    {!Settings.debug_ignoreShowMelody && isMelodyLoaded && isMelodyAvailable() ? undefined :
+      /* @ts-ignore */
+      <MainTextComponent
+        style={[styles.text, animatedStyle.text]}
+        selectable={Settings.enableTextSelection}
+        textBreakStrategy={"balanced"}
+        adjustsFontSizeToFit={Settings.debug_adjustsFontSizeToFit}
+        allowFontScaling={Settings.debug_allowFontScaling}
+        onTextLayout={Settings.debug_logOnTextLayout ? onTextLayout : undefined}
+      >
+        {renderContent()}
+      </MainTextComponent>
     }
 
-    {!isMelodyAvailable() ? undefined : <MelodyView onLoaded={onMelodyLoaded}
-                                                    abc={memoizedAbc}
-                                                    animatedScale={scale}
-                                                    melodyScale={melodyScale} />}
+    {Settings.debug_ignoreShowMelody || !isMelodyAvailable() ? undefined :
+      <MelodyView onLoaded={onMelodyLoaded}
+                  abc={memoizedAbc}
+                  animatedScale={scale}
+                  melodyScale={melodyScale} />}
   </Animated.View>;
 };
 
 export default ContentVerse;
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
-  container: {},
+  container: {
+    borderWidth: Settings.debug_drawSongVerseBorders ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorders ? "#f00" : undefined,
+    width: Settings.debug_maxVerseWidth ? "100%" : (Settings.debug_mediumVerseWidth ? "90%" : undefined),
+    flex: Settings.debug_useFlexForVerses ? 1 : undefined,
+    flexDirection: Settings.debug_useFlexForVersesContent ? "column" : undefined
+  },
   title: {
     color: colors.verseTitle,
     textTransform: "lowercase",
     fontFamily: fontFamily.sansSerifLight,
-    fontStyle: "italic"
+    fontStyle: "italic",
+    borderWidth: Settings.debug_drawSongVerseBorders ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorders ? "#00f" : undefined,
+    flex: 10
   },
 
   titleNotSelected: {},
@@ -159,7 +218,10 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   },
 
   text: {
-    color: colors.text.default
+    color: colors.text.default,
+    borderWidth: Settings.debug_drawSongVerseBorders ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorders ? "#0f0" : undefined,
+    flex: Settings.debug_useFlexForVersesContent ? 1 : undefined
   },
   textHighlighted: {
     color: colors.text.highlighted.foreground,

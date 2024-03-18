@@ -12,17 +12,19 @@ import { BaseSettingProps, createStyles as settingComponentCreateStyles } from "
 
 interface BooleanSettingProps extends BaseSettingProps<boolean> {
   onPress?: (setValue: (newValue: boolean) => void, key: string | undefined, newValue: boolean) => void;
+  onLongPress?: (setValue: (newValue: boolean) => void, key: string | undefined) => void;
 }
 
-const SettingSwitchComponent: React.FC<BooleanSettingProps> =  ({
-                                         title,
-                                         description,
-                                         keyName,
-                                         value,
-                                         onPress = undefined,
-                                         isVisible = true,
-                                         lessObviousStyling = false
-                                       }) => {
+const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
+                                                                 title,
+                                                                 description,
+                                                                 keyName,
+                                                                 value,
+                                                                 onPress = undefined,
+                                                                 onLongPress = undefined,
+                                                                 isVisible = true,
+                                                                 lessObviousStyling = false
+                                                               }) => {
   if (!isVisible) {
     return null;
   }
@@ -51,23 +53,31 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> =  ({
   };
 
   if (typeof _value !== "boolean") {
-    console.warn("Using boolean switch component for non boolean setting:", keyName, _value);
+    console.warn("Using boolean switch component for non boolean setting:", {
+      key: keyName,
+      value: _value,
+      valueType: typeof _value
+    });
   }
 
   return (
-    <View style={[baseStyles.container, styles.switchContainer, (lessObviousStyling ? {} : baseStyles.whiteContainer)]}>
-      <View style={baseStyles.titleContainer}>
-        <Text style={baseStyles.titleText}>{title}</Text>
-        {description === undefined ? undefined : <Text style={baseStyles.descriptionText}>{description}</Text>}
+    <TouchableWithoutFeedback
+      onLongPress={onLongPress === undefined ? undefined : () => onLongPress(setValue, keyName)}>
+      <View
+        style={[baseStyles.container, styles.switchContainer, (lessObviousStyling ? {} : baseStyles.whiteContainer)]}>
+        <View style={baseStyles.titleContainer}>
+          <Text style={baseStyles.titleText}>{title}</Text>
+          {description === undefined ? undefined : <Text style={baseStyles.descriptionText}>{description}</Text>}
+        </View>
+        {value === undefined ? undefined :
+          <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
+                  thumbColor={styles.switchComponent.color}
+                  ios_backgroundColor={styles.switchComponent.backgroundColor}
+                  value={_value} />}
       </View>
-      {value === undefined ? undefined :
-        <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
-                thumbColor={styles.switchComponent.color}
-                ios_backgroundColor={styles.switchComponent.backgroundColor}
-                value={_value} />}
-    </View>
+    </TouchableWithoutFeedback>
   );
-}
+};
 
 
 export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
@@ -82,4 +92,4 @@ export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleShee
   }
 });
 
-export default SettingSwitchComponent
+export default SettingSwitchComponent;
