@@ -110,11 +110,11 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     const TextComponent = Settings.debug_useAnimatedTextComponentForExtraComponents ? Animated.Text : Text;
     let resultComponent = <>{content}</>;
 
-    if (!Settings.debug_renderEachVerseLineAsTextComponent) {
+    if (Settings.debug_renderEachVerseLineAsTextComponent) {
       resultComponent = <>{
         content
           .split("\n")
-          .map((it, i) => <TextComponent key={i + it}>{it}</TextComponent>)
+          .map((it, i) => <TextComponent key={i + it}>{i > 0 ? "\n" : ""}{it}</TextComponent>)
       }</>;
     }
 
