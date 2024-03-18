@@ -14,6 +14,7 @@ import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
+import { useAppContext } from "../../components/providers/AppContextProvider";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
   const styles = createStyles(useTheme());
@@ -27,9 +28,9 @@ const SettingsScreen: React.FC = () => {
   const [isReloading, setReloading] = useState(false);
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
   const [showDocumentsZoomSettings, setShowDocumentsZoomSettings] = useState(Settings.documentsUseExperimentalViewer);
 
+  const appContext = useAppContext();
   const theme = useTheme();
   const styles = createStyles(theme);
 
@@ -70,13 +71,13 @@ const SettingsScreen: React.FC = () => {
   };
 
   const increaseEasterEggDevMode = () => {
-    if (showDevSettings) {
+    if (appContext.developerMode) {
       return;
     }
 
     setEasterEggEnableDevModeCount(easterEggEnableDevModeCount + 1);
     if (easterEggEnableDevModeCount >= 9) {
-      setShowDevSettings(true);
+      appContext.setDeveloperMode(true);
       rollbar.info("Someone switched on developer mode", {
         deviceId: ServerAuth.getDeviceId(),
         appOpenedTimes: Settings.appOpenedTimes
@@ -102,9 +103,61 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
-    <SettingSwitchComponent title={"Add whitespace after verse"}
-                            description={"On some devices, some verses won't display their last line. Enable this toggle to see if this fixes that problem."}
-                            keyName={"debug_addWhitespaceAfterVerse"} />
+    <SettingSwitchComponent title={"debug_addWhitespaceAfterEachVerseLine"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_addWhitespaceAfterEachVerseLine"} />
+    <SettingSwitchComponent title={"debug_renderEachVerseLineAsTextComponent"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_renderEachVerseLineAsTextComponent"} />
+    <SettingSwitchComponent title={"debug_useAnimatedTextComponentForVerse"}
+                            onLongPress={(setValue) => setValue(true)}
+                            keyName={"debug_useAnimatedTextComponentForVerse"} />
+    <SettingSwitchComponent title={"debug_useAnimatedTextComponentForExtraComponents"}
+                            onLongPress={(setValue) => setValue(true)}
+                            keyName={"debug_useAnimatedTextComponentForExtraComponents"} />
+    <SettingSwitchComponent title={"debug_addWhitespacesAfterVerse"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_addWhitespacesAfterVerse"} />
+    <SettingSwitchComponent title={"debug_addInvisibleCharactersAfterVerse"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_addInvisibleCharactersAfterVerse"} />
+    <SettingSwitchComponent title={"debug_addInvisibleTextAfterVerse"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_addInvisibleTextAfterVerse"} />
+    <SettingSwitchComponent title={"debug_adjustsFontSizeToFit"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_adjustsFontSizeToFit"} />
+    <SettingSwitchComponent title={"debug_allowFontScaling"}
+                            onLongPress={(setValue) => setValue(true)}
+                            keyName={"debug_allowFontScaling"} />
+    <SettingSwitchComponent title={"debug_logOnTextLayout"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_logOnTextLayout"} />
+    <SettingSwitchComponent title={"debug_drawSongVerseBorders"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_drawSongVerseBorders"} />
+    <SettingSwitchComponent title={"debug_ignoreShowMelody"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_ignoreShowMelody"} />
+    <SettingSwitchComponent title={"debug_maxVerseWidth"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_maxVerseWidth"} />
+    <SettingSwitchComponent title={"debug_mediumVerseWidth"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_mediumVerseWidth"} />
+    <SettingSwitchComponent title={"debug_removeClippedSubviews"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_removeClippedSubviews"} />
+    <SettingSwitchComponent title={"debug_alwaysCalculateVerseHeight"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_alwaysCalculateVerseHeight"} />
+    <SettingSwitchComponent title={"debug_useFlexForVerses"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_useFlexForVerses"} />
+    <SettingSwitchComponent title={"debug_useFlexForVersesContent"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_useFlexForVersesContent"} />
+
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
     <SettingSwitchComponent title={"Track song audio downloads"}
@@ -292,7 +345,7 @@ const SettingsScreen: React.FC = () => {
                                   setValue(getAuthenticationStateAsMessage());
                                 })} />
 
-          {!showDevSettings ? undefined : developerSettings}
+          {!appContext.developerMode ? undefined : developerSettings}
 
         </>}
       </ScrollView>

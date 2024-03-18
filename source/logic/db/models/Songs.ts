@@ -71,6 +71,7 @@ export class Verse implements VerseProps {
   index: number;
   uuid: string;
   abcLyrics?: string;
+  _songs?: Song[];  // Only added temporary for #228.
 
   constructor(
     index: number,

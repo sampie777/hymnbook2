@@ -56,7 +56,24 @@ class SettingsClass extends SettingsBaseClass {
 
   // Other
   shareUsageData = process.env.NODE_ENV !== "development";
-  debug_addWhitespaceAfterVerse = false;
+  debug_addWhitespaceAfterEachVerseLine = false;
+  debug_renderEachVerseLineAsTextComponent = false;
+  debug_useAnimatedTextComponentForVerse = true;
+  debug_useAnimatedTextComponentForExtraComponents = true;
+  debug_addWhitespacesAfterVerse = false;
+  debug_addInvisibleCharactersAfterVerse = false;
+  debug_addInvisibleTextAfterVerse = false;
+  debug_adjustsFontSizeToFit = false;
+  debug_allowFontScaling = true;
+  debug_logOnTextLayout = false;
+  debug_drawSongVerseBorders = false;
+  debug_ignoreShowMelody = false;
+  debug_maxVerseWidth = false;
+  debug_mediumVerseWidth = false;
+  debug_removeClippedSubviews = false;
+  debug_alwaysCalculateVerseHeight = false;
+  debug_useFlexForVerses = false;
+  debug_useFlexForVersesContent = false;
 }
 
 const Settings = new SettingsClass();

@@ -421,7 +421,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             renderItem={renderContentItem}
             initialNumToRender={20}
             keyExtractor={(item: Verse) => item.id.toString()}
-            getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
+            getItemLayout={Settings.debug_alwaysCalculateVerseHeight || (song && song?.verses.length > 20) ? calculateVerseLayout : undefined}
             contentContainerStyle={styles.contentSectionList}
             onViewableItemsChanged={onListViewableItemsChanged.current}
             viewabilityConfig={listViewabilityConfig.current}
@@ -437,7 +437,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             })}
             ListHeaderComponent={<Header song={song} scale={animatedScale} />}
             ListFooterComponent={<Footer song={song} scale={animatedScale} />}
-            removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
+            removeClippedSubviews={Settings.debug_removeClippedSubviews} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
           />
         </ReAnimated.View>
 
