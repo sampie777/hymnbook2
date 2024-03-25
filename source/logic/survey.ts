@@ -10,7 +10,7 @@ export namespace Survey {
         getDeviceId: Security.getDeviceId()
       });
     }
-    return `https://hymnbook.sajansen.nl/feedback/features/${Security.getDeviceId()}`;
+    return `https://hymnbook.sajansen.nl/api/v1/feedback/features/register?user=${Security.getDeviceId()}`;
   };
 
   export const needToShow = (date = new Date()) => {
