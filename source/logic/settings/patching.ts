@@ -14,7 +14,7 @@ const patches: { [key: number]: () => any } = {
 const isPatchIdApplied = (appliedPatches: Realm.Results<SettingPatch & Realm.Object>, id: number) =>
   appliedPatches.some(it => it.id == id);
 
-const markPatchAsApplied = (id: number) => new Promise<void>(resolve => {
+const markPatchAsApplied = (id: number) => new Promise<void>((resolve, reject) => {
   const patch = new SettingPatch(id);
 
   try {
@@ -27,6 +27,7 @@ const markPatchAsApplied = (id: number) => new Promise<void>(resolve => {
       ...sanitizeErrorForRollbar(error),
       patch: patch
     });
+    reject(error);
   }
 });
 
