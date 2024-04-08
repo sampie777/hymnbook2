@@ -52,7 +52,7 @@ import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
-import FeaturesProvider from "./gui/components/FeaturesProvider";
+import FeaturesProvider, { useFeatures } from "./gui/components/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 
@@ -177,6 +177,7 @@ const AppRoot: React.FC = () => {
   const [isSongDbLoading, setIsSongDbLoading] = useState(true);
   const [isDocumentDbLoading, setIsDocumentDbLoading] = useState(true);
   const theme = useTheme();
+  const features = useFeatures();
   const styles = createStyles(theme);
 
   useEffect(() => {
@@ -193,6 +194,8 @@ const AppRoot: React.FC = () => {
             "Authenticating error",
             "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
           ));
+
+        if (!features.loaded) features.loadFeatures();
       })
       .finally(() => setIsSettingsDbLoading(false)));
     runAsync(() => initSongDatabase().finally(() => setIsSongDbLoading(false)));

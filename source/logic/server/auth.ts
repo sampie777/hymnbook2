@@ -53,7 +53,13 @@ export namespace ServerAuth {
 
   export const getJwt = (): string => {
     if (!isAuthenticated() && Settings.appOpenedTimes > 1) {
-      rollbar.info("Trying to get JWT but I'm not authenticated yet");
+      rollbar.info("Trying to get JWT but I'm not authenticated yet", {
+        appOpenedTimes: Settings.appOpenedTimes,
+        isAuthenticating: _isAuthenticating,
+        authJwt: Settings.authJwt,
+        authRequestId: Settings.authRequestId,
+        authStatus: Settings.authStatus,
+      });
     }
     return Settings.authJwt;
   };
@@ -157,7 +163,7 @@ export namespace ServerAuth {
         if (accessRequestResponse.jwt == null) {
           rollbar.error(`Access request approved but received no (valid) jwt`, {
             authRequestId: Settings.authRequestId,
-            response: accessRequestResponse.jwt,
+            response: accessRequestResponse.jwt
           });
           return "";
         }
