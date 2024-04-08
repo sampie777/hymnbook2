@@ -3,12 +3,12 @@ import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from ".
 import { AbcMelody } from "./AbcMelodies";
 
 export class SongAudio {
-  id: number
-  file: string = ""
-  name: string = ""
-  type: string = ""
-  uuid: string | null
-  downloadCount: number = 0
+  id: number;
+  file: string = "";
+  name: string = "";
+  type: string = "";
+  uuid: string | null;
+  downloadCount: number = 0;
 
   constructor(
     id: number,
@@ -16,14 +16,14 @@ export class SongAudio {
     name: string,
     type: string,
     uuid: string | null,
-    downloadCount: number = 0,
+    downloadCount: number = 0
   ) {
-    this.id = id
-    this.file = file
-    this.name = name
-    this.type = type
-    this.uuid = uuid
-    this.downloadCount = downloadCount
+    this.id = id;
+    this.file = file;
+    this.name = name;
+    this.type = type;
+    this.uuid = uuid;
+    this.downloadCount = downloadCount;
   }
 }
 
@@ -39,17 +39,17 @@ export enum SongMetadataType {
 
 export class SongMetadata {
   id: number;
-  type: SongMetadataType
-  value: string = ""
+  type: SongMetadataType;
+  value: string = "";
 
   constructor(
     type: SongMetadataType,
     value: string = "",
-    id = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema),
+    id = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema)
   ) {
-    this.id = id
-    this.type = type
-    this.value = value
+    this.id = id;
+    this.type = type;
+    this.value = value;
   }
 }
 
@@ -194,5 +194,21 @@ export class SongBundle {
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
     this.hash = hash;
+  }
+
+  static clone(obj: SongBundle, options: { includeSongs: boolean } = { includeSongs: false }): SongBundle {
+    return {
+      id: obj.id,
+      abbreviation: obj.abbreviation,
+      name: obj.name,
+      language: obj.language,
+      author: obj.author,
+      copyright: obj.copyright,
+      songs: !options.includeSongs ? [] : obj.songs,
+      createdAt: obj.createdAt,
+      modifiedAt: obj.modifiedAt,
+      uuid: obj.uuid,
+      hash: obj.hash
+    };
   }
 }
