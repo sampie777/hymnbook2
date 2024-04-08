@@ -88,6 +88,9 @@ export namespace DeepLinking {
     if (url === null) return;
 
     if (validate && !validateUrl(url)) {
+      // Ignore track player notification clicks
+      if (url.startsWith("trackplayer://")) return;
+
       rollbar.warning("Received invalid deep link", {
         url: url,
         deepLinkPaths: config.deepLinkPaths
