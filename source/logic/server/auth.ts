@@ -52,7 +52,7 @@ export namespace ServerAuth {
   };
 
   export const getJwt = (): string => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated() && Settings.appOpenedTimes > 1) {
       rollbar.info("Trying to get JWT but I'm not authenticated yet");
     }
     return Settings.authJwt;
