@@ -58,7 +58,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   };
 
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     // Let user navigate when the screen is still loading the data
     if (serverGroups.length === 0) {
@@ -79,7 +79,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     setIsGroupLoading(true);
     DocumentServer.fetchDocumentGroup({ uuid: promptForUuid }, {})
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
 
         if (localGroups.find(it => it.uuid === promptForUuid)) return;
 
@@ -90,7 +90,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       .finally(() => {
         dismissPromptForUuid?.();
 
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsGroupLoading(false);
       });
   };
@@ -103,7 +103,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     if (result.data !== undefined) {
       setLocalGroups(result.data);
@@ -127,12 +127,12 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     setIsLoading(true);
     DocumentServer.fetchDocumentGroups()
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setServerGroups(data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsLoading(false);
       });
   };
@@ -208,13 +208,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
     DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         saveDocumentGroup(data);
       })
       .catch(error =>
         Alert.alert("Error", `Error downloading ${group.name}: ${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsLoading(false);
       });
   };
@@ -226,7 +226,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     setIsLoading(false);
     loadLocalDocumentGroups();
@@ -243,7 +243,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       .catch(error =>
         Alert.alert("Error", `Error updating ${group.name}: ${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setLocalGroups([]);
         setIsLoading(false);
         loadLocalDocumentGroups();
@@ -268,7 +268,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     loadLocalDocumentGroups();
   };

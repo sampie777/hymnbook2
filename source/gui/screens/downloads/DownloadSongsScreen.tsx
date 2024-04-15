@@ -56,7 +56,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   };
 
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     // Let user navigate when the screen is still loading the data
     if (serverBundles.length === 0) {
@@ -77,7 +77,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsBundleLoading(true);
     Server.fetchSongBundle({ uuid: promptForUuid }, {})
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
 
         if (localBundles.find(it => it.uuid === promptForUuid)) return;
 
@@ -88,7 +88,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
       .finally(() => {
         dismissPromptForUuid?.();
 
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsBundleLoading(false);
       });
   };
@@ -101,7 +101,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     if (result.data !== undefined) {
       setLocalBundles(result.data);
@@ -125,12 +125,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsLoading(true);
     Server.fetchSongBundles()
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setServerBundles(data);
       })
       .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsLoading(false);
       });
   };
@@ -207,13 +207,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         saveSongBundle(data);
       })
       .catch(error =>
         Alert.alert("Error", `Error downloading ${bundle.name}: ${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsLoading(false);
       });
   };
@@ -225,7 +225,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     setIsLoading(false);
     loadLocalSongBundles();
@@ -242,7 +242,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
       .catch(error =>
         Alert.alert("Error", `Error updating ${bundle.name}: ${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setLocalBundles([]);
         setIsLoading(false);
         loadLocalSongBundles();
@@ -267,7 +267,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     loadLocalSongBundles();
   };
