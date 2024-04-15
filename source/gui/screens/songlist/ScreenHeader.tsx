@@ -4,14 +4,12 @@ import DeleteModeButton from "./DeleteModeButton";
 
 interface Props {
   toggleDeleteMode: () => void,
-  clearAll: () => void,
   isDeleteMode: boolean
 }
 
-const ScreenHeader: React.FC<Props> = ({ toggleDeleteMode, clearAll, isDeleteMode = false }) => {
+const ScreenHeader: React.FC<Props> = ({ toggleDeleteMode, isDeleteMode = false }) => {
   return <View style={styles.container}>
     <DeleteModeButton onPress={toggleDeleteMode}
-                      onLongPress={clearAll}
                       isActivated={isDeleteMode} />
   </View>;
 };

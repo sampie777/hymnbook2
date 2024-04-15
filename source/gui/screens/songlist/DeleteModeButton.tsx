@@ -1,12 +1,12 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
 import { isIOS } from "../../../logic/utils";
 
 interface Props {
   onPress: () => void,
-  onLongPress: () => void,
+  onLongPress?: () => void,
   isActivated: boolean
 }
 
@@ -16,10 +16,13 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
                            onLongPress={onLongPress}
                            style={styles.deleteModeButton}
                            hitSlop={{ top: 10, right: 10, bottom: isIOS ? 5 : 10, left: 10 }}>
-    <Icon name={"trash-alt"}
-          solid={isActivated}
-          size={styles.deleteModeButton.fontSize}
-          color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
+    {isActivated
+      ? <Text style={styles.text}>Cancel</Text>
+      : <Icon name={"trash-alt"}
+              solid={isActivated}
+              size={styles.deleteModeButton.fontSize}
+              color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
+    }
   </TouchableOpacity>;
 };
 
@@ -33,6 +36,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   deleteModeButtonActive: {
     color: colors.delete
+  },
+  text: {
+    color: colors.text.default,
+    fontSize: 16
   }
 });
 
