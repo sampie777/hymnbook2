@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
 import { Verse } from "../../../logic/db/models/Songs";
@@ -35,7 +35,6 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     React.useLayoutEffect(() => {
       navigation.setOptions({
         headerRight: () => <ScreenHeader toggleDeleteMode={toggleDeleteMode}
-                                         clearAll={clearAll}
                                          isDeleteMode={isDeleteMode} />
       });
     }, [navigation, isDeleteMode]);
