@@ -7,7 +7,6 @@ import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
 import config from "../../../../config";
 import { Song } from "../../../../logic/db/models/Songs";
-import { SongSchema } from "../../../../logic/db/models/SongsSchema";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { isIOS, isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
