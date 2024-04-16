@@ -79,9 +79,10 @@ export function openLink(url?: string): Promise<any> {
 
   return Linking.openURL(url)
     .catch(error => {
-      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Your device can't open these type of URLs.")) {
-        rollbar.info("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
-      } else {
+      if (error == undefined || error.message == undefined || !(
+        `${error.message}`.startsWith("Your device can't open these type of URLs.")
+        || `${error.message}`.startsWith("No Activity found to handle Intent")
+      )) {
         rollbar.warning("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
       }
 
@@ -187,4 +188,4 @@ export const executeInForeGround = <T>(callback: () => Promise<T>): Promise<T> =
 export const delayed = <T>(callback: () => T, delay: number) => new Promise<T>(resolve =>
   setTimeout(async () =>
       resolve(await callback()),
-    delay))
+    delay));
