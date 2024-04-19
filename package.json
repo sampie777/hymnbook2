@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "6.9.17",
     "abcjs": "git+https://github.com/paulrosen/abcjs.git#6.2.3",
     "fastest-levenshtein": "1.0.16",
+    "fetch-retry": "6.0.0",
     "htmlparser2": "9.0.0",
     "react": "18.2.0",
     "react-native": "0.72.12",

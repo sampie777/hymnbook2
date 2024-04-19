@@ -1,9 +1,10 @@
 import { databaseHost } from "../../../app.json";
+import { retryFetch } from "../api";
 
 const authEndpoint = `${databaseHost}/api/v1`;
 
 const post = (url: string, data: any = "") =>
-  fetch(url, {
+  retryFetch(url, {
     method: "POST",
     credentials: "include",
     headers: {
