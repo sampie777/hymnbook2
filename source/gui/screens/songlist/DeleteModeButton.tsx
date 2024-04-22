@@ -7,17 +7,18 @@ import { isIOS } from "../../../logic/utils";
 interface Props {
   onPress: () => void,
   onLongPress?: () => void,
-  isActivated: boolean
+  isActivated: boolean,
+  listHasBeenChanged: boolean,
 }
 
-const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated = false }) => {
+const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated = false, listHasBeenChanged }) => {
   const styles = createStyles(useTheme());
   return <TouchableOpacity onPress={onPress}
                            onLongPress={onLongPress}
                            style={styles.deleteModeButton}
                            hitSlop={{ top: 10, right: 10, bottom: isIOS ? 5 : 10, left: 10 }}>
     {isActivated
-      ? <Text style={styles.text}>Cancel</Text>
+      ? <Text style={styles.text}>{listHasBeenChanged ? "Done" : "Cancel"}</Text>
       : <Icon name={"trash-alt"}
               solid={isActivated}
               size={styles.deleteModeButton.fontSize}

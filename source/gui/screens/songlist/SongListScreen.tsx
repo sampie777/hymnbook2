@@ -19,6 +19,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
   ({ navigation }) => {
     const [list, setList] = useState<Array<SongListSongModel>>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
+    const [listHasBeenChanged, setListHasBeenChanged] = useState(false);
     const styles = createStyles(useTheme());
 
     useEffect(() => {
@@ -35,14 +36,19 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     React.useLayoutEffect(() => {
       navigation.setOptions({
         headerRight: () => <ScreenHeader toggleDeleteMode={toggleDeleteMode}
-                                         isDeleteMode={isDeleteMode} />
+                                         isDeleteMode={isDeleteMode}
+                                         listHasBeenChanged={listHasBeenChanged} />
       });
-    }, [navigation, isDeleteMode]);
+    }, [navigation, isDeleteMode, listHasBeenChanged]);
 
     useFocusEffect(
       React.useCallback(() => {
         BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
         reloadSongList();
+
+        setListHasBeenChanged(false);
+
         return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       }, [isDeleteMode])
     );
@@ -96,6 +102,10 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     };
 
     const onSearchResultItemDeleteButtonPress = (index: number) => {
+      // Check list length, because if the list is emptied using deleteAll, the GUI crashes when we also try to set
+      // setListHasBeenChanged to true. This doesn't appear to be happening here, but better safe than sorry.
+      if (list.length > 1) setListHasBeenChanged(true)
+
       SongList.deleteSongAtIndex(index);
     };
 
