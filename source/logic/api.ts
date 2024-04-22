@@ -3,15 +3,16 @@ import { databaseHost, hymnbookHost } from "../../app.json";
 import { Song, SongAudio } from "./db/models/Songs";
 import Settings from "../settings";
 import fetchBuilder from "fetch-retry";
+import config from "../config";
 
-export const retryFetch = fetchBuilder(fetch);
+export const fetchRetry = fetchBuilder(fetch, {retries: config.fetchRetries});
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
 const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>
-    retryFetch(url, {
+    fetchRetry(url, {
       method: "GET",
       credentials: "include",
       headers: {
