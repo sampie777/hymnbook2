@@ -84,7 +84,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         setFilterLanguage(data.language);
         setRequestDownloadForBundle(data);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch the song bundle.\n${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", "Could not load song bundle. Make sure your internet connection is working or try again later.")
+        } else {
+          Alert.alert("Error", `Could not load song bundle. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         dismissPromptForUuid?.();
 
@@ -128,7 +134,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         if (!isMounted()) return;
         setServerBundles(data);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", "Could not load song bundles. Make sure your internet connection is working or try again later.")
+        } else {
+          Alert.alert("Error", `Could not load song bundles. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         if (!isMounted()) return;
         setIsLoading(false);
@@ -210,8 +222,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         if (!isMounted()) return;
         saveSongBundle(data);
       })
-      .catch(error =>
-        Alert.alert("Error", `Error downloading ${bundle.name}: ${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", `Could not download ${bundle.name}. Make sure your internet connection is working or try again later.`)
+        } else {
+          Alert.alert("Error", `Could not download ${bundle.name}. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         if (!isMounted()) return;
         setIsLoading(false);
@@ -239,8 +256,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         result.alert();
         result.throwIfException();
       })
-      .catch(error =>
-        Alert.alert("Error", `Error updating ${bundle.name}: ${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", `Could not update ${bundle.name}. Make sure your internet connection is working or try again later.`)
+        } else {
+          Alert.alert("Error", `Could not update ${bundle.name}. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         if (!isMounted()) return;
         setLocalBundles([]);

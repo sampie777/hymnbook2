@@ -86,7 +86,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         setFilterLanguage(data.language);
         setRequestDownloadForGroup(data);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch document group.\n${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", "Could not load documents group. Make sure your internet connection is working or try again later.")
+        } else {
+          Alert.alert("Error", `Could not load documents group. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         dismissPromptForUuid?.();
 
@@ -130,7 +136,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         if (!isMounted()) return;
         setServerGroups(data);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch documents. \n${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", "Could not load documents. Make sure your internet connection is working or try again later.")
+        } else {
+          Alert.alert("Error", `Could not load documents. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         if (!isMounted()) return;
         setIsLoading(false);
@@ -211,8 +223,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         if (!isMounted()) return;
         saveDocumentGroup(data);
       })
-      .catch(error =>
-        Alert.alert("Error", `Error downloading ${group.name}: ${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", `Could not download ${group.name}. Make sure your internet connection is working or try again later.`)
+        } else {
+          Alert.alert("Error", `Could not download ${group.name}. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         if (!isMounted()) return;
         setIsLoading(false);
@@ -240,8 +257,13 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         result.alert();
         result.throwIfException();
       })
-      .catch(error =>
-        Alert.alert("Error", `Error updating ${group.name}: ${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", `Could not update ${group.name}. Make sure your internet connection is working or try again later.`)
+        } else {
+          Alert.alert("Error", `Could not update ${group.name}. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         if (!isMounted()) return;
         setLocalGroups([]);
