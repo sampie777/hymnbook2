@@ -7,6 +7,7 @@ import {
   View
 } from "react-native";
 import ConfirmationModal from "./ConfirmationModal";
+import { clearOrSelectAll } from "../../../logic/songs/versePicker";
 
 interface Props<T> {
   selectedValues: Array<T>;
@@ -21,7 +22,7 @@ interface Props<T> {
   invertConfirmColor?: boolean;
 }
 
-function MultiPickerComponent<T>({
+const MultiPickerComponent = <T extends any>({
                                    selectedValues,
                                    values,
                                    onCompleted,
@@ -32,7 +33,7 @@ function MultiPickerComponent<T>({
                                    closeText,
                                    confirmText,
                                    invertConfirmColor
-                                 }: Props<T>) {
+                                 }: Props<T>) => {
   const [_selectedValues, setSelectedValues] = useState<T[]>(selectedValues);
   const styles = createStyles(useTheme());
 
@@ -43,6 +44,8 @@ function MultiPickerComponent<T>({
       setSelectedValues([..._selectedValues, value]);
     }
   };
+
+  const clearOrSelectAll = () => setSelectedValues(_selectedValues.length > 0 ? [] : values);
 
   return <ConfirmationModal isOpen={true}
                             title={title}
@@ -60,7 +63,8 @@ function MultiPickerComponent<T>({
             return <View key={keyExtractor?.(item, index)}
                          style={styles.row}>
               <TouchableOpacity style={[styles.rowButton, (isSelected ? styles.selectedItem : {})]}
-                                onPress={() => toggleValue(item)}>
+                                onPress={() => toggleValue(item)}
+                                onLongPress={clearOrSelectAll}>
                 {rowContentRenderer(item, isSelected)}
               </TouchableOpacity>
             </View>;
@@ -69,7 +73,7 @@ function MultiPickerComponent<T>({
       </ScrollView>
     </View>
   </ConfirmationModal>;
-}
+};
 
 export default MultiPickerComponent;
 
