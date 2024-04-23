@@ -24,7 +24,7 @@
     "fetch-retry": "6.0.0",
     "htmlparser2": "9.0.0",
     "react": "18.2.0",
-    "react-native": "0.72.12",
+    "react-native": "0.72.13",
     "react-native-config": "1.5.1",
     "react-native-device-info": "10.12.0",
     "react-native-gesture-handler": "2.16.0",
