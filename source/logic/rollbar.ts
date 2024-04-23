@@ -43,7 +43,7 @@ const checkShouldRollbarBeEnabled = (uniqueId: string | null) => {
     && process.env.NODE_ENV !== "development";
 
   if (shouldRollbarBeEnabled) return;
-  console.debug("Rollbar is disabled");
+  console.debug("Rollbar is disabled", { client: uniqueId, env: process.env.NODE_ENV });
 
   const rollbarLogLocal = (logFunction: (...data: any[]) => void, obj: LogArgument, extra?: Extra, callback?: Callback): LogResult => {
     if (extra === undefined) logFunction(obj);
