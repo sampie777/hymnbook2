@@ -22,7 +22,7 @@ interface Props<T> {
   invertConfirmColor?: boolean;
 }
 
-function MultiPickerComponent<T>({
+const MultiPickerComponent = <T extends any>({
                                    selectedValues,
                                    values,
                                    onCompleted,
@@ -33,7 +33,7 @@ function MultiPickerComponent<T>({
                                    closeText,
                                    confirmText,
                                    invertConfirmColor
-                                 }: Props<T>) {
+                                 }: Props<T>) => {
   const [_selectedValues, setSelectedValues] = useState<T[]>(selectedValues);
   const styles = createStyles(useTheme());
 
@@ -73,7 +73,7 @@ function MultiPickerComponent<T>({
       </ScrollView>
     </View>
   </ConfirmationModal>;
-}
+};
 
 export default MultiPickerComponent;
 
