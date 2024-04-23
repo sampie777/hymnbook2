@@ -225,7 +225,7 @@ const AppRoot: React.FC = () => {
   </SafeAreaView>;
 };
 
-const App = () =>
+const App: React.FC = () =>
   <ErrorBoundary>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <FeaturesProvider>
