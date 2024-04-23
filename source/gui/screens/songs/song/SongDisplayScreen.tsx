@@ -388,8 +388,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
-        isMelodyShown={showMelody}
-        enableMelody={setShowMelody}
         onClose={() => setShowMelodySettings(false)}
         selectedMelody={selectedMelody}
         onMelodySelect={setSelectedMelody}
@@ -450,7 +448,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     </PinchGestureHandler>
 
     {song === undefined ? undefined :
-      <AudioPlayerControls song={song} />}
+      <AudioPlayerControls song={song}
+                           showMelodySettings={() => setShowMelodySettings(true)} />}
   </View>;
 };
 

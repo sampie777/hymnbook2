@@ -8,15 +8,15 @@ interface BooleanSettingProps extends BaseSettingProps<boolean> {
   onPress?: (setValue: (newValue: boolean) => void, key: string | undefined, newValue: boolean) => void;
 }
 
-const SettingSwitchComponent: React.FC<BooleanSettingProps> =  ({
-                                         title,
-                                         description,
-                                         keyName,
-                                         value,
-                                         onPress = undefined,
-                                         isVisible = true,
-                                         lessObviousStyling = false
-                                       }) => {
+const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
+                                                                 title,
+                                                                 description,
+                                                                 keyName,
+                                                                 value,
+                                                                 onPress = undefined,
+                                                                 isVisible = true,
+                                                                 lessObviousStyling = false
+                                                               }) => {
   if (!isVisible) {
     return null;
   }
@@ -56,12 +56,13 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> =  ({
       </View>
       {value === undefined ? undefined :
         <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
+                trackColor={{ true: undefined, false: styles.switchComponent.backgroundColor }}
                 thumbColor={styles.switchComponent.color}
                 ios_backgroundColor={styles.switchComponent.backgroundColor}
                 value={_value} />}
     </View>
   );
-}
+};
 
 
 export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.create({
@@ -76,4 +77,4 @@ export const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleShee
   }
 });
 
-export default SettingSwitchComponent
+export default SettingSwitchComponent;

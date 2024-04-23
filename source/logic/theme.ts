@@ -87,7 +87,7 @@ export const lightColors: ThemeColors = {
   },
   switchComponent: {
     thumb: isIOS ? "#fff" : "dodgerblue",
-    background: isIOS ? "#eee" : undefined
+    background: "#eee"
   },
   badge: {
     medium: "#ff9100"
