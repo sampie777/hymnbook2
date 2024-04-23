@@ -20,9 +20,10 @@ import Animated, {
 
 interface Props {
   song: Song;
+  showMelodySettings: () => void;
 }
 
-const AudioPlayerControls: React.FC<Props> = ({ song }) => {
+const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
   const progressBarUpdateIntervalMs = 250;
 
   const songUuid = useRef<string | undefined>();
@@ -139,13 +140,21 @@ const AudioPlayerControls: React.FC<Props> = ({ song }) => {
         </TouchableOpacity>
       }
 
-      <TouchableOpacity style={styles.button}
-                        onPress={stop}
-                        onLongPress={() => Alert.alert("Close player",
-                          "Click this button to stop the audio and close the player.")}>
-        <Icon name={"times"}
-              style={styles.icon} />
-      </TouchableOpacity>
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity style={styles.button}
+                          onPress={showMelodySettings}>
+          <Icon name={"cog"}
+                style={styles.icon} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button}
+                          onPress={stop}
+                          onLongPress={() => Alert.alert("Close player",
+                            "Click this button to stop the audio and close the player.")}>
+          <Icon name={"times"}
+                style={styles.icon} />
+        </TouchableOpacity>
+      </View>
     </View>
   </View>;
 };
@@ -178,6 +187,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between"
+  },
+  buttonGroup: {
+    flexDirection: "row"
   },
   button: {},
   icon: {
