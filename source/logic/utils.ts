@@ -189,3 +189,19 @@ export const delayed = <T>(callback: () => T, delay: number) => new Promise<T>(r
   setTimeout(async () =>
       resolve(await callback()),
     delay));
+
+// According to: https://askubuntu.com/a/222650
+export const readableFileSizeSI = (size: number): string => {
+  if (size < 1000) return `${size} bytes`;
+  if (size < 1000 * 1000) return `${(size / 1000).toFixed(0)} kB`;
+  if (size < 1000 * 1000 * 1000) return `${(size / (1000 * 1000)).toFixed(1)} MB`;
+  return `${(size / (1000 * 1000 * 1000)).toFixed(1)} GB`;
+}
+
+// According to: https://askubuntu.com/a/222650
+export const readableFileSizeIEC = (size: number): string => {
+  if (size < 1024) return `${size} bytes`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(0)} KiB`;
+  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MiB`;
+  return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GiB`;
+}

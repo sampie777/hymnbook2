@@ -52,9 +52,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
     const jwt = ServerAuth.getJwt();
     const track = {
       url: api.songs.audio.single(item),
-      headers: {
-        "Authorization": `Bearer ${jwt}`
-      },
+      headers: { "Authorization": `Bearer ${jwt}` },
       title: song.name + " - " + item.name,
       album: Song.getSongBundle(song)?.name
     };
@@ -74,7 +72,8 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
                             showCloseButton={true}>
     <View style={styles.container}>
       <Text style={styles.text}>
-        Currently, all audio files come from an online server. Mobile data/WiFi will be used to download and play the selected audio file.
+        Currently, all audio files come from an online server. Mobile data/WiFi will be used to download and play the
+        selected audio file.
       </Text>
 
       {!isLoading ? undefined :

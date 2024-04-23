@@ -9,6 +9,7 @@ export class SongAudio {
   type: string = "";
   uuid: string | null;
   downloadCount: number = 0;
+  fileSize: number | null;
 
   constructor(
     id: number,
@@ -16,7 +17,8 @@ export class SongAudio {
     name: string,
     type: string,
     uuid: string | null,
-    downloadCount: number = 0
+    downloadCount: number = 0,
+    fileSize: number | null = null
   ) {
     this.id = id;
     this.file = file;
@@ -24,6 +26,7 @@ export class SongAudio {
     this.type = type;
     this.uuid = uuid;
     this.downloadCount = downloadCount;
+    this.fileSize = fileSize
   }
 }
 
