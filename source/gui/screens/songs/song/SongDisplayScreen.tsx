@@ -388,8 +388,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
-        isMelodyShown={showMelody}
-        enableMelody={setShowMelody}
         onClose={() => setShowMelodySettings(false)}
         selectedMelody={selectedMelody}
         onMelodySelect={setSelectedMelody}
