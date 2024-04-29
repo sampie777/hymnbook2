@@ -17,11 +17,11 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.14.6</string>
+		<string>1.15.0-SNAPSHOT</string>
 		<key>CFBundleSignature</key>
 		<string>nl.sajansen.hymnbook2</string>
 		<key>CFBundleVersion</key>
-		<string>587</string>
+		<string>588</string>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<key>LSApplicationQueriesSchemes</key>
