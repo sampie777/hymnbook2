@@ -39,6 +39,7 @@ import MelodySettingsModal from "./melody/MelodySettingsModal";
 import Header from "./Header";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
+import SongList from "../../../../logic/songs/songList";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -170,7 +171,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       rollbar.warning("Can't open versepicker for undefined song.", {
         "route.params.id": route.params.id,
         isMounted: isMounted(),
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
       return;
     }
@@ -219,7 +221,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
         viewIndex: viewIndex,
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
     }
 
@@ -278,7 +281,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
         viewIndex: viewIndex,
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
       scrollToFirstVerse();
       return;
@@ -291,6 +295,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     // Once loaded, scroll to position
     scrollTimeout.current = setTimeout(scrollToFirstVerse, 200);
+  };
+
+  const getSongListInformationForErrorReporting = () => {
+    try {
+      if (route.params.songListIndex != null) {
+        return {
+          currentIndex: route.params.songListIndex,
+          previousSong: SongList.previousSong(route.params.songListIndex)?.song.name,
+          nextSong: SongList.nextSong(route.params.songListIndex)?.song.name
+        };
+      }
+    } catch (e) {
+      return sanitizeErrorForRollbar(e);
+    }
+    return undefined;
   };
 
   const scrollToFirstVerse = () => {
@@ -324,7 +343,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
         isMounted: isMounted(),
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
     }
   };
@@ -431,7 +451,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               isMounted: isMounted(),
               viewIndex: viewIndex,
               selectedVerses: route.params.selectedVerses?.map(it => it.name),
-              isFocused: _isFocused.current
+              isFocused: _isFocused.current,
+              songList: getSongListInformationForErrorReporting()
             })}
             ListHeaderComponent={<Header song={song} scale={animatedScale} />}
             ListFooterComponent={<Footer song={song} scale={animatedScale} />}
