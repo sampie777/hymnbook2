@@ -81,7 +81,7 @@ export function openLink(url?: string): Promise<any> {
     .catch(error => {
       if (error == undefined || error.message == undefined || !(
         `${error.message}`.startsWith("Your device can't open these type of URLs.")
-        || `${error.message}`.startsWith("No Activity found to handle Intent")
+        || `${error.message}`.includes("No Activity found to handle Intent")
       )) {
         rollbar.warning("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
       }
