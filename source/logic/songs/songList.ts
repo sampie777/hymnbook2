@@ -3,6 +3,7 @@ import Db from "../db/db";
 import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/SongListModel";
 import { SongListModelSchema } from "../db/models/SongListModelSchema";
 import { VerseSchema } from "../db/models/SongsSchema";
+import { rollbar } from "../rollbar";
 
 export default class SongList {
 
@@ -54,6 +55,41 @@ export default class SongList {
 
     this.cleanUpSongListFromNullsAndCorrectIndices(songList);
     return songListSongModel;
+  }
+
+  static moveSong(fromIndex: number, toIndex: number) {
+    const songList = this.getFirstSongList();
+    if (songList === undefined) return;
+    const dbSong = songList.songs.find(it => it.index == fromIndex);
+    if (dbSong === undefined) return;
+
+    if (toIndex < 0 || toIndex > songList.songs.length) {
+      rollbar.warning("Can't move song to out of bounds song list index", {
+        fromIndex: fromIndex,
+        toIndex: toIndex,
+        songList: songList,
+        dbSong: dbSong
+      });
+      return;
+    }
+    if (toIndex == fromIndex || (toIndex == songList.songs.length && fromIndex == toIndex - 1)) return;
+
+    const songsFromIndex = songList.songs
+      .filter(it => it.index >= toIndex)
+      .filter(it => it.index != fromIndex);
+
+    try {
+      Db.songs.realm().write(() => {
+        dbSong.index = toIndex;
+        songsFromIndex.forEach(it => it.index++);
+      });
+    } catch (error) {
+      throw Error("Could not move song");
+    }
+
+    // If index == songs.length, there will be an index gap (e.g. if original index was 3 and there are 5 items,
+    // indices will be: 0, 1, 2, 4, 5). But this will be fixed in `unifyIndices()` function.
+    this.cleanUpSongListFromNullsAndCorrectIndices(songList);
   }
 
   static deleteSongAtIndex(index: number) {
