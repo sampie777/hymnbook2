@@ -8,9 +8,7 @@ export default class SongList {
 
   static list(): Array<SongListSongModel> {
     const songList = this.getFirstSongList();
-    if (songList === undefined) {
-      return [];
-    }
+    if (songList === undefined) return [];
 
     if (!Db.songs.realm().isInTransaction && songList.songs.some(it => it == null || it.song == null)) {
       this.cleanUpSongListFromNullsAndCorrectIndices(songList);
@@ -29,9 +27,7 @@ export default class SongList {
 
   static getFirstSongList(): SongListModel | undefined {
     const songLists = this.getAllSongLists();
-    if (songLists.length === 0) {
-      return undefined;
-    }
+    if (songLists.length === 0) return undefined;
     return songLists[0];
   }
 
@@ -127,9 +123,7 @@ export default class SongList {
 
   static saveSelectedVersesForSong(index: number, verses: Array<Verse>) {
     const songListSong = SongList.getSongAtIndex(index);
-    if (songListSong === undefined) {
-      return;
-    }
+    if (songListSong === undefined) return;
 
     if (verses.length === 0) {
       Db.songs.realm().write(() => {
@@ -152,4 +146,14 @@ export default class SongList {
       dbVerses.forEach(it => songListSong.selectedVerses.push(new SongListVerseModel(it)));
     });
   };
+
+  static replaceSong(item: SongListSongModel, newSong: Song) {
+    const verses = newSong.verses.filter(verse =>
+      item.selectedVerses.some(it => it.verse.uuid == verse.uuid));
+
+    Db.songs.realm().write(() => {
+      item.song = newSong;
+    });
+    SongList.saveSelectedVersesForSong(item.index, verses);
+  }
 }
