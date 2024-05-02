@@ -13,6 +13,7 @@ import { rollbar } from "../rollbar";
 import config from "../../config";
 import { SongProcessor } from "./songProcessor";
 import Settings from "../../settings";
+import SongList from "./songList";
 
 export namespace SongUpdaterUtils {
 
@@ -32,10 +33,7 @@ export namespace SongUpdaterUtils {
   const copyUserSettingsToExistingSongBundles = (songBundle: SongBundle) => {
     const localSongBundle = Db.songs.realm().objectForPrimaryKey<SongBundle>(SongBundleSchema.name, songBundle.id);
     if (!localSongBundle) {
-      rollbar.error("Could not find newly created song bundle in database", {
-        bundle: { ...songBundle, songs: null }
-      });
-      return;
+      throw Error("Could not find newly created song bundle in database");
     }
 
     localSongBundle.songs.forEach(song => {
@@ -56,6 +54,23 @@ export namespace SongUpdaterUtils {
     });
   };
 
+  const replaceSongListSongs = (songBundle: SongBundle) => {
+    const songList = SongList.list();
+    songList.forEach(item => {
+      const newSong = songBundle.songs.find(it => it.uuid == item.song.uuid);
+      if (newSong == undefined) return;
+
+      try {
+        SongList.replaceSong(item, newSong);
+      } catch (error) {
+        rollbar.error("Failed to replace song list song", {
+          item: item,
+          newSong: newSong,
+        })
+      }
+    });
+  };
+
   const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle): SongBundle => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
@@ -73,12 +88,12 @@ export namespace SongUpdaterUtils {
         verseId++,
         verse.abcLyrics,
         []
-      )
+      );
 
       result.abcMelodies = (verse.abcMelodies || [])
         .map(melody => {
-          const parent = melodies.find(it => it.uuid == melody.parent.uuid)
-          if (parent == null) return null
+          const parent = melodies.find(it => it.uuid == melody.parent.uuid);
+          if (parent == null) return null;
 
           return new AbcSubMelody(
             melody.melody,
@@ -87,10 +102,10 @@ export namespace SongUpdaterUtils {
             subMelodyId++
           );
         })
-        .filter(it => it != null) as AbcSubMelody[]
+        .filter(it => it != null) as AbcSubMelody[];
 
-      return result
-    }
+      return result;
+    };
 
     const convertServerSongToLocalSong = (song: ServerSong): Song => {
       const abcMelodies = (song.abcMelodies || [])
@@ -181,6 +196,17 @@ export namespace SongUpdaterUtils {
       copyUserSettingsToExistingSongBundles(songBundle);
     } catch (error) {
       rollbar.error(`Failed to copy user settings to new song bundle`, {
+        ...sanitizeErrorForRollbar(error),
+        bundle: { ...songBundle, songs: null },
+        existingBundleNames: existingBundles.map(it => it.name),
+        isUpdate: isUpdate
+      });
+    }
+
+    try {
+      replaceSongListSongs(songBundle);
+    } catch (error) {
+      rollbar.error(`Failed to replace song list songs with new song bundle`, {
         ...sanitizeErrorForRollbar(error),
         bundle: { ...songBundle, songs: null },
         existingBundleNames: existingBundles.map(it => it.name),
