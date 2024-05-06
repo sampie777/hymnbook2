@@ -13,10 +13,12 @@ export namespace Features {
   export interface Props {
     loaded: boolean;
     goldenEgg: boolean;
+    allowLogging: boolean;
   }
 
   interface JsonProps {
     golden_egg: boolean;
+    allowLogging: boolean;
   }
 
   export const fetch = (maxTries: number = config.featuresWaitForDatabaseMaxTries): Promise<Props> => {
@@ -48,7 +50,8 @@ export namespace Features {
       .then(features => {
         return {
           loaded: true,
-          goldenEgg: features.golden_egg
+          goldenEgg: features.golden_egg,
+          allowLogging: features.allowLogging
         };
       });
   };
