@@ -30,7 +30,7 @@ export namespace SongUpdaterUtils {
    * @param songBundle The newly created song bundle. Used for fetching the bundle from the database by ID
    * and used for error logging context.
    */
-  const copyUserSettingsToExistingSongBundles = (songBundle: SongBundle) => {
+  export const copyUserSettingsToExistingSongBundles = (songBundle: SongBundle) => {
     const localSongBundle = Db.songs.realm().objectForPrimaryKey<SongBundle>(SongBundleSchema.name, songBundle.id);
     if (!localSongBundle) {
       throw Error("Could not find newly created song bundle in database");
@@ -71,7 +71,7 @@ export namespace SongUpdaterUtils {
     });
   };
 
-  const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle): SongBundle => {
+  export const convertServerSongBundleToLocalSongBundle = (bundle: ServerSongBundle): SongBundle => {
     let songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
     let verseId = Db.songs.getIncrementedPrimaryKey(VerseSchema);
     let melodyId = Db.songs.getIncrementedPrimaryKey(AbcMelodySchema);
