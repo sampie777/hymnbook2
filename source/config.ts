@@ -24,6 +24,8 @@ const config = {
 
   authWaitForAuthenticationDelayMs: 500,
   authWaitForAuthenticationTimeoutMs: 60000,
-  authReauthenticateMaxRetries: 3
+  authReauthenticateMaxRetries: 3,
+
+  fetchRetries: 5
 };
 export default config;

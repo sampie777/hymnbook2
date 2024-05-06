@@ -32,18 +32,18 @@ export class SongMetadata {
 export class AbcSubMelody {
   id: number;
   melody: string = "";
-  parentId: number;
+  parent: AbcMelody;
   uuid: string = "";
 
   constructor(
     id: number,
     melody: string = "",
-    parentId: number,
+    parent: AbcMelody,
     uuid: string
   ) {
     this.id = id;
     this.melody = melody;
-    this.parentId = parentId;
+    this.parent = parent;
     this.uuid = uuid;
   }
 }
@@ -54,7 +54,6 @@ export class AbcMelody {
   melody: string = "";
   uuid: string = "";
   song: Song | null;
-  subMelodies: AbcSubMelody[] | null;
 
   constructor(
     id: number,
@@ -62,14 +61,12 @@ export class AbcMelody {
     melody: string = "",
     uuid: string = "",
     song: Song | null,
-    subMelodies: AbcSubMelody[] | null
   ) {
     this.id = id;
     this.name = name;
     this.melody = melody;
     this.uuid = uuid;
     this.song = song;
-    this.subMelodies = subMelodies;
   }
 }
 

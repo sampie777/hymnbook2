@@ -79,9 +79,10 @@ export function openLink(url?: string): Promise<any> {
 
   return Linking.openURL(url)
     .catch(error => {
-      if (error !== undefined && error.message !== undefined && `${error.message}`.startsWith("Your device can't open these type of URLs.")) {
-        rollbar.info("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
-      } else {
+      if (error == undefined || error.message == undefined || !(
+        `${error.message}`.startsWith("Your device can't open these type of URLs.")
+        || `${error.message}`.includes("No Activity found to handle Intent")
+      )) {
         rollbar.warning("Failed to open URL", { ...sanitizeErrorForRollbar(error), url: url });
       }
 
@@ -187,4 +188,20 @@ export const executeInForeGround = <T>(callback: () => Promise<T>): Promise<T> =
 export const delayed = <T>(callback: () => T, delay: number) => new Promise<T>(resolve =>
   setTimeout(async () =>
       resolve(await callback()),
-    delay))
+    delay));
+
+// According to: https://askubuntu.com/a/222650
+export const readableFileSizeSI = (size: number): string => {
+  if (size < 1000) return `${size} bytes`;
+  if (size < 1000 * 1000) return `${(size / 1000).toFixed(0)} kB`;
+  if (size < 1000 * 1000 * 1000) return `${(size / (1000 * 1000)).toFixed(1)} MB`;
+  return `${(size / (1000 * 1000 * 1000)).toFixed(1)} GB`;
+}
+
+// According to: https://askubuntu.com/a/222650
+export const readableFileSizeIEC = (size: number): string => {
+  if (size < 1024) return `${size} bytes`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(0)} KiB`;
+  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MiB`;
+  return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GiB`;
+}

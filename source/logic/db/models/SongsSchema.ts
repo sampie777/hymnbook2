@@ -26,16 +26,12 @@ export const VerseSchema: Realm.ObjectSchema = {
     index: "int",
     uuid: "string",
     abcLyrics: "string?",
+    abcMelodies: AbcSubMelodySchema.name + "[]",
     _songs: {
       type: "linkingObjects",
       objectType: "Song",    // SongSchema.name
       property: "verses"
     },
-    _abcMelodies: {
-      type: "linkingObjects",
-      objectType: AbcSubMelodySchema.name,
-      property: "verse"
-    }
   },
   primaryKey: "id"
 };

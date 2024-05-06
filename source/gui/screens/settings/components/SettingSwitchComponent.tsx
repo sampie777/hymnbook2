@@ -71,6 +71,7 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
         </View>
         {value === undefined ? undefined :
           <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
+                  trackColor={{ true: undefined, false: styles.switchComponent.backgroundColor }}
                   thumbColor={styles.switchComponent.color}
                   ios_backgroundColor={styles.switchComponent.backgroundColor}
                   value={_value} />}

@@ -2,6 +2,10 @@
 
 progname=$(basename $0)
 
+if [ -d ~/.local/share/JetBrains/Toolbox/apps/android-studio/jbr ]; then
+	export JAVA_HOME=~/.local/share/JetBrains/Toolbox/apps/android-studio/jbr
+fi
+
 function usage {
   cat << HEREDOC
 
@@ -15,6 +19,18 @@ function usage {
        -h, --help             Show this help message and exit
 
 HEREDOC
+}
+
+function retry() {
+  command="$@"
+  for i in {1..10}; do
+    $command && return
+    echo "Retrying attempt $i/10"
+    sleep 3
+  done
+
+  echo "Retry failed for command: ${command}"
+  exit 1
 }
 
 function setVersion() {
@@ -35,7 +51,7 @@ function releasePatch {
   yarn test || exit 1
 
   git checkout master || exit 1
-  git pull || exit 1
+  retry git pull
 
   # Create patch version
   CURRENT_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
@@ -52,7 +68,7 @@ function releaseMinor {
   yarn test || exit 1
 
   git checkout master || exit 1
-  git pull || exit 1
+  retry git pull
   git merge develop || exit 1
 
   # Create patch version
@@ -68,7 +84,7 @@ function releaseMajor {
   yarn test || exit 1
 
   git checkout master || exit 1
-  git pull || exit 1
+  retry git pull
   git merge develop || exit 1
 
   # Create patch version
@@ -90,7 +106,7 @@ function pushAndRelease {
   git add ios/hymnbook2/Info.plist || exit 1
   git commit -m "version release: ${RELEASE_VERSION}" || exit 1
   git tag "v${RELEASE_VERSION}" || exit 1
-  git push -u origin master --tags || exit 1
+  retry git push -u origin master --tags
 
   yarn build || exit 1
   echo
@@ -103,11 +119,12 @@ function pushAndRelease {
   echo
   echo
 
-  ./upload_source_map.sh
+  retry ./upload_source_map.sh
 }
 
 function setNextDevelopmentVersion {
   git checkout develop || exit 1
+  retry git pull
   git rebase master || exit 1
 
   # Generate next (minor) development version
@@ -120,7 +137,7 @@ function setNextDevelopmentVersion {
   git add package.json || exit 1
   git add ios/hymnbook2/Info.plist || exit 1
   git commit -m "next development version" || exit 1
-  git push -u origin develop --tags || exit 1
+  retry git push -u origin develop --tags
 }
 
 command="$1"

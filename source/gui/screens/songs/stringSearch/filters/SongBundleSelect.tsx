@@ -26,7 +26,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
   const reloadBundles = () => {
     try {
       const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
-      setBundles(Array.from(result));
+      setBundles(result.map(it => SongBundle.clone(it)));
     } catch (error) {
       rollbar.error("Failed to load song bundles from database for search screen.", sanitizeErrorForRollbar(error));
     }

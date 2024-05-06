@@ -71,7 +71,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     const escapedSearchText = searchText.replace(/\\/g, "\\\\");
     immediateSearchText.current = escapedSearchText;
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     if (!Db.songs.isConnected()) {
       return;
@@ -91,7 +91,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   }, [sortOrder]);
 
   const fetchSearchResults: FetchSearchResultsFunction = (text: string) => {
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     if (isSearchEmpty(immediateSearchText.current)) {
       clearSearch();
@@ -116,7 +116,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
         searchInTitles: searchInTitles,
         searchInVerses: searchInVerses,
         sortOrder: sortOrder,
-        isMounted: isMounted,
+        isMounted: isMounted(),
         dbIsConnected: Db.songs.isConnected(),
         dbIsClosed: Db.songs.realm().isClosed
       });
@@ -124,7 +124,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
     // Prevent state update if the new state will by invalid anyway
     if (text != immediateSearchText.current) return;
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     setSearchResults(SongSearch.sort(results, sortOrder));
     setIsLoading(false);
