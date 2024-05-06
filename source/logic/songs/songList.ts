@@ -3,14 +3,13 @@ import Db from "../db/db";
 import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/SongListModel";
 import { SongListModelSchema } from "../db/models/SongListModelSchema";
 import { VerseSchema } from "../db/models/SongsSchema";
+import { rollbar } from "../rollbar";
 
 export default class SongList {
 
   static list(): Array<SongListSongModel> {
     const songList = this.getFirstSongList();
-    if (songList === undefined) {
-      return [];
-    }
+    if (songList === undefined) return [];
 
     if (!Db.songs.realm().isInTransaction && songList.songs.some(it => it == null || it.song == null)) {
       this.cleanUpSongListFromNullsAndCorrectIndices(songList);
@@ -29,9 +28,7 @@ export default class SongList {
 
   static getFirstSongList(): SongListModel | undefined {
     const songLists = this.getAllSongLists();
-    if (songLists.length === 0) {
-      return undefined;
-    }
+    if (songLists.length === 0) return undefined;
     return songLists[0];
   }
 
@@ -58,6 +55,41 @@ export default class SongList {
 
     this.cleanUpSongListFromNullsAndCorrectIndices(songList);
     return songListSongModel;
+  }
+
+  static moveSong(fromIndex: number, toIndex: number) {
+    const songList = this.getFirstSongList();
+    if (songList === undefined) return;
+    const dbSong = songList.songs.find(it => it.index == fromIndex);
+    if (dbSong === undefined) return;
+
+    if (toIndex < 0 || toIndex > songList.songs.length) {
+      rollbar.warning("Can't move song to out of bounds song list index", {
+        fromIndex: fromIndex,
+        toIndex: toIndex,
+        songList: songList,
+        dbSong: dbSong
+      });
+      return;
+    }
+    if (toIndex == fromIndex || (toIndex == songList.songs.length && fromIndex == toIndex - 1)) return;
+
+    const songsFromIndex = songList.songs
+      .filter(it => it.index >= toIndex)
+      .filter(it => it.index != fromIndex);
+
+    try {
+      Db.songs.realm().write(() => {
+        dbSong.index = toIndex;
+        songsFromIndex.forEach(it => it.index++);
+      });
+    } catch (error) {
+      throw Error("Could not move song");
+    }
+
+    // If index == songs.length, there will be an index gap (e.g. if original index was 3 and there are 5 items,
+    // indices will be: 0, 1, 2, 4, 5). But this will be fixed in `unifyIndices()` function.
+    this.cleanUpSongListFromNullsAndCorrectIndices(songList);
   }
 
   static deleteSongAtIndex(index: number) {
@@ -127,9 +159,7 @@ export default class SongList {
 
   static saveSelectedVersesForSong(index: number, verses: Array<Verse>) {
     const songListSong = SongList.getSongAtIndex(index);
-    if (songListSong === undefined) {
-      return;
-    }
+    if (songListSong === undefined) return;
 
     if (verses.length === 0) {
       Db.songs.realm().write(() => {
@@ -152,4 +182,14 @@ export default class SongList {
       dbVerses.forEach(it => songListSong.selectedVerses.push(new SongListVerseModel(it)));
     });
   };
+
+  static replaceSong(item: SongListSongModel, newSong: Song) {
+    const verses = newSong.verses.filter(verse =>
+      item.selectedVerses.some(it => it.verse.uuid == verse.uuid));
+
+    Db.songs.realm().write(() => {
+      item.song = newSong;
+    });
+    SongList.saveSelectedVersesForSong(item.index, verses);
+  }
 }

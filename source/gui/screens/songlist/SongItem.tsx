@@ -44,7 +44,7 @@ const SongItem: React.FC<Props> = ({
     {!showDeleteButton ? undefined :
       <TouchableOpacity style={styles.button}
                         onPress={() => onDeleteButtonPress(index)}>
-        <Icon name={"times"}
+        <Icon name={"trash-alt"}
               size={styles.button.fontSize}
               color={styles.button.color} />
       </TouchableOpacity>
@@ -90,7 +90,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   button: {
     padding: 15,
     paddingRight: 22,
-    fontSize: 20,
+    fontSize: 18,
     color: colors.delete
   }
 });

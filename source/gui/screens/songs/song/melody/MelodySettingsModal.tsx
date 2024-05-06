@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Settings from "../../../../../settings";
 import { isIOS } from "../../../../../logic/utils";
 import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
+import TrackPlayer from "react-native-track-player";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
@@ -9,11 +10,9 @@ import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
 import PickerComponent from "../../../../components/popups/PickerComponent";
 import SliderComponent from "../../../../components/SliderComponent";
-import TrackPlayer from "react-native-track-player";
+import MelodySettingsModelHeader from "./MelodySettingsModelHeader";
 
 interface Props {
-  isMelodyShown: boolean;
-  enableMelody?: (value: boolean) => void;
   onClose?: () => void;
   selectedMelody?: AbcMelody;
   onMelodySelect?: (value: AbcMelody) => void;
@@ -25,8 +24,6 @@ interface Props {
 
 const MelodySettingsModal: React.FC<Props> = ({
                                                 onClose,
-                                                enableMelody,
-                                                isMelodyShown,
                                                 selectedMelody,
                                                 onMelodySelect,
                                                 melodies = [],
@@ -80,7 +77,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                        } />
     }
     <ConfirmationModal isOpen={isIOS ? !showPicker : true}
-                       title={"Melody"}
+                       title={"Configuration"}
                        closeText={"Close"}
                        invertConfirmColor={false}
                        onClose={() => {
@@ -90,10 +87,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                        showCloseButton={true}>
 
       <View style={styles.popupContent}>
-        <SwitchComponent title={"Show melody"}
-                         isVisible={true}
-                         value={isMelodyShown}
-                         onPress={() => enableMelody?.(!isMelodyShown)} />
+        <MelodySettingsModelHeader title={"Musical notation"}
+                                   iconName={"music"}
+                                   hideBorder={true} />
+
         <SwitchComponent title={"Show melody for all verses"}
                          isVisible={true}
                          value={showMelodyForAllVerses}
@@ -127,6 +124,8 @@ const MelodySettingsModal: React.FC<Props> = ({
                              melodyScale.setValue(1.0);
                            }} />
         </View>
+
+        <MelodySettingsModelHeader title={"Audio"} iconName={"volume-up"} />
 
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleLabel}>Audio playback speed:</Text>

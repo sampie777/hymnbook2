@@ -39,6 +39,7 @@ import MelodySettingsModal from "./melody/MelodySettingsModal";
 import Header from "./Header";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
+import SongList from "../../../../logic/songs/songList";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -169,8 +170,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (useSong === undefined) {
       rollbar.warning("Can't open versepicker for undefined song.", {
         "route.params.id": route.params.id,
-        isMounted: isMounted,
-        isFocused: _isFocused.current
+        isMounted: isMounted(),
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
       return;
     }
@@ -201,7 +203,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       fadeInTimeout.current = undefined;
     }
 
-    if (!isMounted || song == null) return;
+    if (!isMounted() || song == null) return;
 
     if (maxTries > 0 && (verseHeights.current == null || Object.keys(verseHeights.current).length == 0)) {
       // Wait for the verses to load before fading song in, otherwise the screen will look glitchy.
@@ -213,13 +215,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       rollbar.warning("Max song load animation tries elapsed", {
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted,
+        isMounted: isMounted(),
         maxTries: maxTries,
         SettingsSongFadeIn: Settings.songFadeIn,
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
         viewIndex: viewIndex,
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
     }
 
@@ -248,7 +251,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const onListViewableItemsChanged = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
-
       if (viewableItems.length === 0) {
         setViewIndex(-1);
       } else if (viewableItems[0].index !== null) {
@@ -257,6 +259,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
 
   const onListEndReached = () => {
+    if (!isMounted()) return;
     setViewIndex((song?.verses?.length ?? 0) - 1);
   };
 
@@ -267,18 +270,19 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       scrollTimeout.current = undefined;
     }
 
-    if (!isMounted || song == null) return;
+    if (!isMounted() || song == null) return;
 
     if (maxTries <= 0) {
       rollbar.warning("Max scroll tries elapsed.", {
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted,
+        isMounted: isMounted(),
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
         viewIndex: viewIndex,
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
       scrollToFirstVerse();
       return;
@@ -293,8 +297,23 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     scrollTimeout.current = setTimeout(scrollToFirstVerse, 200);
   };
 
+  const getSongListInformationForErrorReporting = () => {
+    try {
+      if (route.params.songListIndex != null) {
+        return {
+          currentIndex: route.params.songListIndex,
+          previousSong: SongList.previousSong(route.params.songListIndex)?.song.name,
+          nextSong: SongList.nextSong(route.params.songListIndex)?.song.name
+        };
+      }
+    } catch (e) {
+      return sanitizeErrorForRollbar(e);
+    }
+    return undefined;
+  };
+
   const scrollToFirstVerse = () => {
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     if (song === undefined
       || song?.verses === undefined || song?.verses.length === 0
@@ -322,9 +341,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted,
+        isMounted: isMounted(),
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
-        isFocused: _isFocused.current
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
       });
     }
   };
@@ -388,8 +408,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
-        isMelodyShown={showMelody}
-        enableMelody={setShowMelody}
         onClose={() => setShowMelodySettings(false)}
         selectedMelody={selectedMelody}
         onMelodySelect={setSelectedMelody}
@@ -430,10 +448,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               info: info,
               songName: song?.name ?? "null",
               verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-              isMounted: isMounted,
+              isMounted: isMounted(),
               viewIndex: viewIndex,
               selectedVerses: route.params.selectedVerses?.map(it => it.name),
-              isFocused: _isFocused.current
+              isFocused: _isFocused.current,
+              songList: getSongListInformationForErrorReporting()
             })}
             ListHeaderComponent={<Header song={song} scale={animatedScale} />}
             ListFooterComponent={<Footer song={song} scale={animatedScale} />}
@@ -450,7 +469,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     </PinchGestureHandler>
 
     {song === undefined ? undefined :
-      <AudioPlayerControls song={song} />}
+      <AudioPlayerControls song={song}
+                           showMelodySettings={() => setShowMelodySettings(true)} />}
   </View>;
 };
 

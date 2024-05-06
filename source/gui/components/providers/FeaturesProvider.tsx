@@ -3,18 +3,17 @@ import { Features } from "../../../logic/features";
 import { rollbar } from "../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../logic/utils";
 
-export const FeaturesContext = React.createContext<Features.Props>({
+type FeaturesContextProps = Features.Props & { loadFeatures: () => void };
+
+export const FeaturesContext = React.createContext<FeaturesContextProps>({
   loaded: false,
-  goldenEgg: false
+  goldenEgg: false,
+  loadFeatures: () => rollbar.warning("loadFeatures not implemented yet")
 });
 
 const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [loaded, setLoaded] = useState(false);
   const [goldenEgg, setGoldenEgg] = useState(false);
-
-  useEffect(() => {
-    loadFeatures();
-  }, []);
 
   const loadFeatures = () => {
     try {
@@ -26,14 +25,15 @@ const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
         .catch(() => null);
     } catch (error) {
       rollbar.error("Failed to initiate features fetching", {
-        ...sanitizeErrorForRollbar(error),
+        ...sanitizeErrorForRollbar(error)
       });
     }
   };
 
-  const defaultContext: Features.Props = {
+  const defaultContext: FeaturesContextProps = {
     loaded: loaded,
-    goldenEgg: goldenEgg
+    goldenEgg: goldenEgg,
+    loadFeatures: loadFeatures
   };
 
   return <FeaturesContext.Provider value={defaultContext}>

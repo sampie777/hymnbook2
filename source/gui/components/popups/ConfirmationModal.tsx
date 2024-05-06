@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity, ScrollView } from "react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { RectangularInset } from "../utils";
 
 interface ComponentProps {
   isOpen: boolean;
@@ -51,7 +52,8 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
 
             {!showCloseButton ? undefined :
               <TouchableOpacity style={styles.headerCloseButton}
-                                onPress={onClose}>
+                                onPress={onClose}
+                                hitSlop={RectangularInset(10)}>
                 <Icon name={"times"} style={styles.headerCloseButtonText} />
               </TouchableOpacity>
             }
@@ -114,15 +116,14 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
 
   modalHeader: {
     flexDirection: "row",
-    paddingTop: 10,
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     maxWidth: "100%"
   },
 
   headerCloseButton: {
     width: 45,
-    top: 10,
+    alignSelf: "stretch",
     justifyContent: "center",
     alignItems: "center"
   },
@@ -137,7 +138,7 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     flexShrink: 1,
 
     paddingHorizontal: 30,
-    paddingVertical: 10,
+    paddingVertical: 12,
     fontWeight: "bold",
     textAlign: "center",
     color: colors.text.default

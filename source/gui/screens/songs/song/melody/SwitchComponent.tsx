@@ -36,6 +36,7 @@ export const SwitchComponent: React.FC<Props> =
       </View>
       {value === undefined ? undefined :
         <Switch onValueChange={onPress}
+                trackColor={{ true: undefined, false: styles.switchComponent.backgroundColor }}
                 thumbColor={styles.switchComponent.color}
                 ios_backgroundColor={styles.switchComponent.backgroundColor}
                 value={value} />}

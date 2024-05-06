@@ -96,7 +96,7 @@ export const mergeStyleSheets = (styles: Array<object | Array<object>>): object 
 
 export const RectangularInset = (size: number): Insets => ({ top: size, right: size, bottom: size, left: size });
 
-export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: false }) => {
+export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: false }): () => boolean => {
   const isMounted = useRef(false);
   useEffect(() => {
     isMounted.current = true;

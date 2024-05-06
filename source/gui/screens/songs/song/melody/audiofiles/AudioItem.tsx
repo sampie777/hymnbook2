@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import { SongAudio } from "../../../../../../logic/db/models/Songs";
+import { readableFileSizeSI } from "../../../../../../logic/utils";
 
 interface Props {
   item: SongAudio;
@@ -18,6 +19,7 @@ const AudioItem: React.FC<Props> = ({ item, isSelected, onPress }) => {
     <Text style={[styles.text, (isSelected ? styles.textSelected : {})]}>
       {item.name}
     </Text>
+    {item.fileSize ? <Text style={styles.fileSize}>{readableFileSizeSI(item.fileSize)}</Text> : null}
   </TouchableOpacity>;
 };
 
@@ -29,7 +31,8 @@ const createStyles = ({ colors }: ThemeContextProps) => {
       alignItems: "center"
     },
     text: {
-      color: colors.text.default
+      color: colors.text.default,
+      flex: 1
     },
     textSelected: {
       fontWeight: "bold"
@@ -45,6 +48,11 @@ const createStyles = ({ colors }: ThemeContextProps) => {
     },
     selectionSelected: {
       backgroundColor: colors.primary.default
+    },
+
+    fileSize: {
+      color: colors.text.lighter,
+      fontSize: 12,
     }
   });
 };

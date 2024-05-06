@@ -22,6 +22,7 @@ import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
+import { SongUpdater } from "../../../logic/songs/songUpdater";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -56,7 +57,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   };
 
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     // Let user navigate when the screen is still loading the data
     if (serverBundles.length === 0) {
@@ -77,18 +78,24 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsBundleLoading(true);
     Server.fetchSongBundle({ uuid: promptForUuid }, {})
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
 
         if (localBundles.find(it => it.uuid === promptForUuid)) return;
 
         setFilterLanguage(data.language);
         setRequestDownloadForBundle(data);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch the song bundle.\n${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", "Could not load song bundle. Make sure your internet connection is working or try again later.");
+        } else {
+          Alert.alert("Error", `Could not load song bundle. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
         dismissPromptForUuid?.();
 
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsBundleLoading(false);
       });
   };
@@ -101,7 +108,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     if (result.data !== undefined) {
       setLocalBundles(result.data);
@@ -125,18 +132,24 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsLoading(true);
     Server.fetchSongBundles()
       .then(data => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setServerBundles(data);
       })
-      .catch(error => Alert.alert("Error", `Could not fetch song bundles. \n${error}\n\nTry again later.`))
+      .catch(error => {
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", "Could not load song bundles. Make sure your internet connection is working or try again later.");
+        } else {
+          Alert.alert("Error", `Could not load song bundles. \n${error}\n\nTry again later.`);
+        }
+      })
       .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setIsLoading(false);
       });
   };
 
   const applyUuidUpdateForPullRequest8 = () => {
-    SongProcessor.updateLocalBundlesWithUuid(localBundles, serverBundles);
+    SongUpdater.updateLocalBundlesWithUuid(localBundles, serverBundles);
   };
   useEffect(applyUuidUpdateForPullRequest8, [serverBundles]);
 
@@ -202,47 +215,35 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     updateSongBundle(songBundle);
   };
 
-  const downloadSongBundle = (bundle: ServerSongBundle) => {
+  const downloadSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, false);
+
+  const updateSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, true);
+
+  const saveSongBundle = (bundle: ServerSongBundle, isUpdate: boolean) => {
+    if (!isMounted()) return;
     setIsLoading(true);
 
-    Server.fetchSongBundleWithSongsAndVerses(bundle)
-      .then(data => {
-        if (!isMounted) return;
-        saveSongBundle(data);
+    const call = isUpdate
+      ? SongUpdater.fetchAndUpdateSongBundle(bundle)
+      : SongUpdater.fetchAndSaveSongBundle(bundle);
+
+    call
+      .then(() => Alert.alert("Success", `${bundle.name} ${isUpdate ? "updated" : "added"}!`))
+      .catch(error => {
+        rollbar.error("Failed to import song bundle", {
+          ...sanitizeErrorForRollbar(error),
+          isUpdate: isUpdate,
+          bundle: bundle
+        });
+
+        if (error.name == "TypeError" && error.message == "Network request failed") {
+          Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${bundle.name}. Make sure your internet connection is working or try again later.`);
+        } else {
+          Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${bundle.name}. \n${error}\n\nTry again later.`);
+        }
       })
-      .catch(error =>
-        Alert.alert("Error", `Error downloading ${bundle.name}: ${error}\n\nTry again later.`))
       .finally(() => {
-        if (!isMounted) return;
-        setIsLoading(false);
-      });
-  };
-
-  const saveSongBundle = (bundle: ServerSongBundle) => {
-    setIsLoading(true);
-
-    const result = SongProcessor.saveSongBundleToDatabase(bundle);
-    result.alert();
-    result.throwIfException();
-
-    if (!isMounted) return;
-
-    setIsLoading(false);
-    loadLocalSongBundles();
-  };
-
-  const updateSongBundle = (bundle: ServerSongBundle) => {
-    setIsLoading(true);
-
-    SongProcessor.fetchAndUpdateSongBundle(bundle)
-      .then(result => {
-        result.alert();
-        result.throwIfException();
-      })
-      .catch(error =>
-        Alert.alert("Error", `Error updating ${bundle.name}: ${error}\n\nTry again later.`))
-      .finally(() => {
-        if (!isMounted) return;
+        if (!isMounted()) return;
         setLocalBundles([]);
         setIsLoading(false);
         loadLocalSongBundles();
@@ -267,7 +268,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     result.alert();
     result.throwIfException();
 
-    if (!isMounted) return;
+    if (!isMounted()) return;
 
     loadLocalSongBundles();
   };

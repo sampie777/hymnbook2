@@ -1,14 +1,15 @@
 import Db from "../db";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./SongsSchema";
-import { AbcMelody } from "./AbcMelodies";
+import { AbcMelody, AbcSubMelody } from "./AbcMelodies";
 
 export class SongAudio {
-  id: number
-  file: string = ""
-  name: string = ""
-  type: string = ""
-  uuid: string | null
-  downloadCount: number = 0
+  id: number;
+  file: string = "";
+  name: string = "";
+  type: string = "";
+  uuid: string | null;
+  downloadCount: number = 0;
+  fileSize: number | null;
 
   constructor(
     id: number,
@@ -17,13 +18,15 @@ export class SongAudio {
     type: string,
     uuid: string | null,
     downloadCount: number = 0,
+    fileSize: number | null = null
   ) {
-    this.id = id
-    this.file = file
-    this.name = name
-    this.type = type
-    this.uuid = uuid
-    this.downloadCount = downloadCount
+    this.id = id;
+    this.file = file;
+    this.name = name;
+    this.type = type;
+    this.uuid = uuid;
+    this.downloadCount = downloadCount;
+    this.fileSize = fileSize
   }
 }
 
@@ -39,17 +42,17 @@ export enum SongMetadataType {
 
 export class SongMetadata {
   id: number;
-  type: SongMetadataType
-  value: string = ""
+  type: SongMetadataType;
+  value: string = "";
 
   constructor(
     type: SongMetadataType,
     value: string = "",
-    id = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema),
+    id = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema)
   ) {
-    this.id = id
-    this.type = type
-    this.value = value
+    this.id = id;
+    this.type = type;
+    this.value = value;
   }
 }
 
@@ -61,6 +64,7 @@ export interface VerseProps {
   index: number;
   uuid: string;
   abcLyrics?: string;
+  abcMelodies: AbcSubMelody[];
 }
 
 export class Verse implements VerseProps {
@@ -71,6 +75,7 @@ export class Verse implements VerseProps {
   index: number;
   uuid: string;
   abcLyrics?: string;
+  abcMelodies: AbcSubMelody[];
   _songs?: Song[];  // Only added temporary for #228.
 
   constructor(
@@ -80,7 +85,8 @@ export class Verse implements VerseProps {
     language: string,
     uuid: string,
     id = Db.songs.getIncrementedPrimaryKey(VerseSchema),
-    abcLyrics?: string
+    abcLyrics?: string,
+    abcMelodies: AbcSubMelody[] = [],
   ) {
     this.id = id;
     this.name = name;
@@ -89,17 +95,20 @@ export class Verse implements VerseProps {
     this.index = index;
     this.uuid = uuid;
     this.abcLyrics = abcLyrics;
+    this.abcMelodies = abcMelodies;
   }
 
-  static toObject(verse: VerseProps): VerseProps {
+  static toObject(verse: VerseProps, includeReference = false): VerseProps {
     return {
       id: verse.id,
       name: verse.name,
       content: verse.content,
       language: verse.language,
       index: verse.index,
-      abcLyrics: verse.abcLyrics
-    } as VerseProps;
+      uuid: verse.uuid,
+      abcLyrics: verse.abcLyrics,
+      abcMelodies: !includeReference ? [] : verse.abcMelodies.map(AbcSubMelody.toObject)
+    }
   }
 }
 
@@ -195,5 +204,21 @@ export class SongBundle {
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
     this.hash = hash;
+  }
+
+  static clone(obj: SongBundle, options: { includeSongs: boolean } = { includeSongs: false }): SongBundle {
+    return {
+      id: obj.id,
+      abbreviation: obj.abbreviation,
+      name: obj.name,
+      language: obj.language,
+      author: obj.author,
+      copyright: obj.copyright,
+      songs: !options.includeSongs ? [] : obj.songs,
+      createdAt: obj.createdAt,
+      modifiedAt: obj.modifiedAt,
+      uuid: obj.uuid,
+      hash: obj.hash
+    };
   }
 }

@@ -6,6 +6,7 @@
  * @flow strict-local
  */
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -52,7 +53,7 @@ import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
-import FeaturesProvider from "./gui/components/providers/FeaturesProvider";
+import FeaturesProvider, {useFeatures} from "./gui/components/providers/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
@@ -178,6 +179,7 @@ const AppRoot: React.FC = () => {
   const [isSongDbLoading, setIsSongDbLoading] = useState(true);
   const [isDocumentDbLoading, setIsDocumentDbLoading] = useState(true);
   const theme = useTheme();
+  const features = useFeatures();
   const styles = createStyles(theme);
 
   useEffect(() => {
@@ -194,6 +196,8 @@ const AppRoot: React.FC = () => {
             "Authenticating error",
             "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
           ));
+
+        if (!features.loaded) features.loadFeatures();
       })
       .finally(() => setIsSettingsDbLoading(false)));
     runAsync(() => initSongDatabase().finally(() => setIsSongDbLoading(false)));
@@ -223,7 +227,7 @@ const AppRoot: React.FC = () => {
   </SafeAreaView>;
 };
 
-const App = () =>
+const App: React.FC = () =>
   <ErrorBoundary>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AppContextProvider>
