@@ -55,6 +55,7 @@ import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScr
 import FeaturesProvider, { useFeatures } from "./gui/components/providers/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
+import AppContextProvider from "./gui/components/providers/AppContextProvider";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -228,13 +229,15 @@ const AppRoot: React.FC = () => {
 const App: React.FC = () =>
   <ErrorBoundary>
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <FeaturesProvider>
-        <ThemeProvider>
-          <MenuProvider>
-            <AppRoot />
-          </MenuProvider>
-        </ThemeProvider>
-      </FeaturesProvider>
+      <AppContextProvider>
+        <FeaturesProvider>
+          <ThemeProvider>
+            <MenuProvider>
+              <AppRoot />
+            </MenuProvider>
+          </ThemeProvider>
+        </FeaturesProvider>
+      </AppContextProvider>
     </GestureHandlerRootView>
   </ErrorBoundary>;
 
