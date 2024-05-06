@@ -7,10 +7,10 @@ import {
   SongMetadata as ServerSongMetadata,
   SongMetadataType as ServerSongMetadataType,
 } from "../../../../source/logic/server/models/ServerSongsModel";
-import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
 import { Song, SongBundle, SongMetadataType, Verse } from "../../../../source/logic/db/models/Songs";
 import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
 import Db from "../../../../source/logic/db/db";
+import { SongUpdaterUtils } from "../../../../source/logic/songs/songUpdaterUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");
 
@@ -32,7 +32,15 @@ describe("test convert server songbundle to local songbundle", () => {
         "language",
         [
           new ServerVerse(0, "name0", "content", "language", 0, "verse0", null,
-            [new ServerAbcSubMelody(0, "melody0", 0, "submelody0")], "abcLyrics"),
+            [new ServerAbcSubMelody(0, "melody0",
+              new ServerAbcMelody(
+                0,
+                "name0",
+                "melody",
+                "melody0",
+                null,
+                null,
+              ), "submelody0")], "abcLyrics"),
           new ServerVerse(1, "name1", "content", "language", 1, "verse1", null, [], "abcLyrics"),
         ],
         null,
@@ -85,7 +93,7 @@ describe("test convert server songbundle to local songbundle", () => {
       100,
     );
 
-    const result = SongProcessor.convertServerSongBundleToLocalSongBundle(bundle);
+    const result = SongUpdaterUtils.convertServerSongBundleToLocalSongBundle(bundle);
 
     expect(result).toBeInstanceOf(SongBundle);
     expect(result.id).toBe(1);
@@ -119,21 +127,12 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].abcMelodies[0].name).toBe("name0");
     expect(result.songs[0].abcMelodies[0].melody).toBe("melody");
     expect(result.songs[0].abcMelodies[0].uuid).toBe("melody0");
-    expect(result.songs[0].abcMelodies[0].subMelodies.length).toBe(1);
-
-    expect(result.songs[0].abcMelodies[0].subMelodies[0]).toBeInstanceOf(AbcSubMelody);
-    expect(result.songs[0].abcMelodies[0].subMelodies[0].id).toBe(1);
-    expect(result.songs[0].abcMelodies[0].subMelodies[0].melody).toBe("melody0");
-    expect(result.songs[0].abcMelodies[0].subMelodies[0].uuid).toBe("submelody0");
-    expect(result.songs[0].abcMelodies[0].subMelodies[0].verse).toBeInstanceOf(Verse);
-    expect(result.songs[0].abcMelodies[0].subMelodies[0].verse).toBe(result.songs[0].verses[0]);
 
     expect(result.songs[0].abcMelodies[1]).toBeInstanceOf(AbcMelody);
     expect(result.songs[0].abcMelodies[1].id).toBe(2);
     expect(result.songs[0].abcMelodies[1].name).toBe("name1");
     expect(result.songs[0].abcMelodies[1].melody).toBe("melody");
     expect(result.songs[0].abcMelodies[1].uuid).toBe("melody1");
-    expect(result.songs[0].abcMelodies[1].subMelodies).toStrictEqual([]);
 
     expect(result.songs[0].verses[0]).toBeInstanceOf(Verse);
     expect(result.songs[0].verses[0].id).toBe(1);
@@ -143,6 +142,13 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].verses[0].index).toBe(0);
     expect(result.songs[0].verses[0].uuid).toBe("verse0");
     expect(result.songs[0].verses[0].abcLyrics).toBe("abcLyrics");
+    expect(result.songs[0].verses[0].abcMelodies.length).toBe(1);
+
+    expect(result.songs[0].verses[0].abcMelodies[0]).toBeInstanceOf(AbcSubMelody);
+    expect(result.songs[0].verses[0].abcMelodies[0].id).toBe(1);
+    expect(result.songs[0].verses[0].abcMelodies[0].melody).toBe("melody0");
+    expect(result.songs[0].verses[0].abcMelodies[0].uuid).toBe("submelody0");
+    expect(result.songs[0].verses[0].abcMelodies[0].parentUuid).toBe("melody0");
 
     expect(result.songs[0].verses[1]).toBeInstanceOf(Verse);
     expect(result.songs[0].verses[1].id).toBe(2);
@@ -152,6 +158,7 @@ describe("test convert server songbundle to local songbundle", () => {
     expect(result.songs[0].verses[1].index).toBe(1);
     expect(result.songs[0].verses[1].uuid).toBe("verse1");
     expect(result.songs[0].verses[1].abcLyrics).toBe("abcLyrics");
+    expect(result.songs[0].verses[1].abcMelodies.length).toBe(0);
 
     expect(result.songs[1]).toBeInstanceOf(Song);
     expect(result.songs[1].id).toBe(2);
