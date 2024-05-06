@@ -10,11 +10,11 @@ import { capitalize, isAndroid } from "../../../logic/utils";
 import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
+import { useAppContext } from "../../components/providers/AppContextProvider";
 import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
-import { useAppContext } from "../../components/providers/AppContextProvider";
 
 const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
   const styles = createStyles(useTheme());
