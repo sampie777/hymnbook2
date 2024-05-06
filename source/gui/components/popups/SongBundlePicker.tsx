@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MultiPickerComponent from "./MultiPickerComponent";
 import { SongBundle } from "../../../logic/db/models/Songs";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { languageAbbreviationToFullName } from "../../../logic/utils";
 
 interface Props {

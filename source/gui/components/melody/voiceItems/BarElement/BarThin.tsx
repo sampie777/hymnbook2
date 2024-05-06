@@ -2,7 +2,7 @@ import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import { AbcConfig } from "../../config";
 import { Line } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 import LinesSvg from "../../other/LinesSvg";
 import { AnimatedG, AnimatedSvg } from "../../../utils";
 

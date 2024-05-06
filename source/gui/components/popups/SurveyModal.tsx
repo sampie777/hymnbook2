@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { Survey } from "../../../logic/survey";
 import ConfirmationModal from "./ConfirmationModal";
 import { openLink } from "../../../logic/utils";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 
 const SurveyModal: React.FC<{
   onCompleted?: () => void,

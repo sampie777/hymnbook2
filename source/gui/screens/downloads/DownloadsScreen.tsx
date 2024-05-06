@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DatabasesRoute, ParamList } from "../../../navigation";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import TypeSelectBar, { Types } from "./TypeSelectBar";
 import DownloadSongsScreen from "./DownloadSongsScreen";
 import DownloadDocumentsScreen from "./DownloadDocumentsScreen";

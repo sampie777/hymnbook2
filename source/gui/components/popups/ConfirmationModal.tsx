@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity, ScrollView } from "react-native";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { RectangularInset } from "../utils";
 

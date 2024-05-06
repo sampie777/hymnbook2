@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Insets, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface ComponentProps {
