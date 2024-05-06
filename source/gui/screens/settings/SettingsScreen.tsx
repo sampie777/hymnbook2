@@ -9,7 +9,8 @@ import { SongSearch } from "../../../logic/songs/songSearch";
 import { capitalize, isAndroid } from "../../../logic/utils";
 import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
+import { useAppContext } from "../../components/providers/AppContextProvider";
 import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
@@ -27,9 +28,9 @@ const SettingsScreen: React.FC = () => {
   const [isReloading, setReloading] = useState(false);
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const [showDevSettings, setShowDevSettings] = useState(process.env.NODE_ENV === "development");
   const [showDocumentsZoomSettings, setShowDocumentsZoomSettings] = useState(Settings.documentsUseExperimentalViewer);
 
+  const appContext = useAppContext();
   const theme = useTheme();
   const styles = createStyles(theme);
 
@@ -70,13 +71,13 @@ const SettingsScreen: React.FC = () => {
   };
 
   const increaseEasterEggDevMode = () => {
-    if (showDevSettings) {
+    if (appContext.developerMode) {
       return;
     }
 
     setEasterEggEnableDevModeCount(easterEggEnableDevModeCount + 1);
     if (easterEggEnableDevModeCount >= 9) {
-      setShowDevSettings(true);
+      appContext.setDeveloperMode(true);
       rollbar.info("Someone switched on developer mode", {
         deviceId: ServerAuth.getDeviceId(),
         appOpenedTimes: Settings.appOpenedTimes
@@ -292,7 +293,7 @@ const SettingsScreen: React.FC = () => {
                                   setValue(getAuthenticationStateAsMessage());
                                 })} />
 
-          {!showDevSettings ? undefined : developerSettings}
+          {!appContext.developerMode ? undefined : developerSettings}
 
         </>}
       </ScrollView>

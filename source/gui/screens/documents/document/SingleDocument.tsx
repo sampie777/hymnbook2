@@ -14,7 +14,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/Documents";
 import { useFocusEffect } from "@react-navigation/native";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { isIOS, keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {

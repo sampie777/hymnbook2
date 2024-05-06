@@ -1,7 +1,7 @@
 import React from "react";
 import { Song } from "../../../../../logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../../logic/songs/utils";
-import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import { ActivityIndicator, Text, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import {

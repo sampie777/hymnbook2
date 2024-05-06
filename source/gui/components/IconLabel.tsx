@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 import { Image, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, Text, View } from "react-native";
 
 interface Props {

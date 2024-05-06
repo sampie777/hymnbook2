@@ -3,7 +3,7 @@ import { Security } from "./security";
 import { rollbar } from "./rollbar";
 import Db from "./db/db";
 import Settings from "../settings";
-import { ThemeContextProps } from "../gui/components/ThemeProvider";
+import { ThemeContextProps } from "../gui/components/providers/ThemeProvider";
 import { sanitizeErrorForRollbar } from "./utils";
 import { AudioFiles } from "./songs/audiofiles/audiofiles";
 

@@ -14,7 +14,7 @@ import { rollbar } from "../../../logic/rollbar";
 import { parseDocument } from "htmlparser2";
 import { mergeStyleSheets } from "../utils";
 import { ElementType } from "domelementtype";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { DataNode, Document, Element, Node } from "domhandler/lib/node";
 
 interface HtmlStyles {

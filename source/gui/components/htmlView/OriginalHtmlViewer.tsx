@@ -1,6 +1,6 @@
 import React, { ReactNode, useMemo } from "react";
 import Settings from "../../../settings";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { Platform, StyleSheet, View } from "react-native";
 import HTMLView, { HTMLViewNode, HTMLViewNodeRenderer } from "react-native-htmlview";
 

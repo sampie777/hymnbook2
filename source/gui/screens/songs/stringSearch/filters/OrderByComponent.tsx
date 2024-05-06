@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import PickerComponent from "../../../../components/popups/PickerComponent";
 import { SongSearch } from "../../../../../logic/songs/songSearch";
 

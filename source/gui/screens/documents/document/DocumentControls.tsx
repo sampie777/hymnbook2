@@ -5,7 +5,7 @@ import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import { Document } from "../../../../logic/db/models/Documents";
 import { RectangularInset } from "../../../components/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";

@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { AbcConfig } from "../../config";
 import { AbcPitch, StemDirection } from "../../../../../logic/songs/abc/abcjsTypes";
 import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 
 interface Props {
   pitch: AbcPitch,

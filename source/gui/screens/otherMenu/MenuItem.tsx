@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View } from "react-native";
 
 interface MenuItemProps {
