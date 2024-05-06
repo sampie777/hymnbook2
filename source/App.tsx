@@ -52,7 +52,7 @@ import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
-import FeaturesProvider, {useFeatures} from "./gui/components/providers/FeaturesProvider";
+import FeaturesProvider, { useFeatures } from "./gui/components/providers/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";

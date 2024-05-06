@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableWithoutFeedback,
-  View
-} from "react-native";
+import { StyleSheet, Switch, Text,  TouchableWithoutFeedback, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import Settings from "../../../../settings";
 import { BaseSettingProps, createStyles as settingComponentCreateStyles } from "./SettingComponent";
