@@ -51,7 +51,6 @@ import DocumentSearchScreen from "./gui/screens/documents/search/DocumentSearchS
 import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
 import FeaturesProvider, {useFeatures} from "./gui/components/providers/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
