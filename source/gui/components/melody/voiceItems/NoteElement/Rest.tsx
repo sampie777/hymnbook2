@@ -2,7 +2,7 @@ import React from "react";
 import { AbcConfig } from "../../config";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import { Circle, G, Path, Rect } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 
 interface Props {
   note: VoiceItemNote;

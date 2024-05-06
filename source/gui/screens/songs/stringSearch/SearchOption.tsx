@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface Props {

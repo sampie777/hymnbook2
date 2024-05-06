@@ -7,7 +7,7 @@ import { DeepLinking } from "../../../logic/deeplinking";
 import { rollbar } from "../../../logic/rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../components/utils";
 import {
   Alert,

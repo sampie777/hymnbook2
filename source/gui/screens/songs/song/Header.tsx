@@ -2,7 +2,7 @@ import React from "react";
 import Settings from "../../../../settings";
 import { Song } from "../../../../logic/db/models/Songs";
 import { createHeader } from "../../../../logic/songs/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Animated, StyleSheet } from "react-native";
 
 interface Props {

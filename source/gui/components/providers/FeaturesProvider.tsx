@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { Features } from "../../logic/features";
-import { rollbar } from "../../logic/rollbar";
-import { sanitizeErrorForRollbar } from "../../logic/utils";
+import { Features } from "../../../logic/features";
+import { rollbar } from "../../../logic/rollbar";
+import { sanitizeErrorForRollbar } from "../../../logic/utils";
 
 type FeaturesContextProps = Features.Props & { loadFeatures: () => void };
 

@@ -14,7 +14,7 @@ import {
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
 import { RectangularInset } from "../../../../components/utils";
-import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import {
   StyleSheet,
   View,

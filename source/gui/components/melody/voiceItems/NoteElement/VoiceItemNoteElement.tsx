@@ -4,7 +4,7 @@ import Settings from "../../../../../settings";
 import { AbcConfig } from "../../config";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
-import { ThemeContextProps, useTheme } from "../../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 import NoteElement from "./NoteElement";
 
 interface Props {

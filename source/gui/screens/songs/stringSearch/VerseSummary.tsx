@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Verse } from "../../../../logic/db/models/Songs";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, Text } from "react-native";
 
 interface Props {

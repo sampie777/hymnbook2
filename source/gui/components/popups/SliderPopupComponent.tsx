@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import ConfirmationModal from "./ConfirmationModal";
 import SliderComponent from "../SliderComponent";
 

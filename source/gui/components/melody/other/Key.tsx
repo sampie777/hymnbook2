@@ -3,7 +3,7 @@ import { Animated } from "react-native";
 import { AbcConfig } from "../config";
 import { KeySignature } from "../../../../logic/songs/abc/abcjsTypes";
 import { Text } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
 import Lines from "./Lines";
 import { AnimatedG, AnimatedSvg } from "../../utils";
 

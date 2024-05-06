@@ -9,7 +9,7 @@ import { SongSearch } from "../../../logic/songs/songSearch";
 import { capitalize, isAndroid } from "../../../logic/utils";
 import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";

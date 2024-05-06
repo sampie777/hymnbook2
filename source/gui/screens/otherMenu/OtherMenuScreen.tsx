@@ -5,7 +5,7 @@ import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { shareApp } from "../../../logic/utils";
 import { Survey } from "../../../logic/survey";
 import { AboutRoute, DatabasesRoute, OtherMenuRoute, ParamList, SettingsRoute } from "../../../navigation";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import MenuItem from "./MenuItem";
