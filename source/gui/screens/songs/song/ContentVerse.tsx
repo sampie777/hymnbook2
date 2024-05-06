@@ -7,7 +7,7 @@ import { ABC } from "../../../../logic/songs/abc/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import MelodyView from "../../../components/melody/MelodyView";
 

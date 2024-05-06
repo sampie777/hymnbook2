@@ -5,7 +5,7 @@ import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
 import TrackPlayer from "react-native-track-player";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
 import PickerComponent from "../../../../components/popups/PickerComponent";

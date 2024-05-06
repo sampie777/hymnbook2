@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { ThemeContextProps, useTheme } from "../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ShowAllLanguagesValue } from "./LanguageSelectBar";
 

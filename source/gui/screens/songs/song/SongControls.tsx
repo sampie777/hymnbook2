@@ -7,7 +7,7 @@ import Settings from "../../../../settings";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import { getNextVerseIndex } from "../../../../logic/songs/utils";
 import { RectangularInset } from "../../../components/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";

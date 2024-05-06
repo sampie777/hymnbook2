@@ -1,6 +1,6 @@
 import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
 import { StyleSheet, View } from "react-native";
-import { ThemeContextProps, useTheme } from "./ThemeProvider";
+import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 
 interface Props extends PropsWithChildren {
 }

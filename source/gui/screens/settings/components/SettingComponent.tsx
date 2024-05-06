@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Settings from "../../../../settings";
 import { capitalize } from "../../../../logic/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 
 export interface BaseSettingProps<T> {
   title: string;

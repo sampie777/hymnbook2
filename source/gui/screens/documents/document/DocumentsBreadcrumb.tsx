@@ -2,7 +2,7 @@ import React from "react";
 import Settings from "../../../../settings";
 import { Document } from "../../../../logic/db/models/Documents";
 import { getPathForDocument } from "../../../../logic/documents/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Animated, StyleSheet } from "react-native";
 
 interface Props {

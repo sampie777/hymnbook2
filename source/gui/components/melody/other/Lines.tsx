@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { AbcConfig } from "../config";
 import { Line } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
 
 interface Props {
   width?: number;

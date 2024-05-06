@@ -11,7 +11,7 @@ import { DocumentSearch } from "../../../../logic/documents/documentSearch";
 import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
 import { RectangularInset, useCollectionListener } from "../../../components/utils";
-import { ThemeContextProps, useTheme } from "../../../components/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { ScrollView, View, Text, StyleSheet, BackHandler } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import DocumentItem from "./DocumentItem";
