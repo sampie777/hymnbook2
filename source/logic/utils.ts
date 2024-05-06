@@ -3,6 +3,7 @@ import KeepAwake from "react-native-keep-awake";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { rollbar } from "./rollbar";
 import config from "../config";
+import { stringMd5 } from "react-native-quick-md5";
 
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
@@ -205,3 +206,5 @@ export const readableFileSizeIEC = (size: number): string => {
   if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MiB`;
   return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GiB`;
 }
+
+export const hash = (value: string): string => stringMd5(value);
