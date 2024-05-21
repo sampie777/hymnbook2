@@ -1,5 +1,9 @@
 import { getVerseType, VerseType } from "../../../../source/logic/songs/utils";
 import { Verse } from "../../../../source/logic/db/models/Songs";
+import { mockDb } from "../../../testUtils";
+
+jest.mock("hymnbook2/source/logic/db/db");
+mockDb();
 
 describe("test getting verse type", () => {
   const mockVerse = (name) => new Verse(0, name, "", "", "", 0)
