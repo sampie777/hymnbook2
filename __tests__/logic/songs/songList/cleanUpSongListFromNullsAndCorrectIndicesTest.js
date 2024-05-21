@@ -2,19 +2,12 @@ import SongList from "../../../../source/logic/songs/songList";
 import Db from "../../../../source/logic/db/db";
 import { SongListModel, SongListSongModel } from "../../../../source/logic/db/models/SongListModel";
 import { Song } from "../../../../source/logic/db/models/Songs";
+import { mockDb } from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");
+mockDb();
 
 describe("test cleaning up song list", () => {
-  Db.songs.getIncrementedPrimaryKey.mockImplementation(() => 1);
-  Db.songs.realm.mockImplementation(() => {
-    return {
-      objects: () => [],
-      write: (callback) => callback ? callback() : undefined,
-      create: () => undefined,
-      delete: () => undefined,
-    };
-  });
   const spy = jest.spyOn(SongList, "unifyIndices").mockImplementation(() => undefined);
 
   beforeEach(() => {
