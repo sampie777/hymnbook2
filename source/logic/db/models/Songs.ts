@@ -1,6 +1,6 @@
 import Db from "../db";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./SongsSchema";
-import { AbcMelody, AbcSubMelody } from "./AbcMelodies";
+import { AbcMelody } from "./AbcMelodies";
 
 export class SongAudio {
   id: number;
@@ -64,7 +64,6 @@ export interface VerseProps {
   index: number;
   uuid: string;
   abcLyrics?: string;
-  abcMelodies: AbcSubMelody[];
 }
 
 export class Verse implements VerseProps {
@@ -75,7 +74,6 @@ export class Verse implements VerseProps {
   index: number;
   uuid: string;
   abcLyrics?: string;
-  abcMelodies: AbcSubMelody[];
 
   constructor(
     index: number,
@@ -83,9 +81,8 @@ export class Verse implements VerseProps {
     content: string,
     language: string,
     uuid: string,
-    id = Db.songs.getIncrementedPrimaryKey(VerseSchema),
     abcLyrics?: string,
-    abcMelodies: AbcSubMelody[] = [],
+    id = Db.songs.getIncrementedPrimaryKey(VerseSchema),
   ) {
     this.id = id;
     this.name = name;
@@ -94,10 +91,9 @@ export class Verse implements VerseProps {
     this.index = index;
     this.uuid = uuid;
     this.abcLyrics = abcLyrics;
-    this.abcMelodies = abcMelodies;
   }
 
-  static toObject(verse: VerseProps, includeReference = false): VerseProps {
+  static toObject(verse: VerseProps): VerseProps {
     return {
       id: verse.id,
       name: verse.name,
@@ -106,7 +102,6 @@ export class Verse implements VerseProps {
       index: verse.index,
       uuid: verse.uuid,
       abcLyrics: verse.abcLyrics,
-      abcMelodies: !includeReference ? [] : verse.abcMelodies.map(AbcSubMelody.toObject)
     }
   }
 }

@@ -1,5 +1,5 @@
 import Realm from "realm";
-import { AbcMelodySchema, AbcSubMelodySchema } from "./AbcMelodiesSchema";
+import { AbcMelodySchema } from "./AbcMelodiesSchema";
 
 export const SongMetadataSchema: Realm.ObjectSchema = {
   name: "SongMetadata",
@@ -26,7 +26,6 @@ export const VerseSchema: Realm.ObjectSchema = {
     index: "int",
     uuid: "string",
     abcLyrics: "string?",
-    abcMelodies: AbcSubMelodySchema.name + "[]",
     _songs: {
       type: "linkingObjects",
       objectType: "Song",    // SongSchema.name

@@ -1,4 +1,5 @@
 import {
+  AbcMelody as ServerAbcMelody,
   Song as ServerSong,
   SongBundle as ServerSongBundle,
   SongVerse as ServerVerse
@@ -65,8 +66,8 @@ export namespace SongUpdaterUtils {
       } catch (error) {
         rollbar.error("Failed to replace song list song", {
           item: item,
-          newSong: newSong,
-        })
+          newSong: newSong
+        });
       }
     });
   };
@@ -78,48 +79,45 @@ export namespace SongUpdaterUtils {
     let subMelodyId = Db.songs.getIncrementedPrimaryKey(AbcSubMelodySchema);
     let metadataId = Db.songs.getIncrementedPrimaryKey(SongMetadataSchema);
 
-    const convertVerseWithSubMelodies = (verse: ServerVerse, melodies: AbcMelody[]): Verse => {
-      const result = new Verse(
+    const convertAbcMelody = (melody: ServerAbcMelody): AbcMelody =>
+      new AbcMelody(
+        melody.name,
+        melody.melody,
+        melody.uuid,
+        (melody.subMelodies ?? []).map(it => new AbcSubMelody(
+          it.melody,
+          it.name,
+          it.uuid,
+          it.verseUuids,
+          subMelodyId++
+        )),
+        melodyId++
+      );
+
+    const convertVerse = (verse: ServerVerse): Verse =>
+      new Verse(
         verse.index,
         verse.name,
         verse.content,
         verse.language,
         verse.uuid,
-        verseId++,
-        verse.abcLyrics,
-        []
+        verse.abcLyrics ?? undefined,
+        verseId++
       );
-
-      result.abcMelodies = (verse.abcMelodies || [])
-        .map(melody => {
-          const parent = melodies.find(it => it.uuid == melody.parent.uuid);
-          if (parent == null) return null;
-
-          return new AbcSubMelody(
-            melody.melody,
-            melody.uuid,
-            parent.uuid,
-            subMelodyId++
-          );
-        })
-        .filter(it => it != null) as AbcSubMelody[];
-
-      return result;
-    };
 
     const convertServerSongToLocalSong = (song: ServerSong): Song => {
       const abcMelodies = (song.abcMelodies || [])
         .sort(SongProcessor.sortSongMelodyByName)
-        .map(melody => new AbcMelody(
-          melody.name,
-          melody.melody,
-          melody.uuid,
-          melodyId++
-        ));
+        .map(convertAbcMelody);
 
       const verses = (song.verses || [])
         .sort((a, b) => a.index - b.index)
-        .map(verse => convertVerseWithSubMelodies(verse, abcMelodies));
+        .map(convertVerse);
+
+      const metadata = (song.metadata || [])
+        .sort((a, b) => a.id - b.id)
+        .filter(it => Object.values(SongMetadataType).includes(it.type))
+        .map(it => new SongMetadata(it.type, it.value, metadataId++));
 
       return new Song(
         song.name,
@@ -129,12 +127,9 @@ export namespace SongUpdaterUtils {
         song.uuid,
         verses,
         abcMelodies,
-        song.metadata
-          ?.sort((a, b) => a.id - b.id)
-          ?.filter(it => Object.values(SongMetadataType).includes(it.type))
-          ?.map(it => new SongMetadata(it.type, it.value, metadataId++)) || [],
+        metadata,
         songId++,
-        song.number
+        song.number ?? undefined
       );
     };
 
