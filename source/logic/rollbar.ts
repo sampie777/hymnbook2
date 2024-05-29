@@ -36,13 +36,17 @@ export const rollbarInit = () =>
     })
     .catch(e => rollbar.error("Could not get unique ID", { error: e }));
 
-const checkShouldRollbarBeEnabled = (uniqueId: string | null) => {
+export const checkShouldRollbarBeEnabled = (uniqueId: string | null = Security.getDeviceId()) => {
   const shouldRollbarBeEnabled = uniqueId != null
     && uniqueId.length > 0
     && !config.debugEmulators.includes(uniqueId)
     && process.env.NODE_ENV !== "development";
 
   if (shouldRollbarBeEnabled) return;
+  disableRollbar(uniqueId);
+};
+
+export const disableRollbar = (uniqueId: string | null = Security.getDeviceId()) => {
   console.debug("Rollbar is disabled", { client: uniqueId, env: process.env.NODE_ENV });
 
   const rollbarLogLocal = (logFunction: (...data: any[]) => void, obj: LogArgument, extra?: Extra, callback?: Callback): LogResult => {

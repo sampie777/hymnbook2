@@ -86,3 +86,5 @@ hymnbook_songs.management/
 
 rsa_key
 rsa_key.pub
+
+*.log

@@ -12,61 +12,71 @@ export enum SongMetadataType {
 
 export class SongMetadata {
   id: number;
-  type: SongMetadataType
-  value: string = ""
-  song: Song | null
+  type: SongMetadataType;
+  value: string;
+  song: Song | null = null;
 
   constructor(
     id: number,
     type: SongMetadataType,
-    value: string = "",
-    song: Song | null,
+    value: string = ""
   ) {
-    this.id = id
-    this.type = type
-    this.value = value
-    this.song = song
+    this.id = id;
+    this.type = type;
+    this.value = value;
   }
 }
 
 export class AbcSubMelody {
   id: number;
-  melody: string = "";
-  parent: AbcMelody;
-  uuid: string = "";
+  name: string;
+  melody: string;
+  verseUuids: string[];
+  uuid: string;
+  parent: AbcMelody | null = null;
+  verses: SongVerse[] | null = null;
 
   constructor(
     id: number,
+    name: string = "",
     melody: string = "",
-    parent: AbcMelody,
+    verseUuids: string[] = [],
     uuid: string
   ) {
     this.id = id;
+    this.name = name;
     this.melody = melody;
-    this.parent = parent;
+    this.verseUuids = verseUuids;
     this.uuid = uuid;
   }
 }
 
 export class AbcMelody {
   id: number;
-  name: string = config.defaultMelodyName;
-  melody: string = "";
-  uuid: string = "";
-  song: Song | null;
+  name: string;
+  melody: string;
+  subMelodies: AbcSubMelody[] | null;
+  uuid: string;
+  song: Song | null = null;
+  createdAt: string;
+  modifiedAt: string;
 
   constructor(
     id: number,
     name: string = config.defaultMelodyName,
     melody: string = "",
+    subMelodies: AbcSubMelody[] | null = [],
     uuid: string = "",
-    song: Song | null,
+    createdAt: string = "",
+    modifiedAt: string = ""
   ) {
     this.id = id;
     this.name = name;
     this.melody = melody;
+    this.subMelodies = subMelodies;
     this.uuid = uuid;
-    this.song = song;
+    this.createdAt = createdAt;
+    this.modifiedAt = modifiedAt;
   }
 }
 
@@ -77,9 +87,9 @@ export class SongVerse {
   language: string;
   index: number;
   uuid: string;
-  song: Song | null;
-  abcMelodies?: AbcSubMelody[] | null;
-  abcLyrics?: string;
+  song: Song | null = null;
+  abcMelodies: AbcSubMelody[] | null = null;
+  abcLyrics: string | null = null;
 
   constructor(
     id: number,
@@ -88,9 +98,7 @@ export class SongVerse {
     language: string,
     index: number,
     uuid: string,
-    song: Song | null,
-    abcMelodies?: AbcSubMelody[] | null,
-    abcLyrics?: string
+    abcLyrics: string | null = null
   ) {
     this.id = id;
     this.name = name;
@@ -98,8 +106,6 @@ export class SongVerse {
     this.language = language;
     this.index = index;
     this.uuid = uuid;
-    this.song = song;
-    this.abcMelodies = abcMelodies;
     this.abcLyrics = abcLyrics;
   }
 }
@@ -107,35 +113,33 @@ export class SongVerse {
 export class Song {
   id: number;
   name: string;
-  number?: number;
+  number: number | null;
   language: string;
   verses: Array<SongVerse> | null;
-  songBundle: SongBundle | null;
+  songBundle: SongBundle | null = null;
   createdAt: string;
   modifiedAt: string;
   uuid: string;
-  abcMelodies?: AbcMelody[] | null;
-  metadata?: SongMetadata[] | null;
+  abcMelodies: AbcMelody[] | null;
+  metadata: SongMetadata[] | null;
 
   constructor(
     id: number,
     name: string,
     language: string,
-    verses: Array<SongVerse> | null,
-    songBundle: SongBundle | null,
+    verses: Array<SongVerse> | null = null,
     createdAt: string,
     modifiedAt: string,
     uuid: string,
-    number?: number,
-    abcMelodies?: AbcMelody[] | null,
-    metadata?: SongMetadata[] | null,
+    number: number | null = null,
+    abcMelodies: AbcMelody[] | null = null,
+    metadata: SongMetadata[] | null = null
   ) {
     this.id = id;
     this.name = name;
     this.number = number;
     this.language = language;
     this.verses = verses;
-    this.songBundle = songBundle;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
@@ -152,7 +156,7 @@ export class SongBundle {
   author: string;
   copyright: string;
   songs: Array<Song> | null;
-  size?: number;
+  size: number = 0;
   createdAt: string;
   modifiedAt: string;
   uuid: string;
@@ -169,7 +173,7 @@ export class SongBundle {
               modifiedAt: string,
               uuid: string,
               hash: string,
-              size?: number
+              size: number = 0
   ) {
     this.id = id;
     this.abbreviation = abbreviation;

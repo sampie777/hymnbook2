@@ -15,7 +15,7 @@ import ReAnimated, {
 } from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
-import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
+import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/AbcMelodies";
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import Db from "../../../../logic/db/db";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
@@ -25,7 +25,7 @@ import {
   getDefaultMelody,
   loadSongWithId
 } from "../../../../logic/songs/utils";
-import { isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
@@ -55,6 +55,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
   const verseHeights = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
+  const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
@@ -381,6 +382,24 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     return calculateVerseHeight(index, verseHeights.current);
   };
 
+  // When verse is shown (either no verses as selected or this verse selected no matter if its first or not)
+  // and the verse custom melody isn't shown yet
+  const isVerseVisibleAndHasUniqueMelody = (verse: Verse, selectedVerses: Verse[]): boolean => {
+    if (!selectedMelody) return false;
+
+    const isNotSelectedVerse = selectedVerses.length > 0 && !selectedVerses.some(it => it.id === verse.id);
+    if (isNotSelectedVerse) return false;
+
+    const melody = AbcSubMelody.getForVerse(selectedMelody, verse)?.melody || selectedMelody.melody;
+    if (!melody) return false;
+
+    const melodyHash = hash(melody);
+    if(shownMelodyHashes.includes(melodyHash)) return false;
+
+    shownMelodyHashes.push(melodyHash);
+    return true;
+  };
+
   const renderContentItem = ({ item }: { item: Verse }) => {
     const selectedVerses = route.params.selectedVerses || [];
 
@@ -388,11 +407,19 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     const noVersesSelectedButAllMustBeShown = showMelodyForAllVerses && selectedVerses.length === 0;
     const verseIsSelectedAndAllMustBeShown = showMelodyForAllVerses && selectedVerses.some(it => it.id == item.id);
     // Show melody because it's first selected verse
-    const isVerseSelectedVerse = selectedVerses.length > 0 && selectedVerses[0].id == item.id;
+    const isFirstSelectedVerse = selectedVerses.length > 0 && selectedVerses[0].id == item.id;
     // Show melody because it's first verse of song
     const isFirstVerseOfSongWithNoSelectedVerses = selectedVerses.length === 0 && item.index === 0;
 
-    const shouldMelodyBeShownForVerse = showMelody && (noVersesSelectedButAllMustBeShown || verseIsSelectedAndAllMustBeShown || isVerseSelectedVerse || isFirstVerseOfSongWithNoSelectedVerses);
+    // Do the variable assignment here, so the function `isVerseVisibleAndHasUniqueMelody()` will always run, as it keeps track of `shownMelodyHashes`.
+    const verseIsVisibleAndHasUniqueMelody = isVerseVisibleAndHasUniqueMelody(item, selectedVerses);
+
+    const shouldMelodyBeShownForVerse = showMelody
+      && (noVersesSelectedButAllMustBeShown
+        || verseIsSelectedAndAllMustBeShown
+        || isFirstSelectedVerse
+        || isFirstVerseOfSongWithNoSelectedVerses
+        || verseIsVisibleAndHasUniqueMelody);
 
     return <ContentVerse verse={item}
                          scale={animatedScale}

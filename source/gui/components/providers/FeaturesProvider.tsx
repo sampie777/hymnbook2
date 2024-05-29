@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import { Features } from "../../../logic/features";
-import { rollbar } from "../../../logic/rollbar";
+import { checkShouldRollbarBeEnabled, disableRollbar, rollbar } from "../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../logic/utils";
 
 type FeaturesContextProps = Features.Props & { loadFeatures: () => void };
@@ -8,12 +8,14 @@ type FeaturesContextProps = Features.Props & { loadFeatures: () => void };
 export const FeaturesContext = React.createContext<FeaturesContextProps>({
   loaded: false,
   goldenEgg: false,
+  allowLogging: true,
   loadFeatures: () => rollbar.warning("loadFeatures not implemented yet")
 });
 
 const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [loaded, setLoaded] = useState(false);
   const [goldenEgg, setGoldenEgg] = useState(false);
+  const [allowLogging, setAllowLogging] = useState(true);
 
   const loadFeatures = () => {
     try {
@@ -21,6 +23,7 @@ const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
         .then(features => {
           setLoaded(true);
           setGoldenEgg(features.goldenEgg);
+          setAllowLogging(features.allowLogging);
         })
         .catch(() => null);
     } catch (error) {
@@ -30,9 +33,18 @@ const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
+  // When features are loaded
+  useEffect(() => {
+    if (!loaded) return
+
+    if (!allowLogging) disableRollbar();
+    else checkShouldRollbarBeEnabled();
+  }, [allowLogging]);
+
   const defaultContext: FeaturesContextProps = {
     loaded: loaded,
     goldenEgg: goldenEgg,
+    allowLogging: allowLogging,
     loadFeatures: loadFeatures
   };
 
