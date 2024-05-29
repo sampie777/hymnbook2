@@ -57,6 +57,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
+  const zoomFactor = Settings.debug_zoomFactor;
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
@@ -249,15 +250,17 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     shouldMelodyShowWhenSongIsLoaded.current = false;
   };
 
+  const calculateZoomSpeed = (event: GestureEvent<PinchGestureHandlerEventPayload>) => 1 - (1 - event.nativeEvent.scale) * zoomFactor;
+
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
+    animatedScale.setValue(Settings.songScale * calculateZoomSpeed(event));
   };
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     if (event.nativeEvent.state === State.END) {
       verseHeights.current = {};
-      animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
-      Settings.songScale *= event.nativeEvent.scale;
+      animatedScale.setValue(Settings.songScale * calculateZoomSpeed(event));
+      Settings.songScale *= calculateZoomSpeed(event);
     }
   };
 
