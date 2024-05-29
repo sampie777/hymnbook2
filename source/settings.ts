@@ -85,6 +85,7 @@ class SettingsClass extends SettingsBaseClass {
   debug_verseHeightCalculationReturnsZero = false;
   debug_neverCalculateVerseHeight = false;
   debug_letterSpacing = 0.0;
+  debug_includeFontPadding = true;
 }
 
 const Settings = new SettingsClass();
