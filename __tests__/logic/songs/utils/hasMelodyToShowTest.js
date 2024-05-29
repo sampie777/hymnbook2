@@ -1,10 +1,14 @@
 import { Song, Verse } from "../../../../source/logic/db/models/Songs";
 import { hasMelodyToShow } from "../../../../source/logic/songs/utils";
 import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
+import { mockDb } from "../../../testUtils";
+
+jest.mock("hymnbook2/source/logic/db/db");
+mockDb();
 
 describe("test if song has a melody to show", () => {
-  const verse1 = new Verse(0, "", "", "", "", [], 0);
-  const verse2 = new Verse(1, "", "", "", "", [], 1);
+  const verse1 = new Verse(0, "", "", "", "verse1");
+  const verse2 = new Verse(1, "", "", "", "verse2");
   const song = new Song("", "", new Date(), new Date(), "", [verse1, verse2], [], [],0, 1);
 
   const abcMelody = new AbcMelody("", "", "", [], 0);
@@ -32,7 +36,7 @@ describe("test if song has a melody to show", () => {
   it("does not have a melody to show if the song doesn't have a melody but at least one verse has a melody and lyrics", () => {
     song.abcMelodies = [];
     verse1.abcLyrics = "123";
-    new AbcSubMelody("", verse1, "", 0);
+    new AbcSubMelody("", "", "", [verse1.uuid]);
     expect(hasMelodyToShow(song)).toBe(false);
   });
 
