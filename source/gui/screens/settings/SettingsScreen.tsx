@@ -118,6 +118,12 @@ const SettingsScreen: React.FC = () => {
     <SettingSwitchComponent title={"debug_drawSongVerseBorderVerseList"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorderVerseList"} />
+    <SettingsSliderComponent title={"debug_verseWidth"}
+                             keyName={"debug_verseWidth"}
+                             minValue={0.9}
+                             maxValue={1.05}
+                             valueRender={(it) => Math.round(it * 100) + " %"}
+                             defaultValue={1.0} />
 
     <SettingSwitchComponent title={"debug_addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}

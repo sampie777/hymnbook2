@@ -184,6 +184,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   container: {
     borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderContainer ? 1 : undefined,
     borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
+    width: Settings.debug_maxVerseWidth ? "100%" : (Settings.debug_mediumVerseWidth ? "90%" : `${Math.round(Settings.debug_verseWidth * 100)}%`),
     flex: Settings.debug_useFlexForVerses ? 1 : undefined,
     flexDirection: Settings.debug_useFlexForVersesContent ? "column" : undefined
   },
