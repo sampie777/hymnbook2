@@ -84,6 +84,7 @@ class SettingsClass extends SettingsBaseClass {
   debug_zoomFactor = 1.0;
   debug_verseHeightCalculationReturnsZero = false;
   debug_neverCalculateVerseHeight = false;
+  debug_letterSpacing = 0.0;
 }
 
 const Settings = new SettingsClass();
