@@ -97,6 +97,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                          onPress={() => {
                            Settings.showMelodyForAllVerses = !showMelodyForAllVerses;
                            setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
+                         }}
+                         onLongPress={() => {
+                           Settings.showMelodyForAllVerses = false;
+                           setShowMelodyForAllVerses?.(false);
                          }} />
 
         <View style={styles.melodyContainer}>
