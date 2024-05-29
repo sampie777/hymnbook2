@@ -11,7 +11,7 @@ export const SongMetadataSchema: Realm.ObjectSchema = {
       type: "linkingObjects",
       objectType: "Song",    // SongSchema.name
       property: "metadata"
-    },
+    }
   },
   primaryKey: "id"
 };
@@ -24,13 +24,13 @@ export const VerseSchema: Realm.ObjectSchema = {
     content: "string",
     language: "string",
     index: "int",
-    uuid: "string",
+    uuid: {type: "string", indexed: true},
     abcLyrics: "string?",
     _songs: {
       type: "linkingObjects",
       objectType: "Song",    // SongSchema.name
       property: "verses"
-    },
+    }
   },
   primaryKey: "id"
 };
@@ -39,12 +39,12 @@ export const SongSchema: Realm.ObjectSchema = {
   name: "Song",
   properties: {
     id: "int",
-    name: "string",
-    number: "int?",
+    name: { type: "string", indexed: true },
+    number: { type: "int?", indexed: true },
     language: "string",
     createdAt: "date",
     modifiedAt: "date",
-    uuid: "string",
+    uuid: {type: "string", indexed: true},
     verses: VerseSchema.name + "[]",
     metadata: SongMetadataSchema.name + "[]",
     abcMelodies: AbcMelodySchema.name + "[]",
@@ -69,7 +69,7 @@ export const SongBundleSchema: Realm.ObjectSchema = {
     copyright: "string",
     createdAt: "date",
     modifiedAt: "date",
-    uuid: "string",
+    uuid: {type: "string", indexed: true},
     hash: "string",
     songs: SongSchema.name + "[]"
   },
