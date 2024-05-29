@@ -530,6 +530,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   contentSectionList: {
     paddingLeft: 30,
     paddingTop: 5,
-    paddingRight: 20
+    paddingRight: 20,
+    borderWidth: Settings.debug_drawSongVerseBorderVerseList ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
   }
 });
