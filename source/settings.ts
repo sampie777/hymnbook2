@@ -74,6 +74,12 @@ class SettingsClass extends SettingsBaseClass {
   debug_alwaysCalculateVerseHeight = false;
   debug_useFlexForVerses = false;
   debug_useFlexForVersesContent = false;
+
+  debug_drawSongVerseBorderOpaque = false;
+  debug_drawSongVerseBorderContainer = false;
+  debug_drawSongVerseBorderTitle = false;
+  debug_drawSongVerseBorderText = false;
+  debug_drawSongVerseBorderVerseList = false;
 }
 
 const Settings = new SettingsClass();

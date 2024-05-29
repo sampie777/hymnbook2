@@ -103,6 +103,22 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
+    <SettingSwitchComponent title={"debug_drawSongVerseBorderOpaque"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_drawSongVerseBorderOpaque"} />
+    <SettingSwitchComponent title={"debug_drawSongVerseBorderContainer"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_drawSongVerseBorderContainer"} />
+    <SettingSwitchComponent title={"debug_drawSongVerseBorderTitle"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_drawSongVerseBorderTitle"} />
+    <SettingSwitchComponent title={"debug_drawSongVerseBorderText"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_drawSongVerseBorderText"} />
+    <SettingSwitchComponent title={"debug_drawSongVerseBorderVerseList"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_drawSongVerseBorderVerseList"} />
+
     <SettingSwitchComponent title={"debug_addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_addWhitespaceAfterEachVerseLine"} />

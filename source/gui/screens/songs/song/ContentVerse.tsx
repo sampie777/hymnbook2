@@ -182,9 +182,8 @@ export default ContentVerse;
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {
-    borderWidth: Settings.debug_drawSongVerseBorders ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorders ? "#f00" : undefined,
-    width: Settings.debug_maxVerseWidth ? "100%" : (Settings.debug_mediumVerseWidth ? "90%" : undefined),
+    borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderContainer ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
     flex: Settings.debug_useFlexForVerses ? 1 : undefined,
     flexDirection: Settings.debug_useFlexForVersesContent ? "column" : undefined
   },
@@ -193,8 +192,8 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     textTransform: "lowercase",
     fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic",
-    borderWidth: Settings.debug_drawSongVerseBorders ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorders ? "#00f" : undefined,
+    borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderTitle ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
     flex: 10
   },
 
@@ -219,8 +218,8 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
 
   text: {
     color: colors.text.default,
-    borderWidth: Settings.debug_drawSongVerseBorders ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorders ? "#0f0" : undefined,
+    borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderText ? 1 : undefined,
+    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
     flex: Settings.debug_useFlexForVersesContent ? 1 : undefined
   },
   textHighlighted: {
