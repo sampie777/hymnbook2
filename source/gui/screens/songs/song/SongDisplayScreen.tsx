@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import {
-  FlatList,
+  FlatList, Gesture, GestureDetector,
   GestureEvent,
   PinchGestureHandler, PinchGestureHandlerEventPayload,
   State
@@ -16,7 +16,7 @@ import ReAnimated, {
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/AbcMelodies";
-import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
+import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import Db from "../../../../logic/db/db";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import {
@@ -40,6 +40,7 @@ import Header from "./Header";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
+import { useAppContext } from "../../../components/providers/AppContextProvider";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -55,6 +56,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const verseHeights = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
+  const appContext = useAppContext();
 
   const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
@@ -72,6 +74,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
+
+  // For debugging issue #199 only: open settings screen after 3x tap.
+  const tapGesture = useMemo(() =>
+      Gesture.Tap()
+        .enabled(appContext.developerMode)
+        .runOnJS(true)
+        .numberOfTaps(3)
+        .onStart(() => navigation.navigate(SettingsRoute))
+    , []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -455,37 +466,39 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                       flatListComponentRef={flatListComponentRef.current || undefined}
                       selectedVerses={route.params.selectedVerses} />
 
-        <ReAnimated.View style={[
-          styles.contentSectionListContainer,
-          useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
-        ]}>
-          <VerseList
-            ref={flatListComponentRef}
-            waitFor={isIOS ? undefined : pinchGestureHandlerRef}
-            data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
-            renderItem={renderContentItem}
-            initialNumToRender={20}
-            keyExtractor={(item: Verse) => item.id.toString()}
-            getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
-            contentContainerStyle={styles.contentSectionList}
-            onViewableItemsChanged={onListViewableItemsChanged.current}
-            viewabilityConfig={listViewabilityConfig.current}
-            onEndReached={onListEndReached}
-            onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
-              info: info,
-              songName: song?.name ?? "null",
-              verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-              isMounted: isMounted(),
-              viewIndex: viewIndex,
-              selectedVerses: route.params.selectedVerses?.map(it => it.name),
-              isFocused: _isFocused.current,
-              songList: getSongListInformationForErrorReporting()
-            })}
-            ListHeaderComponent={<Header song={song} scale={animatedScale} />}
-            ListFooterComponent={<Footer song={song} scale={animatedScale} />}
-            removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
-          />
-        </ReAnimated.View>
+        <GestureDetector gesture={tapGesture}>
+          <ReAnimated.View style={[
+            styles.contentSectionListContainer,
+            useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
+          ]}>
+            <VerseList
+              ref={flatListComponentRef}
+              waitFor={isIOS ? undefined : pinchGestureHandlerRef}
+              data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+              renderItem={renderContentItem}
+              initialNumToRender={20}
+              keyExtractor={(item: Verse) => item.id.toString()}
+              getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
+              contentContainerStyle={styles.contentSectionList}
+              onViewableItemsChanged={onListViewableItemsChanged.current}
+              viewabilityConfig={listViewabilityConfig.current}
+              onEndReached={onListEndReached}
+              onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
+                info: info,
+                songName: song?.name ?? "null",
+                verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
+                isMounted: isMounted(),
+                viewIndex: viewIndex,
+                selectedVerses: route.params.selectedVerses?.map(it => it.name),
+                isFocused: _isFocused.current,
+                songList: getSongListInformationForErrorReporting()
+              })}
+              ListHeaderComponent={<Header song={song} scale={animatedScale} />}
+              ListFooterComponent={<Footer song={song} scale={animatedScale} />}
+              removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
+            />
+          </ReAnimated.View>
+        </GestureDetector>
 
         <LoadingOverlay text={null}
                         isVisible={
