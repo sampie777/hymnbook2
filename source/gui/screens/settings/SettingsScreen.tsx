@@ -139,6 +139,12 @@ const SettingsScreen: React.FC = () => {
                             description={"Overrides debug_alwaysCalculateVerseHeight."}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_neverCalculateVerseHeight"} />
+    <SettingsSliderComponent title={"[debug] letterSpacing"}
+                             keyName={"debug_letterSpacing"}
+                             minValue={0.0}
+                             maxValue={0.5}
+                             valueRender={(it) => Math.round(it * 100) / 100 + ""}
+                             defaultValue={0.0} />
     <Header title={""}/>
     <SettingSwitchComponent title={"[debug] addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}
