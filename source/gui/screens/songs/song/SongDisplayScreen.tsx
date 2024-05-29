@@ -374,7 +374,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     offset: number;
     index: number
   } => {
-    if (data == null || data.length == 0 || verseHeights.current == null) {
+    if (Settings.debug_verseHeightCalculationReturnsZero || data == null || data.length == 0 || verseHeights.current == null) {
       return {
         length: 0,
         offset: 0,
@@ -481,7 +481,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               renderItem={renderContentItem}
               initialNumToRender={20}
               keyExtractor={(item: Verse) => item.id.toString()}
-              getItemLayout={Settings.debug_alwaysCalculateVerseHeight || (song && song?.verses.length > 20) ? calculateVerseLayout : undefined}
+              getItemLayout={!Settings.debug_neverCalculateVerseHeight && (Settings.debug_alwaysCalculateVerseHeight || (song && song?.verses.length > 20)) ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
               onViewableItemsChanged={onListViewableItemsChanged.current}
               viewabilityConfig={listViewabilityConfig.current}

@@ -103,86 +103,95 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
-    <SettingSwitchComponent title={"debug_drawSongVerseBorderOpaque"}
+    <SettingSwitchComponent title={"[debug] drawSongVerseBorderOpaque"}
+                            description={"Toggles between opaque border matching the background color and a transparent border '#0000'"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorderOpaque"} />
-    <SettingSwitchComponent title={"debug_drawSongVerseBorderContainer"}
+    <SettingSwitchComponent title={"[debug] drawSongVerseBorderContainer"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorderContainer"} />
-    <SettingSwitchComponent title={"debug_drawSongVerseBorderTitle"}
+    <SettingSwitchComponent title={"[debug] drawSongVerseBorderTitle"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorderTitle"} />
-    <SettingSwitchComponent title={"debug_drawSongVerseBorderText"}
+    <SettingSwitchComponent title={"[debug] drawSongVerseBorderText"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorderText"} />
-    <SettingSwitchComponent title={"debug_drawSongVerseBorderVerseList"}
+    <SettingSwitchComponent title={"[debug] drawSongVerseBorderVerseList"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorderVerseList"} />
-    <SettingsSliderComponent title={"debug_verseWidth"}
+    <SettingsSliderComponent title={"[debug] verseWidth"}
                              keyName={"debug_verseWidth"}
                              minValue={0.9}
                              maxValue={1.05}
                              valueRender={(it) => Math.round(it * 100) + " %"}
                              defaultValue={1.0} />
-    <SettingsSliderComponent title={"debug_zoomFactor"}
+    <SettingsSliderComponent title={"[debug] zoomFactor"}
                              keyName={"debug_zoomFactor"}
                              minValue={0.1}
                              maxValue={1.0}
                              valueRender={(it) => Math.round(it * 100) + " %"}
                              defaultValue={1.0} />
-
-    <SettingSwitchComponent title={"debug_addWhitespaceAfterEachVerseLine"}
+    <SettingSwitchComponent title={"[debug] verseHeightCalculationReturnsZero"}
+                            description={"For this debug_alwaysCalculateVerseHeight must be enabled."}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_verseHeightCalculationReturnsZero"} />
+    <SettingSwitchComponent title={"[debug] neverCalculateVerseHeight"}
+                            description={"Overrides debug_alwaysCalculateVerseHeight."}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"debug_neverCalculateVerseHeight"} />
+    <Header title={""}/>
+    <SettingSwitchComponent title={"[debug] addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_addWhitespaceAfterEachVerseLine"} />
-    <SettingSwitchComponent title={"debug_renderEachVerseLineAsTextComponent"}
+    <SettingSwitchComponent title={"[debug] renderEachVerseLineAsTextComponent"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_renderEachVerseLineAsTextComponent"} />
-    <SettingSwitchComponent title={"debug_useAnimatedTextComponentForVerse"}
+    <SettingSwitchComponent title={"[debug] useAnimatedTextComponentForVerse"}
                             onLongPress={(setValue) => setValue(true)}
                             keyName={"debug_useAnimatedTextComponentForVerse"} />
-    <SettingSwitchComponent title={"debug_useAnimatedTextComponentForExtraComponents"}
+    <SettingSwitchComponent title={"[debug] useAnimatedTextComponentForExtraComponents"}
                             onLongPress={(setValue) => setValue(true)}
                             keyName={"debug_useAnimatedTextComponentForExtraComponents"} />
-    <SettingSwitchComponent title={"debug_addWhitespacesAfterVerse"}
+    <SettingSwitchComponent title={"[debug] addWhitespacesAfterVerse"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_addWhitespacesAfterVerse"} />
-    <SettingSwitchComponent title={"debug_addInvisibleCharactersAfterVerse"}
+    <SettingSwitchComponent title={"[debug] addInvisibleCharactersAfterVerse"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_addInvisibleCharactersAfterVerse"} />
-    <SettingSwitchComponent title={"debug_addInvisibleTextAfterVerse"}
+    <SettingSwitchComponent title={"[debug] addInvisibleTextAfterVerse"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_addInvisibleTextAfterVerse"} />
-    <SettingSwitchComponent title={"debug_adjustsFontSizeToFit"}
+    <SettingSwitchComponent title={"[debug] adjustsFontSizeToFit"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_adjustsFontSizeToFit"} />
-    <SettingSwitchComponent title={"debug_allowFontScaling"}
+    <SettingSwitchComponent title={"[debug] allowFontScaling"}
                             onLongPress={(setValue) => setValue(true)}
                             keyName={"debug_allowFontScaling"} />
-    <SettingSwitchComponent title={"debug_logOnTextLayout"}
+    <SettingSwitchComponent title={"[debug] logOnTextLayout"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_logOnTextLayout"} />
-    <SettingSwitchComponent title={"debug_drawSongVerseBorders"}
+    <SettingSwitchComponent title={"[debug] drawSongVerseBorders"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_drawSongVerseBorders"} />
-    <SettingSwitchComponent title={"debug_ignoreShowMelody"}
+    <SettingSwitchComponent title={"[debug] ignoreShowMelody"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_ignoreShowMelody"} />
-    <SettingSwitchComponent title={"debug_maxVerseWidth"}
+    <SettingSwitchComponent title={"[debug] maxVerseWidth"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_maxVerseWidth"} />
-    <SettingSwitchComponent title={"debug_mediumVerseWidth"}
+    <SettingSwitchComponent title={"[debug] mediumVerseWidth"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_mediumVerseWidth"} />
-    <SettingSwitchComponent title={"debug_removeClippedSubviews"}
+    <SettingSwitchComponent title={"[debug] removeClippedSubviews"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_removeClippedSubviews"} />
-    <SettingSwitchComponent title={"debug_alwaysCalculateVerseHeight"}
+    <SettingSwitchComponent title={"[debug] alwaysCalculateVerseHeight"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_alwaysCalculateVerseHeight"} />
-    <SettingSwitchComponent title={"debug_useFlexForVerses"}
+    <SettingSwitchComponent title={"[debug] useFlexForVerses"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_useFlexForVerses"} />
-    <SettingSwitchComponent title={"debug_useFlexForVersesContent"}
+    <SettingSwitchComponent title={"[debug] useFlexForVersesContent"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_useFlexForVersesContent"} />
 
