@@ -145,6 +145,9 @@ const SettingsScreen: React.FC = () => {
                              maxValue={0.5}
                              valueRender={(it) => Math.round(it * 100) / 100 + ""}
                              defaultValue={0.0} />
+    <SettingSwitchComponent title={"[debug] includeFontPadding"}
+                            onLongPress={(setValue) => setValue(true)}
+                            keyName={"debug_includeFontPadding"} />
     <Header title={""}/>
     <SettingSwitchComponent title={"[debug] addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}
@@ -201,6 +204,7 @@ const SettingsScreen: React.FC = () => {
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_useFlexForVersesContent"} />
 
+    <Header title={""}/>
     <SettingSwitchComponent title={"Survey completed"}
                             keyName={"surveyCompleted"} />
     <SettingSwitchComponent title={"Track song audio downloads"}

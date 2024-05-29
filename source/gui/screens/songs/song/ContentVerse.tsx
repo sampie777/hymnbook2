@@ -222,7 +222,8 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderText ? 1 : undefined,
     borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
     flex: Settings.debug_useFlexForVersesContent ? 1 : undefined,
-    letterSpacing: Settings.debug_letterSpacing
+    letterSpacing: Settings.debug_letterSpacing,
+    includeFontPadding: Settings.debug_includeFontPadding
   },
   textHighlighted: {
     color: colors.text.highlighted.foreground,
