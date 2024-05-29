@@ -124,6 +124,12 @@ const SettingsScreen: React.FC = () => {
                              maxValue={1.05}
                              valueRender={(it) => Math.round(it * 100) + " %"}
                              defaultValue={1.0} />
+    <SettingsSliderComponent title={"debug_zoomFactor"}
+                             keyName={"debug_zoomFactor"}
+                             minValue={0.1}
+                             maxValue={1.0}
+                             valueRender={(it) => Math.round(it * 100) + " %"}
+                             defaultValue={1.0} />
 
     <SettingSwitchComponent title={"debug_addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}
