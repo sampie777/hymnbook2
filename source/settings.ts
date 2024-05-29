@@ -82,6 +82,8 @@ class SettingsClass extends SettingsBaseClass {
   debug_drawSongVerseBorderVerseList = false;
   debug_verseWidth = 1.0;
   debug_zoomFactor = 1.0;
+  debug_verseHeightCalculationReturnsZero = false;
+  debug_neverCalculateVerseHeight = false;
 }
 
 const Settings = new SettingsClass();
