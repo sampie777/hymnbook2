@@ -24,7 +24,7 @@ export const VerseSchema: Realm.ObjectSchema = {
     content: "string",
     language: "string",
     index: "int",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     abcLyrics: "string?",
     _songs: {
       type: "linkingObjects",
@@ -44,7 +44,7 @@ export const SongSchema: Realm.ObjectSchema = {
     language: "string",
     createdAt: "date",
     modifiedAt: "date",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     verses: VerseSchema.name + "[]",
     metadata: SongMetadataSchema.name + "[]",
     abcMelodies: AbcMelodySchema.name + "[]",
@@ -69,7 +69,7 @@ export const SongBundleSchema: Realm.ObjectSchema = {
     copyright: "string",
     createdAt: "date",
     modifiedAt: "date",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     hash: "string",
     songs: SongSchema.name + "[]"
   },

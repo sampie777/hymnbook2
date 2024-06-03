@@ -45,6 +45,7 @@ const SongControls: React.FC<ComponentProps> =
     const goToSongListSong = (songListSong: SongListSongModel) => {
       requestAnimationFrame(() => navigation.navigate(SongRoute, {
         id: songListSong.song.id,
+        uuid: songListSong.song.uuid,
         songListIndex: songListSong.index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
       }));

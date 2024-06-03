@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import Db from "../../../../../logic/db/db";
-import { SongSchema } from "../../../../../logic/db/models/SongsSchema";
 import { rollbar } from "../../../../../logic/rollbar";
-import { generateSongTitle } from "../../../../../logic/songs/utils";
+import { generateSongTitle, loadSongWithUuidOrId } from "../../../../../logic/songs/utils";
 import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
-import { Song, Verse, VerseProps } from "../../../../../logic/db/models/Songs";
+import { Verse, VerseProps } from "../../../../../logic/db/models/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
   clearOrSelectAll,
@@ -90,22 +88,15 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const showSong = (verses: Verse[]) => {
     navigation.replace(SongRoute, {
       id: route.params.songId,
+      uuid: route.params.songUuid,
       selectedVerses: verses,
       highlightText: route.params.highlightText
     });
   };
 
   const addToSongListAndShowSearch = (verses: Verse[]) => {
-    if (route.params.songId === undefined) {
-      return;
-    }
-
-    const song = Db.songs.realm()
-      .objectForPrimaryKey(SongSchema.name, route.params.songId) as (Song & Realm.Object | undefined);
-
-    if (song === undefined) {
-      return;
-    }
+    const song = loadSongWithUuidOrId(route.params.songUuid, route.params.songId);
+    if (song === undefined) return;
 
     let addedSongListSongModel;
     try {
@@ -119,9 +110,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       Alert.alert("Could not add song to songlist: " + error);
       return;
     }
-    if (addedSongListSongModel === undefined) {
-      return;
-    }
+
+    if (addedSongListSongModel === undefined) return;
 
     SongList.saveSelectedVersesForSong(addedSongListSongModel.index, verses);
 
