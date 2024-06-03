@@ -54,6 +54,14 @@ export class SongMetadata {
     this.type = type;
     this.value = value;
   }
+
+  static clone(obj: SongMetadata): SongMetadata {
+    return {
+      id: obj.id,
+      type: obj.type,
+      value: obj.value,
+    }
+  }
 }
 
 export interface VerseProps {
@@ -159,6 +167,23 @@ export class Song {
 
     return song._songBundles[0];
   }
+
+  static clone(obj: Song): Song {
+    return {
+      id: obj.id,
+      name: obj.name,
+      number: obj.number,
+      language: obj.language,
+      verses: obj.verses.map(Verse.toObject).sort((a, b) => a.index - b.index),
+      createdAt: obj.createdAt,
+      modifiedAt: obj.modifiedAt,
+      uuid: obj.uuid,
+      abcMelodies: obj.abcMelodies.map(AbcMelody.clone),
+      metadata: obj.metadata.map(SongMetadata.clone),
+      lastUsedMelody: obj.lastUsedMelody ? AbcMelody.clone(obj.lastUsedMelody) : undefined,
+      _songBundles: obj._songBundles?.map(it => SongBundle.clone(it, {includeSongs: false})),
+    }
+  }
 }
 
 export class SongBundle {
@@ -208,7 +233,7 @@ export class SongBundle {
       language: obj.language,
       author: obj.author,
       copyright: obj.copyright,
-      songs: !options.includeSongs ? [] : obj.songs,
+      songs: !options.includeSongs ? [] : obj.songs.map(Song.clone),
       createdAt: obj.createdAt,
       modifiedAt: obj.modifiedAt,
       uuid: obj.uuid,
