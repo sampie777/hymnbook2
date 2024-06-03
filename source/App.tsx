@@ -85,6 +85,7 @@ const RootNavigation = () => {
                     }}
                     initialParams={{
                       id: undefined,
+                      uuid: undefined,
                       songListIndex: undefined,
                       selectedVerses: []
                     }} />

@@ -68,7 +68,7 @@ export const SearchResultItem: React.FC<{
 
     const navigateToSong = () => {
       beforeNavigating?.();
-      navigation.navigate(SongRoute, { id: song.id });
+      navigation.navigate(SongRoute, { id: song.id, uuid: song.uuid });
     };
 
     const navigateToVersePicker = () => {
@@ -77,6 +77,7 @@ export const SearchResultItem: React.FC<{
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
         songId: song.id,
+        songUuid: song.uuid,
         songName: song.name,
         method: VersePickerMethod.ShowSong
       });
@@ -88,6 +89,7 @@ export const SearchResultItem: React.FC<{
         verses: song.verses?.map(it => Verse.toObject(it)),
         selectedVerses: [],
         songId: song.id,
+        songUuid: song.uuid,
         songName: song.name,
         method: VersePickerMethod.AddToSongListAndShowSearch
       });

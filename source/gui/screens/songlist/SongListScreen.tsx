@@ -92,6 +92,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     const onSearchResultItemPress = (index: number, songListSong: SongListSongModel) => {
       navigation.navigate(SongRoute, {
         id: songListSong.song.id,
+        uuid: songListSong.song.uuid,
         songListIndex: index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
       });
