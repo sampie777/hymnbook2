@@ -23,10 +23,10 @@ import {
   calculateVerseHeight,
   generateSongTitle,
   getDefaultMelody,
-  loadSongWithId
+  loadSongWithUuidOrId
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
+import { Alert, Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
@@ -58,7 +58,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
 
-  const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
+  const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
   const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
@@ -88,7 +88,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     React.useCallback(() => {
       onFocus();
       return onBlur;
-    }, [route.params.id])
+    }, [route.params.id, route.params.uuid])
   );
 
   const onFocus = () => {
@@ -175,13 +175,26 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const loadSong = () => {
-    setSong(loadSongWithId(route.params.id));
+    const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
+    setSong(dbSong ? Song.clone(dbSong) : undefined);
+
+    if (!dbSong) {
+      Alert.alert("Song could not be found", "This probably happened because the database was updated. Try re-opening the song.")
+      rollbar.info("Song could not be found", {
+        "route.params.id": route.params.id,
+        "route.params.uuid": route.params.uuid,
+        isMounted: isMounted(),
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
+      })
+    }
   };
 
   const openVersePicker = (useSong?: Song) => {
     if (useSong === undefined) {
       rollbar.warning("Can't open versepicker for undefined song.", {
         "route.params.id": route.params.id,
+        "route.params.uuid": route.params.uuid,
         isMounted: isMounted(),
         isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
@@ -474,7 +487,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             <VerseList
               ref={flatListComponentRef}
               waitFor={isIOS ? undefined : pinchGestureHandlerRef}
-              data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+              data={song?.verses}
               renderItem={renderContentItem}
               initialNumToRender={20}
               keyExtractor={(item: Verse) => item.id.toString()}
@@ -502,8 +515,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
         <LoadingOverlay text={null}
                         isVisible={
-                          route.params.id !== undefined
-                          && (song === undefined || song.id !== route.params.id)}
+                          (route.params.id != undefined && route.params.uuid != undefined)
+                          && (song === undefined || (song.id !== route.params.id && song.uuid !== route.params.uuid))}
                         animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>

@@ -29,6 +29,16 @@ export class AbcSubMelody {
       // `.includes()` won't work due to the Realm data type of `verseUuids`.
       it.verseUuids.some(it => it == verse.uuid));
   }
+
+  static clone(obj: AbcSubMelody) {
+    return {
+      id: obj.id,
+      uuid: obj.uuid,
+      name: obj.name,
+      melody: obj.melody,
+      verseUuids: obj.verseUuids,
+    }
+  }
 }
 
 export class AbcMelody {
@@ -50,5 +60,15 @@ export class AbcMelody {
     this.melody = melody;
     this.subMelodies = subMelodies;
     this.uuid = uuid;
+  }
+
+  static clone(obj: AbcMelody): AbcMelody {
+    return {
+      id: obj.id,
+      uuid: obj.uuid,
+      name: obj.name,
+      melody: obj.melody,
+      subMelodies: obj.subMelodies.map(AbcSubMelody.clone),
+    }
   }
 }

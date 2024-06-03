@@ -7,7 +7,7 @@ import HeaderIconVersePicker from "./HeaderIconVersePicker";
 import MelodyHeaderIconButton from "./melody/MelodyHeaderIconButton";
 
 interface Props {
-  song: Song & Realm.Object | undefined;
+  song: Song | undefined;
   showMelody: boolean;
   isMelodyLoading: boolean;
   openVersePicker: () => void;

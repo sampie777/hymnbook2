@@ -183,7 +183,7 @@ export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean =
   const stripNameDownToEssentials = (it: string) => it.replace(/ [0-9(\[].*$/g, "").trim();
 
   const songBundle = Song.getSongBundle(item);
-  const nameWithoutNumber = stripNameDownToEssentials(item.name)
+  const nameWithoutNumber = stripNameDownToEssentials(item.name);
   return songs.some(it =>
     it.id !== item.id
     && Song.getSongBundle(it)?.id !== songBundle?.id
@@ -215,16 +215,28 @@ export const hasMelodyToShow = (song?: Song) => {
   return true;
 };
 
-export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => {
+export const loadSongWithUuidOrId = (uuid?: string, id?: number): Song & Realm.Object | undefined => {
+  if (uuid == undefined && id == undefined) {
+    return undefined;
+  }
+
   if (!Db.songs.isConnected()) {
     return;
   }
 
-  if (id === undefined) {
-    return undefined;
+  const songs = Db.songs.realm().objects<Song>(SongSchema.name)
+    .filtered(`uuid = "${uuid}" OR id = ${id}`);
+
+  if (songs.length == 0) return undefined;
+  if (songs.length > 1) {
+    rollbar.warning("Multiple songs found for UUID and ID search", {
+      uuid: uuid,
+      id: id,
+      songs: songs.map(it => ({ name: it.name, id: it.id, uuid: it.uuid }))
+    });
   }
 
-  return Db.songs.realm().objectForPrimaryKey(SongSchema.name, id) ?? undefined;
+  return songs[0];
 };
 
 export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: SongBundle): boolean => {
