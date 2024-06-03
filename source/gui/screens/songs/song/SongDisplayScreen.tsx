@@ -26,7 +26,7 @@ import {
   loadSongWithId
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
+import { Alert, Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
 import { StyleSheet, View, ViewToken } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
@@ -177,6 +177,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const loadSong = () => {
     const dbSong = loadSongWithId(route.params.id);
     setSong(dbSong ? Song.clone(dbSong) : undefined);
+
+    if (!dbSong) {
+      Alert.alert("Song could not be found", "This probably happened because the database was updated. Try re-opening the song.")
+      rollbar.info("Song could not be found", {
+        "route.params.id": route.params.id,
+        isMounted: isMounted(),
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
+      })
+    }
   };
 
   const openVersePicker = (useSong?: Song) => {
