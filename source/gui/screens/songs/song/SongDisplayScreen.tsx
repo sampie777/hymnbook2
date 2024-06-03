@@ -58,7 +58,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
 
-  const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
+  const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
   const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
@@ -175,7 +175,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const loadSong = () => {
-    setSong(loadSongWithId(route.params.id));
+    const dbSong = loadSongWithId(route.params.id);
+    setSong(dbSong ? Song.clone(dbSong) : undefined);
   };
 
   const openVersePicker = (useSong?: Song) => {
@@ -474,7 +475,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             <VerseList
               ref={flatListComponentRef}
               waitFor={isIOS ? undefined : pinchGestureHandlerRef}
-              data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+              data={song?.verses}
               renderItem={renderContentItem}
               initialNumToRender={20}
               keyExtractor={(item: Verse) => item.id.toString()}

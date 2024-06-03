@@ -12,7 +12,7 @@ import {
 } from "react-native-popup-menu";
 
 interface Props {
-  song: Song & Realm.Object;
+  song: Song;
   showMelody: boolean;
   isMelodyLoading: boolean;
   setShowMelody: (value: boolean) => void;
