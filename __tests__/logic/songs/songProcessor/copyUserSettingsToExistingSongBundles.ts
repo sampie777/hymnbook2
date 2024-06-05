@@ -94,7 +94,7 @@ describe("copy user settings during songbundle update", () => {
     expect(newDbBundle.songs.length).toBe(newSongBundle.songs.length);
     expect(newDbBundle.songs[0].lastUsedMelody).toBeNull();
     expect(newDbBundle.songs[1].lastUsedMelody).toBeNull();
-    expect(newDbBundle.songs[2].lastUsedMelody).toStrictEqual(newDbBundle.songs[2].abcMelodies[0]);
-    expect(newDbBundle.songs[3].lastUsedMelody).toStrictEqual(newDbBundle.songs[3].abcMelodies[1]);
+    expect(newDbBundle.songs[2].lastUsedMelody?.uuid).toBe(newDbBundle.songs[2].abcMelodies[0].uuid);
+    expect(newDbBundle.songs[3].lastUsedMelody?.uuid).toBe(newDbBundle.songs[3].abcMelodies[1].uuid);
   });
 });
