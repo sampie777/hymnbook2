@@ -4,7 +4,6 @@ import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchem
 import SongList from "../../../logic/songs/songList";
 import Settings from "../../../settings";
 import { objectToArrayIfNotAlready } from "../../../logic/utils";
-import { CollectionChangeCallback } from "realm";
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
@@ -38,7 +37,7 @@ const SongListMenuIcon: React.FC<Props> = ({ size, color, style }) => {
     Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange = () => {
     animateSongListChange();
 
     previousSongListSize.current = SongList.list().length;

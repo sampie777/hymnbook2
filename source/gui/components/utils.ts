@@ -4,7 +4,7 @@ import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import { CollectionChangeCallback } from "realm";
+import { RealmObject } from "realm/dist/public-types/Object";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -118,7 +118,7 @@ export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: fa
 };
 
 
-export const useCollectionListener = <T>(objects: Realm.Results<T & Realm.Object>, onChange: () => void) => {
+export const useCollectionListener = <T>(objects: Realm.Results<RealmObject<T> & T>, onChange: () => void) => {
   const isMounted = useIsMounted({ trackFocus: true });
 
   useFocusEffect(useCallback(() => {
@@ -128,10 +128,10 @@ export const useCollectionListener = <T>(objects: Realm.Results<T & Realm.Object
     };
   }, []));
 
-  const onCollectionChange: CollectionChangeCallback<T> = () => {
+  const onCollectionChange = () => {
     runAsync(() => {
       // This is needed, as the removeListener doesn't seem to correctly work.
-      if (!isMounted) return;
+      if (!isMounted()) return;
 
       onChange();
     });

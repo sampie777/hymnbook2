@@ -36,8 +36,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isLocalGroupsLoading, setIsLocalGroupsLoading] = useState(true);
   const [isGroupLoading, setIsGroupLoading] = useState(false);
-  const [serverGroups, setServerGroups] = useState<Array<ServerDocumentGroup>>([]);
-  const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup & Realm.Object>>([]);
+  const [serverGroups, setServerGroups] = useState<ServerDocumentGroup[]>([]);
+  const [localGroups, setLocalGroups] = useState<(LocalDocumentGroup & Realm.Object<LocalDocumentGroup>)[]>([]);
   const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
@@ -295,7 +295,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     loadLocalDocumentGroups();
   };
 
-  const getAllLanguagesFromGroups = (groups: Array<ServerDocumentGroup>) => {
+  const getAllLanguagesFromGroups = (groups: ServerDocumentGroup[]) => {
     const languages = DocumentProcessor.getAllLanguagesFromDocumentGroups(groups);
 
     if (languages.length > 0 && filterLanguage === "") {

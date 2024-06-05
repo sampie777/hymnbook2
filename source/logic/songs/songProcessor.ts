@@ -14,7 +14,7 @@ import Settings from "../../settings";
 
 export namespace SongProcessor {
 
-  export const loadLocalSongBundles = (): Result<Array<SongBundle & Realm.Object> | undefined> => {
+  export const loadLocalSongBundles = (): Result<(SongBundle & Realm.Object<SongBundle>)[] | undefined> => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot load local song bundles: song database is not connected");
       return new Result({ success: false, message: "Database is not connected" });
@@ -101,12 +101,12 @@ export namespace SongProcessor {
     return new Result({ success: true, message: `Deleted all ${songCount} songs for ${bundleName}` });
   };
 
-  export const getAllLanguagesFromBundles = (bundles: Array<ServerSongBundle | SongBundle>) => {
+  export const getAllLanguagesFromBundles = (bundles: (ServerSongBundle | SongBundle)[]) => {
     if (bundles.length === 0) {
       return [];
     }
 
-    const languages: Array<string> = [];
+    const languages: string[] = [];
     bundles.forEach(it => {
       if (!languages.includes(it.language)) {
         languages.push(it.language);
@@ -116,7 +116,7 @@ export namespace SongProcessor {
     return languages;
   };
 
-  export const determineDefaultFilterLanguage = (bundles: Array<ServerSongBundle | SongBundle>): string => {
+  export const determineDefaultFilterLanguage = (bundles: (ServerSongBundle | SongBundle)[]): string => {
     if (bundles.length === 0) {
       return "";
     }

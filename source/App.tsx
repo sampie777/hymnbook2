@@ -12,7 +12,6 @@ import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CollectionChangeCallback } from "realm";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
@@ -131,7 +130,7 @@ const HomeNavigation: React.FC = () => {
     Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange = () => {
     setSongListSize(SongList.list().length);
   };
 

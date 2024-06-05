@@ -11,7 +11,7 @@ interface ScreenProps<T extends DocumentGroup> {
   searchText?: string;
 }
 
-const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object>> = ({ group, onPress, searchText }) => {
+const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<DocumentGroup>>> = ({ group, onPress, searchText }) => {
   const styles = createStyles(useTheme());
 
   return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>

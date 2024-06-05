@@ -7,7 +7,6 @@ import {
   View
 } from "react-native";
 import ConfirmationModal from "./ConfirmationModal";
-import { clearOrSelectAll } from "../../../logic/songs/versePicker";
 
 interface Props<T> {
   selectedValues: Array<T>;
