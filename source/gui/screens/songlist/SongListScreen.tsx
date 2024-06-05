@@ -13,6 +13,8 @@ import { ThemeContextProps, useTheme } from "../../components/providers/ThemePro
 import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
 import DeleteAllButton from "./DeleteAllButton";
+import { rollbar } from "../../../logic/rollbar";
+import { sanitizeErrorForRollbar } from "../../../logic/utils";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -27,7 +29,11 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     }, []);
 
     const onLaunch = () => {
-      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+      try {
+        Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+      } catch (error) {
+        rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+      }
     };
 
     const onExit = () => Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
@@ -104,7 +110,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     const onSearchResultItemDeleteButtonPress = (index: number) => {
       // Check list length, because if the list is emptied using deleteAll, the GUI crashes when we also try to set
       // setListHasBeenChanged to true. This doesn't appear to be happening here, but better safe than sorry.
-      if (list.length > 1) setListHasBeenChanged(true)
+      if (list.length > 1) setListHasBeenChanged(true);
 
       SongList.deleteSongAtIndex(index);
     };

@@ -122,7 +122,11 @@ export const useCollectionListener = <T>(objects: Realm.Results<RealmObject<T> &
   const isMounted = useIsMounted({ trackFocus: true });
 
   useFocusEffect(useCallback(() => {
-    objects.addListener(onCollectionChange);
+    try {
+      objects.addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+    }
     return () => {
       objects.removeListener(onCollectionChange);
     };
