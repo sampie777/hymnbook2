@@ -38,7 +38,7 @@
     "react-native-svg": "13.14.0",
     "react-native-track-player": "4.0.1",
     "react-native-vector-icons": "9.2.0",
-    "realm": "11.10.2",
+    "realm": "12.9.0",
     "rollbar-react-native": "0.9.3"
   },
   "devDependencies": {
