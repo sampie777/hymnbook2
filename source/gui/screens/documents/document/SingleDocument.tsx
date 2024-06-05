@@ -50,7 +50,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
   const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
 
-  const [document, setDocument] = useState<Document & Realm.Object | undefined>(undefined);
+  const [document, setDocument] = useState<(Document & Realm.Object<Document>) | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
@@ -121,9 +121,9 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
 
     const newDocument = Db.documents.realm()
-      .objectForPrimaryKey(DocumentSchema.name, route.params.id) as (Document & Realm.Object | undefined);
+      .objectForPrimaryKey<Document>(DocumentSchema.name, route.params.id) ?? undefined;
 
-    if (newDocument === undefined) {
+    if (newDocument == undefined) {
       // Document not found
     }
 

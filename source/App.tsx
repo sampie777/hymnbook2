@@ -12,7 +12,6 @@ import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CollectionChangeCallback } from "realm";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
@@ -34,7 +33,7 @@ import {
 } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
-import { runAsync } from "./logic/utils";
+import { runAsync, sanitizeErrorForRollbar } from "./logic/utils";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";
@@ -56,6 +55,7 @@ import FeaturesProvider, { useFeatures } from "./gui/components/providers/Featur
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
+import { rollbar } from "./logic/rollbar";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -124,14 +124,18 @@ const HomeNavigation: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    try {
+      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+    }
   };
 
   const onExit = () => {
     Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange = () => {
     setSongListSize(SongList.list().length);
   };
 
