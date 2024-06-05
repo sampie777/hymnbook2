@@ -145,14 +145,20 @@ case $command in
   patch)
     releasePatch
     setNextDevelopmentVersion
+    xdg-open android/app/build/outputs/apk/release
+    xdg-open android/app/build/outputs/bundle/release
     ;;
   minor)
     releaseMinor
     setNextDevelopmentVersion
+    xdg-open android/app/build/outputs/apk/release
+    xdg-open android/app/build/outputs/bundle/release
     ;;
   major)
     releaseMajor
     setNextDevelopmentVersion
+    xdg-open android/app/build/outputs/apk/release
+    xdg-open android/app/build/outputs/bundle/release
     ;;
   setNextDevelopmentVersion)
     setNextDevelopmentVersion
