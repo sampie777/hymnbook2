@@ -4,7 +4,6 @@ import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import { RealmObject } from "realm/dist/public-types/Object";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -118,7 +117,7 @@ export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: fa
 };
 
 
-export const useCollectionListener = <T>(objects: Realm.Results<RealmObject<T> & T>, onChange: () => void) => {
+export const useCollectionListener = <T>(objects: Realm.Results<Realm.Object<T> & T>, onChange: () => void) => {
   const isMounted = useIsMounted({ trackFocus: true });
 
   useFocusEffect(useCallback(() => {
