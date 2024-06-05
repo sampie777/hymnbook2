@@ -5,12 +5,12 @@ export const DocumentSchema: Realm.ObjectSchema = {
   properties: {
     id: "int",
     name: { type: "string", indexed: true },
-    html: "string",
+    html: { type: "string", indexed: "full-text" },
     language: "string",
     index: "int",
     createdAt: "date",
     modifiedAt: "date",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     _parent: {
       type: "linkingObjects",
       objectType: "DocumentGroup",    // DocumentGroupSchema.name
@@ -31,7 +31,7 @@ export const DocumentGroupSchema: Realm.ObjectSchema = {
     size: "int",
     createdAt: "date",
     modifiedAt: "date",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     hash: "string?",
     isRoot: { type: "bool", indexed: true },
     _parent: {
