@@ -159,7 +159,7 @@ export namespace DocumentProcessor {
     return new Result({ success: true, message: `${documentGroup.name} updated!` });
   };
 
-  export const loadLocalDocumentRoot = (): Result<Array<DocumentGroup & Realm.Object> | undefined> => {
+  export const loadLocalDocumentRoot = (): Result<(DocumentGroup & Realm.Object<DocumentGroup>)[] | undefined> => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot load local document groups: document database is not connected");
       return new Result({ success: false, message: "Database is not connected" });

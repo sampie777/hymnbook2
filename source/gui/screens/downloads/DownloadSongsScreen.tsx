@@ -35,8 +35,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const [isLoading, setIsLoading] = useState(false);
   const [isLocalBundlesLoading, setIsLocalBundlesLoading] = useState(true);
   const [isBundleLoading, setIsBundleLoading] = useState(false);
-  const [serverBundles, setServerBundles] = useState<Array<ServerSongBundle>>([]);
-  const [localBundles, setLocalBundles] = useState<Array<LocalSongBundle & Realm.Object>>([]);
+  const [serverBundles, setServerBundles] = useState<ServerSongBundle[]>([]);
+  const [localBundles, setLocalBundles] = useState<(LocalSongBundle & Realm.Object<LocalSongBundle>)[]>([]);
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
@@ -273,7 +273,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     loadLocalSongBundles();
   };
 
-  const getAllLanguagesFromBundles = (bundles: Array<ServerSongBundle>) => {
+  const getAllLanguagesFromBundles = (bundles: ServerSongBundle[]) => {
     const languages = SongProcessor.getAllLanguagesFromBundles(bundles);
 
     if (languages.length > 0 && filterLanguage === "") {

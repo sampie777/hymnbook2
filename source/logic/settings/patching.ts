@@ -11,7 +11,7 @@ const patches: { [key: number]: () => any } = {
   2: patch2_PreFillSettingsSongSearchSelectedSongBundleUuids
 };
 
-const isPatchIdApplied = (appliedPatches: Realm.Results<SettingPatch & Realm.Object>, id: number) =>
+const isPatchIdApplied = (appliedPatches: Realm.Results<SettingPatch & Realm.Object<SettingPatch>>, id: number) =>
   appliedPatches.some(it => it.id == id);
 
 const markPatchAsApplied = (id: number) => new Promise<void>((resolve, reject) => {

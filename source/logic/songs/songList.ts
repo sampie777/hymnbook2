@@ -7,7 +7,7 @@ import { rollbar } from "../rollbar";
 
 export default class SongList {
 
-  static list(): Array<SongListSongModel> {
+  static list(): SongListSongModel[] {
     const songList = this.getFirstSongList();
     if (songList === undefined) return [];
 
@@ -19,10 +19,10 @@ export default class SongList {
       .sorted("index")
       // Fix for when null objects come through when database is in transaction
       // (rollbar: #58 Cannot read property of undefined/null expression n)
-      .filter(it => it != null && it.song != null) as unknown as Array<SongListSongModel>;
+      .filter(it => it != null && it.song != null) as unknown as SongListSongModel[];
   }
 
-  static getAllSongLists(): Realm.Results<SongListModel> {
+  static getAllSongLists(): Realm.Results<Realm.Object<SongListModel> & SongListModel> {
     return Db.songs.realm().objects<SongListModel>(SongListModelSchema.name);
   }
 
@@ -157,7 +157,7 @@ export default class SongList {
     return this.getSongAtIndex(currentIndex + 1);
   }
 
-  static saveSelectedVersesForSong(index: number, verses: Array<Verse>) {
+  static saveSelectedVersesForSong(index: number, verses: Verse[]) {
     const songListSong = SongList.getSongAtIndex(index);
     if (songListSong === undefined) return;
 

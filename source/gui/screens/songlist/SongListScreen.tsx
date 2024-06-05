@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, Text, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
 import { Verse } from "../../../logic/db/models/Songs";
@@ -7,7 +7,6 @@ import { ParamList, SongListRoute, SongRoute } from "../../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../logic/songs/songList";
 import { SongListSongModel } from "../../../logic/db/models/SongListModel";
-import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
 import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
@@ -85,7 +84,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       return false;
     };
 
-    const onCollectionChange: CollectionChangeCallback<Object> = () => {
+    const onCollectionChange = () => {
       reloadSongList();
     };
 
