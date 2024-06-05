@@ -4,6 +4,7 @@ import { SettingSchema } from "../db/models/SettingsSchema";
 import { rollbar } from "../rollbar";
 import { sanitizeErrorForRollbar } from "../utils";
 import { applyPatches } from "./patching";
+import { UpdateMode } from "realm";
 
 class SettingsProvider {
   static set(key: string, value: string) {
@@ -14,7 +15,7 @@ class SettingsProvider {
     return Db.settings.realm().write(() =>
       Db.settings.realm().create<Setting>(SettingSchema.name,
         new Setting({ key, value }),
-        Realm.UpdateMode.All)
+        UpdateMode.All)
     );
   }
 
