@@ -19,6 +19,7 @@
     "@react-navigation/bottom-tabs": "6.5.11",
     "@react-navigation/native": "6.1.9",
     "@react-navigation/native-stack": "6.9.17",
+    "@realm/react": "0.7.0",
     "abcjs": "git+https://github.com/paulrosen/abcjs.git#6.2.3",
     "fastest-levenshtein": "1.0.16",
     "fetch-retry": "6.0.0",
