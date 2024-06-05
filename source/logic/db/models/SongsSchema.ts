@@ -40,7 +40,7 @@ export const SongSchema: Realm.ObjectSchema = {
   properties: {
     id: "int",
     name: { type: "string", indexed: true },
-    number: { type: "int?", indexed: true },
+    number: { type: "int", optional: true, indexed: true },
     language: "string",
     createdAt: "date",
     modifiedAt: "date",

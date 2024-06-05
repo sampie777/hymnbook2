@@ -21,9 +21,11 @@ import SearchInput from "./SearchInput";
 
 
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
+  type DbDocumentGroup = DocumentGroup & Realm.Object<DocumentGroup>;
+
   const [isLoading, setIsLoading] = useState(true);
-  const [group, setGroup] = useState<(DocumentGroup & Realm.Object) | undefined>(undefined);
-  const [rootGroups, setRootGroups] = useState<Array<DocumentGroup & Realm.Object>>([]);
+  const [group, setGroup] = useState<DbDocumentGroup | undefined>(undefined);
+  const [rootGroups, setRootGroups] = useState<Array<DbDocumentGroup>>([]);
   const [searchText, setSearchText] = useState("");
   const styles = createStyles(useTheme());
 
@@ -97,7 +99,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     setSearchText("");
   };
 
-  const onGroupPress = (group: DocumentGroup & Realm.Object) => {
+  const onGroupPress = (group: DbDocumentGroup) => {
     setGroup(group);
     setSearchText("");
   };
@@ -106,7 +108,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     navigation.navigate(DocumentRoute, { id: document.id });
   };
 
-  const groups = (): Array<DocumentGroup & Realm.Object> => {
+  const groups = (): Array<DbDocumentGroup> => {
     if (group === undefined) {
       return rootGroups;
     }
@@ -115,7 +117,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       return [];
     }
 
-    return Array.from(group.groups as (DocumentGroup & Realm.Object)[]);
+    return Array.from(group.groups as DbDocumentGroup[]);
   };
 
   const groupsForSearch = () => {
@@ -125,9 +127,9 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     return DocumentSearch.searchForGroups([group], searchText);
   };
 
-  const groupsWithSearchResult = (): Array<DocumentGroup & Realm.Object> => {
+  const groupsWithSearchResult = (): Array<DbDocumentGroup> => {
     if (searchText.length > 0) {
-      return groupsForSearch() as (DocumentGroup & Realm.Object)[];
+      return groupsForSearch() as DbDocumentGroup[];
     }
     return groups();
   };
@@ -166,7 +168,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       // rollbar.debug("The selected group is invalid")
       setGroup(undefined);
       return true;
-    } else if (group && (group.groups as (DocumentGroup & Realm.Object)[]).some(it => !it.isValid())) {
+    } else if (group && (group.groups as DbDocumentGroup[]).some(it => !it.isValid())) {
       rollbar.debug("Some sub groups are invalid");
       setGroup(undefined);
       return true;

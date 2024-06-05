@@ -3,10 +3,10 @@ import Db from "../../../logic/db/db";
 import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
 import SongList from "../../../logic/songs/songList";
 import Settings from "../../../settings";
-import { objectToArrayIfNotAlready } from "../../../logic/utils";
-import { CollectionChangeCallback } from "realm";
+import { objectToArrayIfNotAlready, sanitizeErrorForRollbar } from "../../../logic/utils";
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { rollbar } from "../../../logic/rollbar";
 
 interface Props {
   size?: number;
@@ -31,14 +31,18 @@ const SongListMenuIcon: React.FC<Props> = ({ size, color, style }) => {
   }, []);
 
   const onLaunch = () => {
-    Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    try {
+      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+    }
   };
 
   const onExit = () => {
     Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange = () => {
     animateSongListChange();
 
     previousSongListSize.current = SongList.list().length;

@@ -215,7 +215,7 @@ export const hasMelodyToShow = (song?: Song) => {
   return true;
 };
 
-export const loadSongWithUuidOrId = (uuid?: string, id?: number): Song & Realm.Object | undefined => {
+export const loadSongWithUuidOrId = (uuid?: string, id?: number): (Song & Realm.Object<Song>) | undefined => {
   if (uuid == undefined && id == undefined) {
     return undefined;
   }
@@ -345,8 +345,8 @@ export const calculateVerseHeight = (index: number, verseHeights: Record<number,
   let totalHeight = 0;
   let count = 0;
   Object.entries(verseHeights)
-    .filter(([key, value]) => +key < index)
-    .forEach(([key, value]) => {
+    .filter(([key]) => +key < index)
+    .forEach(([, value]) => {
       totalHeight += value;
       count++;
     });

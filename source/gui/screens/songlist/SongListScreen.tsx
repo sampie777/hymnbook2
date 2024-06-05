@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, Text, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
 import { Verse } from "../../../logic/db/models/Songs";
@@ -7,13 +7,14 @@ import { ParamList, SongListRoute, SongRoute } from "../../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../logic/songs/songList";
 import { SongListSongModel } from "../../../logic/db/models/SongListModel";
-import { CollectionChangeCallback } from "realm";
 import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
 import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
 import DeleteAllButton from "./DeleteAllButton";
+import { rollbar } from "../../../logic/rollbar";
+import { sanitizeErrorForRollbar } from "../../../logic/utils";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -28,7 +29,11 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     }, []);
 
     const onLaunch = () => {
-      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+      try {
+        Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+      } catch (error) {
+        rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+      }
     };
 
     const onExit = () => Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
@@ -85,7 +90,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       return false;
     };
 
-    const onCollectionChange: CollectionChangeCallback<Object> = () => {
+    const onCollectionChange = () => {
       reloadSongList();
     };
 
@@ -105,7 +110,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     const onSearchResultItemDeleteButtonPress = (index: number) => {
       // Check list length, because if the list is emptied using deleteAll, the GUI crashes when we also try to set
       // setListHasBeenChanged to true. This doesn't appear to be happening here, but better safe than sorry.
-      if (list.length > 1) setListHasBeenChanged(true)
+      if (list.length > 1) setListHasBeenChanged(true);
 
       SongList.deleteSongAtIndex(index);
     };
