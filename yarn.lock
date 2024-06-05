@@ -2349,7 +2349,7 @@
   resolved "https://registry.yarnpkg.com/@realm/fetch/-/fetch-0.1.1.tgz#1a637d0a1fc3734a7ffca64361d764777dd3d80c"
   integrity sha512-hkTprw79RXGv54Je0DrjpQPLaz4QID2dO3FmthAQQWAkqwyrqMzrCGzJzLlmTKWZFsgLrN8KQyNewod27P+nJg==
 
-"@realm/react@^0.7.0":
+"@realm/react@0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@realm/react/-/react-0.7.0.tgz#6afbb46bc22ff4cbdd81061dd446899ec670064c"
   integrity sha512-Ee3dUq/WeYNgCyjJOwaef1c5aFmqJy21yQEL/DaZWBTV6NMd5DH19xzIJeA8YPeSbYIVPOyD5hiu48kdfFdOxA==
