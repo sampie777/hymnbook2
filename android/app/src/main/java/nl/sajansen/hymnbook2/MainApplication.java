@@ -1,6 +1,8 @@
 package nl.sajansen.hymnbook2;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.provider.Settings;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -61,5 +63,9 @@ public class MainApplication extends Application implements ReactApplication {
     ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
 
     RollbarReactNative.init(this, BuildConfig.ROLLBAR_API_KEY, BuildConfig.DEBUG ? "development" : "production");
+    // Set unhashed device ID (as I struggle to reach the hash function).
+    // This code is copied from react-native-device-info package.
+    @SuppressLint("HardwareIds") String clientId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    RollbarReactNative.instance().setPersonData(clientId, "", "");
   }
 }
