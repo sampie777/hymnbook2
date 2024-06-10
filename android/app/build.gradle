@@ -138,6 +138,7 @@ android {
 
 dependencies {
     implementation project(':react-native-config')
+    implementation('com.rollbar:rollbar-android') // Needed for custom loading device ID for Rollbar
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
