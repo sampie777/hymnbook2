@@ -4,6 +4,7 @@
 
 #import "RNCConfig.h"
 #import <RollbarReactNative/RollbarReactNative.h>
+#import <RNDeviceInfo/DeviceUID.h>
 #import <React/RCTLinkingManager.h>
 
 @implementation AppDelegate
@@ -15,8 +16,17 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
+  // Setup Rollbar config
   NSString *rollbarKey = [RNCConfig envFor:@"ROLLBAR_API_KEY"];
-  [RollbarReactNative initWithAccessToken:rollbarKey];
+  RollbarConfiguration *rollbarConfig = [Rollbar currentConfiguration];
+  rollbarConfig.personId = [DeviceUID uid];
+#if DEBUG
+  rollbarConfig.environment = @"development";
+#else
+  rollbarConfig.environment = @"production";
+#endif
+  
+  [RollbarReactNative initWithAccessToken:rollbarKey configuration:rollbarConfig];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
