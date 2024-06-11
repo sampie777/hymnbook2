@@ -7,6 +7,7 @@ import { ThemeContextProps } from "../gui/components/providers/ThemeProvider";
 import { sanitizeErrorForRollbar } from "./utils";
 import { AudioFiles } from "./songs/audiofiles/audiofiles";
 import { SongDbPatch } from "./db/patches/songs";
+import { DocumentDbPatch } from "./db/patches/documents";
 
 export const closeDatabases = () => {
   Settings.store();
@@ -55,4 +56,6 @@ export const initDocumentDatabase = () =>
     .catch(error => {
       rollbar.error("Could not connect to local document database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not connect to local document database: " + error);
-    });
+    })
+    .then(DocumentDbPatch.patch)
+    .catch(error => rollbar.error("Could not apply patches to document database", sanitizeErrorForRollbar(error)));
