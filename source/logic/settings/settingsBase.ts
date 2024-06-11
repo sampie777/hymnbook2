@@ -3,7 +3,6 @@ import Db from "../db/db";
 import { SettingSchema } from "../db/models/SettingsSchema";
 import { rollbar } from "../rollbar";
 import { sanitizeErrorForRollbar } from "../utils";
-import { applyPatches } from "./patching";
 import { UpdateMode } from "realm";
 
 class SettingsProvider {
@@ -141,10 +140,5 @@ export class SettingsBaseClass {
   get(key: string): any {
     // @ts-ignore
     return this[key];
-  }
-
-  patch() {
-    return applyPatches()
-      .catch((e) => console.error(e))
   }
 }
