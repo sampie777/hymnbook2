@@ -20,7 +20,8 @@ export namespace SongUpdaterUtils {
 
   const writeBundleToDatabase = (bundle: SongBundle) => {
     Db.songs.realm().write(() => {
-      Db.songs.realm().create(SongBundleSchema.name, bundle);
+      const result = Db.songs.realm().create(SongBundleSchema.name, bundle);
+      bundle.id = result.id;
     });
   };
 
@@ -56,16 +57,23 @@ export namespace SongUpdaterUtils {
   };
 
   const replaceSongListSongs = (songBundle: SongBundle) => {
+    const localSongBundle = Db.songs.realm().objectForPrimaryKey<SongBundle>(SongBundleSchema.name, songBundle.id);
+    if (!localSongBundle) {
+      throw Error("Could not find newly created song bundle in database");
+    }
+
     const songList = SongList.list();
     songList.forEach(item => {
-      const newSong = songBundle.songs.find(it => it.uuid == item.song.uuid);
+      const newSong = localSongBundle.songs.find(it => it.uuid == item.song.uuid);
       if (newSong == undefined) return;
 
       try {
         SongList.replaceSong(item, newSong);
       } catch (error) {
         rollbar.error("Failed to replace song list song", {
+          ...sanitizeErrorForRollbar(error),
           item: item,
+          itemSong: item.song,
           newSong: newSong
         });
       }
