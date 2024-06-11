@@ -8,6 +8,7 @@ import { sanitizeErrorForRollbar } from "./utils";
 import { AudioFiles } from "./songs/audiofiles/audiofiles";
 import { SongDbPatch } from "./db/patches/songs";
 import { DocumentDbPatch } from "./db/patches/documents";
+import { SettingsDbPatch } from "./db/patches/settings/patching";
 
 export const closeDatabases = () => {
   Settings.store();
@@ -22,12 +23,16 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
       rollbar.error("Could not connect to local settings database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not connect to local settings database: " + error);
     })
+
     .then(() => Settings.load())
     .catch(error => {
       rollbar.error("Could not load settings from database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not load settings from database: " + error);
     })
-    .then(() => Settings.patch())
+
+    .then(SettingsDbPatch.patch)
+    .catch(error => rollbar.error("Could not apply patches to settings database", sanitizeErrorForRollbar(error)))
+
     .then(() => {
       theme?.reload();
       Settings.appOpenedTimes++;

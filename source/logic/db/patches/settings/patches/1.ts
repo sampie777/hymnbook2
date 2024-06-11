@@ -1,5 +1,5 @@
-import Settings from "../../../settings";
-import { SongSearch } from "../../songs/songSearch";
+import Settings from "../../../../../settings";
+import { SongSearch } from "../../../../songs/songSearch";
 import StringSearchButtonPlacement = SongSearch.StringSearchButtonPlacement;
 
 export const patch1_ConvertingStringSearchButtonPlacementEnumToStringIndexed = () => {

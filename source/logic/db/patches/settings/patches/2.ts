@@ -1,8 +1,8 @@
-import { delayed } from "../../utils";
-import Db from "../../db/db";
-import { SongBundle } from "../../db/models/Songs";
-import { SongBundleSchema } from "../../db/models/SongsSchema";
-import Settings from "../../../settings";
+import { delayed } from "../../../../utils";
+import Db from "../../../db";
+import { SongBundle } from "../../../models/Songs";
+import { SongBundleSchema } from "../../../models/SongsSchema";
+import Settings from "../../../../../settings";
 
 export const patch2_PreFillSettingsSongSearchSelectedSongBundleUuids = () => {
   if (Settings.songStringSearchSelectedBundlesUuids.length > 0 || Settings.songSearchSelectedBundlesUuids.length > 0) {
