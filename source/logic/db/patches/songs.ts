@@ -11,15 +11,15 @@ export namespace SongDbPatch {
    * bundle is found, which is newer, remove the older bundle.
    */
   const removeDuplicateBundles = () => {
-    const approvedBundleUuids: string[] = [];
+    const approvedUuids: string[] = [];
     const bundles = Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted("id", true);
 
     bundles.forEach((it, index) => {
-      const isDuplicateBundle = approvedBundleUuids.includes(it.uuid);
-      if (!isDuplicateBundle) {
-        approvedBundleUuids.push(it.uuid);
+      const isDuplicate = approvedUuids.includes(it.uuid);
+      if (!isDuplicate) {
+        approvedUuids.push(it.uuid);
         return;
       }
 
@@ -29,7 +29,7 @@ export namespace SongDbPatch {
         rollbar.warning("Failed to remove older duplicate bundle", {
           ...sanitizeErrorForRollbar(error),
           bundle: it,
-          approvedBundleUuids: approvedBundleUuids,
+          approvedUuids: approvedUuids,
           bundles: bundles.map(it => ({
             id: it.id,
             name: it.name,
