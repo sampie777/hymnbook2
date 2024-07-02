@@ -2344,11 +2344,6 @@
   dependencies:
     nanoid "^3.1.23"
 
-"@realm/fetch@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@realm/fetch/-/fetch-0.1.1.tgz#1a637d0a1fc3734a7ffca64361d764777dd3d80c"
-  integrity sha512-hkTprw79RXGv54Je0DrjpQPLaz4QID2dO3FmthAQQWAkqwyrqMzrCGzJzLlmTKWZFsgLrN8KQyNewod27P+nJg==
-
 "@realm/react@0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@realm/react/-/react-0.7.0.tgz#6afbb46bc22ff4cbdd81061dd446899ec670064c"
@@ -6723,7 +6718,7 @@ node-dir@^0.1.17:
   dependencies:
     minimatch "^3.0.2"
 
-node-fetch@^2.2.0, node-fetch@^2.6.0:
+node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.9:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
@@ -7046,11 +7041,6 @@ patch-package@7.0.2:
     slash "^2.0.0"
     tmp "^0.0.33"
     yaml "^2.2.2"
-
-path-browserify@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz#d98454a9c3753d5790860f16f68867b9e46be1fd"
-  integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
 
 path-exists@^3.0.0:
   version "3.0.0"
@@ -7563,16 +7553,15 @@ readline@^1.3.0:
   resolved "https://registry.yarnpkg.com/readline/-/readline-1.3.0.tgz#c580d77ef2cfc8752b132498060dc9793a7ac01c"
   integrity sha512-k2d6ACCkiNYz222Fs/iNze30rRJ1iIicW7JuX/7/cozvih6YCkFZH+J6mAFDVgv0dRBaAyr4jDqC95R2y4IADg==
 
-realm@12.9.0:
-  version "12.9.0"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-12.9.0.tgz#0edfc8c4156efdce4a73a171152dc1007173442d"
-  integrity sha512-K7JblaSaqqFEu8kObgTCo1ITTYnR8rXYBdb5/5VXxD4VNKQVlrnO6Z4GhxDlohubmF8eNvRdC2wlHAsv2aUsOg==
+realm@12.5.1:
+  version "12.5.1"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-12.5.1.tgz#d9e7efb836fb0c393770051d82fd5c9174e5d03d"
+  integrity sha512-8WfyMuCV80o7F25wCXofarcDPnOsf6TMFalprMqjZ02ibp9+Px3+Z1bTG6xgtXTfdreEI8Apl/fELgitv1kgaQ==
   dependencies:
-    "@realm/fetch" "^0.1.1"
     bson "^4.7.2"
     debug "^4.3.4"
+    node-fetch "^2.6.9"
     node-machine-id "^1.1.12"
-    path-browserify "^1.0.1"
     prebuild-install "^7.1.1"
 
 recast@^0.20.4:

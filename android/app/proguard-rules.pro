@@ -11,3 +11,4 @@
 
 -keepattributes LineNumberTable,SourceFile
 -renamesourcefileattribute SourceFile
+-keep class io.realm.react.**
