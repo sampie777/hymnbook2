@@ -7,7 +7,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest; rm -R hymnbook_songs*",
+    "test": "jest && rm -R hymnbook_songs*",
     "bundle": "cd android && ./gradlew bundleRelease",
     "build": "cd android && ./gradlew assembleRelease",
     "device-install": "adb -d install \"$(ls -t ./android/app/build/outputs/apk/release/*.apk | head -1)\"",
@@ -39,7 +39,7 @@
     "react-native-svg": "13.14.0",
     "react-native-track-player": "4.0.1",
     "react-native-vector-icons": "9.2.0",
-    "realm": "12.5.1",
+    "realm": "12.9.0",
     "rollbar-react-native": "0.9.3"
   },
   "devDependencies": {
