@@ -1,0 +1,15 @@
+diff --git a/node_modules/rollbar-react-native/android/build.gradle b/node_modules/rollbar-react-native/android/build.gradle
+index 4885814..882813f 100644
+--- a/node_modules/rollbar-react-native/android/build.gradle
++++ b/node_modules/rollbar-react-native/android/build.gradle
+@@ -5,8 +5,8 @@ android {
+     buildToolsVersion project.hasProperty('buildToolsVersion') ? project.buildToolsVersion : "27.0.3"
+ 
+     defaultConfig {
+-        minSdkVersion 19
+-        targetSdkVersion 27
++        minSdkVersion project.hasProperty('minSdkVersion') ? project.minSdkVersion : 19
++        targetSdkVersion project.hasProperty('targetSdkVersion') ? project.targetSdkVersion : 27
+         versionCode 1
+         versionName "1.0"
+     }
