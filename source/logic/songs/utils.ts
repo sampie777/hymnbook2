@@ -216,22 +216,28 @@ export const hasMelodyToShow = (song?: Song) => {
 };
 
 export const loadSongWithUuidOrId = (uuid?: string, id?: number): (Song & Realm.Object<Song>) | undefined => {
+  if (uuid == "") uuid = undefined;
+
   if (uuid == undefined && id == undefined) {
     return undefined;
   }
 
   if (!Db.songs.isConnected()) {
-    return;
+    return undefined;
   }
 
+  let query = `uuid = "${uuid}" OR id = ${id}`;
+  if (id == undefined) query = `uuid = "${uuid}"`;
+  if (uuid == undefined) query = `id = "${id}"`;
+
   const songs = Db.songs.realm().objects<Song>(SongSchema.name)
-    .filtered(`uuid = "${uuid}" OR id = ${id}`);
+    .filtered(query);
 
   if (songs.length == 0) return undefined;
   if (songs.length > 1) {
     rollbar.warning("Multiple songs found for UUID and ID search", {
-      uuid: uuid,
-      id: id,
+      uuid: uuid ?? (uuid === null ? "null" : "undefined"),
+      id: id ?? (id === null ? "null" : "undefined"),
       songs: songs.map(it => ({ name: it.name, id: it.id, uuid: it.uuid }))
     });
   }

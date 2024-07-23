@@ -119,7 +119,7 @@ export class Song {
   name: string;
   number?: number;
   language: string;
-  verses: Array<Verse>;
+  verses: Verse[];
   createdAt: Date;
   modifiedAt: Date;
   uuid: string;
@@ -134,7 +134,7 @@ export class Song {
     createdAt: Date,
     modifiedAt: Date,
     uuid: string,
-    verses: Array<Verse> = [],
+    verses: Verse[] = [],
     abcMelodies: AbcMelody[] = [],
     metadata: SongMetadata[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongSchema),
@@ -193,7 +193,7 @@ export class SongBundle {
   language: string;
   author: string;
   copyright: string;
-  songs: Array<Song>;
+  songs: Song[];
   createdAt: Date;
   modifiedAt: Date;
   uuid: string;
@@ -209,7 +209,7 @@ export class SongBundle {
     modifiedAt: Date,
     uuid: string,
     hash: string = "",
-    songs: Array<Song> = [],
+    songs: Song[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema)
   ) {
     this.id = id;
