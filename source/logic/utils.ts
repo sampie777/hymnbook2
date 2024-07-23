@@ -208,3 +208,5 @@ export const readableFileSizeIEC = (size: number): string => {
 }
 
 export const hash = (value: string): string => stringMd5(value);
+
+export const isTestEnv = () => process.env.JEST_WORKER_ID !== undefined || process.env.NODE_ENV === 'test';

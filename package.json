@@ -7,7 +7,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest && rm -R hymnbook_songs*",
+    "test": "jest",
     "bundle": "cd android && ./gradlew bundleRelease",
     "build": "cd android && ./gradlew assembleRelease",
     "device-install": "adb -d install \"$(ls -t ./android/app/build/outputs/apk/release/*.apk | head -1)\"",
