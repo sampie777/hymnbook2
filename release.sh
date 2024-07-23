@@ -106,7 +106,6 @@ function pushAndRelease {
   git add ios/hymnbook2/Info.plist || exit 1
   git commit -m "version release: ${RELEASE_VERSION}" || exit 1
   git tag "v${RELEASE_VERSION}" || exit 1
-  retry git push -u origin master --tags
 
   yarn build || exit 1
   echo
@@ -118,6 +117,8 @@ function pushAndRelease {
   echo "BUNDLE DONE"
   echo
   echo
+
+  retry git push -u origin master --tags
 
   retry ./upload_source_map.sh
 }
