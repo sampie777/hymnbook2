@@ -42,7 +42,7 @@ describe("Song search find songs by title", () => {
   });
 
   afterAll(() => {
-    Db.songs.disconnect();
+    Db.songs.deleteDb();
   });
 
   it("find main title (1)", () => {

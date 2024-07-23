@@ -46,7 +46,7 @@ describe("when loading a song from the database using uuid or id", () => {
     });
 
     afterAll(() => {
-        Db.songs.disconnect();
+        Db.songs.deleteDb();
     });
 
     it("returns undefined if uuid and id are undefined", () => {
