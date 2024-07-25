@@ -19,6 +19,11 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 
+echo "===== Setting environment variables ====="
+echo "ROLLBAR_API_KEY=${ROLLBAR_API_KEY}" > .env
+echo "DEVELOPER_EMAIL=${DEVELOPER_EMAIL}" >> .env
+echo "WHATSAPP_USER_GROUP_LINK=${WHATSAPP_USER_GROUP_LINK}" >> .env
+
 echo "===== Running pod install ====="
 pwd
 pod install
