@@ -17,7 +17,6 @@ import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/AbcMelodies";
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
-import Db from "../../../../logic/db/db";
 import { Song, Verse } from "../../../../logic/db/models/Songs";
 import {
   calculateVerseHeight,
