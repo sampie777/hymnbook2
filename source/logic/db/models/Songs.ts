@@ -169,7 +169,7 @@ export class Song {
   }
 
   static clone(obj: Song): Song {
-    return {
+    const result: Song = {
       id: obj.id,
       name: obj.name,
       number: obj.number,
@@ -181,8 +181,16 @@ export class Song {
       abcMelodies: obj.abcMelodies.map(AbcMelody.clone),
       metadata: obj.metadata.map(SongMetadata.clone),
       lastUsedMelody: obj.lastUsedMelody ? AbcMelody.clone(obj.lastUsedMelody) : undefined,
-      _songBundles: obj._songBundles?.map(it => SongBundle.clone(it, {includeSongs: false})),
+      _songBundles: obj._songBundles?.map(it => SongBundle.clone(it, { includeSongs: false })),
     }
+
+    if (result.lastUsedMelody) {
+      // Re-assign to keep the pointer reference
+      result.lastUsedMelody = result.abcMelodies
+        .find(it => it.id === result.lastUsedMelody!.id) ?? result.lastUsedMelody;
+    }
+
+    return result;
   }
 }
 
