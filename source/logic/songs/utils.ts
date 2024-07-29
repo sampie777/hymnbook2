@@ -327,6 +327,16 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
 
+export const storeLastUsedMelody = (song: Song, melody?: AbcMelody) => {
+  const dbSong = Db.songs.realm().objectForPrimaryKey<Song>(SongSchema.name, song.id);
+  if (!dbSong) return;
+
+  const dbMelody = dbSong.abcMelodies.find(it => it.id == melody?.id);
+  Db.songs.realm().write(() => {
+    dbSong.lastUsedMelody = dbMelody;
+  });
+}
+
 export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): {
   length: number;
   offset: number;

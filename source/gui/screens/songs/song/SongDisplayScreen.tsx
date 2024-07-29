@@ -23,7 +23,7 @@ import {
   calculateVerseHeight,
   generateSongTitle,
   getDefaultMelody,
-  loadSongWithUuidOrId
+  loadSongWithUuidOrId, storeLastUsedMelody
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { Alert, Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
@@ -127,9 +127,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (song == null) return;
     if (selectedMelody?.id == song.lastUsedMelody?.id) return;
 
-    Db.songs.realm().write(() => {
-      song.lastUsedMelody = selectedMelody;
-    });
+    try {
+      storeLastUsedMelody(song, selectedMelody);
+    } catch (error) {
+      rollbar.error("Failed to store new lastUsedMelody", {
+        ...sanitizeErrorForRollbar(error),
+        song: { ...song, verses: null },
+        selectedMelody: selectedMelody,
+      });
+    }
   }, [selectedMelody]);
 
   useEffect(() => {
@@ -395,7 +401,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     return calculateVerseHeight(index, verseHeights.current);
   };
 
-  // When verse is shown (either no verses as selected or this verse selected no matter if its first or not)
+  // When verse is shown (either no verses as selected or this verse selected no matter if it's first or not)
   // and the verse custom melody isn't shown yet
   const isVerseVisibleAndHasUniqueMelody = (verse: Verse, selectedVerses: Verse[]): boolean => {
     if (!selectedMelody) return false;
@@ -407,7 +413,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (!melody) return false;
 
     const melodyHash = hash(melody);
-    if(shownMelodyHashes.includes(melodyHash)) return false;
+    if (shownMelodyHashes.includes(melodyHash)) return false;
 
     shownMelodyHashes.push(melodyHash);
     return true;
