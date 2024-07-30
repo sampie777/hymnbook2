@@ -16,7 +16,7 @@ export namespace SongDbPatch {
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted("id", true);
 
-    bundles.forEach((it, index) => {
+    bundles.forEach((it) => {
       const isDuplicate = approvedUuids.includes(it.uuid);
       if (!isDuplicate) {
         approvedUuids.push(it.uuid);

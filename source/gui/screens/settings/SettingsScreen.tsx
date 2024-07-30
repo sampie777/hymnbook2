@@ -6,7 +6,7 @@ import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
-import { capitalize, isAndroid } from "../../../logic/utils";
+import { capitalize, format, isAndroid } from "../../../logic/utils";
 import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
@@ -109,6 +109,11 @@ const SettingsScreen: React.FC = () => {
     <SettingSwitchComponent title={"Track song audio downloads"}
                             onLongPress={(setValue) => setValue(true)}
                             keyName={"trackDownloads"} />
+    <SettingComponent title={"Last update timestamp"}
+                      description={"Timestamp of list time the app checked for database updates"}
+                      onLongPress={(setValue) => setValue(0)}
+                      valueRender={value => format(new Date(value), "%H:%MM:%SS %d-%m-%YYYY")}
+                      keyName={"autoUpdateDatabasesLastCheckTimestamp"} />
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}
                       onLongPress={(setValue) => setValue(0)} />
@@ -277,6 +282,23 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Other"} />
+          <SettingComponent
+            title={"Auto update databases"}
+            keyName={"autoUpdateDatabasesCheckIntervalInDays"}
+            description={"Tap here to change or disable the auto updating frequency of the song and document databases."}
+            onPress={(setValue) => {
+              if (Settings.autoUpdateDatabasesCheckIntervalInDays < 7) setValue(7);
+              else if (Settings.autoUpdateDatabasesCheckIntervalInDays < 30) setValue(30);
+              else setValue(0);
+            }}
+            onLongPress={(setValue) => setValue(7)}  // Set default
+            valueRender={(it) => {
+              const value = +it;
+              if (value <= 0) return "Never";
+              if (value == 7) return "Once a week";
+              if (value == 30) return "Once a month";
+              return `Every ${value} days`;
+            }} />
           <SettingSwitchComponent title={"Enable text selection"}
                                   description={"Enable this to be able to select and copy text from songs and documents."}
                                   onLongPress={(setValue) => setValue(true)}

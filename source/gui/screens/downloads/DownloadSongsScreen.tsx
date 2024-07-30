@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Config from "react-native-config";
-import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
+import { SongBundle, SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
 import { rollbar } from "../../../logic/rollbar";
 import { DeepLinking } from "../../../logic/deeplinking";
-import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../components/utils";
@@ -22,7 +22,7 @@ import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
-import { SongUpdater } from "../../../logic/songs/songUpdater";
+import { SongUpdater } from "../../../logic/songs/updater/songUpdater";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -104,24 +104,19 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsLoading(true);
     setIsLocalBundlesLoading(true);
 
-    const result = SongProcessor.loadLocalSongBundles();
-    result.alert();
-    result.throwIfException();
+    let data: (SongBundle & Realm.Object<SongBundle>)[];
+    try {
+      data = SongProcessor.loadLocalSongBundles()
+    } catch (error) {
+      return alertAndThrow(error);
+    }
 
     if (!isMounted()) return;
 
-    if (result.data !== undefined) {
-      setLocalBundles(result.data);
-    } else {
-      setLocalBundles([]);
-    }
+    setLocalBundles(data);
 
     if (filterLanguage === "") {
-      if (result.data !== undefined) {
-        setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(result.data));
-      } else {
-        setFilterLanguage("");
-      }
+      setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(data));
     }
 
     setIsLoading(false);
@@ -264,9 +259,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const deleteSongBundle = (bundle: LocalSongBundle) => {
     setIsLoading(true);
 
-    const result = SongProcessor.deleteSongBundle(bundle);
-    result.alert();
-    result.throwIfException();
+    try {
+      const successMessage = SongProcessor.deleteSongBundle(bundle)
+      Alert.alert("Success", successMessage);
+    } catch (error) {
+      alertAndThrow(error);
+    }
 
     if (!isMounted()) return;
 
