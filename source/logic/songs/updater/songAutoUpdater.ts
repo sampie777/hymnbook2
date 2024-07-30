@@ -14,10 +14,10 @@ export namespace SongAutoUpdater {
 
     const updates = await Server.fetchSongBundleUpdates();
 
-    const outdatedBundles = bundles.filter(bundle =>
-      updates.some(update => update.uuid === bundle.uuid && update.hash != bundle.hash))
+    for (const bundle of bundles) {
+      const hasUpdate = updates.some(update => update.uuid === bundle.uuid && update.hash != bundle.hash);
+      if (!hasUpdate) continue;
 
-    for (const bundle of outdatedBundles) {
       console.debug(`Auto updating song bundle ${bundle.name}...`)
       try {
         await SongUpdater.fetchAndUpdateSongBundle(bundle)
