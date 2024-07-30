@@ -56,6 +56,8 @@ class SettingsClass extends SettingsBaseClass {
 
   // Other
   shareUsageData = process.env.NODE_ENV !== "development";
+  autoUpdateDatabasesCheckIntervalInDays = 7;
+  autoUpdateDatabasesLastCheckTimestamp = 0;
 }
 
 const Settings = new SettingsClass();
