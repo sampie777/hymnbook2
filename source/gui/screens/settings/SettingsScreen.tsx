@@ -103,10 +103,6 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
-    <SettingSwitchComponent title={"Add whitespace after verse"}
-                            description={"On some devices, some verses won't display their last line. Enable this toggle to see if this fixes that problem."}
-                            onLongPress={(setValue) => setValue(false)}
-                            keyName={"debug_addWhitespaceAfterVerse"} />
     <SettingSwitchComponent title={"Survey completed"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"surveyCompleted"} />
