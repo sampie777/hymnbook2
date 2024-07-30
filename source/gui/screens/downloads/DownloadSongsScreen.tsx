@@ -23,6 +23,7 @@ import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
 import { SongUpdater } from "../../../logic/songs/updater/songUpdater";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -41,6 +42,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -217,6 +219,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const saveSongBundle = (bundle: ServerSongBundle, isUpdate: boolean) => {
     if (!isMounted()) return;
     setIsLoading(true);
+    updaterContext.addSongBundleUpdating(bundle);
 
     const call = isUpdate
       ? SongUpdater.fetchAndUpdateSongBundle(bundle)
@@ -238,6 +241,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         }
       })
       .finally(() => {
+        updaterContext.removeSongBundleUpdating(bundle);
         if (!isMounted()) return;
         setLocalBundles([]);
         setIsLoading(false);

@@ -10,6 +10,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import MenuItem from "./MenuItem";
 import FeedbackComponent from "../../components/popups/FeedbackComponent";
+import { IsDownloadingIcon } from "../downloads/common";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface MenuItemProps {
   name?: string;
@@ -17,19 +19,22 @@ interface MenuItemProps {
   icon?: (style?: StyleProp<TextStyle> | undefined) => React.ReactElement;
   onPress?: () => void;
   hasNotification?: boolean;
+  statusIcon?: React.ReactElement;
 }
 
 const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenuRoute>> =
   ({ navigation }) => {
     const styles = createStyles(useTheme());
     const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+    const updaterContext = useUpdaterContext();
 
     const routesToShow: MenuItemProps[] = [
       {
         route: DatabasesRoute,
         name: "Song databases",
         icon: (style) => <Icon name="music"
-                               style={style as StyleProp<any> /* Set this type as TypeScript does weird things... */} />
+                               style={style as StyleProp<any> /* Set this type as TypeScript does weird things... */} />,
+        statusIcon: updaterContext.songBundlesUpdating.length > 0 ? <IsDownloadingIcon /> : undefined,
       },
       {
         name: "Document databases",
@@ -75,7 +80,8 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
           text={it.name || it.route || ""}
           icon={it.icon}
           onPress={it.onPress ? it.onPress : () => onPress(it.route)}
-          hasNotification={it.hasNotification} />)}
+          hasNotification={it.hasNotification}
+          statusIcon={it.statusIcon} />)}
       </ScrollView>
     </>);
   };

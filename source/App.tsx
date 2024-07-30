@@ -57,6 +57,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
 import { rollbar } from "./logic/rollbar";
 import { SongAutoUpdater } from "./logic/songs/updater/songAutoUpdater";
+import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -117,6 +118,7 @@ const RootNavigation = () => {
 
 const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -131,7 +133,7 @@ const HomeNavigation: React.FC = () => {
       rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
     }
 
-    SongAutoUpdater.run()
+    SongAutoUpdater.run(updaterContext.addSongBundleUpdating, updaterContext.removeSongBundleUpdating)
       .catch(error => rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error)));
   };
 
@@ -224,7 +226,9 @@ const AppRoot: React.FC = () => {
     {isLoading ? undefined :
       <NavigationContainer>
         <DeepLinkHandler>
-          <RootNavigation />
+          <UpdaterContextProvider>
+            <RootNavigation />
+          </UpdaterContextProvider>
         </DeepLinkHandler>
       </NavigationContainer>
     }
