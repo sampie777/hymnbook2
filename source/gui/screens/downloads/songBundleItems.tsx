@@ -29,7 +29,7 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
     <TouchableOpacity onPress={() => onPress(bundle)}
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
-                      disabled={disabled}>
+                      disabled={disabled || isUpdating}>
       <Text style={styles.titleText}>
         {bundle.name}
       </Text>
@@ -76,7 +76,7 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
     <TouchableOpacity onPress={() => onPress(bundle)}
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
-                      disabled={disabled}>
+                      disabled={disabled || isUpdating}>
       <Text style={styles.titleText}>
         {bundle.name}
       </Text>
