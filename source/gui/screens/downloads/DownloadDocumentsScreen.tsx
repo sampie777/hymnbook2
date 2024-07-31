@@ -216,14 +216,19 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   };
 
   const downloadDocumentGroup = (group: ServerDocumentGroup) => {
+    if (!isMounted()) return;
     setIsLoading(true);
+    updaterContext.addDocumentGroupUpdating(group);
 
-    DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then(data => {
-        if (!isMounted()) return;
-        saveDocumentGroup(data);
-      })
+    DocumentUpdater.fetchAndSaveDocumentGroup(group)
+      .then(() => Alert.alert("Success", `${group.name} added!`))
       .catch(error => {
+        rollbar.error("Failed to import document group", {
+          ...sanitizeErrorForRollbar(error),
+          isUpdate: false,
+          group: group,
+        });
+
         if (error.name == "TypeError" && error.message == "Network request failed") {
           Alert.alert("Error", `Could not download ${group.name}. Make sure your internet connection is working or try again later.`)
         } else {
@@ -233,22 +238,12 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       .finally(() => {
         if (!isMounted()) return;
         setIsLoading(false);
-      });
-  };
-
-  const saveDocumentGroup = (group: ServerDocumentGroup) => {
-    if (!isMounted()) return;
-    setIsLoading(true);
-    updaterContext.addDocumentGroupUpdating(group);
-
-    const result = DocumentUpdater.saveDocumentGroupToDatabase(group);
-    updaterContext.removeDocumentGroupUpdating(group);
-    result.alert();
-    result.throwIfException();
-
-    if (!isMounted()) return;
-    setIsLoading(false);
-    loadLocalDocumentGroups();
+        loadLocalDocumentGroups();
+      })
+      .finally(() => {
+        // Do this here after the state has been called, otherwise we get realm invalidation errors
+        updaterContext.removeDocumentGroupUpdating(group);
+      })
   };
 
   const updateDocumentGroup = (group: ServerDocumentGroup) => {
@@ -259,7 +254,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     DocumentUpdater.fetchAndUpdateDocumentGroup(group)
       .then(() => Alert.alert("Success", `${group.name} updated!`))
       .catch(error => {
-        rollbar.error("Failed to import document group", {
+        rollbar.error("Failed to update document group", {
           ...sanitizeErrorForRollbar(error),
           isUpdate: true,
           group: group,
@@ -272,12 +267,15 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         }
       })
       .finally(() => {
-        updaterContext.removeDocumentGroupUpdating(group);
         if (!isMounted()) return;
         setLocalGroups([]);
         setIsLoading(false);
         loadLocalDocumentGroups();
-      });
+      })
+      .finally(() => {
+        // Do this here after the state has been called, otherwise we get realm invalidation errors
+        updaterContext.removeDocumentGroupUpdating(group);
+      })
   };
 
   const onConfirmDeleteDocumentGroup = () => {
