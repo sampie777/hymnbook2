@@ -99,10 +99,14 @@ export const SearchResultItem: React.FC<{
                                       onLongPress={navigateToVersePicker}
                                       style={styles.container}>
       <View style={styles.infoContainer}>
-        <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>{song.name}</Text>
+        <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}
+              importantForAccessibility={"auto"}>
+          {song.name}
+        </Text>
 
         {!showSongBundle ? undefined :
-          <Text style={styles.songBundleName}>
+          <Text style={styles.songBundleName}
+                importantForAccessibility={"auto"}>
             {Song.getSongBundle(song)?.name}
           </Text>
         }
@@ -111,7 +115,8 @@ export const SearchResultItem: React.FC<{
       <TouchableOpacity onPress={addSongToSongList}
                         onLongPress={navigateToVersePickerForSongList}
                         style={styles.button}
-                        hitSlop={RectangularInset(styles.infoContainer.paddingVertical)}>
+                        hitSlop={RectangularInset(styles.infoContainer.paddingVertical)}
+                        accessibilityLabel={"Add to song list"}>
         <Icon name={songAddedToSongList ? "check" : "plus"}
               size={styles.button.fontSize}
               color={songAddedToSongList
