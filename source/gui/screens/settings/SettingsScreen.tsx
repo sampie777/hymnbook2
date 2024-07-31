@@ -287,7 +287,9 @@ const SettingsScreen: React.FC = () => {
             keyName={"autoUpdateDatabasesCheckIntervalInDays"}
             description={"Tap here to change or disable the auto updating frequency of the song and document databases."}
             onPress={(setValue) => {
-              if (Settings.autoUpdateDatabasesCheckIntervalInDays < 7) setValue(7);
+              // Only allow the 'once a day' mode for developers, to not overload the backend servers
+              if (Settings.autoUpdateDatabasesCheckIntervalInDays < 1 && appContext.developerMode) setValue(1);
+              else if (Settings.autoUpdateDatabasesCheckIntervalInDays < 7) setValue(7);
               else if (Settings.autoUpdateDatabasesCheckIntervalInDays < 30) setValue(30);
               else setValue(0);
             }}
@@ -295,6 +297,7 @@ const SettingsScreen: React.FC = () => {
             valueRender={(it) => {
               const value = +it;
               if (value <= 0) return "Never";
+              if (value == 1) return "Once a day";
               if (value == 7) return "Once a week";
               if (value == 30) return "Once a month";
               return `Every ${value} days`;

@@ -2,7 +2,7 @@ import { Server } from "../../server/server";
 import { SongProcessor } from "../songProcessor";
 import { SongUpdater } from "./songUpdater";
 import { rollbar } from "../../rollbar";
-import { delayed, sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils";
 import Settings from "../../../settings";
 import { SongBundle } from "../../db/models/Songs";
 
