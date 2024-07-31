@@ -6,6 +6,8 @@ import {
   Document as ServerDocument,
   DocumentGroup as ServerDocumentGroup,
 } from "../../../source/logic/server/models/Documents";
+import {DocumentUpdaterUtils} from "../../../source/logic/documents/updater/documentUpdaterUtils";
+import {DocumentUpdater} from "../../../source/logic/documents/updater/documentUpdater";
 
 describe("test document processor", () => {
   const group = (name = "group 1", id = undefined, isRoot = false) => new DocumentGroup(name, "NL", [], [], new Date(), new Date(), "000", "", 0, isRoot, id);
@@ -42,7 +44,7 @@ describe("test document processor", () => {
       documentId: 1,
       totalDocuments: 0,
     };
-    const result = DocumentProcessor.convertServerDocumentGroupToLocalDocumentGroup(group2, conversionState, true);
+    const result = DocumentUpdaterUtils.convertServerDocumentGroupToLocalDocumentGroup(group2, conversionState, true);
 
     expect(result.name).toBe("group 2");
     expect(result.size).toBe(4);
@@ -92,10 +94,7 @@ describe("test document processor", () => {
     group22.items.push(serverDocument("doc 2.2.1", 3));
     group221.items.push(serverDocument("doc 2.2.1.1", 4));
 
-    const result = DocumentProcessor.saveDocumentGroupToDatabase(group2);
-
-    expect(result.message).toBe("group 2 added!");
-    expect(result.success).toBe(true);
+    DocumentUpdater.saveDocumentGroupToDatabase(group2);
     expect(Db.documents.realm().objects(DocumentGroupSchema.name).length).toBe(4);
     expect(Db.documents.realm().objects(DocumentSchema.name).length).toBe(4);
     expect(Db.documents.realm().objects(DocumentGroupSchema.name)[0].name).toBe("group 2");
