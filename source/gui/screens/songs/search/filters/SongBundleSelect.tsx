@@ -57,6 +57,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
                                         title={"Search only in the selected bundles"} />}
 
     <TouchableOpacity style={styles.button}
+                      accessibilityLabel={"Select song bundles"}
                       onPress={() => setIsOpen(true)}>
       <Icon name={"filter"} style={styles.icon} />
       <Icon name={isOpen ? "caret-left" : "sort-down"} style={styles.icon} />

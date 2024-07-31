@@ -26,17 +26,20 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText}
+            importantForAccessibility={"auto"}>
         {bundle.name}
       </Text>
       <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(bundle.language)}
           </Text>
         }
         {bundle.size === undefined ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"no"}>
             {bundle.size} songs
           </Text>
         }
@@ -68,16 +71,19 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText}
+            importantForAccessibility={"auto"}>
         {bundle.name}
       </Text>
       <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(bundle.language)}
           </Text>
         }
-        <Text style={styles.infoText}>
+        <Text style={styles.infoText}
+              importantForAccessibility={"no"}>
           {bundle.songs.length} songs
         </Text>
       </View>
