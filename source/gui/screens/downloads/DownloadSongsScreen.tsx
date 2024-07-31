@@ -242,12 +242,15 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         }
       })
       .finally(() => {
-        updaterContext.removeSongBundleUpdating(bundle);
         if (!isMounted()) return;
         setLocalBundles([]);
         setIsLoading(false);
         loadLocalSongBundles();
-      });
+      })
+      .finally(() => {
+        // Do this here after the state has been called, otherwise we get realm invalidation errors
+        updaterContext.removeSongBundleUpdating(bundle);
+      })
   };
 
   const onConfirmDeleteSongBundle = () => {

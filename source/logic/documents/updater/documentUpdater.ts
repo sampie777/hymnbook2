@@ -10,27 +10,32 @@ import { DocumentUpdaterUtils } from "./documentUpdaterUtils";
 
 export namespace DocumentUpdater {
 
+  export const fetchAndSaveDocumentGroup = (group: { uuid: string }): Promise<any> => {
+    return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
+      .then(saveDocumentGroupToDatabase);
+  };
+
   export const fetchAndUpdateDocumentGroup = (group: { uuid: string }): Promise<any> => {
     return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
       .then(updateAndSaveDocumentGroup);
   };
 
-  export const saveDocumentGroupToDatabase = (group: ServerDocumentGroup): Result => {
+  export const saveDocumentGroupToDatabase = (group: ServerDocumentGroup) => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot save local document group to database: document database is not connected");
-      return new Result({ success: false, message: "Database is not connected" });
+      throw new Error("Database is not connected");
     }
 
     if (group.items == null && group.groups == null) {
       rollbar.warning("Document group contains no documents or groups: " + group.name, group);
-      return new Result({ success: false, message: "Document group contains no documents or groups" });
+      throw new Error("Document group contains no documents or groups");
     }
 
     const existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
       .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
     if (existingGroup.length > 0) {
-      return new Result({ success: false, message: `Document group ${group.name} already exists` });
+      throw new Error(`Document group ${group.name} already exists`);
     }
 
     const conversionState: DocumentUpdaterUtils.ConversionState = {
@@ -46,17 +51,8 @@ export namespace DocumentUpdater {
       });
     } catch (error) {
       rollbar.error(`Failed to import documents`, sanitizeErrorForRollbar(error));
-      return new Result({
-        success: false,
-        message: `Failed to import documents: ${error}`,
-        error: error as Error
-      });
+      throw new Error(`Failed to import documents: ${error}`);
     }
-
-    return new Result({
-      success: true,
-      message: `${documentGroup.name} added!`
-    });
   };
 
   const updateAndSaveDocumentGroup = (group: ServerDocumentGroup) => {
