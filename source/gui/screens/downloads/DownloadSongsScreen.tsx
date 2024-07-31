@@ -106,7 +106,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsLoading(true);
     setIsLocalBundlesLoading(true);
 
-    let data: (SongBundle & Realm.Object<SongBundle>)[];
+    let data: (SongBundle & Realm.Object<SongBundle>)[] = [];
     try {
       data = SongProcessor.loadLocalSongBundles()
     } catch (error) {
@@ -189,14 +189,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setRequestDeleteForBundle(bundle);
   };
 
-
   const onConfirmDownloadSongBundle = () => {
     const bundle = requestDownloadForBundle;
     setRequestDownloadForBundle(undefined);
 
-    if (isLoading || bundle === undefined) {
-      return;
-    }
+    if (isLoading || bundle === undefined) return;
 
     const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
     if (isUpdating) return;
@@ -235,7 +232,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         rollbar.error("Failed to import song bundle", {
           ...sanitizeErrorForRollbar(error),
           isUpdate: isUpdate,
-          bundle: bundle
+          bundle: bundle,
         });
 
         if (error.name == "TypeError" && error.message == "Network request failed") {
@@ -257,9 +254,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     const bundle = requestDeleteForBundle;
     setRequestDeleteForBundle(undefined);
 
-    if (isLoading || bundle === undefined) {
-      return;
-    }
+    if (isLoading || bundle === undefined) return;
 
     const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
     if (isUpdating) {
