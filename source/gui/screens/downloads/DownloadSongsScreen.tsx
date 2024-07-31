@@ -214,7 +214,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   };
 
   const downloadSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, false);
-
   const updateSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, true);
 
   const saveSongBundle = (bundle: ServerSongBundle, isUpdate: boolean) => {
