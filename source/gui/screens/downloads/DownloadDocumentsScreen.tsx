@@ -215,55 +215,31 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     updateDocumentGroup(group);
   };
 
-  const downloadDocumentGroup = (group: ServerDocumentGroup) => {
+  const downloadDocumentGroup = (group: ServerDocumentGroup) => saveDocumentGroup(group, false);
+  const updateDocumentGroup = (group: ServerDocumentGroup) => saveDocumentGroup(group, true);
+
+  const saveDocumentGroup = (group: ServerDocumentGroup, isUpdate: boolean) => {
     if (!isMounted()) return;
     setIsLoading(true);
     updaterContext.addDocumentGroupUpdating(group);
 
-    DocumentUpdater.fetchAndSaveDocumentGroup(group)
-      .then(() => Alert.alert("Success", `${group.name} added!`))
+    const call = isUpdate
+      ? DocumentUpdater.fetchAndUpdateDocumentGroup(group)
+      : DocumentUpdater.fetchAndSaveDocumentGroup(group)
+
+    call
+      .then(() => Alert.alert("Success", `${group.name} ${isUpdate ? "updated" : "added"}!`))
       .catch(error => {
         rollbar.error("Failed to import document group", {
           ...sanitizeErrorForRollbar(error),
-          isUpdate: false,
+          isUpdate: isUpdate,
           group: group,
         });
 
         if (error.name == "TypeError" && error.message == "Network request failed") {
-          Alert.alert("Error", `Could not download ${group.name}. Make sure your internet connection is working or try again later.`)
+          Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${group.name}. Make sure your internet connection is working or try again later.`)
         } else {
-          Alert.alert("Error", `Could not download ${group.name}. \n${error}\n\nTry again later.`);
-        }
-      })
-      .finally(() => {
-        if (!isMounted()) return;
-        setIsLoading(false);
-        loadLocalDocumentGroups();
-      })
-      .finally(() => {
-        // Do this here after the state has been called, otherwise we get realm invalidation errors
-        updaterContext.removeDocumentGroupUpdating(group);
-      })
-  };
-
-  const updateDocumentGroup = (group: ServerDocumentGroup) => {
-    if (!isMounted()) return;
-    setIsLoading(true);
-    updaterContext.addDocumentGroupUpdating(group);
-
-    DocumentUpdater.fetchAndUpdateDocumentGroup(group)
-      .then(() => Alert.alert("Success", `${group.name} updated!`))
-      .catch(error => {
-        rollbar.error("Failed to update document group", {
-          ...sanitizeErrorForRollbar(error),
-          isUpdate: true,
-          group: group,
-        });
-
-        if (error.name == "TypeError" && error.message == "Network request failed") {
-          Alert.alert("Error", `Could not update ${group.name}. Make sure your internet connection is working or try again later.`)
-        } else {
-          Alert.alert("Error", `Could not update ${group.name}. \n${error}\n\nTry again later.`);
+          Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${group.name}. \n${error}\n\nTry again later.`);
         }
       })
       .finally(() => {
