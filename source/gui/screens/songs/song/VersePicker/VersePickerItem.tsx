@@ -49,7 +49,8 @@ const VersePickerItem: React.FC<ComponentProps> = ({
                              left: horizontalMargin,
                              right: horizontalMargin
                            }}>
-    <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}>
+    <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}
+          importantForAccessibility={"auto"}>
       {getVerseShortName(verse.name)}
     </Text>
   </TouchableOpacity>;

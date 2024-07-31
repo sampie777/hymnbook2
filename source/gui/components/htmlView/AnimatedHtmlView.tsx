@@ -141,7 +141,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
     <Animated.Text key={index}
-                   accessible={node.data != null && node.data.length > 0}
+                   importantForAccessibility={node.data != null && node.data.length > 0 ? undefined : "no"}
                    style={[mergedStyles.defaultText, args?.["style"]]}
                    dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>

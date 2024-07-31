@@ -26,7 +26,9 @@ const SearchInput: React.FC<ScreenProps> = ({ value, onChange, autoFocus = false
     {value.length === 0
       ? <Icon name={"search"} style={styles.icon} />
       : <TouchableOpacity onPress={clear}>
-        <Icon name={"times"} style={styles.icon} />
+        <Icon name={"times"}
+              style={styles.icon}
+              accessibilityLabel={"Clear search text"} />
       </TouchableOpacity>
     }
   </View>;

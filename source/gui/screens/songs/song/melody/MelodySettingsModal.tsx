@@ -109,7 +109,8 @@ const MelodySettingsModal: React.FC<Props> = ({
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
-            <Text style={styles.selectedLanguage}>
+            <Text style={styles.selectedLanguage}
+                  importantForAccessibility={"auto"}>
               {melodies.length === 0 ? "No melodies available"
                 : (selectedMelody?.name ?? "No default set")}
             </Text>

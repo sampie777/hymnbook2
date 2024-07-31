@@ -53,12 +53,15 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
                        } />
     }
 
-    <Text style={styles.label}>Language:</Text>
+    <Text style={styles.label}>
+      Language:
+    </Text>
 
     <TouchableOpacity style={styles.button}
                       onPress={openPicker}
                       disabled={disabled}>
-      <Text style={styles.selectedLanguage}>
+      <Text style={styles.selectedLanguage}
+            importantForAccessibility={"auto"}>
         {languageAbbreviationToFullName(selectedLanguage)}
       </Text>
       <Icon name={"caret-down"} style={styles.arrow} />

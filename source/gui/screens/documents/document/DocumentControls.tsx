@@ -126,7 +126,8 @@ const DocumentControls: React.FC<Props> =
       {previousDocument === undefined ? undefined :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(previousDocument)}
-                                  hitSlop={RectangularInset(20)}>
+                                  hitSlop={RectangularInset(20)}
+                                  accessibilityLabel={"Previous document"}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
@@ -142,7 +143,8 @@ const DocumentControls: React.FC<Props> =
         ) :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(nextDocument)}
-                                  hitSlop={RectangularInset(20)}>
+                                  hitSlop={RectangularInset(20)}
+                                  accessibilityLabel={"Next document"}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
