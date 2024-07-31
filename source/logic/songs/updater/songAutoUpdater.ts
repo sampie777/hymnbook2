@@ -19,6 +19,9 @@ export namespace SongAutoUpdater {
     const updates = await Server.fetchSongBundleUpdates();
 
     for (const bundle of bundles) {
+      // Check if bundle hasn't been deleted in the meantime
+      if (!bundle.isValid()) continue;
+
       const hasUpdate = updates.some(update => update.uuid === bundle.uuid && update.hash != bundle.hash);
       if (!hasUpdate) continue;
 
