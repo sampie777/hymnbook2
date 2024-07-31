@@ -39,7 +39,8 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
       {
         name: "Document databases",
         icon: (style) => <Icon name="file-alt" style={style as StyleProp<any>} />,
-        onPress: () => navigation.navigate(DatabasesRoute, { type: Types.Documents })
+        onPress: () => navigation.navigate(DatabasesRoute, { type: Types.Documents }),
+        statusIcon: updaterContext.documentGroupsUpdating.length > 0 ? <IsDownloadingIcon /> : undefined,
       },
       {
         route: SettingsRoute,

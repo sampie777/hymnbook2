@@ -58,7 +58,8 @@ export const api = {
       get: (uuid: string, loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean) =>
         get(`${databaseApiEndpoint}/documents/groups/${uuid}?loadGroups=${loadGroups ? "true" : "false"}` +
           `&loadItems=${loadItems ? "true" : "false"}` +
-          `&loadContent=${loadContent ? "true" : "false"}`)
+          `&loadContent=${loadContent ? "true" : "false"}`),
+      updates: () => get(`${databaseApiEndpoint}/documents/groups/updates`),
     }
   },
 

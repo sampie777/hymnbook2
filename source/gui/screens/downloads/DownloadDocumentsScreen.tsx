@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
+import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
 import { DeepLinking } from "../../../logic/deeplinking";
 import { rollbar } from "../../../logic/rollbar";
-import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../components/utils";
@@ -20,6 +20,8 @@ import {
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
+import { DocumentUpdater } from "../../../logic/documents/updater/documentUpdater";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -42,6 +44,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -105,24 +108,19 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     setIsLoading(true);
     setIsLocalGroupsLoading(true);
 
-    const result = DocumentProcessor.loadLocalDocumentRoot();
-    result.alert();
-    result.throwIfException();
+    let data: (DocumentGroup & Realm.Object<DocumentGroup>)[] = [];
+    try {
+      data = DocumentProcessor.loadLocalDocumentRoot();
+    } catch (error) {
+      return alertAndThrow(error);
+    }
 
     if (!isMounted()) return;
 
-    if (result.data !== undefined) {
-      setLocalGroups(result.data);
-    } else {
-      setLocalGroups([]);
-    }
+    setLocalGroups(data);
 
     if (filterLanguage === "") {
-      if (result.data !== undefined) {
-        setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(result.data));
-      } else {
-        setFilterLanguage("");
-      }
+      setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(data));
     }
 
     setIsLoading(false);
@@ -150,7 +148,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   };
 
   const applyUuidUpdateForPullRequest8 = () => {
-    DocumentProcessor.updateLocalGroupsWithUuid(localGroups, serverGroups);
+    DocumentUpdater.updateLocalGroupsWithUuid(localGroups, serverGroups);
   };
   useEffect(applyUuidUpdateForPullRequest8, [serverGroups]);
 
@@ -194,23 +192,25 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   };
 
   const onConfirmDownloadDocumentGroup = () => {
-    const serverDocumentGroup = requestDownloadForGroup;
+    const group = requestDownloadForGroup;
     setRequestDownloadForGroup(undefined);
 
-    if (isLoading || serverDocumentGroup === undefined) {
-      return;
-    }
+    if (isLoading || group === undefined) return;
 
-    downloadDocumentGroup(serverDocumentGroup);
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === group.uuid);
+    if (isUpdating) return;
+
+    downloadDocumentGroup(group);
   };
 
   const onConfirmUpdateDocumentGroup = () => {
     const group = requestUpdateForGroup;
     setRequestUpdateForGroup(undefined);
 
-    if (isLoading || group === undefined) {
-      return;
-    }
+    if (isLoading || group === undefined) return;
+
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === group.uuid);
+    if (isUpdating) return;
 
     updateDocumentGroup(group);
   };
@@ -237,27 +237,34 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   };
 
   const saveDocumentGroup = (group: ServerDocumentGroup) => {
+    if (!isMounted()) return;
     setIsLoading(true);
+    updaterContext.addDocumentGroupUpdating(group);
 
-    const result = DocumentProcessor.saveDocumentGroupToDatabase(group);
+    const result = DocumentUpdater.saveDocumentGroupToDatabase(group);
+    updaterContext.removeDocumentGroupUpdating(group);
     result.alert();
     result.throwIfException();
 
     if (!isMounted()) return;
-
     setIsLoading(false);
     loadLocalDocumentGroups();
   };
 
   const updateDocumentGroup = (group: ServerDocumentGroup) => {
+    if (!isMounted()) return;
     setIsLoading(true);
+    updaterContext.addDocumentGroupUpdating(group);
 
-    DocumentProcessor.fetchAndUpdateDocumentGroup(group)
-      .then(result => {
-        result.alert();
-        result.throwIfException();
-      })
+    DocumentUpdater.fetchAndUpdateDocumentGroup(group)
+      .then(() => Alert.alert("Success", `${group.name} updated!`))
       .catch(error => {
+        rollbar.error("Failed to import document group", {
+          ...sanitizeErrorForRollbar(error),
+          isUpdate: true,
+          group: group,
+        });
+
         if (error.name == "TypeError" && error.message == "Network request failed") {
           Alert.alert("Error", `Could not update ${group.name}. Make sure your internet connection is working or try again later.`)
         } else {
@@ -265,6 +272,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         }
       })
       .finally(() => {
+        updaterContext.removeDocumentGroupUpdating(group);
         if (!isMounted()) return;
         setLocalGroups([]);
         setIsLoading(false);
@@ -276,7 +284,11 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     const group = requestDeleteForGroup;
     setRequestDeleteForGroup(undefined);
 
-    if (isLoading || group === undefined) {
+    if (isLoading || group === undefined) return;
+
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === group.uuid);
+    if (isUpdating) {
+      Alert.alert("Could not delete", "This group is being updated. Please wait until this operation is done and try again.")
       return;
     }
 
@@ -285,6 +297,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
   const deleteDocumentGroup = (group: LocalDocumentGroup) => {
     setIsLoading(true);
+    updaterContext.removeDocumentGroupUpdating(group);
 
     const result = DocumentProcessor.deleteDocumentGroup(group);
     result.alert();

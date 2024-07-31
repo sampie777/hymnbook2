@@ -1,7 +1,7 @@
-import { DocumentProcessor } from "../../../source/logic/documents/documentProcessor";
+import {DocumentProcessor} from "../../../source/logic/documents/documentProcessor";
 import Db from "../../../source/logic/db/db";
-import { DocumentGroupSchema, DocumentSchema } from "../../../source/logic/db/models/DocumentsSchema";
-import { Document, DocumentGroup } from "../../../source/logic/db/models/Documents";
+import {DocumentGroupSchema, DocumentSchema} from "../../../source/logic/db/models/DocumentsSchema";
+import {Document, DocumentGroup} from "../../../source/logic/db/models/Documents";
 import {
   Document as ServerDocument,
   DocumentGroup as ServerDocumentGroup,
@@ -108,19 +108,21 @@ describe("test document processor", () => {
       Db.documents.realm().create(DocumentGroupSchema.name, group("group 2", undefined, true));
     });
 
-    const result = DocumentProcessor.loadLocalDocumentRoot();
-    expect(result.success).toBe(true);
-    expect(result.data.length).toBe(2);
-    expect(result.data[0].name).toBe("group 1");
-    expect(result.data[1].name).toBe("group 2");
+    const data = DocumentProcessor.loadLocalDocumentRoot();
+    expect(data.length).toBe(2);
+    expect(data[0].name).toBe("group 1");
+    expect(data[1].name).toBe("group 2");
   });
 
   it("give error if db not connected when trying to load all document groups from the database", () => {
     Db.documents.disconnect();
 
-    const result = DocumentProcessor.loadLocalDocumentRoot();
-    expect(result.success).toBe(false);
-    expect(result.message).toBe("Database is not connected");
+    try {
+      DocumentProcessor.loadLocalDocumentRoot();
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(error.message).toBe("Database is not connected");
+    }
   });
 
   it("deletes document group with all children from the database", () => {
