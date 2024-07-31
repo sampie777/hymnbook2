@@ -262,6 +262,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
   const deleteSongBundle = (bundle: LocalSongBundle) => {
     setIsLoading(true);
+    updaterContext.removeSongBundleUpdating(bundle);
 
     try {
       const successMessage = SongProcessor.deleteSongBundle(bundle)
