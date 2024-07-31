@@ -191,25 +191,29 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
 
   const onConfirmDownloadSongBundle = () => {
-    const songBundle = requestDownloadForBundle;
+    const bundle = requestDownloadForBundle;
     setRequestDownloadForBundle(undefined);
 
-    if (isLoading || songBundle === undefined) {
+    if (isLoading || bundle === undefined) {
       return;
     }
 
-    downloadSongBundle(songBundle);
+    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+    if (isUpdating) return;
+
+    downloadSongBundle(bundle);
   };
 
   const onConfirmUpdateSongBundle = () => {
-    const songBundle = requestUpdateForBundle;
+    const bundle = requestUpdateForBundle;
     setRequestUpdateForBundle(undefined);
 
-    if (isLoading || songBundle === undefined) {
-      return;
-    }
+    if (isLoading || bundle === undefined) return;
 
-    updateSongBundle(songBundle);
+    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+    if (isUpdating) return;
+
+    updateSongBundle(bundle);
   };
 
   const downloadSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, false);
@@ -254,6 +258,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setRequestDeleteForBundle(undefined);
 
     if (isLoading || bundle === undefined) {
+      return;
+    }
+
+    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+    if (isUpdating) {
+      Alert.alert("Could not delete", "This bundle is being updated. Please wait until this operation is done and try again.")
       return;
     }
 
