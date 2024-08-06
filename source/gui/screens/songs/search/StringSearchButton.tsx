@@ -52,6 +52,7 @@ const StringSearchButton: React.FC<Props> = ({
 
   return <View style={[styles.containerBase, containerPositionStyle]}>
     <TouchableOpacity style={[styles.button, buttonPositionStyle]}
+                      accessibilityLabel={"Search song text"}
                       onPress={onPress}>
       <Icon name={"search"} style={[styles.icon, iconPositionStyle]} />
     </TouchableOpacity>

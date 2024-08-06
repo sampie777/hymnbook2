@@ -11,7 +11,9 @@ const DeleteAllButton: React.FC<Props> = ({ onPress }) => {
 
   return <TouchableOpacity style={styles.container}
                            onPress={onPress}>
-    <Text style={styles.text}>Delete all</Text>
+    <Text style={styles.text}
+          importantForAccessibility={"no"}
+          accessibilityElementsHidden={true}>Delete all</Text>
   </TouchableOpacity>;
 };
 
