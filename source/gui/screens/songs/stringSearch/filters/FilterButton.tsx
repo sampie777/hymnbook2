@@ -13,7 +13,8 @@ const FilterButton: React.FC<Props> = ({ onPress, isOpen }) => {
 
   return <TouchableOpacity style={styles.container}
                            onPress={onPress}
-                           hitSlop={{ top: 10, right: 30, bottom: 10, left: 5 }}>
+                           hitSlop={{ top: 10, right: 30, bottom: 10, left: 5 }}
+                           accessibilityLabel={`${isOpen ? "Hide" : "Show"} search filters`}>
     <Icon name={"filter"} style={styles.icon} />
     <Icon name={isOpen ? "sort-up" : "sort-down"} style={styles.icon} />
   </TouchableOpacity>;

@@ -18,12 +18,14 @@ const DocumentItem: React.FC<ScreenProps> = ({ document, onPress, searchText }) 
     <Text style={[
       styles.itemName,
       (!(searchText === undefined || searchText.length === 0) ? {} : styles.itemExtraPadding)
-    ]}>
+    ]}
+          importantForAccessibility={"auto"}>
       {document.name}
     </Text>
 
     {searchText === undefined || searchText.length === 0 ? undefined :
-      <Text style={styles.parentName}>
+      <Text style={styles.parentName}
+            importantForAccessibility={"auto"}>
         {Document.getParent(document)?.name}
       </Text>
     }

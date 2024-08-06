@@ -30,12 +30,14 @@ const SongItem: React.FC<Props> = ({
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={styles.container}>
     <View style={styles.infoContainer}>
-      <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>
+      <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}
+            importantForAccessibility={"auto"}>
         {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
       </Text>
 
       {!showSongBundle ? undefined :
-        <Text style={styles.songBundleName}>
+        <Text style={styles.songBundleName}
+              importantForAccessibility={"auto"}>
           {Song.getSongBundle(songListSong.song)?.name}
         </Text>
       }
@@ -43,7 +45,8 @@ const SongItem: React.FC<Props> = ({
 
     {!showDeleteButton ? undefined :
       <TouchableOpacity style={styles.button}
-                        onPress={() => onDeleteButtonPress(index)}>
+                        onPress={() => onDeleteButtonPress(index)}
+                        accessibilityLabel={`Delete ${songListSong.song.name}`}>
         <Icon name={"trash-alt"}
               size={styles.button.fontSize}
               color={styles.button.color} />

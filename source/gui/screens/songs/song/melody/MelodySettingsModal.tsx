@@ -71,7 +71,8 @@ const MelodySettingsModal: React.FC<Props> = ({
                        onDenied={closePicker}
                        onCompleted={it => setMelody(it)}
                        rowContentRenderer={(item, isSelected) =>
-                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
+                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
+                               importantForAccessibility={"auto"}>
                            {item.name}
                          </Text>
                        } />
@@ -109,8 +110,10 @@ const MelodySettingsModal: React.FC<Props> = ({
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
-            <Text style={styles.selectedLanguage}>
-              {melodies.length === 0 ? "No melodies available"
+            <Text style={styles.selectedLanguage}
+                  importantForAccessibility={"auto"}>
+              {melodies.length === 0
+                ? "No melodies available"
                 : (selectedMelody?.name ?? "No default set")}
             </Text>
             {melodies?.length < 2 ? undefined : <Icon name={"caret-down"} style={styles.arrow} />}
