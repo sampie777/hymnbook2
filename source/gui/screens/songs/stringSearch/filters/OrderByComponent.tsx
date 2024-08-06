@@ -36,7 +36,8 @@ const OrderByComponent: React.FC<Props> = ({ value, onChange }) => {
                        onDenied={() => setIsOpen(false)}
                        onCompleted={_onChange}
                        rowContentRenderer={(item, isSelected) =>
-                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
+                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
+                               importantForAccessibility={"auto"}>
                            {toText(item)}
                          </Text>
                        } />
@@ -44,7 +45,8 @@ const OrderByComponent: React.FC<Props> = ({ value, onChange }) => {
 
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
-      <Text style={styles.text}>
+      <Text style={styles.text}
+            importantForAccessibility={"auto"}>
         Sort by: <Text style={{ fontWeight: "bold" }}>{toText(value)}</Text>
       </Text>
     </TouchableOpacity>
