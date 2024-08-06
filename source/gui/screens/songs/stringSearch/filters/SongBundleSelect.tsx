@@ -59,10 +59,14 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
 
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
-      <Text style={styles.text} numberOfLines={2}>
+      <Text style={styles.text}
+            numberOfLines={2}
+            importantForAccessibility={"auto"}>
         Song bundles:
       </Text>
-      <Text style={[styles.text, styles.value]} numberOfLines={2}>
+      <Text style={[styles.text, styles.value]}
+            numberOfLines={2}
+            importantForAccessibility={"auto"}>
         {selectedBundlesText()}
       </Text>
 

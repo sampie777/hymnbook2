@@ -44,7 +44,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () => <HeaderIconButton icon={"check"}
                                            onPress={submit}
-                                           hitSlop={RectangularInset(10)} />
+                                           hitSlop={RectangularInset(10)}
+                                           accessibilityLabel={"Done"}/>
     });
   }, [selectedVerses]);
 

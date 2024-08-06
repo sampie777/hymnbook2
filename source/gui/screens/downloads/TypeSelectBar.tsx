@@ -19,7 +19,8 @@ const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick, is
   return (<View style={styles.container}>
     <TouchableOpacity style={[styles.typeContainer, (Types.Songs !== selectedType ? {} : styles.selectedContainer)]}
                       onPress={() => onTypeClick?.(Types.Songs)}
-                      disabled={isProcessing}>
+                      disabled={isProcessing}
+                      accessibilityLabel={"Song databases"}>
       <Icon name={"music"}
             style={[
               styles.icon,
@@ -28,10 +29,10 @@ const TypeSelectBar: React.FC<ComponentProps> = ({ selectedType, onTypeClick, is
             ]} />
     </TouchableOpacity>
 
-    <TouchableOpacity
-      style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
-      onPress={() => onTypeClick?.(Types.Documents)}
-      disabled={isProcessing}>
+    <TouchableOpacity style={[styles.typeContainer, (Types.Documents !== selectedType ? {} : styles.selectedContainer)]}
+                      onPress={() => onTypeClick?.(Types.Documents)}
+                      disabled={isProcessing}
+                      accessibilityLabel={"Document databases"}>
       <Icon name={"file-alt"}
             style={[
               styles.icon,

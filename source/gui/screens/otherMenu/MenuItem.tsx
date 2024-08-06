@@ -21,7 +21,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
       {icon?.(styles.icon)}
       {!hasNotification ? null : <View style={styles.badge}></View>}
     </View>
-    <Text style={styles.title}>{text}</Text>
+    <Text style={styles.title}
+          importantForAccessibility={"auto"}>
+      {text}
+    </Text>
   </TouchableOpacity>);
 };
 

@@ -46,19 +46,23 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
                        onDenied={closePicker}
                        onCompleted={it => setLanguage(it)}
                        rowContentRenderer={(item, isSelected) =>
-                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
+                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
+                               importantForAccessibility={"auto"}>
                            {languageAbbreviationToFullName(item)}
                            {itemCountPerLanguage.get(item) ? ` (${itemCountPerLanguage.get(item)})` : undefined}
                          </Text>
                        } />
     }
 
-    <Text style={styles.label}>Language:</Text>
+    <Text style={styles.label}>
+      Language:
+    </Text>
 
     <TouchableOpacity style={styles.button}
                       onPress={openPicker}
                       disabled={disabled}>
-      <Text style={styles.selectedLanguage}>
+      <Text style={styles.selectedLanguage}
+            importantForAccessibility={"auto"}>
         {languageAbbreviationToFullName(selectedLanguage)}
       </Text>
       <Icon name={"caret-down"} style={styles.arrow} />

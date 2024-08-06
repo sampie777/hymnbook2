@@ -16,10 +16,15 @@ const AudioItem: React.FC<Props> = ({ item, isSelected, onPress }) => {
   return <TouchableOpacity style={styles.container}
                            onPress={onPress}>
     <View style={[styles.selection, (isSelected ? styles.selectionSelected : {})]} />
-    <Text style={[styles.text, (isSelected ? styles.textSelected : {})]}>
+    <Text style={[styles.text, (isSelected ? styles.textSelected : {})]}
+          importantForAccessibility={"auto"}>
       {item.name}
     </Text>
-    {item.fileSize ? <Text style={styles.fileSize}>{readableFileSizeSI(item.fileSize)}</Text> : null}
+    {item.fileSize ?
+      <Text style={styles.fileSize}
+            importantForAccessibility={"no"}>
+        {readableFileSizeSI(item.fileSize)}
+      </Text> : null}
   </TouchableOpacity>;
 };
 

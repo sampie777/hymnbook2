@@ -25,14 +25,16 @@ const SongBundlePicker: React.FC<Props> = ({ bundles, selectedBundles, onConfirm
                                onCompleted={onConfirm}
                                rowContentRenderer={(item, isSelected) =>
                                  <View style={styles.container}>
-                                   <Text style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}>
+                                   <Text style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}
+                                         importantForAccessibility={"auto"}>
                                      {item.name}
                                    </Text>
 
                                    {!showLanguage ? null :
                                      <View style={styles.infoContainer}>
                                        {item.language === undefined || item.language === "" ? undefined :
-                                         <Text style={styles.infoText}>
+                                         <Text style={styles.infoText}
+                                               importantForAccessibility={"auto"}>
                                            {languageAbbreviationToFullName(item.language)}
                                          </Text>
                                        }

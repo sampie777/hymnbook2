@@ -138,7 +138,8 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
           renderItem={renderSongListItem}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.songList}
-          ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined} />
+          ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
+          importantForAccessibility={list.length > 0 ? undefined : "no"}/>
       </View>
     );
   };
