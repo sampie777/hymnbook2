@@ -44,9 +44,12 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
     <Menu>
       <MenuTrigger customStyles={{ TriggerTouchableComponent: TouchableOpacity }}>
         <View style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
-              hitSlop={{ top: 10, right: 0, bottom: 10, left: 10 }}>
+              hitSlop={{ top: 10, right: 0, bottom: 10, left: 10 }}
+              accessibilityLabel={"Melody menu"}
+              importantForAccessibility={"auto"}>
           <Icon name={"music"} style={styles.icon} />
-          {!showMelody || !songHasMelodyToShow ? undefined : <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
+          {!showMelody || !songHasMelodyToShow ? undefined :
+            <Icon name={"slash"} style={[styles.icon, styles.iconOverlay]} />}
 
           {/* Show a dot for each available melody (if multiple), maxed at 4 dots/melodies */}
           {!shouldShowMelodyCount ? undefined :
@@ -57,6 +60,7 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
           }
         </View>
       </MenuTrigger>
+
       <MenuOptions optionsContainerStyle={styles.popupContainer}>
         <MenuOption style={styles.popupItem}
                     disabled={!songHasMelodyToShow}
@@ -69,7 +73,8 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
               { top: 15, left: 10 },
               (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]} />}
 
-          <Text style={[styles.popupItemText, (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]}>
+          <Text style={[styles.popupItemText, (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]}
+                importantForAccessibility={"auto"}>
             {showMelody && songHasMelodyToShow ? "Hide" : "View"}
           </Text>
         </MenuOption>
@@ -77,13 +82,19 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
         <MenuOption style={styles.popupItem}
                     onSelect={() => setShowSongAudioModal(true)}>
           <Icon name={"play"} style={styles.popupItemIcon} />
-          <Text style={styles.popupItemText}>Play</Text>
+          <Text style={styles.popupItemText}
+                importantForAccessibility={"auto"}>
+            Play
+          </Text>
         </MenuOption>
 
         <MenuOption style={styles.popupItem}
                     onSelect={() => setShowMelodySettings(true)}>
           <Icon name={"cog"} style={styles.popupItemIcon} />
-          <Text style={styles.popupItemText}>Settings</Text>
+          <Text style={styles.popupItemText}
+                importantForAccessibility={"auto"}>
+            Settings
+          </Text>
         </MenuOption>
       </MenuOptions>
     </Menu>

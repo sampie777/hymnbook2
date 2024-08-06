@@ -30,17 +30,20 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
                       onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText}
+            importantForAccessibility={"auto"}>
         {group.name}
       </Text>
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(group.language)}
           </Text>
         }
         {group.size === undefined ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"no"}>
             {group.size} documents
           </Text>
         }
@@ -77,16 +80,19 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
                       onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText}
+            importantForAccessibility={"auto"}>
         {group.name}
       </Text>
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(group.language)}
           </Text>
         }
-        <Text style={styles.infoText}>
+        <Text style={styles.infoText}
+              importantForAccessibility={"no"}>
           {group.size} documents
         </Text>
       </View>

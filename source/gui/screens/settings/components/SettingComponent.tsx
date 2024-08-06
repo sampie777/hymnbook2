@@ -67,10 +67,21 @@ export function SettingComponent<T = string>({
       onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName, _value)}
       onLongPress={onLongPress === undefined ? undefined : () => onLongPress(setValue, keyName, _value)}>
       <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>{title}</Text>
+        <Text style={styles.titleText}
+              importantForAccessibility={"auto"}>
+          {title}
+        </Text>
       </View>
-      {description === undefined ? undefined : <Text style={styles.descriptionText}>{description}</Text>}
-      {value === undefined ? undefined : <Text style={styles.valueText}>{valueRender(_value)}</Text>}
+      {description === undefined ? undefined :
+        <Text style={styles.descriptionText}
+              importantForAccessibility={"auto"}>
+          {description}
+        </Text>}
+      {value === undefined ? undefined :
+        <Text style={styles.valueText}
+              importantForAccessibility={"auto"}>
+          {valueRender(_value)}
+        </Text>}
     </TouchableOpacity>
   );
 }

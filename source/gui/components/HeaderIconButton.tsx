@@ -10,6 +10,7 @@ interface ComponentProps {
   onLongPress?: () => void;
   buttonStyle?: StyleProp<ViewStyle> | undefined;
   hitSlop?: Insets;
+  accessibilityLabel?: string;
 }
 
 const HeaderIconButton: React.FC<ComponentProps> = ({
@@ -18,7 +19,8 @@ const HeaderIconButton: React.FC<ComponentProps> = ({
                                                       onPress,
                                                       onLongPress,
                                                       buttonStyle,
-                                                      hitSlop
+                                                      hitSlop,
+                                                      accessibilityLabel,
                                                     }) => {
   const styles = createStyles(useTheme());
 
@@ -32,7 +34,8 @@ const HeaderIconButton: React.FC<ComponentProps> = ({
   return <TouchableOpacity onPress={onPress}
                            onLongPress={onLongPress}
                            style={[styles.container, buttonStyle]}
-                           hitSlop={hitSlop}>
+                           hitSlop={hitSlop}
+                           accessibilityLabel={accessibilityLabel}>
     {icon}
     {iconOverlay}
   </TouchableOpacity>;
