@@ -12,9 +12,9 @@ import { SettingsDbPatch } from "./db/patches/settings/patching";
 
 export const closeDatabases = () => {
   Settings.store();
-  Db.documents.disconnect();
-  Db.songs.disconnect();
-  Db.settings.disconnect();
+  Db.documents.queueDisconnect();
+  Db.songs.queueDisconnect();
+  Db.settings.queueDisconnect();
 };
 
 export const initSettingsDatabase = (theme?: ThemeContextProps) =>
