@@ -202,10 +202,13 @@ const AppRoot: React.FC = () => {
       .then(() => {
         // Don't return, as that will hold up the app loading. Authentication should be done async.
         ServerAuth.authenticate()
-          .catch(error => Alert.alert(
-            "Authenticating error",
-            "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
-          ));
+          .catch(error => {
+            rollbar.error("Failed to authenticate with song server", sanitizeErrorForRollbar(error))
+            Alert.alert(
+              "Authenticating error",
+              "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
+            )
+          });
 
         if (!features.loaded) features.loadFeatures();
       })
