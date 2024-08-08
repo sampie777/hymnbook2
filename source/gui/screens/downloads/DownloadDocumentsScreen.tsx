@@ -39,7 +39,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const [isLocalGroupsLoading, setIsLocalGroupsLoading] = useState(true);
   const [isGroupLoading, setIsGroupLoading] = useState(false);
   const [serverGroups, setServerGroups] = useState<ServerDocumentGroup[]>([]);
-  const [localGroups, setLocalGroups] = useState<(LocalDocumentGroup & Realm.Object<LocalDocumentGroup>)[]>([]);
+  const [localGroups, setLocalGroups] = useState<LocalDocumentGroup[]>([]);
   const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
@@ -108,10 +108,12 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     setIsLoading(true);
     setIsLocalGroupsLoading(true);
 
-    let data: (DocumentGroup & Realm.Object<DocumentGroup>)[] = [];
+    let data: DocumentGroup[] = [];
     try {
-      data = DocumentProcessor.loadLocalDocumentRoot();
+      data = DocumentProcessor.loadLocalDocumentRoot()
+        .map(it => DocumentGroup.clone(it, {includeChildren: true, includeParent: false}))
     } catch (error) {
+      rollbar.error("Cannot load local document groups", sanitizeErrorForRollbar(error));
       return alertAndThrow(error);
     }
 
@@ -331,7 +333,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                                   tintColor={styles.refreshControl.color}
                                                   refreshing={isLoading || isGroupLoading} />}>
 
-        {localGroups.filter(it => it.isValid())
+        {localGroups
           .filter(isOfSelectedLanguage)
           .map((group: LocalDocumentGroup) =>
             <LocalDocumentGroupItem key={group.uuid + group.name}
@@ -341,7 +343,8 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                     hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
                                     disabled={isLoading || isGroupLoading} />)}
 
-        {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
+        {serverGroups
+          .filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
           .filter(isOfSelectedLanguage)
           .map((group: ServerDocumentGroup) =>
             <ServerDocumentGroupItem key={group.uuid + group.name}

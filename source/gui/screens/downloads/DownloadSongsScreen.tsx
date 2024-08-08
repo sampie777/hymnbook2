@@ -37,7 +37,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const [isLocalBundlesLoading, setIsLocalBundlesLoading] = useState(true);
   const [isBundleLoading, setIsBundleLoading] = useState(false);
   const [serverBundles, setServerBundles] = useState<ServerSongBundle[]>([]);
-  const [localBundles, setLocalBundles] = useState<(LocalSongBundle & Realm.Object<LocalSongBundle>)[]>([]);
+  const [localBundles, setLocalBundles] = useState<LocalSongBundle[]>([]);
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
@@ -106,10 +106,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsLoading(true);
     setIsLocalBundlesLoading(true);
 
-    let data: (SongBundle & Realm.Object<SongBundle>)[] = [];
+    let data: SongBundle[] = [];
     try {
       data = SongProcessor.loadLocalSongBundles()
+        .map(it => SongBundle.clone(it, { includeSongs: true, includeVerses: false }))
     } catch (error) {
+      rollbar.error("Cannot load local song bundles", sanitizeErrorForRollbar(error));
       return alertAndThrow(error);
     }
 
@@ -344,7 +346,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                                   tintColor={styles.refreshControl.color}
                                                   refreshing={isLoading || isBundleLoading} />}>
 
-        {localBundles.filter(it => it.isValid())
+        {localBundles
           .filter(isOfSelectedLanguage)
           .map((bundle: LocalSongBundle) =>
             <LocalSongBundleItem key={bundle.uuid + bundle.name}
@@ -354,7 +356,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                  hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
                                  disabled={isLoading || isBundleLoading} />)}
 
-        {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
+        {serverBundles
+          .filter(it => !SongProcessor.isBundleLocal(localBundles, it))
           .filter(isOfSelectedLanguage)
           .map((bundle: ServerSongBundle) =>
             <SongBundleItem key={bundle.uuid + bundle.name}

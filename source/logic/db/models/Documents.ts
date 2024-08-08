@@ -131,8 +131,9 @@ export class DocumentGroup {
       obj.name,
       obj.language,
       !options.includeChildren ? [] :
-        obj.groups?.map(it => DocumentGroup.clone(it, { ...options, includeParent: false })) ?? null,
-      !options.includeChildren ? [] : obj.items, // todo: clone
+        obj.groups?.map(it => DocumentGroup.clone(it, { ...options, includeParent: false })) ?? [],
+      !options.includeChildren ? [] :
+        obj.items?.map(it => Document.clone(it, {includeParent: false})) ?? [],
       obj.createdAt,
       obj.modifiedAt,
       obj.uuid,
