@@ -173,7 +173,8 @@ const SettingsScreen: React.FC = () => {
                             }} />
           <SettingSwitchComponent title={"Keep screen on"}
                                   onLongPress={(setValue) => setValue(true)}
-                                  keyName={"keepScreenAwake"} />
+                                  keyName={"keepScreenAwake"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Songs"} />
           <SettingsSliderComponent title={"Song text size"}
@@ -255,7 +256,8 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Documents"} />
+          <Header title={"Documents"}
+                  isVisible={showDocumentsZoomSettings || showAdvancedSettings}/>
           <SettingSwitchComponent title={"Enable zoom (experimental)"}
                                   description={"Use the experimental document viewer, which can be zoomed in/out. Let us know if you see something wrong."}
                                   onLongPress={(setValue) => setValue(true)}
@@ -263,7 +265,8 @@ const SettingsScreen: React.FC = () => {
                                   onPress={((setValue, key, newValue) => {
                                     setValue(newValue);
                                     setShowDocumentsZoomSettings(newValue);
-                                  })} />
+                                  })}
+                                  isVisible={showAdvancedSettings} />
           <SettingsSliderComponent title={"Document text size"}
                                    keyName={"documentScale"}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
