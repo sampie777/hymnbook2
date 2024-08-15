@@ -197,6 +197,8 @@ export const delayed = <T>(callback: () => T, delay: number) => new Promise<T>(r
       resolve(await callback()),
     delay));
 
+export const delay = (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout))
+
 // According to: https://askubuntu.com/a/222650
 export const readableFileSizeSI = (size: number): string => {
   if (size < 1000) return `${size} bytes`;
