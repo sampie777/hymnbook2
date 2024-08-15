@@ -8,7 +8,8 @@ import { SongBundle } from "../../db/models/Songs";
 export namespace SongAutoUpdater {
   export const run = async (
     addSongBundleUpdating: (bundle: { uuid: string }) => void,
-    removeSongBundleUpdating: (bundle: { uuid: string }) => void
+    removeSongBundleUpdating: (bundle: { uuid: string }) => void,
+    mayUseNetwork: () => boolean
   ) => {
     const bundles = SongProcessor.loadLocalSongBundles();
     if (bundles.length == 0) return;
@@ -16,6 +17,8 @@ export namespace SongAutoUpdater {
     const updates = await Server.fetchSongBundleUpdates();
 
     for (const bundle of bundles) {
+      if (!mayUseNetwork()) continue;
+
       // Check if bundle hasn't been deleted in the meantime
       if (!bundle.isValid()) continue;
 
