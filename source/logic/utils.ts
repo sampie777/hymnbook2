@@ -239,3 +239,5 @@ export const format = (date: Date | string, format: string) => {
     .replace(/%S/g, date.getSeconds().toString())
     .replace(/%f/g, date.getMilliseconds().toString().padStart(3, '0'));
 }
+
+export const consoleDir = (data: any) => console.debug(JSON.stringify(data, null, 2))

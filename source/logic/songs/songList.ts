@@ -161,12 +161,11 @@ export default class SongList {
     const songListSong = SongList.getSongAtIndex(index);
     if (songListSong === undefined) return;
 
-    if (verses.length === 0) {
-      Db.songs.realm().write(() => {
-        Db.songs.realm().delete(songListSong.selectedVerses);
-      });
-      return;
-    }
+    Db.songs.realm().write(() => {
+      Db.songs.realm().delete(songListSong.selectedVerses);
+    });
+
+    if (verses.length === 0) return;
 
     // "id IN [..]" currently not supported by Realm.
     // See: https://github.com/realm/realm-js/issues/2781#issuecomment-607213640
@@ -177,8 +176,6 @@ export default class SongList {
       .sorted("index");
 
     Db.songs.realm().write(() => {
-      Db.songs.realm().delete(songListSong.selectedVerses);
-
       dbVerses.forEach(it => songListSong.selectedVerses.push(new SongListVerseModel(it)));
     });
   };
