@@ -56,3 +56,5 @@ export const clearOrSelectAll = (selectedVerses: Array<VerseProps>, allVerses: A
 };
 
 export const hasVisibleNameForPicker = (verse: VerseProps) => verse.name.replace(/verse/gi, "").trim() !== "";
+
+export const cleanSelectedVerses = (data: VerseProps[], pool: VerseProps[]) => data.filter(selected => pool.some(it => it.id == selected.id));
