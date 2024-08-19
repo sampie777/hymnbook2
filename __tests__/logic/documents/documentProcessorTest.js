@@ -161,7 +161,7 @@ describe("test document processor", () => {
     const result = DocumentProcessor.deleteDocumentGroup(group2);
 
     expect(result.success).toBe(false);
-    expect(result.message).toBe("Cannot find document group group 2 in database");
+    expect(result.message).toBe("Could not find document group group 2 in database");
     expect(Db.documents.realm().objects(DocumentGroupSchema.name).length).toBe(1);
   });
 });
