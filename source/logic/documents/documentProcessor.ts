@@ -1,6 +1,6 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
-import { Result } from "../utils";
+import { Result, sanitizeErrorForRollbar } from "../utils";
 import { DocumentGroup } from "../db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../server/models/Documents";
 import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
@@ -21,30 +21,40 @@ export namespace DocumentProcessor {
 
   export const deleteDocumentGroup = (group: DocumentGroup): Result => {
     if (!Db.documents.isConnected()) {
-      rollbar.warning("Cannot delete document group: document database is not connected");
+      rollbar.warning("Cannot delete document group: document database is not connected", {
+        group: { ...group, groups: null, items: null, _parent: null }
+      });
       return new Result({ success: false, message: "Database is not connected" });
     }
 
-    const deleteGroup = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).find(it => it.id === group.id);
-    if (deleteGroup === null || deleteGroup === undefined) {
+    const dbGroup = Db.documents.realm().objectForPrimaryKey<DocumentGroup>(DocumentGroupSchema.name, group.id);
+    if (!dbGroup) {
       rollbar.error(`Trying to delete document group which does not exist in database`, {
-        group: group
+        group: { ...group, groups: null, items: null, _parent: null }
       });
-      return new Result({ success: false, message: `Cannot find document group ${group.name} in database` });
+      return new Result({ success: false, message: `Could not find document group ${group.name} in database` });
     }
 
-    const groupName = deleteGroup.name;
+    const groupName = dbGroup.name;
 
     // Shallow copy
-    const deleteGroups = deleteGroup.groups?.slice(0) || [];
+    const deleteGroups = dbGroup.groups?.slice(0) || [];
     deleteGroups.forEach(it => {
       deleteDocumentGroup(it);
     });
 
-    Db.documents.realm().write(() => {
-      Db.documents.realm().delete(deleteGroup.items);
-      Db.documents.realm().delete(deleteGroup);
-    });
+    try {
+      Db.documents.realm().write(() => {
+        Db.documents.realm().delete(dbGroup.items);
+        Db.documents.realm().delete(dbGroup);
+      });
+    } catch (error) {
+      rollbar.error("Failed to delete document group", {
+        ...sanitizeErrorForRollbar(error),
+        group: { ...group, groups: null, items: null, _parent: null }
+      });
+      throw new Error(`Could not delete (outdated) documents for ${groupName}`);
+    }
 
     return new Result({ success: true, message: `Deleted all for ${groupName}` });
   };
