@@ -71,7 +71,7 @@ function releaseMinor {
   retry git pull
   git merge develop || exit 1
 
-  # Create patch version
+  # Create version
   npm --no-git-tag-version version minor || exit 1
   RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
 
@@ -87,7 +87,7 @@ function releaseMajor {
   retry git pull
   git merge develop || exit 1
 
-  # Create patch version
+  # Create version
   npm --no-git-tag-version version major || exit 1
   RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
 
