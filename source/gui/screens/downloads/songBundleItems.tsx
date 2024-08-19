@@ -4,7 +4,8 @@ import { SongBundle as ServerSongBundle } from "../../../logic/server/models/Ser
 import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
+import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface SongBundleItemComponentProps {
   bundle: ServerSongBundle;
@@ -21,11 +22,14 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
        disabled
      }) => {
   const styles = createStyles(useTheme());
+  const { songBundlesUpdating } = useUpdaterContext();
+  const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
-                      disabled={disabled}>
+                      disabled={disabled || isUpdating}>
       <Text style={styles.titleText}
             importantForAccessibility={"auto"}>
         {bundle.name}
@@ -44,7 +48,9 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
           </Text>
         }
       </View>
-      <DownloadIcon />
+      <View>
+        {isUpdating ? <IsDownloadingIcon /> : <DownloadIcon />}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -66,11 +72,14 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
        disabled
      }) => {
   const styles = createStyles(useTheme());
+  const { songBundlesUpdating } = useUpdaterContext();
+  const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
-                      disabled={disabled}>
+                      disabled={disabled || isUpdating}>
       <Text style={styles.titleText}
             importantForAccessibility={"auto"}>
         {bundle.name}
@@ -88,7 +97,8 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
         </Text>
       </View>
       <View>
-        {!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />}
+        {isUpdating ? <IsDownloadingIcon /> :
+          (!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />)}
       </View>
     </TouchableOpacity>
   );

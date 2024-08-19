@@ -1,7 +1,7 @@
 import { api } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse } from "../apiUtils";
-import { SongBundle } from "./models/ServerSongsModel";
+import { ServerSongBundleUpdateStatus, SongBundle } from "./models/ServerSongsModel";
 import { sanitizeErrorForRollbar } from "../utils";
 import { Song, SongAudio } from "../db/models/Songs";
 
@@ -25,7 +25,17 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundle = (bundle: SongBundle | { uuid: string }, {
+  export const fetchSongBundleUpdates = (): Promise<ServerSongBundleUpdateStatus[]> =>
+    api.songBundles.updates()
+      .then(r => parseJscheduleResponse<ServerSongBundleUpdateStatus[]>(r))
+      .catch(error => {
+        rollbar.error(`Error fetching song bundle update status`, {
+          ...sanitizeErrorForRollbar(error),
+        });
+        throw error;
+      });
+
+  export const fetchSongBundle = (bundle: { uuid: string }, {
     loadSongs = false,
     loadVerses = false,
     loadAbcMelodies = false
@@ -44,7 +54,7 @@ export namespace Server {
       });
   };
 
-  export const fetchSongBundleWithSongsAndVerses = (bundle: SongBundle): Promise<SongBundle> =>
+  export const fetchSongBundleWithSongsAndVerses = (bundle: { uuid: string }): Promise<SongBundle> =>
     fetchSongBundle(bundle, {
       loadSongs: true,
       loadVerses: true,

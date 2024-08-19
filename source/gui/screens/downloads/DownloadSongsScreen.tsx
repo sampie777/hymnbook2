@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Config from "react-native-config";
-import { SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
+import { SongBundle, SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
 import { rollbar } from "../../../logic/rollbar";
 import { DeepLinking } from "../../../logic/deeplinking";
-import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../components/utils";
@@ -22,7 +22,8 @@ import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
-import { SongUpdater } from "../../../logic/songs/songUpdater";
+import { SongUpdater } from "../../../logic/songs/updater/songUpdater";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -36,11 +37,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const [isLocalBundlesLoading, setIsLocalBundlesLoading] = useState(true);
   const [isBundleLoading, setIsBundleLoading] = useState(false);
   const [serverBundles, setServerBundles] = useState<ServerSongBundle[]>([]);
-  const [localBundles, setLocalBundles] = useState<(LocalSongBundle & Realm.Object<LocalSongBundle>)[]>([]);
+  const [localBundles, setLocalBundles] = useState<LocalSongBundle[]>([]);
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -104,24 +106,21 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setIsLoading(true);
     setIsLocalBundlesLoading(true);
 
-    const result = SongProcessor.loadLocalSongBundles();
-    result.alert();
-    result.throwIfException();
+    let data: SongBundle[] = [];
+    try {
+      data = SongProcessor.loadLocalSongBundles()
+        .map(it => SongBundle.clone(it, { includeSongs: true, includeVerses: false }))
+    } catch (error) {
+      rollbar.error("Cannot load local song bundles", sanitizeErrorForRollbar(error));
+      return alertAndThrow(error);
+    }
 
     if (!isMounted()) return;
 
-    if (result.data !== undefined) {
-      setLocalBundles(result.data);
-    } else {
-      setLocalBundles([]);
-    }
+    setLocalBundles(data);
 
     if (filterLanguage === "") {
-      if (result.data !== undefined) {
-        setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(result.data));
-      } else {
-        setFilterLanguage("");
-      }
+      setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(data));
     }
 
     setIsLoading(false);
@@ -192,36 +191,37 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setRequestDeleteForBundle(bundle);
   };
 
-
   const onConfirmDownloadSongBundle = () => {
-    const songBundle = requestDownloadForBundle;
+    const bundle = requestDownloadForBundle;
     setRequestDownloadForBundle(undefined);
 
-    if (isLoading || songBundle === undefined) {
-      return;
-    }
+    if (isLoading || bundle === undefined) return;
 
-    downloadSongBundle(songBundle);
+    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+    if (isUpdating) return;
+
+    downloadSongBundle(bundle);
   };
 
   const onConfirmUpdateSongBundle = () => {
-    const songBundle = requestUpdateForBundle;
+    const bundle = requestUpdateForBundle;
     setRequestUpdateForBundle(undefined);
 
-    if (isLoading || songBundle === undefined) {
-      return;
-    }
+    if (isLoading || bundle === undefined) return;
 
-    updateSongBundle(songBundle);
+    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+    if (isUpdating) return;
+
+    updateSongBundle(bundle);
   };
 
   const downloadSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, false);
-
   const updateSongBundle = (bundle: ServerSongBundle) => saveSongBundle(bundle, true);
 
   const saveSongBundle = (bundle: ServerSongBundle, isUpdate: boolean) => {
     if (!isMounted()) return;
     setIsLoading(true);
+    updaterContext.addSongBundleUpdating(bundle);
 
     const call = isUpdate
       ? SongUpdater.fetchAndUpdateSongBundle(bundle)
@@ -233,7 +233,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         rollbar.error("Failed to import song bundle", {
           ...sanitizeErrorForRollbar(error),
           isUpdate: isUpdate,
-          bundle: bundle
+          bundle: bundle,
         });
 
         if (error.name == "TypeError" && error.message == "Network request failed") {
@@ -247,14 +247,22 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         setLocalBundles([]);
         setIsLoading(false);
         loadLocalSongBundles();
-      });
+      })
+      .finally(() => {
+        // Do this here after the state has been called, otherwise we get realm invalidation errors
+        updaterContext.removeSongBundleUpdating(bundle);
+      })
   };
 
   const onConfirmDeleteSongBundle = () => {
     const bundle = requestDeleteForBundle;
     setRequestDeleteForBundle(undefined);
 
-    if (isLoading || bundle === undefined) {
+    if (isLoading || bundle === undefined) return;
+
+    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+    if (isUpdating) {
+      Alert.alert("Could not delete", "This bundle is being updated. Please wait until this operation is done and try again.")
       return;
     }
 
@@ -263,10 +271,14 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
   const deleteSongBundle = (bundle: LocalSongBundle) => {
     setIsLoading(true);
+    updaterContext.removeSongBundleUpdating(bundle);
 
-    const result = SongProcessor.deleteSongBundle(bundle);
-    result.alert();
-    result.throwIfException();
+    try {
+      const successMessage = SongProcessor.deleteSongBundle(bundle)
+      Alert.alert("Success", successMessage);
+    } catch (error) {
+      alertAndThrow(error);
+    }
 
     if (!isMounted()) return;
 
@@ -334,7 +346,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                                   tintColor={styles.refreshControl.color}
                                                   refreshing={isLoading || isBundleLoading} />}>
 
-        {localBundles.filter(it => it.isValid())
+        {localBundles
           .filter(isOfSelectedLanguage)
           .map((bundle: LocalSongBundle) =>
             <LocalSongBundleItem key={bundle.uuid + bundle.name}
@@ -344,7 +356,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
                                  hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
                                  disabled={isLoading || isBundleLoading} />)}
 
-        {serverBundles.filter(it => !SongProcessor.isBundleLocal(localBundles, it))
+        {serverBundles
+          .filter(it => !SongProcessor.isBundleLocal(localBundles, it))
           .filter(isOfSelectedLanguage)
           .map((bundle: ServerSongBundle) =>
             <SongBundleItem key={bundle.uuid + bundle.name}

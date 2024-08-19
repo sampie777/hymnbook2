@@ -54,9 +54,7 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
                        } />
     }
 
-    <Text style={styles.label}>
-      Language:
-    </Text>
+    <Text style={styles.label}>Language:</Text>
 
     <TouchableOpacity style={styles.button}
                       onPress={openPicker}

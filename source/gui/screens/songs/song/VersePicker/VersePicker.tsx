@@ -6,6 +6,7 @@ import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRo
 import { Verse, VerseProps } from "../../../../../logic/db/models/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
+  cleanSelectedVerses,
   clearOrSelectAll,
   getMarginForVerses, hasVisibleNameForPicker,
   isVerseInList,
@@ -28,8 +29,8 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VerseP
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
-  const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
   const verses: Array<Verse> = route.params.verses || [];
+  const [selectedVerses, setSelectedVerses] = useState<VerseProps[]>(cleanSelectedVerses(route.params.selectedVerses, verses) || []);
   const songListIndex: number | undefined = route.params.songListIndex;
   const styles = createStyles(useTheme());
   const versePickerItemStyles = createVersePickerItemStyles(useTheme());
