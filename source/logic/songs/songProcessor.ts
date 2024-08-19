@@ -11,7 +11,7 @@ import Settings from "../../settings";
 
 export namespace SongProcessor {
 
-  export const loadLocalSongBundles = (): (SongBundle & Realm.Object<SongBundle>)[] =>  {
+  export const loadLocalSongBundles = (): (SongBundle & Realm.Object<SongBundle>)[] => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot load local song bundles: song database is not connected");
       throw new Error("Database is not connected");
@@ -70,14 +70,22 @@ export namespace SongProcessor {
       throw new Error("Database is not connected");
     }
 
-    const songCount = bundle.songs.length;
-    const bundleName = bundle.name;
-    const bundleUuid = bundle.uuid;
+    const dbBundle = Db.songs.realm().objectForPrimaryKey<SongBundle>(SongBundleSchema.name, bundle.id);
+    if (!dbBundle) {
+      rollbar.error(`Trying to delete song bundle which does not exist in database`, {
+        bundle: { ...bundle, songs: null }
+      });
+      throw Error(`Could not find song bundle ${bundle.name} in database`);
+    }
+
+    const songCount = dbBundle.songs.length;
+    const bundleName = dbBundle.name;
+    const bundleUuid = dbBundle.uuid;
 
     try {
       Db.songs.realm().write(() => {
-        Db.songs.realm().delete(bundle.songs);
-        Db.songs.realm().delete(bundle);
+        Db.songs.realm().delete(dbBundle.songs);
+        Db.songs.realm().delete(dbBundle);
       });
     } catch (error) {
       rollbar.error("Failed to delete song bundle", {
