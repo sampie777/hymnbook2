@@ -10,6 +10,8 @@ export class DatabaseProvider {
   config: Realm.Configuration;
   _realm: Realm | null = null;
   _isConnected = false;
+  _isQueuedForDisconnect = false;
+  _disconnectTimeout: NodeJS.Timeout | undefined = undefined;
 
   constructor(props: DatabaseProps) {
     this.config = {
@@ -20,9 +22,10 @@ export class DatabaseProvider {
   }
 
   async connect() {
+    this.cancelQueuedDisconnect();
+
     if (this.isConnected()) {
-      console.debug(`Database '${this.config.path}' is already connected. Will close current connection to reconnect.`);
-      this.disconnect();
+      return this._realm;
     }
 
     this._isConnected = false;
@@ -34,6 +37,22 @@ export class DatabaseProvider {
     return this._realm;
   }
 
+  // Queue disconnect for development purposes: when the app hot reloads, a disconnect might be queued. But the new
+  // app boot will cancel this disconnect, preventing Realm == null errors.
+  queueDisconnect() {
+    this.cancelQueuedDisconnect();
+    this._isQueuedForDisconnect = true;
+    this._disconnectTimeout = setTimeout(this.disconnect, 300)
+  }
+
+  cancelQueuedDisconnect() {
+    if (this._disconnectTimeout) {
+      clearTimeout(this._disconnectTimeout);
+    }
+    this._disconnectTimeout = undefined;
+    this._isQueuedForDisconnect = false;
+  }
+
   disconnect() {
     this._isConnected = false;
     if (this._realm == null) {
@@ -41,10 +60,11 @@ export class DatabaseProvider {
     }
     this._realm.close();
     this._realm = null;
+    this._isQueuedForDisconnect = false;
   }
 
   isConnected = () => {
-    if (this._isConnected && this._realm == null) {
+    if (this._realm == null || this._realm.isClosed) {
       this._isConnected = false;
     }
     return this._isConnected;

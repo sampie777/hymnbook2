@@ -56,6 +56,8 @@ import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
 import { rollbar } from "./logic/rollbar";
+import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
+import { AutoUpdater } from "./logic/autoUpdater";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -116,6 +118,7 @@ const RootNavigation = () => {
 
 const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -129,6 +132,9 @@ const HomeNavigation: React.FC = () => {
     } catch (error) {
       rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
     }
+
+    AutoUpdater.run(updaterContext)
+      .catch(error => rollbar.error("Failed to run auto updater", sanitizeErrorForRollbar(error)));
   };
 
   const onExit = () => {
@@ -196,10 +202,13 @@ const AppRoot: React.FC = () => {
       .then(() => {
         // Don't return, as that will hold up the app loading. Authentication should be done async.
         ServerAuth.authenticate()
-          .catch(error => Alert.alert(
-            "Authenticating error",
-            "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
-          ));
+          .catch(error => {
+            rollbar.error("Failed to authenticate with song server", sanitizeErrorForRollbar(error))
+            Alert.alert(
+              "Authenticating error",
+              "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
+            )
+          });
 
         if (!features.loaded) features.loadFeatures();
       })
@@ -220,7 +229,9 @@ const AppRoot: React.FC = () => {
     {isLoading ? undefined :
       <NavigationContainer>
         <DeepLinkHandler>
-          <RootNavigation />
+          <UpdaterContextProvider>
+            <RootNavigation />
+          </UpdaterContextProvider>
         </DeepLinkHandler>
       </NavigationContainer>
     }

@@ -1,9 +1,11 @@
 import Db from "../db";
 import { SongBundle } from "../models/Songs";
-import { SongBundleSchema } from "../models/SongsSchema";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../models/SongsSchema";
 import { SongProcessor } from "../../songs/songProcessor";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
+import { AbcMelodySchema } from "../models/AbcMelodiesSchema";
+import { removeObjectsWithoutParents } from "./utils";
 
 export namespace SongDbPatch {
   /**
@@ -16,7 +18,7 @@ export namespace SongDbPatch {
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted("id", true);
 
-    bundles.forEach((it, index) => {
+    bundles.forEach((it) => {
       const isDuplicate = approvedUuids.includes(it.uuid);
       if (!isDuplicate) {
         approvedUuids.push(it.uuid);
@@ -41,7 +43,18 @@ export namespace SongDbPatch {
     });
   };
 
+  const removeSongObjectsWithoutParents = () => {
+    removeObjectsWithoutParents(Db.songs,
+      [
+        { schemaName: SongSchema.name, parentLink: '_songBundles', },
+        { schemaName: SongMetadataSchema.name, parentLink: '_songs', },
+        { schemaName: VerseSchema.name, parentLink: '_songs', },
+        { schemaName: AbcMelodySchema.name, parentLink: '_song', },
+      ]);
+  }
+
   export const patch = () => {
     removeDuplicateBundles();
+    removeSongObjectsWithoutParents();
   };
 }

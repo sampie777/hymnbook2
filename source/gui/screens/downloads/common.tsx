@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ShowAllLanguagesValue } from "./LanguageSelectBar";
+import Animated, {
+  cancelAnimation, Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming
+} from "react-native-reanimated";
 
 export const DownloadIcon: React.FC = () => {
   const styles = createStyles(useTheme());
@@ -16,6 +23,30 @@ export const IsDownloadedIcon: React.FC = () => {
 
   return <Icon name={"check"}
                style={styles.isDownloadedIcon} />;
+};
+
+export const IsDownloadingIcon: React.FC = () => {
+  const rotation = useSharedValue<number>(0);
+  const styles = createStyles(useTheme());
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotateZ: `${rotation.value}deg` }]
+  }))
+
+  useEffect(() => {
+    // Set to 0, as reloading of the component may cause it to start
+    // from a random value resulting in non completing circles
+    rotation.value = 0
+    rotation.value = withRepeat(withTiming(360, {
+      duration: 1300,
+      easing: Easing.linear
+    }), 0)
+
+    return () => cancelAnimation(rotation)
+  })
+
+  const AnimatedIcon = Animated.createAnimatedComponent(Icon)
+  return <AnimatedIcon name={"sync"}
+                       style={[styles.isDownloadingIcon, animatedStyle]} />;
 };
 
 export const UpdateIcon: React.FC = () => {
@@ -40,6 +71,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   isDownloadedIcon: {
     fontSize: 18,
     color: "#0d0"
+  },
+
+  isDownloadingIcon: {
+    fontSize: 18,
+    color: "dodgerblue"
   },
 
   updateIconCornerShadow: {

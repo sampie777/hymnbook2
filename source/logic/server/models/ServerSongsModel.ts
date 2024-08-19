@@ -189,3 +189,8 @@ export class SongBundle {
     this.hash = hash;
   }
 }
+
+export type ServerSongBundleUpdateStatus = {
+  uuid: string
+  hash: string
+}

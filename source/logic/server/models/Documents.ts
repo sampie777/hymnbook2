@@ -65,3 +65,8 @@ export class DocumentGroup {
     this.hash = hash;
   }
 }
+
+export type ServerDocumentGroupUpdateStatus = {
+  uuid: string
+  hash: string
+}
