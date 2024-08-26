@@ -1,7 +1,7 @@
 import Settings from "../settings";
 import { SongAutoUpdater } from "./songs/updater/songAutoUpdater";
 import { rollbar } from "./rollbar";
-import { delayed, sanitizeErrorForRollbar } from "./utils";
+import { delayed, isIOS, sanitizeErrorForRollbar } from "./utils";
 import { DocumentAutoUpdater } from "./documents/updater/documentAutoUpdater";
 import { UpdaterContextProps } from "../gui/components/providers/UpdaterContextProvider";
 import { addEventListener } from "@react-native-community/netinfo";
@@ -37,8 +37,9 @@ export namespace AutoUpdater {
     let isOnWifi = false;
 
     const unsubscribe = addEventListener(state => {
+      console.log(state)
       isSynced = true;
-      isOnWifi = state.isWifiEnabled === true;
+      isOnWifi = state.type == 'wifi' && state.isConnected;
     })
 
     return {
