@@ -20,7 +20,7 @@
     "@react-navigation/bottom-tabs": "6.5.11",
     "@react-navigation/native": "6.1.9",
     "@react-navigation/native-stack": "6.9.17",
-    "@realm/react": "0.7.0",
+    "@realm/react": "0.10.0",
     "abcjs": "git+https://github.com/paulrosen/abcjs.git#6.2.3",
     "fastest-levenshtein": "1.0.16",
     "fetch-retry": "6.0.0",
@@ -40,12 +40,12 @@
     "react-native-svg": "13.14.0",
     "react-native-track-player": "4.0.1",
     "react-native-vector-icons": "9.2.0",
-    "realm": "12.9.0",
+    "realm": "12.13.1",
     "rollbar-react-native": "0.9.3"
   },
   "devDependencies": {
     "@babel/core": "7.23.5",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "7.18.6",
     "@babel/plugin-transform-flow-strip-types": "7.23.3",
     "@babel/plugin-transform-nullish-coalescing-operator": "7.23.4",
     "@babel/plugin-transform-private-methods": "7.23.3",
