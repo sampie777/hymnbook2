@@ -37,7 +37,6 @@ export namespace AutoUpdater {
     let isOnWifi = false;
 
     const unsubscribe = addEventListener(state => {
-      console.log(state)
       isSynced = true;
       isOnWifi = state.type == 'wifi' && state.isConnected;
     })
