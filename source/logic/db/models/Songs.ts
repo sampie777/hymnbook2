@@ -168,21 +168,32 @@ export class Song {
     return song._songBundles[0];
   }
 
-  static clone(obj: Song): Song {
-    return {
+  static clone(obj: Song, options: { includeVerses: boolean } = { includeVerses: false }): Song {
+    const result: Song = {
       id: obj.id,
       name: obj.name,
       number: obj.number,
       language: obj.language,
-      verses: obj.verses.map(Verse.toObject).sort((a, b) => a.index - b.index),
+      verses: !options.includeVerses ? [] :
+        obj.verses
+          .map(Verse.toObject)
+          .sort((a, b) => a.index - b.index),
       createdAt: obj.createdAt,
       modifiedAt: obj.modifiedAt,
       uuid: obj.uuid,
       abcMelodies: obj.abcMelodies.map(AbcMelody.clone),
       metadata: obj.metadata.map(SongMetadata.clone),
       lastUsedMelody: obj.lastUsedMelody ? AbcMelody.clone(obj.lastUsedMelody) : undefined,
-      _songBundles: obj._songBundles?.map(it => SongBundle.clone(it, {includeSongs: false})),
+      _songBundles: obj._songBundles?.map(it => SongBundle.clone(it, { includeSongs: false, includeVerses: false })),
     }
+
+    if (result.lastUsedMelody) {
+      // Re-assign to keep the pointer reference
+      result.lastUsedMelody = result.abcMelodies
+        .find(it => it.id === result.lastUsedMelody!.id) ?? result.lastUsedMelody;
+    }
+
+    return result;
   }
 }
 
@@ -225,7 +236,14 @@ export class SongBundle {
     this.hash = hash;
   }
 
-  static clone(obj: SongBundle, options: { includeSongs: boolean } = { includeSongs: false }): SongBundle {
+  static clone(obj: SongBundle,
+               options: {
+                 includeSongs: boolean,
+                 includeVerses: boolean,
+               } = {
+                 includeSongs: false,
+                 includeVerses: false,
+               }): SongBundle {
     return {
       id: obj.id,
       abbreviation: obj.abbreviation,
@@ -233,7 +251,8 @@ export class SongBundle {
       language: obj.language,
       author: obj.author,
       copyright: obj.copyright,
-      songs: !options.includeSongs ? [] : obj.songs.map(Song.clone),
+      songs: !options.includeSongs ? [] :
+        obj.songs.map(it => Song.clone(it, { includeVerses: options.includeVerses })),
       createdAt: obj.createdAt,
       modifiedAt: obj.modifiedAt,
       uuid: obj.uuid,

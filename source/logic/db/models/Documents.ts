@@ -45,27 +45,44 @@ export class Document {
 
     return document._parent[0];
   }
+
+  static clone(obj: Document, options: { includeParent: boolean } = { includeParent: false }): Document {
+    const parent = Document.getParent(obj);
+
+    return new Document(
+      obj.name,
+      obj.html,
+      obj.language,
+      obj.index,
+      obj.createdAt,
+      obj.modifiedAt,
+      obj.uuid,
+      obj.id,
+      !options.includeParent || parent == undefined ? undefined :
+        DocumentGroup.clone(parent, { ...options, includeChildren: false }),
+    )
+  }
 }
 
 export class DocumentGroup {
   id: number;
   name: string;
   language: string;
-  groups: Array<DocumentGroup> | null;
-  items: Array<Document> | null;
+  groups: DocumentGroup[] | null;
+  items: Document[] | null;
   createdAt: Date;
   modifiedAt: Date;
   uuid: string;
   hash?: string;
   size: number;
   isRoot: boolean;
-  _parent?: Array<DocumentGroup>;
+  _parent?: DocumentGroup[];
 
   constructor(
     name: string,
     language: string,
-    groups: Array<DocumentGroup> | null,
-    items: Array<Document> | null,
+    groups: DocumentGroup[] | null,
+    items: Document[] | null,
     createdAt: Date,
     modifiedAt: Date,
     uuid: string,
@@ -99,5 +116,33 @@ export class DocumentGroup {
     }
 
     return group._parent[0];
+  }
+
+  static clone(obj: DocumentGroup, options: {
+    includeChildren: boolean,
+    includeParent: boolean
+  } = {
+    includeChildren: false,
+    includeParent: false
+  }): DocumentGroup {
+    const parent = DocumentGroup.getParent(obj);
+
+    return new DocumentGroup(
+      obj.name,
+      obj.language,
+      !options.includeChildren ? [] :
+        obj.groups?.map(it => DocumentGroup.clone(it, { ...options, includeParent: false })) ?? [],
+      !options.includeChildren ? [] :
+        obj.items?.map(it => Document.clone(it, {includeParent: false})) ?? [],
+      obj.createdAt,
+      obj.modifiedAt,
+      obj.uuid,
+      obj.hash,
+      obj.size,
+      obj.isRoot,
+      obj.id,
+      !options.includeParent || parent == undefined ? undefined :
+        DocumentGroup.clone(parent, { ...options, includeParent: false }),
+    )
   }
 }

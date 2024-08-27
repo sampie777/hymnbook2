@@ -74,7 +74,8 @@ const SearchResultComponent: React.FC<Props> = ({
                            onPress={disable ? undefined : onPress}
                            onLongPress={disable ? undefined : onLongPress}>
     <View style={styles.titleContainer}>
-      <Text style={styles.songName}>
+      <Text style={styles.songName}
+            importantForAccessibility={"auto"}>
         {!isTitleMatch ? song.name :
           renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
         }
@@ -86,11 +87,11 @@ const SearchResultComponent: React.FC<Props> = ({
       </Text>
 
       {alternativeTitle == null ? undefined :
-        <Text style={styles.alternativeTitle}>
+        <Text style={styles.alternativeTitle}
+              importantForAccessibility={"auto"}>
           {renderTextWithCustomReplacements(alternativeTitle, searchRegex, createHighlightedTextComponent)}
         </Text>
       }
-
     </View>
 
     {song.verses == null || song.verses.length === 0 ? undefined :

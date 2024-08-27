@@ -20,19 +20,22 @@ const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<Docum
       <Text style={[
         styles.itemName,
         (!(searchText === undefined || searchText.length === 0) ? {} : styles.itemExtraPadding)
-      ]}>
+      ]}
+            importantForAccessibility={"auto"}>
         {group.name}
       </Text>
 
       {searchText === undefined || searchText.length === 0 ? undefined :
-        <Text style={styles.parentName}>
+        <Text style={styles.parentName}
+              importantForAccessibility={"auto"}>
           {DocumentGroup.getParent(group)?.name}
         </Text>
       }
     </View>
 
     <View style={styles.infoContainer}>
-      <Text style={styles.infoText}>
+      <Text style={styles.infoText}
+            importantForAccessibility={"no"}>
         {group.size} files
       </Text>
     </View>

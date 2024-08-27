@@ -187,7 +187,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       {group === undefined ? undefined :
         <HeaderIconButton onPress={previousLevel}
                           icon={"arrow-left"}
-                          hitSlop={RectangularInset(10)} />}
+                          hitSlop={RectangularInset(10)}
+                          accessibilityLabel={"Back"}/>}
 
       <Text style={styles.pageTitle}>
         {group?.name || "Browse"}

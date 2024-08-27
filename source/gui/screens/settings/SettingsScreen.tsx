@@ -6,7 +6,7 @@ import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
-import { capitalize, isAndroid } from "../../../logic/utils";
+import { capitalize, format, isAndroid } from "../../../logic/utils";
 import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
@@ -103,16 +103,17 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
-    <SettingSwitchComponent title={"Add whitespace after verse"}
-                            description={"On some devices, some verses won't display their last line. Enable this toggle to see if this fixes that problem."}
-                            onLongPress={(setValue) => setValue(false)}
-                            keyName={"debug_addWhitespaceAfterVerse"} />
     <SettingSwitchComponent title={"Survey completed"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"surveyCompleted"} />
     <SettingSwitchComponent title={"Track song audio downloads"}
                             onLongPress={(setValue) => setValue(true)}
                             keyName={"trackDownloads"} />
+    <SettingComponent title={"Last update timestamp"}
+                      description={"Timestamp of list time the app checked for database updates"}
+                      onLongPress={(setValue) => setValue(0)}
+                      valueRender={value => format(new Date(value), "%H:%MM:%SS %d-%m-%YYYY")}
+                      keyName={"autoUpdateDatabasesLastCheckTimestamp"} />
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}
                       onLongPress={(setValue) => setValue(0)} />
@@ -172,7 +173,8 @@ const SettingsScreen: React.FC = () => {
                             }} />
           <SettingSwitchComponent title={"Keep screen on"}
                                   onLongPress={(setValue) => setValue(true)}
-                                  keyName={"keepScreenAwake"} />
+                                  keyName={"keepScreenAwake"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Songs"} />
           <SettingsSliderComponent title={"Song text size"}
@@ -254,7 +256,8 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Documents"} />
+          <Header title={"Documents"}
+                  isVisible={showDocumentsZoomSettings || showAdvancedSettings}/>
           <SettingSwitchComponent title={"Enable zoom (experimental)"}
                                   description={"Use the experimental document viewer, which can be zoomed in/out. Let us know if you see something wrong."}
                                   onLongPress={(setValue) => setValue(true)}
@@ -262,7 +265,8 @@ const SettingsScreen: React.FC = () => {
                                   onPress={((setValue, key, newValue) => {
                                     setValue(newValue);
                                     setShowDocumentsZoomSettings(newValue);
-                                  })} />
+                                  })}
+                                  isVisible={showAdvancedSettings} />
           <SettingsSliderComponent title={"Document text size"}
                                    keyName={"documentScale"}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
@@ -281,6 +285,30 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Other"} />
+          <SettingComponent
+            title={"Auto update databases"}
+            keyName={"autoUpdateDatabasesCheckIntervalInDays"}
+            description={"Tap here to change or disable the auto updating frequency of the song and document databases."}
+            onPress={(setValue) => {
+              // Only allow the 'once a day' mode for developers, to not overload the backend servers
+              if (Settings.autoUpdateDatabasesCheckIntervalInDays < 1 && appContext.developerMode) setValue(1);
+              else if (Settings.autoUpdateDatabasesCheckIntervalInDays < 7) setValue(7);
+              else if (Settings.autoUpdateDatabasesCheckIntervalInDays < 30) setValue(30);
+              else setValue(0);
+            }}
+            onLongPress={(setValue) => setValue(7)}  // Set default
+            valueRender={(it) => {
+              const value = +it;
+              if (value <= 0) return "Never";
+              if (value == 1) return "Once a day";
+              if (value == 7) return "Once a week";
+              if (value == 30) return "Once a month";
+              return `Every ${value} days`;
+            }} />
+          <SettingSwitchComponent title={"Auto update databases over WiFi only"}
+                                  description={"Disable this to also allow mobile data to be used for auto updates."}
+                                  onLongPress={(setValue) => setValue(true)}
+                                  keyName={"autoUpdateOverWifiOnly"} />
           <SettingSwitchComponent title={"Enable text selection"}
                                   description={"Enable this to be able to select and copy text from songs and documents."}
                                   onLongPress={(setValue) => setValue(true)}

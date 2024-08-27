@@ -85,13 +85,17 @@ const AboutScreen: React.FC<{
           <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`}>
             <View style={styles.row}>
               <FontAwesome5Icon name={"envelope"} style={styles.webpageLink} />
-              <Text style={styles.webpageLink}>Mail me</Text>
+              <Text style={styles.webpageLink}
+                    importantForAccessibility={"auto"}>
+                Mail me
+              </Text>
             </View>
           </UrlLink>
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate(PrivacyPolicyRoute)}>
-          <Text style={styles.webpageLink}>
+          <Text style={styles.webpageLink}
+                importantForAccessibility={"auto"}>
             Privacy Policy
           </Text>
         </TouchableOpacity>

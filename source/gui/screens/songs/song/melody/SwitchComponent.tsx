@@ -39,8 +39,15 @@ export const SwitchComponent: React.FC<Props> =
     return <TouchableWithoutFeedback onLongPress={onLongPress}>
       <View style={[styles.container, styles.switchContainer]}>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>{title}</Text>
-          {description === undefined ? undefined : <Text style={styles.descriptionText}>{description}</Text>}
+          <Text style={styles.titleText}
+                importantForAccessibility={"auto"}>
+            {title}
+          </Text>
+          {description === undefined ? undefined :
+            <Text style={styles.descriptionText}
+                  importantForAccessibility={"auto"}>
+              {description}
+            </Text>}
         </View>
         {value === undefined ? undefined :
           <Switch onValueChange={onPress}
