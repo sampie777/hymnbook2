@@ -3,18 +3,18 @@ import {
   Song as ServerSong,
   SongBundle as ServerSongBundle,
   SongVerse as ServerVerse
-} from "../server/models/ServerSongsModel";
-import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../db/models/Songs";
-import Db from "../db/db";
-import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../db/models/SongsSchema";
-import { AbcMelodySchema, AbcSubMelodySchema } from "../db/models/AbcMelodiesSchema";
-import { AbcMelody, AbcSubMelody } from "../db/models/AbcMelodies";
-import { dateFrom, sanitizeErrorForRollbar } from "../utils";
-import { rollbar } from "../rollbar";
-import config from "../../config";
-import { SongProcessor } from "./songProcessor";
-import Settings from "../../settings";
-import SongList from "./songList";
+} from "../../server/models/ServerSongsModel";
+import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../../db/models/Songs";
+import Db from "../../db/db";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../../db/models/SongsSchema";
+import { AbcMelodySchema, AbcSubMelodySchema } from "../../db/models/AbcMelodiesSchema";
+import { AbcMelody, AbcSubMelody } from "../../db/models/AbcMelodies";
+import { dateFrom, sanitizeErrorForRollbar } from "../../utils";
+import { rollbar } from "../../rollbar";
+import config from "../../../config";
+import { SongProcessor } from "../songProcessor";
+import Settings from "../../../settings";
+import SongList from "../songList";
 
 export namespace SongUpdaterUtils {
 
@@ -221,10 +221,7 @@ export namespace SongUpdaterUtils {
     const isInSongStringSearchSelectedBundlesUuids = Settings.songStringSearchSelectedBundlesUuids.includes(songBundle.uuid);
 
     if (existingBundles.length > 0) {
-      const deleteResult = SongProcessor.deleteSongBundle(existingBundles[0]);
-      if (!deleteResult.success) {
-        throw Error(deleteResult.message);
-      }
+      SongProcessor.deleteSongBundle(existingBundles[0]);
     }
 
     if (!isUpdate || isInSongSearchSelectedBundlesUuids) Settings.songSearchSelectedBundlesUuids.push(songBundle.uuid);

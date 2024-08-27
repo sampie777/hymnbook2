@@ -22,7 +22,10 @@ const UrlLink: React.FC<PropsWithChildren<{
     };
 
     if (textOnly) {
-      return <Text onPress={open}>{children}</Text>;
+      return <Text onPress={open}
+                   importantForAccessibility={"auto"}>
+        {children}
+      </Text>;
     }
 
     return <View style={style}>

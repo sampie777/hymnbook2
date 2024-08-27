@@ -4,7 +4,8 @@ import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/mode
 import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { DownloadIcon, IsDownloadedIcon, UpdateIcon } from "./common";
+import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ServerDocumentGroupItemComponentProps {
   group: ServerDocumentGroup;
@@ -21,27 +22,35 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
        disabled
      }) => {
   const styles = createStyles(useTheme());
+  const { documentGroupsUpdating } = useUpdaterContext();
+  const isUpdating = documentGroupsUpdating.some(it => it.uuid === group.uuid);
+
   return (
     <TouchableOpacity onPress={() => onPress(group)}
                       onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText}
+            importantForAccessibility={"auto"}>
         {group.name}
       </Text>
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(group.language)}
           </Text>
         }
         {group.size === undefined ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"no"}>
             {group.size} documents
           </Text>
         }
       </View>
-      <DownloadIcon />
+      <View>
+        {isUpdating ? <IsDownloadingIcon /> : <DownloadIcon />}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -63,26 +72,33 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
        disabled
      }) => {
   const styles = createStyles(useTheme());
+  const { documentGroupsUpdating } = useUpdaterContext();
+  const isUpdating = documentGroupsUpdating.some(it => it.uuid === group.uuid);
+
   return (
     <TouchableOpacity onPress={() => onPress(group)}
                       onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText}
+            importantForAccessibility={"auto"}>
         {group.name}
       </Text>
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.infoText}>
+          <Text style={styles.infoText}
+                importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(group.language)}
           </Text>
         }
-        <Text style={styles.infoText}>
+        <Text style={styles.infoText}
+              importantForAccessibility={"no"}>
           {group.size} documents
         </Text>
       </View>
       <View>
-        {!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />}
+        {isUpdating ? <IsDownloadingIcon /> :
+          (!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />)}
       </View>
     </TouchableOpacity>
   );

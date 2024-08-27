@@ -53,7 +53,8 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
             {!showCloseButton ? undefined :
               <TouchableOpacity style={styles.headerCloseButton}
                                 onPress={onClose}
-                                hitSlop={RectangularInset(10)}>
+                                hitSlop={RectangularInset(10)}
+                                accessibilityLabel={"Close popup"}>
                 <Icon name={"times"} style={styles.headerCloseButtonText} />
               </TouchableOpacity>
             }
@@ -67,7 +68,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
             {onDeny === undefined ? undefined :
               <Pressable style={[styles.button, (onConfirm !== undefined ? {} : styles.soloButton)]}
                          onPress={onDeny}>
-                <Text style={[styles.buttonText, styles.buttonDenyText]}>{closeText}</Text>
+                <Text style={[styles.buttonText, styles.buttonDenyText]}
+                      importantForAccessibility={"auto"}>
+                  {closeText}
+                </Text>
               </Pressable>
             }
             {onConfirm === undefined ? undefined :
@@ -77,7 +81,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                   style={[styles.buttonText,
                     styles.buttonConfirmText,
                     (invertConfirmColor ? styles.buttonConfirmTextInvert : {}),
-                    (onClose !== undefined ? {} : styles.soloButton)]}>{confirmText}</Text>
+                    (onClose !== undefined ? {} : styles.soloButton)]}
+                  importantForAccessibility={"auto"}>
+                  {confirmText}
+                </Text>
               </Pressable>
             }
           </View>

@@ -21,8 +21,8 @@ export namespace SettingsDbPatch {
     try {
       Db.settings.realm().write(() => {
         Db.settings.realm().create(SettingPatchSchema.name, patch);
-        resolve();
       });
+      resolve();
     } catch (error) {
       rollbar.error("Failed to mark patch as applied", {
         ...sanitizeErrorForRollbar(error),

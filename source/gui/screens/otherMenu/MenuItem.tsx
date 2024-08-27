@@ -7,13 +7,15 @@ interface MenuItemProps {
   icon?: (style?: StyleProp<TextStyle> | undefined) => React.ReactNode;
   onPress?: () => void;
   hasNotification?: boolean;
+  statusIcon?: React.ReactNode;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
                                              text,
                                              icon,
                                              onPress,
-                                             hasNotification
+                                             hasNotification,
+                                             statusIcon,
                                            }) => {
   const styles = createStyles(useTheme());
   return (<TouchableOpacity onPress={onPress} style={styles.container}>
@@ -21,7 +23,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
       {icon?.(styles.icon)}
       {!hasNotification ? null : <View style={styles.badge}></View>}
     </View>
-    <Text style={styles.title}>{text}</Text>
+    <Text style={styles.title}
+          importantForAccessibility={"auto"}>
+      {text}
+    </Text>
+    {statusIcon}
   </TouchableOpacity>);
 };
 
@@ -34,7 +40,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border.default,
     borderBottomWidth: 1,
     alignItems: "center",
-    paddingLeft: 15
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   title: {
     flex: 1,

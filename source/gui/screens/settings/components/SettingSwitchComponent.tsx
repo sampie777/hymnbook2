@@ -59,8 +59,15 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
     <View
       style={[baseStyles.container, styles.switchContainer, (lessObviousStyling ? {} : baseStyles.whiteContainer)]}>
       <View style={baseStyles.titleContainer}>
-        <Text style={baseStyles.titleText}>{title}</Text>
-        {description === undefined ? undefined : <Text style={baseStyles.descriptionText}>{description}</Text>}
+        <Text style={baseStyles.titleText}
+              importantForAccessibility={"auto"}>
+          {title}
+        </Text>
+        {description === undefined ? undefined :
+          <Text style={baseStyles.descriptionText}
+                importantForAccessibility={"auto"}>
+            {description}
+          </Text>}
       </View>
       {value === undefined ? undefined :
         <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}

@@ -191,7 +191,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
               <View style={styles.inputTextView}>
                 <View style={styles.inputTextViewContainer}>
                   <Text onPress={onInputTextPress}
-                        style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}>
+                        style={[styles.inputTextField, (!useSmallerFontSize ? {} : styles.inputTextFieldSmaller)]}
+                        importantForAccessibility={inputValue ? "auto" : "no"}
+                        accessibilityElementsHidden={!inputValue}>
                     {inputValue ? inputValue
                       : (!Settings.songSearchRememberPreviousEntry ? " " :
                           <>{isIOS ? "" : " "}<Text
@@ -212,7 +214,8 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
             data={results}
             renderItem={renderSearchResultItem}
             keyExtractor={item => item.id.toString()}
-            contentContainerStyle={styles.searchList} />
+            contentContainerStyle={styles.searchList}
+            importantForAccessibility={results.length > 0 ? undefined : "no"}/>
 
           {isStringSearchButtonsPositionTop()
           || inputValue.length > 0 || results.length > 0 ? undefined :
@@ -306,7 +309,6 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     textAlign: "center",
     fontFamily: fontFamily.sansSerifLight,
     color: colors.text.light,
-    borderStyle: "solid"
   },
   inputTextFieldPlaceholder: {
     color: isDark ? (isIOS ? "#303030" : "#2a2a2a00") : "#e5e5e5",
