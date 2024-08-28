@@ -7,7 +7,7 @@ echo "WHATSAPP_USER_GROUP_LINK=${WHATSAPP_USER_GROUP_LINK}" >> ../../.env
 
 echo "===== Installing CocoaPods ====="
 export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
-gem install cocoapods
+brew install cocoapods
 
 echo "===== Installing Node.js ====="
 # installs nvm (Node Version Manager)
