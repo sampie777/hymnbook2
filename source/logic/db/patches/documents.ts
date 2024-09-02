@@ -2,8 +2,9 @@ import Db from "../db";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
 import { DocumentGroup } from "../models/Documents";
-import { DocumentGroupSchema } from "../models/DocumentsSchema";
+import { DocumentGroupSchema, DocumentSchema } from "../models/DocumentsSchema";
 import { DocumentProcessor } from "../../documents/documentProcessor";
+import { removeObjectsWithoutParents } from "./utils";
 
 export namespace DocumentDbPatch {
   /**
@@ -42,7 +43,16 @@ export namespace DocumentDbPatch {
     });
   };
 
+  const removeDocumentObjectsWithoutParents = () => {
+    removeObjectsWithoutParents(Db.documents,
+      [
+        { schemaName: DocumentGroupSchema.name, parentLink: '_parent', extraQuery: 'AND isRoot = false'},
+        { schemaName: DocumentSchema.name, parentLink: '_parent', },
+      ]);
+  }
+
   export const patch = () => {
     removeDuplicateGroups();
+    removeDocumentObjectsWithoutParents();
   };
 }

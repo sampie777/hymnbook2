@@ -1,13 +1,13 @@
-import { SongBundle as ServerSongBundle } from "../server/models/ServerSongsModel";
-import { sanitizeErrorForRollbar } from "../utils";
-import Db from "../db/db";
-import { rollbar } from "../rollbar";
-import { Server } from "../server/server";
-import { SongBundle } from "../db/models/Songs";
+import { SongBundle as ServerSongBundle } from "../../server/models/ServerSongsModel";
+import { sanitizeErrorForRollbar } from "../../utils";
+import Db from "../../db/db";
+import { rollbar } from "../../rollbar";
+import { Server } from "../../server/server";
+import { SongBundle } from "../../db/models/Songs";
 import { SongUpdaterUtils } from "./songUpdaterUtils";
 
 export namespace SongUpdater {
-  export const fetchAndSaveSongBundle = (bundle: ServerSongBundle): Promise<any> =>
+  export const fetchAndSaveSongBundle = (bundle: { uuid: string }): Promise<any> =>
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(saveSongBundleToDatabase);
 
@@ -15,7 +15,7 @@ export namespace SongUpdater {
     SongUpdaterUtils.saveServerSongBundleToDatabase(bundle);
   };
 
-  export const fetchAndUpdateSongBundle = (bundle: ServerSongBundle): Promise<any> =>
+  export const fetchAndUpdateSongBundle = (bundle: { uuid: string }): Promise<any> =>
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(updateAndSaveSongBundle);
 
