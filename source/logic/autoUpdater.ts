@@ -18,13 +18,15 @@ export namespace AutoUpdater {
     if (!mayUseNetwork()) return Promise.resolve();
     if (!isCheckIntervalPassed()) return Promise.resolve();
 
-    return Promise.all([
-      SongAutoUpdater.run(context.addSongBundleUpdating, context.removeSongBundleUpdating, mayUseNetwork)
-        .catch(error => rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
-
-      DocumentAutoUpdater.run(context.addDocumentGroupUpdating, context.removeDocumentGroupUpdating, mayUseNetwork)
-        .catch(error => rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
-    ])
+    // todo: further execution of function disabled for test run 1.17.9. Please enable if 1.17.9 works.
+    return Promise.resolve()
+    // return Promise.all([
+    //   SongAutoUpdater.run(context.addSongBundleUpdating, context.removeSongBundleUpdating, mayUseNetwork)
+    //     .catch(error => rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
+    //
+    //   DocumentAutoUpdater.run(context.addDocumentGroupUpdating, context.removeDocumentGroupUpdating, mayUseNetwork)
+    //     .catch(error => rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
+    // ])
       .finally(removeEventListener)
   }
 
