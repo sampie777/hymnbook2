@@ -181,7 +181,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const loadSong = () => {
     const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
-    setSong(dbSong ? Song.clone(dbSong) : undefined);
+    setSong(dbSong ? Song.clone(dbSong, { includeVerses: true }) : undefined);
 
     if (!dbSong) {
       Alert.alert("Song could not be found", "This probably happened because the database was updated. Try re-opening the song.")

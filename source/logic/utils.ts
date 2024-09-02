@@ -4,6 +4,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { rollbar } from "./rollbar";
 import config from "../config";
 import { stringMd5 } from "react-native-quick-md5";
+import { locale } from "./locale";
 
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
@@ -44,6 +45,11 @@ export class Result<T = any> {
       throw this.error;
     }
   }
+}
+
+export const alertAndThrow = (error: Error | unknown, title = "Error") => {
+  Alert.alert(title, error?.toString());
+  throw error;
 }
 
 export function capitalize(word: string) {
@@ -191,6 +197,8 @@ export const delayed = <T>(callback: () => T, delay: number) => new Promise<T>(r
       resolve(await callback()),
     delay));
 
+export const delay = (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout))
+
 // According to: https://askubuntu.com/a/222650
 export const readableFileSizeSI = (size: number): string => {
   if (size < 1000) return `${size} bytes`;
@@ -210,3 +218,28 @@ export const readableFileSizeIEC = (size: number): string => {
 export const hash = (value: string): string => stringMd5(value);
 
 export const isTestEnv = () => process.env.JEST_WORKER_ID !== undefined || process.env.NODE_ENV === 'test';
+
+export const format = (date: Date | string, format: string) => {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
+  return format
+    .replace(/%dd/g, date.getDate().toString().padStart(2, '0'))
+    .replace(/%d/g, date.getDate().toString())
+    .replace(/%mmmm/g, locale.en.constants.date.months[date.getMonth()])
+    .replace(/%mmm/g, locale.en.constants.date.months_short[date.getMonth()])
+    .replace(/%mm/g, (date.getMonth() + 1).toString().padStart(2, '0'))
+    .replace(/%m/g, (date.getMonth() + 1).toString())
+    .replace(/%YYYY/g, date.getFullYear().toString())
+    .replace(/%YY/g, (date.getFullYear() % 100).toString())
+    .replace(/%Y/g, date.getFullYear().toString())
+    .replace(/%HH/g, date.getHours().toString().padStart(2, '0'))
+    .replace(/%H/g, date.getHours().toString())
+    .replace(/%MM/g, date.getMinutes().toString().padStart(2, '0'))
+    .replace(/%M/g, date.getMinutes().toString())
+    .replace(/%SS/g, date.getSeconds().toString().padStart(2, '0'))
+    .replace(/%S/g, date.getSeconds().toString())
+    .replace(/%f/g, date.getMilliseconds().toString().padStart(3, '0'));
+}
+
+export const consoleDir = (data: any) => console.debug(JSON.stringify(data, null, 2))
