@@ -305,10 +305,6 @@ const SettingsScreen: React.FC = () => {
               if (value == 30) return "Once a month";
               return `Every ${value} days`;
             }} />
-          <SettingSwitchComponent title={"Auto update databases over WiFi only"}
-                                  description={"Disable this to also allow mobile data to be used for auto updates."}
-                                  onLongPress={(setValue) => setValue(true)}
-                                  keyName={"autoUpdateOverWifiOnly"} />
           <SettingSwitchComponent title={"Enable text selection"}
                                   description={"Enable this to be able to select and copy text from songs and documents."}
                                   onLongPress={(setValue) => setValue(true)}

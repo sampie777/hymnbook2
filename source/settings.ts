@@ -57,7 +57,6 @@ class SettingsClass extends SettingsBaseClass {
   // Updates
   autoUpdateDatabasesCheckIntervalInDays = 7;
   autoUpdateDatabasesLastCheckTimestamp = 0;
-  autoUpdateOverWifiOnly = true;
 
   // Other
   shareUsageData = process.env.NODE_ENV !== "development";
