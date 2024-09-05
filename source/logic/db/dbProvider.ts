@@ -1,4 +1,6 @@
 import Realm, { ObjectClass, ObjectSchema } from "realm";
+import { rollbar } from "../rollbar";
+import { sanitizeErrorForRollbar } from "../utils";
 
 interface DatabaseProps {
   path: string;
@@ -47,7 +49,11 @@ export class DatabaseProvider {
 
   cancelQueuedDisconnect() {
     if (this._disconnectTimeout) {
-      clearTimeout(this._disconnectTimeout);
+      try {
+        clearTimeout(this._disconnectTimeout);
+      } catch (error) {
+        rollbar.error("Failed to clear disconnect timeout", sanitizeErrorForRollbar(error));
+      }
     }
     this._disconnectTimeout = undefined;
     this._isQueuedForDisconnect = false;
@@ -64,8 +70,12 @@ export class DatabaseProvider {
   }
 
   isConnected = () => {
-    if (this._realm == null || this._realm.isClosed) {
-      this._isConnected = false;
+    try {
+      if (this._realm == null || this._realm.isClosed) {
+        this._isConnected = false;
+      }
+    } catch (error) {
+      rollbar.error("Failed to check if realm is closed", sanitizeErrorForRollbar(error));
     }
     return this._isConnected;
   };

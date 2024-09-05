@@ -52,7 +52,15 @@ export namespace DocumentDbPatch {
   }
 
   export const patch = () => {
-    removeDuplicateGroups();
-    removeDocumentObjectsWithoutParents();
+    try {
+      removeDuplicateGroups();
+    } catch (error) {
+      rollbar.error("Failed to remove duplicate groups", sanitizeErrorForRollbar(error));
+    }
+    try {
+      removeDocumentObjectsWithoutParents();
+    } catch (error) {
+      rollbar.error("Failed to remove document objects without parents", sanitizeErrorForRollbar(error));
+    }
   };
 }
