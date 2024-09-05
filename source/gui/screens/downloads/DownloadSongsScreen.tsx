@@ -23,7 +23,6 @@ import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
 import { SongUpdater } from "../../../logic/songs/updater/songUpdater";
-import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -42,7 +41,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const [requestUpdateForBundle, setRequestUpdateForBundle] = useState<ServerSongBundle | undefined>(undefined);
   const [requestDeleteForBundle, setRequestDeleteForBundle] = useState<LocalSongBundle | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
-  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -197,9 +195,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
     if (isLoading || bundle === undefined) return;
 
-    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
-    if (isUpdating) return;
-
     downloadSongBundle(bundle);
   };
 
@@ -208,9 +203,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     setRequestUpdateForBundle(undefined);
 
     if (isLoading || bundle === undefined) return;
-
-    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
-    if (isUpdating) return;
 
     updateSongBundle(bundle);
   };
@@ -221,7 +213,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const saveSongBundle = (bundle: ServerSongBundle, isUpdate: boolean) => {
     if (!isMounted()) return;
     setIsLoading(true);
-    updaterContext.addSongBundleUpdating(bundle);
 
     const call = isUpdate
       ? SongUpdater.fetchAndUpdateSongBundle(bundle)
@@ -248,10 +239,6 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         setIsLoading(false);
         loadLocalSongBundles();
       })
-      .finally(() => {
-        // Do this here after the state has been called, otherwise we get realm invalidation errors
-        updaterContext.removeSongBundleUpdating(bundle);
-      })
   };
 
   const onConfirmDeleteSongBundle = () => {
@@ -260,18 +247,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
     if (isLoading || bundle === undefined) return;
 
-    const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
-    if (isUpdating) {
-      Alert.alert("Could not delete", "This bundle is being updated. Please wait until this operation is done and try again.")
-      return;
-    }
-
     deleteSongBundle(bundle);
   };
 
   const deleteSongBundle = (bundle: LocalSongBundle) => {
     setIsLoading(true);
-    updaterContext.removeSongBundleUpdating(bundle);
 
     try {
       const successMessage = SongProcessor.deleteSongBundle(bundle)

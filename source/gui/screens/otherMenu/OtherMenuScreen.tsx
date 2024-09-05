@@ -10,8 +10,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import MenuItem from "./MenuItem";
 import FeedbackComponent from "../../components/popups/FeedbackComponent";
-import { IsDownloadingIcon } from "../downloads/common";
-import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface MenuItemProps {
   name?: string;
@@ -26,7 +24,6 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
   ({ navigation }) => {
     const styles = createStyles(useTheme());
     const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
-    const updaterContext = useUpdaterContext();
 
     const routesToShow: MenuItemProps[] = [
       {
@@ -34,13 +31,11 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
         name: "Song databases",
         icon: (style) => <Icon name="music"
                                style={style as StyleProp<any> /* Set this type as TypeScript does weird things... */} />,
-        statusIcon: updaterContext.songBundlesUpdating.length > 0 ? <IsDownloadingIcon /> : undefined,
       },
       {
         name: "Document databases",
         icon: (style) => <Icon name="file-alt" style={style as StyleProp<any>} />,
         onPress: () => navigation.navigate(DatabasesRoute, { type: Types.Documents }),
-        statusIcon: updaterContext.documentGroupsUpdating.length > 0 ? <IsDownloadingIcon /> : undefined,
       },
       {
         route: SettingsRoute,
