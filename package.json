@@ -1,6 +1,6 @@
 {
   "name": "hymnbook2",
-  "version": "1.17.10",
+  "version": "1.17.11",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
