@@ -1,14 +1,8 @@
 import Settings from "../settings";
-import { SongAutoUpdater } from "./songs/updater/songAutoUpdater";
-import { rollbar } from "./rollbar";
-import { delayed, isIOS, sanitizeErrorForRollbar } from "./utils";
-import { DocumentAutoUpdater } from "./documents/updater/documentAutoUpdater";
-import { UpdaterContextProps } from "../gui/components/providers/UpdaterContextProvider";
-import * as Types from "@react-native-community/netinfo/src/internal/types";
 
 export namespace AutoUpdater {
 
-  export const run = async (context: UpdaterContextProps): Promise<any> => {
+  export const run = async (): Promise<any> => {
     const mayUseNetwork = (): boolean => true;
 
     if (!mayUseNetwork()) return Promise.resolve();

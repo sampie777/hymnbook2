@@ -5,7 +5,6 @@ import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
-import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface SongBundleItemComponentProps {
   bundle: ServerSongBundle;
@@ -22,8 +21,7 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
        disabled
      }) => {
   const styles = createStyles(useTheme());
-  const { songBundlesUpdating } = useUpdaterContext();
-  const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+  const isUpdating = false;
 
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
@@ -72,8 +70,7 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
        disabled
      }) => {
   const styles = createStyles(useTheme());
-  const { songBundlesUpdating } = useUpdaterContext();
-  const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+  const isUpdating = false;
 
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
