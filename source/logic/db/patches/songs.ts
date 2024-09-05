@@ -54,7 +54,15 @@ export namespace SongDbPatch {
   }
 
   export const patch = () => {
-    removeDuplicateBundles();
-    removeSongObjectsWithoutParents();
+    try {
+      removeDuplicateBundles();
+    } catch (error) {
+      rollbar.error("Failed to remove duplicate bundles", sanitizeErrorForRollbar(error));
+    }
+    try {
+      removeSongObjectsWithoutParents();
+    } catch (error) {
+      rollbar.error("Failed to remove song objects without parents", sanitizeErrorForRollbar(error));
+    }
   };
 }
