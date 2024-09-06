@@ -2,9 +2,8 @@ import Db from "../db";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
 import { DocumentGroup } from "../models/Documents";
-import { DocumentGroupSchema, DocumentSchema } from "../models/DocumentsSchema";
+import { DocumentGroupSchema } from "../models/DocumentsSchema";
 import { DocumentProcessor } from "../../documents/documentProcessor";
-import { removeObjectsWithoutParents } from "./utils";
 
 export namespace DocumentDbPatch {
   /**
@@ -18,7 +17,7 @@ export namespace DocumentDbPatch {
       .sorted("id", true);
     // Ignore root as all groups could be checked
 
-    groups.forEach((it, index) => {
+    groups.forEach(it => {
       const isDuplicate = approvedUuids.includes(it.uuid);
       if (!isDuplicate) {
         approvedUuids.push(it.uuid);
@@ -43,24 +42,11 @@ export namespace DocumentDbPatch {
     });
   };
 
-  const removeDocumentObjectsWithoutParents = () => {
-    removeObjectsWithoutParents(Db.documents,
-      [
-        { schemaName: DocumentGroupSchema.name, parentLink: '_parent', extraQuery: 'AND isRoot = false'},
-        { schemaName: DocumentSchema.name, parentLink: '_parent', },
-      ]);
-  }
-
   export const patch = () => {
     try {
       removeDuplicateGroups();
     } catch (error) {
       rollbar.error("Failed to remove duplicate groups", sanitizeErrorForRollbar(error));
-    }
-    try {
-      removeDocumentObjectsWithoutParents();
-    } catch (error) {
-      rollbar.error("Failed to remove document objects without parents", sanitizeErrorForRollbar(error));
     }
   };
 }
