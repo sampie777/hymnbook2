@@ -56,6 +56,7 @@ import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
 import { rollbar } from "./logic/rollbar";
+import { AutoUpdater } from "./logic/autoUpdater";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -129,6 +130,9 @@ const HomeNavigation: React.FC = () => {
     } catch (error) {
       rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
     }
+
+    AutoUpdater.run()
+      .catch(error => rollbar.error("Failed to run auto updater", sanitizeErrorForRollbar(error)));
   };
 
   const onExit = () => {
