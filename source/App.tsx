@@ -56,6 +56,7 @@ import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
 import { rollbar } from "./logic/rollbar";
+import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
 import { AutoUpdater } from "./logic/autoUpdater";
 
 const RootNav = createNativeStackNavigator<ParamList>();
@@ -117,6 +118,7 @@ const RootNavigation = () => {
 
 const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -131,7 +133,7 @@ const HomeNavigation: React.FC = () => {
       rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
     }
 
-    AutoUpdater.run()
+    AutoUpdater.run(updaterContext)
       .catch(error => rollbar.error("Failed to run auto updater", sanitizeErrorForRollbar(error)));
   };
 
@@ -227,7 +229,9 @@ const AppRoot: React.FC = () => {
     {isLoading ? undefined :
       <NavigationContainer>
         <DeepLinkHandler>
-          <RootNavigation />
+          <UpdaterContextProvider>
+            <RootNavigation />
+          </UpdaterContextProvider>
         </DeepLinkHandler>
       </NavigationContainer>
     }

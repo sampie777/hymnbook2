@@ -1,8 +1,9 @@
 import Settings from "../settings";
+import { UpdaterContextProps } from "../gui/components/providers/UpdaterContextProvider";
 
 export namespace AutoUpdater {
 
-  export const run = async (): Promise<any> => {
+  export const run = async (context: UpdaterContextProps): Promise<any> => {
     const mayUseNetwork = (): boolean => true;
 
     if (!mayUseNetwork()) return Promise.resolve();

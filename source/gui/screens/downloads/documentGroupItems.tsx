@@ -5,6 +5,7 @@ import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ServerDocumentGroupItemComponentProps {
   group: ServerDocumentGroup;
@@ -21,7 +22,8 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
        disabled
      }) => {
   const styles = createStyles(useTheme());
-  const isUpdating = false;
+  const { documentGroupsUpdating } = useUpdaterContext();
+  const isUpdating = documentGroupsUpdating.some(it => it.uuid === group.uuid);
 
   return (
     <TouchableOpacity onPress={() => onPress(group)}
@@ -70,7 +72,8 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
        disabled
      }) => {
   const styles = createStyles(useTheme());
-  const isUpdating = false;
+  const { documentGroupsUpdating } = useUpdaterContext();
+  const isUpdating = documentGroupsUpdating.some(it => it.uuid === group.uuid);
 
   return (
     <TouchableOpacity onPress={() => onPress(group)}

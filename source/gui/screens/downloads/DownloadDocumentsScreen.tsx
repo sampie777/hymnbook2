@@ -21,6 +21,7 @@ import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroup
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import { DocumentUpdater } from "../../../logic/documents/updater/documentUpdater";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -43,6 +44,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
   const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -197,6 +199,9 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
     if (isLoading || group === undefined) return;
 
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === group.uuid);
+    if (isUpdating) return;
+
     downloadDocumentGroup(group);
   };
 
@@ -205,6 +210,9 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     setRequestUpdateForGroup(undefined);
 
     if (isLoading || group === undefined) return;
+
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === group.uuid);
+    if (isUpdating) return;
 
     updateDocumentGroup(group);
   };
@@ -215,6 +223,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const saveDocumentGroup = (group: ServerDocumentGroup, isUpdate: boolean) => {
     if (!isMounted()) return;
     setIsLoading(true);
+    updaterContext.addDocumentGroupUpdating(group);
 
     const call = isUpdate
       ? DocumentUpdater.fetchAndUpdateDocumentGroup(group)
@@ -241,6 +250,10 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         setIsLoading(false);
         loadLocalDocumentGroups();
       })
+      .finally(() => {
+        // Do this here after the state has been called, otherwise we get realm invalidation errors
+        updaterContext.removeDocumentGroupUpdating(group);
+      })
   };
 
   const onConfirmDeleteDocumentGroup = () => {
@@ -249,11 +262,18 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
     if (isLoading || group === undefined) return;
 
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === group.uuid);
+    if (isUpdating) {
+      Alert.alert("Could not delete", "This group is being updated. Please wait until this operation is done and try again.")
+      return;
+    }
+
     deleteDocumentGroup(group);
   };
 
   const deleteDocumentGroup = (group: LocalDocumentGroup) => {
     setIsLoading(true);
+    updaterContext.removeDocumentGroupUpdating(group);
 
     const result = DocumentProcessor.deleteDocumentGroup(group);
     result.alert();
