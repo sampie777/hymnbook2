@@ -8,7 +8,7 @@ import config from "../config";
 export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
-const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
+export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>

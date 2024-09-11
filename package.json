@@ -28,6 +28,7 @@
     "react-native": "0.72.17",
     "react-native-config": "1.5.1",
     "react-native-device-info": "10.12.0",
+    "react-native-fs": "2.20.0",
     "react-native-gesture-handler": "2.16.0",
     "react-native-htmlview": "0.16.0",
     "react-native-keep-awake": "4.0.0",

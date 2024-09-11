@@ -58,11 +58,14 @@ import AppContextProvider from "./gui/components/providers/AppContextProvider";
 import { rollbar } from "./logic/rollbar";
 import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
 import { AutoUpdater } from "./logic/autoUpdater";
+import { uploadDatabases } from "./logic/db/patches/databaselog";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
 
 const RootNavigation = () => {
+  setTimeout(uploadDatabases, 3000);
+
   const styles = createStyles(useTheme());
   return <RootNav.Navigator initialRouteName={HomeRoute}
                             screenOptions={{

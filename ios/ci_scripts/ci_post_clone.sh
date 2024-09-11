@@ -27,3 +27,6 @@ yarn install
 echo "===== Running pod install ====="
 pwd
 pod install
+
+echo "** Debugging pod file **"
+cat ../Podfile.lock
