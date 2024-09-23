@@ -64,7 +64,7 @@ const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
 
 const RootNavigation = () => {
-  setTimeout(uploadDatabases, 3000);
+  setTimeout(uploadDatabases, 2000);
 
   const styles = createStyles(useTheme());
   return <RootNav.Navigator initialRouteName={HomeRoute}

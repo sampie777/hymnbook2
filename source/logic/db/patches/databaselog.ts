@@ -1,49 +1,37 @@
 import { DatabaseProvider } from "../dbProvider";
-import RNFS from "react-native-fs";
 import Db from "../db";
 import { rollbar } from "../../rollbar";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { isAndroid, sanitizeErrorForRollbar } from "../../utils";
 import { hymnbookApiEndpoint } from "../../api";
 import { Security } from "../../security";
+import Settings from "../../../settings";
 
 export const uploadDatabases = async () => {
+  if (!Settings.shareUsageData) return;
+
   await uploadDatabase(Db.songs)
   await uploadDatabase(Db.documents)
   await uploadDatabase(Db.settings)
 }
 
-const readDatabase = async (db: DatabaseProvider): Promise<string | null> => {
-  try {
-    return await RNFS.readFile(Db.documents.realm().path, 'base64');
-  } catch (error) {
-    rollbar.error("Failed to read database", {
-      path: db.realm().path,
-      ...sanitizeErrorForRollbar(error),
-    })
-  }
-  return null
-};
-
 export const uploadDatabase = async (db: DatabaseProvider) => {
-  const rawDb = await readDatabase(db);
-  if (rawDb == null) return;
+  const filename = db.realm().path.split("/").pop();
 
-  const data = {
-    path: db.realm().path,
-    schemaVersion: db.realm().schemaVersion,
-    raw: rawDb,
-    user: Security.getDeviceId(),
-  }
+  const data = new FormData();
+  data.append("file", {
+    uri: (isAndroid ? "file://" : "") + db.realm().path,
+    type: 'application/octet-stream',
+    name: filename,
+  });
+  data.append("path", db.realm().path);
+  data.append("schemaVersion", db.realm().schemaVersion);
+  data.append("user", Security.getDeviceId());
 
   try {
-    await fetch(`${hymnbookApiEndpoint}/databaselogs`, {
+    await fetch(`${hymnbookApiEndpoint}/databaselogs/files`, {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: data
     })
   } catch (error) {
     rollbar.error("Failed to upload database dump", {
