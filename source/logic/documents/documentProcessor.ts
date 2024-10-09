@@ -4,6 +4,7 @@ import { Result, sanitizeErrorForRollbar } from "../utils";
 import { DocumentGroup } from "../db/models/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../server/models/Documents";
 import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
+import { DocumentDbHelpers } from "./documentDbHelpers";
 
 export namespace DocumentProcessor {
   export const loadLocalDocumentRoot = (): (DocumentGroup & Realm.Object<DocumentGroup>)[] => {
@@ -37,16 +38,9 @@ export namespace DocumentProcessor {
 
     const groupName = dbGroup.name;
 
-    // Shallow copy
-    const deleteGroups = dbGroup.groups?.slice(0) || [];
-    deleteGroups.forEach(it => {
-      deleteDocumentGroup(it);
-    });
-
     try {
       Db.documents.realm().write(() => {
-        Db.documents.realm().delete(dbGroup.items);
-        Db.documents.realm().delete(dbGroup);
+        DocumentDbHelpers.deleteDocumentGroup(dbGroup);
       });
     } catch (error) {
       rollbar.error("Failed to delete document group", {
