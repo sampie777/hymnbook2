@@ -4,6 +4,7 @@ import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/mode
 import { SongListModelSchema } from "../db/models/SongListModelSchema";
 import { VerseSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
+import { SongDbHelpers } from "./songDbHelpers";
 
 export default class SongList {
 
@@ -108,7 +109,7 @@ export default class SongList {
     Db.songs.realm().write(() => {
       // Delete all models with no song
       songList.songs.filter(it => it.song == null)
-        .forEach(it => Db.songs.realm().delete(it));
+        .forEach(SongDbHelpers.deleteSongListSong);
 
       songList.songs = songList.songs.filter(it => it.song != null);
     });
@@ -134,7 +135,7 @@ export default class SongList {
     if (songList === undefined) return undefined;
 
     Db.songs.realm().write(() => {
-      Db.songs.realm().delete(songList.songs);
+      for (const child of songList.songs) SongDbHelpers.deleteSongListSong(child);
     });
   }
 
@@ -162,7 +163,7 @@ export default class SongList {
     if (songListSong === undefined) return;
 
     Db.songs.realm().write(() => {
-      Db.songs.realm().delete(songListSong.selectedVerses);
+      for (const child of songListSong.selectedVerses) SongDbHelpers.deleteSongListVerse(child);
     });
 
     if (verses.length === 0) return;
