@@ -11,6 +11,7 @@
     "bundle": "cd android && ./gradlew bundleRelease",
     "build": "cd android && ./gradlew assembleRelease",
     "device-install": "adb -d install \"$(ls -t ./android/app/build/outputs/apk/release/*.apk | head -1)\"",
+    "device-install-windows": "adb -d install \"./android/app/build/outputs/apk/release/$(Get-ChildItem -Path ./android/app/build/outputs/apk/release/*.apk -Name | select -first 1)\"",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -19,7 +20,7 @@
     "@react-navigation/bottom-tabs": "6.5.11",
     "@react-navigation/native": "6.1.9",
     "@react-navigation/native-stack": "6.9.17",
-    "@realm/react": "0.10.0",
+    "@realm/react": "0.11.0",
     "abcjs": "git+https://github.com/paulrosen/abcjs.git#6.2.3",
     "fastest-levenshtein": "1.0.16",
     "fetch-retry": "6.0.0",

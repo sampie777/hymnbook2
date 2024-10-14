@@ -6,6 +6,7 @@ import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
 import { AbcMelodySchema } from "../models/AbcMelodiesSchema";
 import { removeObjectsWithoutParents } from "./utils";
+import { SongListSongModelSchema, SongListVerseModelSchema } from "../models/SongListModelSchema";
 
 export namespace SongDbPatch {
   /**
@@ -50,6 +51,8 @@ export namespace SongDbPatch {
         { schemaName: SongMetadataSchema.name, parentLink: '_songs', },
         { schemaName: VerseSchema.name, parentLink: '_songs', },
         { schemaName: AbcMelodySchema.name, parentLink: '_song', },
+        { schemaName: SongListSongModelSchema.name, parentLink: '_songList', },
+        { schemaName: SongListVerseModelSchema.name, parentLink: '_songListSong', },
       ]);
   }
 
