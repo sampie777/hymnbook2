@@ -1,24 +1,62 @@
 import Settings from "../settings";
+import { SongAutoUpdater } from "./songs/updater/songAutoUpdater";
+import { rollbar } from "./rollbar";
+import { delayed, isIOS, sanitizeErrorForRollbar } from "./utils";
+import { DocumentAutoUpdater } from "./documents/updater/documentAutoUpdater";
 import { UpdaterContextProps } from "../gui/components/providers/UpdaterContextProvider";
+import { addEventListener } from "@react-native-community/netinfo";
+import * as Types from "@react-native-community/netinfo/src/internal/types";
 
 export namespace AutoUpdater {
 
   export const run = async (context: UpdaterContextProps): Promise<any> => {
-    const mayUseNetwork = (): boolean => true;
+    const { removeEventListener, isSynced, isOnWifi } = useNetworkListener();
+    const mayUseNetwork = (): boolean => !Settings.autoUpdateOverWifiOnly || isOnWifi()
+
+    await waitForNetworkStateSync(isSynced);
 
     if (!mayUseNetwork()) return Promise.resolve();
     if (!isCheckIntervalPassed()) return Promise.resolve();
 
-    // todo: further execution of function disabled for test run 1.17.9. Please enable if 1.17.9 works.
-    return Promise.resolve()
-    // return Promise.all([
-    //   SongAutoUpdater.run(context.addSongBundleUpdating, context.removeSongBundleUpdating, mayUseNetwork)
-    //     .catch(error => rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
-    //
-    //   DocumentAutoUpdater.run(context.addDocumentGroupUpdating, context.removeDocumentGroupUpdating, mayUseNetwork)
-    //     .catch(error => rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
-    // ])
+    return Promise.all([
+      SongAutoUpdater.run(context.addSongBundleUpdating, context.removeSongBundleUpdating, mayUseNetwork)
+        .catch(error => rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
+
+      DocumentAutoUpdater.run(context.addDocumentGroupUpdating, context.removeDocumentGroupUpdating, mayUseNetwork)
+        .catch(error => rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
+    ])
+      .finally(removeEventListener)
   }
+
+  const useNetworkListener = (): {
+    removeEventListener: Types.NetInfoSubscription,
+    isSynced: () => boolean,  // Means: has received an initial network state
+    isOnWifi: () => boolean,
+  } => {
+    let isSynced = false;
+    let isOnWifi = false;
+
+    const unsubscribe = addEventListener(state => {
+      isSynced = true;
+      isOnWifi = state.type == 'wifi' && state.isConnected;
+    })
+
+    return {
+      removeEventListener: unsubscribe,
+      isSynced: () => isSynced,
+      isOnWifi: () => isOnWifi,
+    };
+  }
+
+  const waitForNetworkStateSync = async (isSynced: () => boolean, maxTimeout = 10000, pollInterval = 100): Promise<any> => {
+    if (isSynced()) return Promise.resolve();
+    if (maxTimeout <= 0) return Promise.reject("Waiting for network sync timed out");
+
+    return await delayed(
+      () => waitForNetworkStateSync(isSynced, maxTimeout - pollInterval, pollInterval),
+      pollInterval
+    );
+  };
 
   const isCheckIntervalPassed = (): boolean => {
     if (Settings.autoUpdateDatabasesCheckIntervalInDays <= 0) return false;

@@ -17,6 +17,7 @@
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#2.3.0",
     "@react-native-clipboard/clipboard": "1.12.1",
+    "@react-native-community/netinfo": "11.3.2",
     "@react-navigation/bottom-tabs": "6.5.11",
     "@react-navigation/native": "6.1.9",
     "@react-navigation/native-stack": "6.9.17",
