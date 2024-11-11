@@ -92,7 +92,7 @@ export namespace SongProcessor {
         ...sanitizeErrorForRollbar(error),
         bundle: { ...bundle, songs: null }
       });
-      throw new Error(`Could not delete (outdated) songs for ${bundleName}`);
+      throw new Error(`Could not delete (outdated) song bundle ${bundleName}`);
     }
 
     SongList.cleanUpAllSongLists();
