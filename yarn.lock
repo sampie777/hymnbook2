@@ -3158,10 +3158,15 @@ async-limiter@~1.0.0:
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
 
-async@^3.2.2, async@~3.2.3:
+async@^3.2.2:
   version "3.2.5"
   resolved "https://registry.yarnpkg.com/async/-/async-3.2.5.tgz#ebd52a8fdaf7a2289a24df399f8d8485c8a46b66"
   integrity sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==
+
+async@~3.2.3:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz#1b0728e14929d51b85b449b7f06e27c1145e38ce"
+  integrity sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==
 
 asynciterator.prototype@^1.0.0:
   version "1.0.0"
@@ -7626,10 +7631,10 @@ react-native-popup-menu@0.16.1:
   resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.16.1.tgz#b1bb56be5c0838bbc2f532af7b1f554b7ceef566"
   integrity sha512-xRS7mRh0exwu7Iw8PPVHdM11d13A/KzYjy0/fZx3zVtxISxPkNaDGayau6oa7HqO3Nj0oS9ulFCYjcQfG6vahA==
 
-react-native-quick-md5@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-quick-md5/-/react-native-quick-md5-3.0.5.tgz#d909fb3f308f49efa8470be40825f6ce5fe58c59"
-  integrity sha512-/YLFYjdaue8bORiLKr49cSZU3CQVNhZ50xAXV242Cy9+Bow/tiLTByuvaF0lJOkWt5LOtCO1CbdRDmgtY6Sj2Q==
+react-native-quick-md5@3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-quick-md5/-/react-native-quick-md5-3.0.6.tgz#f059b7d6907d898d31164709ffd6557fcd981d21"
+  integrity sha512-CEQ8hbdj1Kjv3CL5Acuuwra4HvFJvTRRCzscCxWLZk5j8e8PkbgxwoKnS0+nOJJ2kKmjZEPBfDmO+NsxoWSDIg==
   dependencies:
     spark-md5 "^3.0.2"
 
@@ -8054,19 +8059,18 @@ rimraf@~2.6.2:
   dependencies:
     glob "^7.1.3"
 
-rollbar-react-native@0.9.3:
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/rollbar-react-native/-/rollbar-react-native-0.9.3.tgz#36aff4b2785dbf7be621f9a01f096c8bc058f9e2"
-  integrity sha512-lv+O+xi4bp8ENhSuuJcocgW7zVXWP/5Dlu0egPmz5t6kVzSuHdeeuZoqib2QpGddYVupYIfQeNbQDlS9rCLkhw==
+rollbar-react-native@1.0.0-beta.5:
+  version "1.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/rollbar-react-native/-/rollbar-react-native-1.0.0-beta.5.tgz#62bfadeca33099b48708dbe07ca54232e8b12e91"
+  integrity sha512-pAnPIsei7/+uQiVRMV1R8Xrn/tdsMa59+jaI1gea7rs3QwLWOstyrPnthahdV8IHX171SiJ95fE7DMVjF7ZVZA==
   dependencies:
     buffer "^4.9.1 || ^5.0.7"
-    rollbar "^2.21.1"
     url "^0.11.0"
 
-rollbar@^2.21.1:
-  version "2.26.2"
-  resolved "https://registry.yarnpkg.com/rollbar/-/rollbar-2.26.2.tgz#58627dce65233e7433facb6366fd6e8817f396d3"
-  integrity sha512-7ASvrlal87ek2vhTmpu2LPvkdlcnala1qeMT2Ra76s0KjWkQ8d1fTl6dk7AqHx1Qa/puahg3tYw7EPB7wYx9RQ==
+rollbar@^2.26.4:
+  version "2.26.4"
+  resolved "https://registry.yarnpkg.com/rollbar/-/rollbar-2.26.4.tgz#05e47d3b1f52ab6da9f88710ec66371a76cdc3c9"
+  integrity sha512-JKmrj6riYm9ZPJisgxljgH4uCsvjMHDHXrinDF7aAFaP+eoF51HomVPtLcDTYLsrJ568aKVNLUhedFajONBwSg==
   dependencies:
     async "~3.2.3"
     console-polyfill "0.3.0"
