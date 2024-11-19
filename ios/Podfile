@@ -7,7 +7,7 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, min_ios_version_supported
 $static_framework = ['RollbarReactNative','RollbarCommon','RollbarCrash','RollbarNotifier','RollbarReport']
-# use_modular_headers!
+use_modular_headers!
 prepare_react_native_project!
 
 
@@ -30,12 +30,6 @@ end
 
 target 'hymnbook2' do
   config = use_native_modules!
-
-  pod 'RollbarReactNative', :modular_headers => true
-  pod 'RollbarCommon', :modular_headers => true
-  pod 'RollbarCrash', :modular_headers => true
-  pod 'RollbarNotifier', :modular_headers => true
-  pod 'RollbarReport', :modular_headers => true
 
   # Flags change depending on the env values.
   flags = get_default_flags()
