@@ -4,10 +4,9 @@
 
 #import "RNCConfig.h"
 #import <RollbarReactNative/RollbarReactNative.h>
+#import <RollbarNotifier/RollbarNotifier.h>
 #import <RNDeviceInfo/DeviceUID.h>
 #import <React/RCTLinkingManager.h>
-
-@import RollbarNotifier;
 
 @implementation AppDelegate
 

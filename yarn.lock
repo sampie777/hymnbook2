@@ -8062,7 +8062,7 @@ rollbar-react-native@1.0.0-beta.5:
     buffer "^4.9.1 || ^5.0.7"
     url "^0.11.0"
 
-rollbar@^2.26.4:
+rollbar@2.26.4:
   version "2.26.4"
   resolved "https://registry.yarnpkg.com/rollbar/-/rollbar-2.26.4.tgz#05e47d3b1f52ab6da9f88710ec66371a76cdc3c9"
   integrity sha512-JKmrj6riYm9ZPJisgxljgH4uCsvjMHDHXrinDF7aAFaP+eoF51HomVPtLcDTYLsrJ568aKVNLUhedFajONBwSg==
