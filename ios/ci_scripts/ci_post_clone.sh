@@ -26,4 +26,4 @@ yarn install
 
 echo "===== Running pod install 3 ====="
 pwd
-USE_FRAMEWORKS=static pod install
+USE_FRAMEWORKS=static NO_FLIPPER=1 pod install
