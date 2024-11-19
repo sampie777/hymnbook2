@@ -42,7 +42,7 @@
     "react-native-track-player": "4.0.1",
     "react-native-vector-icons": "9.2.0",
     "realm": "12.13.1",
-    "rollbar": "^2.26.4",
+    "rollbar": "2.26.4",
     "rollbar-react-native": "1.0.0-beta.5"
   },
   "devDependencies": {
