@@ -7,6 +7,8 @@
 #import <RNDeviceInfo/DeviceUID.h>
 #import <React/RCTLinkingManager.h>
 
+@import RollbarNotifier;
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
