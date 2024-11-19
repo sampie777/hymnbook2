@@ -4,7 +4,11 @@
 
 #import "RNCConfig.h"
 #import <RollbarReactNative/RollbarReactNative.h>
-#import <RollbarNotifier/RollbarNotifier.h>
+#if __has_include(<RollbarNotifier/Rollbar.h>)
+#import <RollbarNotifier/Rollbar.h>
+#else
+#import "Rollbar.h"
+#endif
 #import <RNDeviceInfo/DeviceUID.h>
 #import <React/RCTLinkingManager.h>
 
