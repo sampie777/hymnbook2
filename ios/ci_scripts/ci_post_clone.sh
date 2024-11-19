@@ -24,6 +24,6 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 
-echo "===== Running pod install ====="
+echo "===== Running pod install 3 ====="
 pwd
-pod install
+USE_FRAMEWORKS=static pod install
