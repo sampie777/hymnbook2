@@ -24,6 +24,6 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 
-echo "===== Running pod install ====="
+echo "===== Running pod install 2 ====="
 pwd
-pod install || pod install --repo-update
+pod install --repo-update
