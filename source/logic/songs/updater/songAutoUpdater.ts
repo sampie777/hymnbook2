@@ -11,7 +11,8 @@ export namespace SongAutoUpdater {
     removeSongBundleUpdating: (bundle: { uuid: string }) => void,
     mayUseNetwork: () => boolean
   ) => {
-    const bundles = SongProcessor.loadLocalSongBundles();
+    const bundles = SongProcessor.loadLocalSongBundles()
+      .filter(it => it.uuid.length > 0);
     if (bundles.length == 0) return;
 
     const updates = await Server.fetchSongBundleUpdates();
