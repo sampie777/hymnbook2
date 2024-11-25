@@ -18,7 +18,7 @@ export namespace DocumentDbPatch {
       .sorted("id", true);
     // Ignore root as all groups could be checked
 
-    groups.forEach((it, index) => {
+    groups.forEach(it => {
       const isDuplicate = approvedUuids.includes(it.uuid);
       if (!isDuplicate) {
         approvedUuids.push(it.uuid);
@@ -52,7 +52,15 @@ export namespace DocumentDbPatch {
   }
 
   export const patch = () => {
-    removeDuplicateGroups();
-    removeDocumentObjectsWithoutParents();
+    try {
+      removeDuplicateGroups();
+    } catch (error) {
+      rollbar.error("Failed to remove duplicate groups", sanitizeErrorForRollbar(error));
+    }
+    try {
+      removeDocumentObjectsWithoutParents();
+    } catch (error) {
+      rollbar.error("Failed to remove document objects without parents", sanitizeErrorForRollbar(error));
+    }
   };
 }

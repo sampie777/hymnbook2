@@ -21,7 +21,7 @@ export const VerseSchema: Realm.ObjectSchema = {
   properties: {
     id: "int",
     name: "string",
-    content: { type: "string", indexed: "full-text" },
+    content: "string",
     language: "string",
     index: "int",
     uuid: { type: "string", indexed: true },
