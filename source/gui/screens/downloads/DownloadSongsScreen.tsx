@@ -420,7 +420,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text.lighter
   },
 
-  listContainer: { flex: 1 },
+  listContainer: {
+    flex: 1,
+    minHeight: 100,
+  },
 
   emptyListText: {
     padding: 20,
