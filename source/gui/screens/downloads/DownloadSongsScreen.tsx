@@ -9,7 +9,7 @@ import { DeepLinking } from "../../../logic/deeplinking";
 import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { useIsMounted } from "../../components/utils";
+import { debounce, useIsMounted } from "../../components/utils";
 import {
   Alert,
   RefreshControl,
@@ -24,6 +24,9 @@ import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import UrlLink from "../../components/UrlLink";
 import { SongUpdater } from "../../../logic/songs/updater/songUpdater";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
+import Db from "../../../logic/db/db";
+import { SongBundleSchema } from "../../../logic/db/models/SongsSchema";
+import { CollectionChangeSet, OrderedCollection } from "realm";
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -31,11 +34,17 @@ interface ComponentProps {
   dismissPromptForUuid?: () => void;
 }
 
-const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, promptForUuid, dismissPromptForUuid }) => {
+const DownloadSongsScreen: React.FC<ComponentProps> = ({
+                                                         setIsProcessing,
+                                                         promptForUuid,
+                                                         dismissPromptForUuid
+                                                       }) => {
   const isMounted = useIsMounted();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLocalBundlesLoading, setIsLocalBundlesLoading] = useState(true);
-  const [isBundleLoading, setIsBundleLoading] = useState(false);
+  const [isProcessingLocalData, setIsProcessingLocalData] = useState(false);
+  const [isServerDataLoading, setIsServerDataLoading] = useState(false);
+  const [isLocalDataLoading, setIsLocalDataLoading] = useState(true);
+  const [isSpecificBundleLoading, setIsSpecificBundleLoading] = useState(false);
+
   const [serverBundles, setServerBundles] = useState<ServerSongBundle[]>([]);
   const [localBundles, setLocalBundles] = useState<LocalSongBundle[]>([]);
   const [requestDownloadForBundle, setRequestDownloadForBundle] = useState<ServerSongBundle | undefined>(undefined);
@@ -51,33 +60,71 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   }, []);
 
   const onOpen = () => {
-    loadLocalSongBundles();
-    fetchSongBundles();
+    fetchServerSongBundles();
+    try {
+      Db.songs.realm().objects<SongBundle>(SongBundleSchema.name).addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle SongBundle collection change", sanitizeErrorForRollbar(error));
+    }
   };
 
   const onClose = () => {
+    Db.songs.realm().objects<SongBundle>(SongBundleSchema.name).removeListener(onCollectionChange);
   };
 
   useEffect(() => {
     if (!isMounted()) return;
 
     // Let user navigate when the screen is still loading the data
-    if (serverBundles.length === 0) {
-      return;
-    }
-    setIsProcessing?.(isLoading);
-  }, [isLoading]);
+    if (serverBundles.length === 0) return;
+
+    setIsProcessing?.(isProcessingLocalData);
+  }, [isProcessingLocalData]);
 
   useEffect(() => {
-    if (isLocalBundlesLoading) return;
+    if (isLocalDataLoading) return;
     loadAndPromptSpecificBundle();
-  }, [promptForUuid, isLocalBundlesLoading]);
+  }, [promptForUuid, isLocalDataLoading]);
+
+  const processLocalDataChanges = (collection: OrderedCollection<Realm.Object<SongBundle> & SongBundle>) => {
+    if (!isMounted()) return;
+    setIsLocalDataLoading(true);
+
+    try {
+      const data: SongBundle[] = collection
+        .sorted(`name`)
+        .map(it => SongBundle.clone(it, { includeSongs: true, includeVerses: false }))
+
+      const distinctData: SongBundle[] = [];
+      data.forEach(bundle => {
+        if (distinctData.some(it => it.uuid == bundle.uuid)) return;
+        distinctData.push(bundle);
+      })
+
+      setLocalBundles(distinctData);
+
+      if (filterLanguage === "") {
+        setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(distinctData));
+      }
+    } catch (error) {
+      rollbar.error("Failed to load local SongBundles from collection change", sanitizeErrorForRollbar(error));
+    }
+
+    setIsLocalDataLoading(false);
+  };
+
+  const processLocalDataChangesDebounced = debounce(processLocalDataChanges, 300);
+
+  const onCollectionChange = (collection: OrderedCollection<Realm.Object<SongBundle> & SongBundle>, changes: CollectionChangeSet) => {
+    if (!isMounted()) return;
+    processLocalDataChangesDebounced(collection, changes);
+  }
 
   const loadAndPromptSpecificBundle = () => {
     if (!promptForUuid) return;
     if (localBundles.find(it => it.uuid === promptForUuid)) return;
 
-    setIsBundleLoading(true);
+    setIsSpecificBundleLoading(true);
     Server.fetchSongBundle({ uuid: promptForUuid }, {})
       .then(data => {
         if (!isMounted()) return;
@@ -98,37 +145,12 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
         dismissPromptForUuid?.();
 
         if (!isMounted()) return;
-        setIsBundleLoading(false);
+        setIsSpecificBundleLoading(false);
       });
   };
 
-  const loadLocalSongBundles = () => {
-    setIsLoading(true);
-    setIsLocalBundlesLoading(true);
-
-    let data: SongBundle[] = [];
-    try {
-      data = SongProcessor.loadLocalSongBundles()
-        .map(it => SongBundle.clone(it, { includeSongs: true, includeVerses: false }))
-    } catch (error) {
-      rollbar.error("Cannot load local song bundles", sanitizeErrorForRollbar(error));
-      return alertAndThrow(error);
-    }
-
-    if (!isMounted()) return;
-
-    setLocalBundles(data);
-
-    if (filterLanguage === "") {
-      setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(data));
-    }
-
-    setIsLoading(false);
-    setIsLocalBundlesLoading(false);
-  };
-
-  const fetchSongBundles = () => {
-    setIsLoading(true);
+  const fetchServerSongBundles = () => {
+    setIsServerDataLoading(true);
     Server.fetchSongBundles()
       .then(data => {
         if (!isMounted()) return;
@@ -143,7 +165,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
       })
       .finally(() => {
         if (!isMounted()) return;
-        setIsLoading(false);
+        setIsServerDataLoading(false);
       });
   };
 
@@ -169,17 +191,13 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   };
 
   const onSongBundlePress = (bundle: ServerSongBundle) => {
-    if (isLoading || isPopupOpen()) {
-      return;
-    }
+    if (isProcessingLocalData || isPopupOpen()) return;
 
     setRequestDownloadForBundle(bundle);
   };
 
   const onLocalSongBundlePress = (bundle: LocalSongBundle) => {
-    if (isLoading || isPopupOpen()) {
-      return;
-    }
+    if (isProcessingLocalData || isPopupOpen()) return;
 
     if (SongProcessor.hasUpdate(serverBundles, bundle)) {
       const serverBundle = SongProcessor.getMatchingServerBundle(serverBundles, bundle);
@@ -195,7 +213,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     const bundle = requestDownloadForBundle;
     setRequestDownloadForBundle(undefined);
 
-    if (isLoading || bundle === undefined) return;
+    if (isProcessingLocalData || bundle === undefined) return;
 
     const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
     if (isUpdating) return;
@@ -207,7 +225,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     const bundle = requestUpdateForBundle;
     setRequestUpdateForBundle(undefined);
 
-    if (isLoading || bundle === undefined) return;
+    if (isProcessingLocalData || bundle === undefined) return;
 
     const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
     if (isUpdating) return;
@@ -220,7 +238,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
 
   const saveSongBundle = (bundle: ServerSongBundle, isUpdate: boolean) => {
     if (!isMounted()) return;
-    setIsLoading(true);
+    setIsProcessingLocalData(true);
     updaterContext.addSongBundleUpdating(bundle);
 
     const call = isUpdate
@@ -244,9 +262,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
       })
       .finally(() => {
         if (!isMounted()) return;
-        setLocalBundles([]);
-        setIsLoading(false);
-        loadLocalSongBundles();
+        setIsProcessingLocalData(false);
       })
       .finally(() => {
         // Do this here after the state has been called, otherwise we get realm invalidation errors
@@ -258,7 +274,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
     const bundle = requestDeleteForBundle;
     setRequestDeleteForBundle(undefined);
 
-    if (isLoading || bundle === undefined) return;
+    if (isProcessingLocalData || bundle === undefined) return;
 
     const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === bundle.uuid);
     if (isUpdating) {
@@ -270,7 +286,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   };
 
   const deleteSongBundle = (bundle: LocalSongBundle) => {
-    setIsLoading(true);
+    setIsProcessingLocalData(true);
     updaterContext.removeSongBundleUpdating(bundle);
 
     try {
@@ -278,11 +294,11 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
       Alert.alert("Success", successMessage);
     } catch (error) {
       alertAndThrow(error);
+    } finally {
+      if (isMounted()) {
+        setIsProcessingLocalData(false);
+      }
     }
-
-    if (!isMounted()) return;
-
-    loadLocalSongBundles();
   };
 
   const getAllLanguagesFromBundles = (bundles: ServerSongBundle[]) => {
@@ -302,83 +318,81 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({ setIsProcessing, prompt
   const isOfSelectedLanguage = (it: { language: string }) =>
     filterLanguage === ShowAllLanguagesValue || it.language.toUpperCase() === filterLanguage.toUpperCase();
 
-  return (
-    <View style={styles.container}>
-      <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
-                         onClose={() => setRequestDownloadForBundle(undefined)}
-                         onConfirm={onConfirmDownloadSongBundle}
-                         invertConfirmColor={true}
-                         message={`Download songs for ${requestDownloadForBundle?.name}?`} />
+  return <View style={styles.container}>
+    <ConfirmationModal isOpen={requestDownloadForBundle !== undefined}
+                       onClose={() => setRequestDownloadForBundle(undefined)}
+                       onConfirm={onConfirmDownloadSongBundle}
+                       invertConfirmColor={true}
+                       message={`Download songs for ${requestDownloadForBundle?.name}?`} />
 
-      <ConfirmationModal isOpen={requestUpdateForBundle !== undefined}
-                         onClose={() => setRequestUpdateForBundle(undefined)}
-                         onConfirm={onConfirmUpdateSongBundle}
-                         invertConfirmColor={true}
-                         message={`Update ${requestUpdateForBundle?.name}?`} />
+    <ConfirmationModal isOpen={requestUpdateForBundle !== undefined}
+                       onClose={() => setRequestUpdateForBundle(undefined)}
+                       onConfirm={onConfirmUpdateSongBundle}
+                       invertConfirmColor={true}
+                       message={`Update ${requestUpdateForBundle?.name}?`} />
 
-      <ConfirmationModal isOpen={requestDeleteForBundle !== undefined}
-                         onClose={() => setRequestDeleteForBundle(undefined)}
-                         onConfirm={onConfirmDeleteSongBundle}
-                         message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
+    <ConfirmationModal isOpen={requestDeleteForBundle !== undefined}
+                       onClose={() => setRequestDeleteForBundle(undefined)}
+                       onConfirm={onConfirmDeleteSongBundle}
+                       message={`Delete all songs for ${requestDeleteForBundle?.name}?`} />
 
 
-      <Text style={[styles.informationText, styles.subtleInformationText]}>We are still sorting out all the song
-        licenses, so we trust that you take the
-        responsibility to make sure you have the correct licenses for the songs you download.</Text>
+    <Text style={[styles.informationText, styles.subtleInformationText]}>We are still sorting out all the song
+      licenses, so we trust that you take the
+      responsibility to make sure you have the correct licenses for the songs you download.</Text>
 
-      <Text style={[styles.informationText, styles.subtleInformationText]}>
-        If you want to download a song bundle which is not displayed, please feel free to
-        <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`} textOnly={true}>
-          <Text style={styles.webpageLink}> contact us</Text>
-        </UrlLink>.
-      </Text>
+    <Text style={[styles.informationText, styles.subtleInformationText]}>
+      If you want to download a song bundle which is not displayed, please feel free to
+      <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`} textOnly={true}>
+        <Text style={styles.webpageLink}> contact us</Text>
+      </UrlLink>.
+    </Text>
 
-      <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
+    <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
 
-      <LanguageSelectBar languages={getAllLanguagesFromBundles(serverBundles)}
-                         selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage}
-                         itemCountPerLanguage={itemCountPerLanguage(localBundles)} />
+    <LanguageSelectBar languages={getAllLanguagesFromBundles(serverBundles)}
+                       selectedLanguage={filterLanguage}
+                       onLanguageClick={setFilterLanguage}
+                       itemCountPerLanguage={itemCountPerLanguage(localBundles)} />
 
-      <ScrollView nestedScrollEnabled={true}
-                  style={styles.listContainer}
-                  refreshControl={<RefreshControl onRefresh={fetchSongBundles}
-                                                  tintColor={styles.refreshControl.color}
-                                                  refreshing={isLoading || isBundleLoading} />}>
+    <ScrollView nestedScrollEnabled={true}
+                style={styles.listContainer}
+                refreshControl={<RefreshControl onRefresh={fetchServerSongBundles}
+                                                tintColor={styles.refreshControl.color}
+                                                refreshing={isProcessingLocalData || isSpecificBundleLoading || isLocalDataLoading || isServerDataLoading} />}>
 
-        {localBundles
-          .filter(isOfSelectedLanguage)
-          .map((bundle: LocalSongBundle) =>
-            <LocalSongBundleItem key={bundle.uuid + bundle.name}
-                                 bundle={bundle}
-                                 onPress={onLocalSongBundlePress}
-                                 onLongPress={shareSongBundle}
-                                 hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
-                                 disabled={isLoading || isBundleLoading} />)}
+      {localBundles
+        .filter(isOfSelectedLanguage)
+        .map((bundle: LocalSongBundle) =>
+          <LocalSongBundleItem key={bundle.uuid + bundle.name}
+                               bundle={bundle}
+                               onPress={onLocalSongBundlePress}
+                               onLongPress={shareSongBundle}
+                               hasUpdate={SongProcessor.hasUpdate(serverBundles, bundle)}
+                               disabled={isProcessingLocalData || isSpecificBundleLoading} />)}
 
-        {serverBundles
-          .filter(it => !SongProcessor.isBundleLocal(localBundles, it))
-          .filter(isOfSelectedLanguage)
-          .map((bundle: ServerSongBundle) =>
-            <SongBundleItem key={bundle.uuid + bundle.name}
-                            bundle={bundle}
-                            onPress={onSongBundlePress}
-                            onLongPress={shareSongBundle}
-                            disabled={isLoading || isBundleLoading} />)}
+      {serverBundles
+        .filter(it => !SongProcessor.isBundleLocal(localBundles, it))
+        .filter(isOfSelectedLanguage)
+        .map((bundle: ServerSongBundle) =>
+          <SongBundleItem key={bundle.uuid + bundle.name}
+                          bundle={bundle}
+                          onPress={onSongBundlePress}
+                          onLongPress={shareSongBundle}
+                          disabled={isProcessingLocalData || isSpecificBundleLoading || isLocalDataLoading || isServerDataLoading} />)}
 
-        {serverBundles.length > 0 ? undefined :
-          <Text style={styles.emptyListText}>
-            {isLoading || isBundleLoading ? "Loading..." : "No online data available..."}
-          </Text>
-        }
-        {isLoading || serverBundles.length === 0 || serverBundles.filter(isOfSelectedLanguage).length > 0 ? undefined :
-          <Text style={styles.emptyListText}>
-            No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
-          </Text>
-        }
-      </ScrollView>
-    </View>
-  );
+      {serverBundles.length > 0 ? undefined :
+        <Text style={styles.emptyListText}>
+          {isServerDataLoading || isSpecificBundleLoading ? "Loading..." : "No online data available..."}
+        </Text>
+      }
+      {isLocalDataLoading || isServerDataLoading || serverBundles.length === 0 || serverBundles.filter(isOfSelectedLanguage).length > 0 ? undefined :
+        <Text style={styles.emptyListText}>
+          No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
+        </Text>
+      }
+    </ScrollView>
+  </View>;
 };
 
 export default DownloadSongsScreen;
