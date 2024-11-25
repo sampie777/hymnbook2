@@ -5,7 +5,7 @@ export const DocumentSchema: Realm.ObjectSchema = {
   properties: {
     id: "int",
     name: { type: "string", indexed: true },
-    html: { type: "string", indexed: "full-text" },
+    html: "string",
     language: "string",
     index: "int",
     createdAt: "date",

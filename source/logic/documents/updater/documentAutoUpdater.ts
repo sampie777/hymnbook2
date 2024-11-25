@@ -11,7 +11,8 @@ export namespace DocumentAutoUpdater {
     removeDocumentGroupUpdating: (bundle: { uuid: string }) => void,
     mayUseNetwork: () => boolean
   ) => {
-    const groups = DocumentProcessor.loadLocalDocumentRoot();
+    const groups = DocumentProcessor.loadLocalDocumentRoot()
+      .filter(it => it.uuid.length > 0);
     if (groups.length == 0) return;
 
     const updates = await DocumentServer.fetchDocumentGroupUpdates();

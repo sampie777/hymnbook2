@@ -6,6 +6,11 @@ export const SongListVerseModelSchema: Realm.ObjectSchema = {
   properties: {
     id: "int",
     verse: VerseSchema.name,
+    _songListSong: {
+      type: "linkingObjects",
+      objectType: "SongListSong",    // SongListSongSchema.name
+      property: "selectedVerses"
+    }
   },
   primaryKey: "id"
 };
@@ -16,7 +21,12 @@ export const SongListSongModelSchema: Realm.ObjectSchema = {
     id: "int",
     index: "int",
     song: SongSchema.name,
-    selectedVerses: SongListVerseModelSchema.name + "[]"
+    selectedVerses: SongListVerseModelSchema.name + "[]",
+    _songList: {
+      type: "linkingObjects",
+      objectType: "SongList",    // SongListModelSchema.name
+      property: "songs"
+    }
   },
   primaryKey: "id"
 };

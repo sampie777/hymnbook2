@@ -8,6 +8,7 @@ import { SongBundleSchema } from "../db/models/SongsSchema";
 import { AbcMelody } from "../db/models/AbcMelodies";
 import SongList from "./songList";
 import Settings from "../../settings";
+import { SongDbHelpers } from "./songDbHelpers";
 
 export namespace SongProcessor {
 
@@ -84,15 +85,14 @@ export namespace SongProcessor {
 
     try {
       Db.songs.realm().write(() => {
-        Db.songs.realm().delete(dbBundle.songs);
-        Db.songs.realm().delete(dbBundle);
+        SongDbHelpers.deleteSongBundle(dbBundle);
       });
     } catch (error) {
       rollbar.error("Failed to delete song bundle", {
         ...sanitizeErrorForRollbar(error),
         bundle: { ...bundle, songs: null }
       });
-      throw new Error(`Could not delete (outdated) songs for ${bundleName}`);
+      throw new Error(`Could not delete (outdated) song bundle ${bundleName}`);
     }
 
     SongList.cleanUpAllSongLists();

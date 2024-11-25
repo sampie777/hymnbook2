@@ -6,6 +6,7 @@ import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
 import { AbcMelodySchema } from "../models/AbcMelodiesSchema";
 import { removeObjectsWithoutParents } from "./utils";
+import { SongListSongModelSchema, SongListVerseModelSchema } from "../models/SongListModelSchema";
 
 export namespace SongDbPatch {
   /**
@@ -18,7 +19,7 @@ export namespace SongDbPatch {
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted("id", true);
 
-    bundles.forEach((it) => {
+    bundles.forEach(it => {
       const isDuplicate = approvedUuids.includes(it.uuid);
       if (!isDuplicate) {
         approvedUuids.push(it.uuid);
@@ -50,11 +51,21 @@ export namespace SongDbPatch {
         { schemaName: SongMetadataSchema.name, parentLink: '_songs', },
         { schemaName: VerseSchema.name, parentLink: '_songs', },
         { schemaName: AbcMelodySchema.name, parentLink: '_song', },
+        { schemaName: SongListSongModelSchema.name, parentLink: '_songList', },
+        { schemaName: SongListVerseModelSchema.name, parentLink: '_songListSong', },
       ]);
   }
 
   export const patch = () => {
-    removeDuplicateBundles();
-    removeSongObjectsWithoutParents();
+    try {
+      removeDuplicateBundles();
+    } catch (error) {
+      rollbar.error("Failed to remove duplicate bundles", sanitizeErrorForRollbar(error));
+    }
+    try {
+      removeSongObjectsWithoutParents();
+    } catch (error) {
+      rollbar.error("Failed to remove song objects without parents", sanitizeErrorForRollbar(error));
+    }
   };
 }

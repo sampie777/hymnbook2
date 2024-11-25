@@ -19,6 +19,7 @@ export const removeObjectsWithoutParents = (
 
     try {
       db.realm().write(() => {
+        console.debug(`Deleting ${data.length} ${schema.schemaName}`)
         db.realm().delete(data);
       });
     } catch (error) {
