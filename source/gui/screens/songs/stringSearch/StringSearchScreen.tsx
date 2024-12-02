@@ -5,8 +5,7 @@ import { rollbar } from "../../../../logic/rollbar";
 import { InterruptedError } from "../../../../logic/InterruptedError";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce, useIsMounted } from "../../../components/utils";
-import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
-import { isIOS, sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { isIOS, runAsync, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
@@ -15,6 +14,7 @@ import SearchInput from "../../documents/search/SearchInput";
 import SearchOptions from "./SearchOptions";
 import SearchResultComponent from "./SearchResultComponent";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
@@ -88,6 +88,9 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   }, [searchText, searchInTitles, searchInVerses, selectedBundleUuids]);
 
   useEffect(() => {
+    // Sorting is not needed for 'showAllSongs' data, as it is already sorted
+    if (searchText.length == 0) return;
+
     setSearchResults(SongSearch.sort([...searchResults], sortOrder));
   }, [sortOrder]);
 
@@ -136,29 +139,35 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const loadWholeDatabase = () => {
     setIsLoading(true);
 
-    try {
-      const data = SongSearch.loadAll(selectedBundleUuids);
+    runAsync(() => {
+      try {
+        const results = SongSearch.loadAll(selectedBundleUuids);
+
+        if (!isMounted()) return;
+        // Sorting is not needed for 'showAllSongs' data, as it is already sorted
+        setSearchResults(SongSearch.sort(results, SongSearch.OrderBy.Relevance));
+      } catch (error) {
+        if (error instanceof InterruptedError) return;
+
+        rollbar.error("Failed to fetch all songs from song database", {
+          ...sanitizeErrorForRollbar(error),
+          searchText: searchText,
+          immediateSearchText: immediateSearchText.current,
+          searchInTitles: searchInTitles,
+          searchInVerses: searchInVerses,
+          sortOrder: sortOrder,
+          isMounted: isMounted(),
+          dbIsConnected: Db.songs.isConnected(),
+          dbIsClosed: Db.songs.realm().isClosed
+        });
+
+        if (!isMounted()) return;
+        Alert.alert("Sorry", "Something went wrong, so we cannot display all songs at once.");
+      }
+
       if (!isMounted()) return;
-
-      setSearchResults(data);
-    } catch (error) {
-      if (error instanceof InterruptedError) return;
-
-      rollbar.error("Failed to fetch all songs from song database", {
-        ...sanitizeErrorForRollbar(error),
-        searchText: searchText,
-        immediateSearchText: immediateSearchText.current,
-        searchInTitles: searchInTitles,
-        searchInVerses: searchInVerses,
-        sortOrder: sortOrder,
-        isMounted: isMounted(),
-        dbIsConnected: Db.songs.isConnected(),
-        dbIsClosed: Db.songs.realm().isClosed
-      });
-
-      Alert.alert("Sorry", "Something went wrong, so we cannot display all songs at once.");
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    })
   }
 
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
@@ -179,9 +188,12 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return null;
     }
 
+    // Don't calculate title similarity for showAllSongs, as this call is very slow
+    const showSongBundle = searchText.length == 0 ? true
+      : isTitleSimilarToOtherSongs(item.song, searchResults.map(it => it.song));
     return <SearchResultComponent navigation={navigation}
                                   searchRegex={searchRegex}
-                                  showSongBundle={isTitleSimilarToOtherSongs(item.song, searchResults.map(it => it.song))}
+                                  showSongBundle={showSongBundle}
                                   disable={isLoading}
                                   song={item.song}
                                   isTitleMatch={item.isTitleMatch}
@@ -189,7 +201,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                                   isVerseMatch={item.isVerseMatch} />;
   }, [isLoading]);
 
-  const noActiveSearchGoingOnOrDataToDisplay = () => searchText.length > 0 || searchResults.length > 0;
+  const noActiveSearchGoingOnOrDataToDisplay = () => isLoading || searchText.length > 0 || searchResults.length > 0;
 
   return <View style={styles.container}>
     <SearchInput value={searchText}
