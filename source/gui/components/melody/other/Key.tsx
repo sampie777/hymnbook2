@@ -45,6 +45,7 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
                          key={it.note + it.verticalPos}
                          x={charWidth * (xOffset++)} y={y}
                          fill={styles.color}
+                         fontFamily={styles.fontFamily}
                          textAnchor={"start"}>♯</Text>;
           }
           if (it.acc === "flat") {
@@ -52,6 +53,7 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
                          key={it.note + it.verticalPos}
                          x={charWidth * (xOffset++)} y={y}
                          fill={styles.color}
+                         fontFamily={styles.fontFamily}
                          textAnchor={"start"}>♭</Text>;
           }
           return undefined;
@@ -61,9 +63,10 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
   </Animated.View>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => ({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => ({
   container: {},
-  color: colors.notes.color
+  color: colors.notes.color,
+  fontFamily: fontFamily.sansSerif,
 });
 
 export default Key;
