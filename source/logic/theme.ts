@@ -149,7 +149,7 @@ export interface ThemeFontFamilies {
 }
 
 export const defaultFontFamilies: ThemeFontFamilies = {
-  sansSerif: "Roboto",
+  sansSerif: "Roboto-Regular",
   sansSerifLight: "Roboto-Light",
   sansSerifThin: "Roboto-Thin"
 };
