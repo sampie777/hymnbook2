@@ -30,8 +30,6 @@ const SearchResultComponent: React.FC<Props> = ({
                                                   isMetadataMatch = false,
                                                   isVerseMatch = false
                                                 }) => {
-  if (searchRegex.length === 0) return null;
-
   const styles = createStyles(useTheme());
 
   const getSelectedVerses = () => !isVerseMatch ? []

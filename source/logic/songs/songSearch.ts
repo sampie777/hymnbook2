@@ -30,6 +30,24 @@ export namespace SongSearch {
 
   const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
 
+  export const loadAll = (selectedBundleUuids: string[] = []): SongSearch.SearchResult[] => {
+    const songBundleQuery = selectedBundleUuids.length == 0 ? ""
+      : `${createSongBundleFilterQuery(selectedBundleUuids)}`;
+
+    const results = Db.songs.realm().objects<Song>(SongSchema.name)
+      .sorted("name")
+      .sorted("number")
+      .filtered(songBundleQuery)
+
+    return results.map(it => ({
+      song: it,
+      points: 1,
+      isTitleMatch: false,
+      isMetadataMatch: false,
+      isVerseMatch: false,
+    }));
+  }
+
   export const findByNumber = (number: number, selectedBundleUuids: string[]) => {
     const songBundleQuery = selectedBundleUuids.length == 0 ? ""
       : `AND ${createSongBundleFilterQuery(selectedBundleUuids)}`;

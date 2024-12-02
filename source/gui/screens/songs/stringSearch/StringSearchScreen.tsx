@@ -10,10 +10,11 @@ import { isIOS, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SearchInput from "../../documents/search/SearchInput";
 import SearchOptions from "./SearchOptions";
 import SearchResultComponent from "./SearchResultComponent";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
@@ -132,6 +133,34 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, 750);
 
+  const loadWholeDatabase = () => {
+    setIsLoading(true);
+
+    try {
+      const data = SongSearch.loadAll(selectedBundleUuids);
+      if (!isMounted()) return;
+
+      setSearchResults(data);
+    } catch (error) {
+      if (error instanceof InterruptedError) return;
+
+      rollbar.error("Failed to fetch all songs from song database", {
+        ...sanitizeErrorForRollbar(error),
+        searchText: searchText,
+        immediateSearchText: immediateSearchText.current,
+        searchInTitles: searchInTitles,
+        searchInVerses: searchInVerses,
+        sortOrder: sortOrder,
+        isMounted: isMounted(),
+        dbIsConnected: Db.songs.isConnected(),
+        dbIsClosed: Db.songs.realm().isClosed
+      });
+
+      Alert.alert("Sorry", "Something went wrong, so we cannot display all songs at once.");
+    }
+    setIsLoading(false);
+  }
+
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
     // Use the ref, as the state will cause unnecessary updates
     const searchRegex = SongSearch.makeSearchTextRegexable(immediateSearchText.current);
@@ -160,6 +189,8 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                                   isVerseMatch={item.isVerseMatch} />;
   }, [isLoading]);
 
+  const noActiveSearchGoingOnOrDataToDisplay = () => searchText.length > 0 || searchResults.length > 0;
+
   return <View style={styles.container}>
     <SearchInput value={searchText}
                  onChange={setSearchText}
@@ -173,24 +204,38 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                    selectedBundleUuids={selectedBundleUuids}
                    onSelectedBundleUuidsChange={setSelectedBundleUuids} />
 
-    <FlatList style={styles.listContainer}
-              onRefresh={isIOS || isLoading ? () => undefined : undefined} // Hack to show loading icon only when loading and disabling pull to refresh
-              refreshing={isLoading}
-              progressViewOffset={15}
-              data={searchResults}
-              renderItem={renderContentItem}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
-              disableScrollViewPanResponder={true}
-              ListHeaderComponent={
-                <Text style={styles.resultsInfoText}>
-                  {isLoading ? "Searching..." :
-                    <>{searchResults.length === 0 ? "No" : searchResults.length} results</>
-                  }
-                </Text>
-              }
-              ListFooterComponent={<View style={styles.listFooter} />} />
+    {noActiveSearchGoingOnOrDataToDisplay() ? null :
+      <View style={styles.showAllContainer}>
+        <TouchableOpacity onPress={loadWholeDatabase} style={styles.showAllButton}>
+          <Icon name={"ellipsis-h"} style={styles.showAllIcon} />
+          <Text style={styles.showAllText}
+                importantForAccessibility={"auto"}>
+            Show all songs
+          </Text>
+        </TouchableOpacity>
+      </View>
+    }
+
+    {!noActiveSearchGoingOnOrDataToDisplay() ? null :
+      <FlatList style={styles.listContainer}
+                onRefresh={isIOS || isLoading ? () => undefined : undefined} // Hack to show loading icon only when loading and disabling pull to refresh
+                refreshing={isLoading}
+                progressViewOffset={15}
+                data={isLoading ? [] : searchResults}
+                renderItem={renderContentItem}
+                initialNumToRender={10}
+                maxToRenderPerBatch={searchText.length > 0 ? 10 : 30} // Use 10 for a regex search because it's slower
+                keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
+                disableScrollViewPanResponder={true}
+                ListHeaderComponent={
+                  <Text style={styles.resultsInfoText}>
+                    {isLoading ? "Searching..." :
+                      <>{searchResults.length === 0 ? "No" : searchResults.length} results</>
+                    }
+                  </Text>
+                }
+                ListFooterComponent={<View style={styles.listFooter} />} />
+    }
   </View>;
 };
 
@@ -216,6 +261,29 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   listFooter: {
     height: 100
+  },
+
+  showAllContainer: { flex: 1, justifyContent: "flex-end", alignItems: "center", paddingBottom: 50 },
+  showAllButton: {
+    marginTop: 25,
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: colors.primary.variant,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 10
+  },
+  showAllIcon: {
+    fontSize: 16,
+    color: colors.onPrimary,
+    opacity: 0.75,
+  },
+  showAllText: {
+    fontSize: 16,
+    color: colors.onPrimary,
+    textAlign: "center"
   }
 });
 
