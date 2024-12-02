@@ -6,6 +6,7 @@ import { Text } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
 import Lines from "./Lines";
 import { AnimatedG, AnimatedSvg } from "../../utils";
+import { defaultFontFamilies } from "../../../../logic/theme";
 
 interface Props {
   animatedScale: Animated.Value;
@@ -45,6 +46,7 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
                          key={it.note + it.verticalPos}
                          x={charWidth * (xOffset++)} y={y}
                          fill={styles.color}
+                         fontFamily={styles.fontFamily}
                          textAnchor={"start"}>♯</Text>;
           }
           if (it.acc === "flat") {
@@ -52,6 +54,7 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
                          key={it.note + it.verticalPos}
                          x={charWidth * (xOffset++)} y={y}
                          fill={styles.color}
+                         fontFamily={styles.fontFamily}
                          textAnchor={"start"}>♭</Text>;
           }
           return undefined;
@@ -63,7 +66,8 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
 
 const createStyles = ({ colors }: ThemeContextProps) => ({
   container: {},
-  color: colors.notes.color
+  color: colors.notes.color,
+  fontFamily: defaultFontFamilies.sansSerif,
 });
 
 export default Key;
