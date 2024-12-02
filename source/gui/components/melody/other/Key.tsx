@@ -6,7 +6,6 @@ import { Text } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
 import Lines from "./Lines";
 import { AnimatedG, AnimatedSvg } from "../../utils";
-import { defaultFontFamilies } from "../../../../logic/theme";
 
 interface Props {
   animatedScale: Animated.Value;
@@ -64,10 +63,10 @@ const Key: React.FC<Props> = ({ animatedScale, keySignature }) => {
   </Animated.View>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => ({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => ({
   container: {},
   color: colors.notes.color,
-  fontFamily: defaultFontFamilies.sansSerif,
+  fontFamily: fontFamily.sansSerif,
 });
 
 export default Key;

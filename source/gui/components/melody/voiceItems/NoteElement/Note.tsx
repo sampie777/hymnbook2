@@ -3,7 +3,6 @@ import { AbcConfig } from "../../config";
 import { AbcPitch, StemDirection } from "../../../../../logic/songs/abc/abcjsTypes";
 import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
 import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
-import { defaultFontFamilies } from "../../../../../logic/theme";
 
 interface Props {
   pitch: AbcPitch,
@@ -117,9 +116,9 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
   </G>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => ({
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => ({
   color: colors.notes.color,
-  fontFamily: defaultFontFamilies.sansSerif,
+  fontFamily: fontFamily.sansSerif,
 });
 
 const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
