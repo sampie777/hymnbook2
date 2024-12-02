@@ -97,24 +97,28 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
       <Text fontSize={22}
             x={-7} y={AbcConfig.sharpOffsetY}
             fill={styles.color}
+            fontFamily={styles.fontFamily}
             textAnchor={"end"}>♯</Text>}
 
     {pitch.accidental !== "flat" ? undefined :
       <Text fontSize={AbcConfig.flatFontSize}
             x={-7} y={AbcConfig.flatOffsetY}
             fill={styles.color}
+            fontFamily={styles.fontFamily}
             textAnchor={"end"}>♭</Text>}
 
     {pitch.accidental !== "natural" ? undefined :
       <Text fontSize={28}
             x={-7} y={AbcConfig.naturalOffsetY}
             fill={styles.color}
+            fontFamily={styles.fontFamily}
             textAnchor={"end"}>♮</Text>}
   </G>;
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notes.color
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) => ({
+  color: colors.notes.color,
+  fontFamily: fontFamily.sansSerif,
 });
 
 const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
