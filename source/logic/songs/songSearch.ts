@@ -1,6 +1,6 @@
 import Db from "../db/db";
-import { Song, SongMetadataType, Verse } from "../db/models/Songs";
-import { SongSchema } from "../db/models/SongsSchema";
+import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/Songs";
+import { SongBundleSchema, SongSchema } from "../db/models/SongsSchema";
 import { InterruptedError } from "../InterruptedError";
 import config from "../../config";
 
@@ -29,6 +29,35 @@ export namespace SongSearch {
   }
 
   const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
+
+  export const loadAll = (selectedBundleUuids: string[] = []): SongSearch.SearchResult[] => {
+    // Load all selected bundles and sort them by name, so we can group our song results by bundles.
+    const bundles = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name)
+      .filtered(`uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`)
+      .sorted("name", true)
+    const sortedByNameSelectedBundleUuids = bundles.map(it => it.uuid);
+
+    const songBundleQuery = selectedBundleUuids.length == 0 ? ""
+      : `${createSongBundleFilterQuery(selectedBundleUuids)}`;
+    const results = Db.songs.realm().objects<Song>(SongSchema.name)
+      .sorted("name")
+      .sorted("number")
+      .filtered(songBundleQuery)
+
+    return results.map(it => {
+      // Intentionally preload song bundle into Song object to increase sorting speed later on
+      const bundle = Song.getSongBundle(it)
+      const points = bundle == undefined ? 0 : sortedByNameSelectedBundleUuids.indexOf(bundle.uuid);
+
+      return {
+        song: it,
+        points: points,
+        isTitleMatch: false,
+        isMetadataMatch: false,
+        isVerseMatch: false,
+      }
+    });
+  }
 
   export const findByNumber = (number: number, selectedBundleUuids: string[]) => {
     const songBundleQuery = selectedBundleUuids.length == 0 ? ""
