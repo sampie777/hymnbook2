@@ -127,6 +127,7 @@ export class Song {
   metadata: SongMetadata[];
   lastUsedMelody?: AbcMelody;
   _songBundles?: SongBundle[];
+  _songBundle?: SongBundle; // Will be loaded by calling getSongBundle()
 
   constructor(
     name: string,
@@ -154,18 +155,21 @@ export class Song {
     this.metadata = metadata;
     this.lastUsedMelody = lastUsedMelody;
     this._songBundles = songBundle === undefined ? [] : [songBundle];
+    this._songBundle = songBundle;
   }
 
   static getSongBundle(song?: Song): SongBundle | undefined {
-    if (song === undefined) {
-      return undefined;
-    }
+    if (song === undefined) return undefined;
+
+    if (song._songBundle != undefined) return song._songBundle;
 
     if (song._songBundles === undefined || song._songBundles.length === 0) {
+      song._songBundle = undefined;
       return undefined;
     }
 
-    return song._songBundles[0];
+    song._songBundle = song._songBundles[0];
+    return song._songBundle;
   }
 
   static clone(obj: Song, options: { includeVerses: boolean } = { includeVerses: false }): Song {

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
@@ -20,7 +20,7 @@ interface Props {
   isVerseMatch?: boolean;
 }
 
-const SearchResultComponent: React.FC<Props> = ({
+const SearchResultComponent: React.FC<Props> = memo(({
                                                   navigation,
                                                   song,
                                                   searchRegex,
@@ -30,8 +30,6 @@ const SearchResultComponent: React.FC<Props> = ({
                                                   isMetadataMatch = false,
                                                   isVerseMatch = false
                                                 }) => {
-  if (searchRegex.length === 0) return null;
-
   const styles = createStyles(useTheme());
 
   const getSelectedVerses = () => !isVerseMatch ? []
@@ -106,7 +104,7 @@ const SearchResultComponent: React.FC<Props> = ({
       </View>
     }
   </TouchableOpacity>;
-};
+});
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
