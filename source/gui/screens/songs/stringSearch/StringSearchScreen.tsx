@@ -189,8 +189,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     // Don't calculate title similarity for showAllSongs, as this call is very slow
-    const showSongBundle = searchText.length == 0 ? true
-      : isTitleSimilarToOtherSongs(item.song, searchResults.map(it => it.song));
+    const showSongBundle = isTitleSimilarToOtherSongs(item.song, searchResults.map(it => it.song));
     return <SearchResultComponent navigation={navigation}
                                   searchRegex={searchRegex}
                                   showSongBundle={showSongBundle}
