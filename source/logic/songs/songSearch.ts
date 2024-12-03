@@ -45,7 +45,10 @@ export namespace SongSearch {
       .filtered(songBundleQuery)
 
     return results.map(it => {
-      const points = it._songBundles == null || it._songBundles.length == 0 ? 0 : sortedByNameSelectedBundleUuids.indexOf(it._songBundles[0].uuid);
+      // Intentionally preload song bundle into Song object to increase sorting speed later on
+      const bundle = Song.getSongBundle(it)
+      const points = bundle == undefined ? 0 : sortedByNameSelectedBundleUuids.indexOf(bundle.uuid);
+
       return {
         song: it,
         points: points,
