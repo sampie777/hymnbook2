@@ -46,11 +46,11 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <View style={styles.modalHeader}>
-            {!showCloseButton ? undefined : <View style={styles.headerCloseButton} />}
+            {!showCloseButton ? <View /> : <View style={styles.headerCloseButton} />}
 
             <Text style={styles.modalTitle}>{title}</Text>
 
-            {!showCloseButton ? undefined :
+            {!showCloseButton ? <View /> :
               <TouchableOpacity style={styles.headerCloseButton}
                                 onPress={onClose}
                                 hitSlop={RectangularInset(10)}
