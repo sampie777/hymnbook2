@@ -45,9 +45,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
 
   const selectedBundles = bundles.filter(it => selectedBundleUuids.includes(it.uuid));
 
-  if (bundles.length <= 1) {
-    return null;
-  }
+  if (bundles.length <= 1) return null;
 
   return <View style={styles.container}>
     {!isOpen ? null : <SongBundlePicker bundles={bundles}
