@@ -21,6 +21,8 @@ const StringSearchButton: React.FC<Props> = ({
   const styles = createStyles(useTheme());
 
   const onPress = () => {
+    // Allow button to be shown, but not operational, when the app is first loading
+    if (bundlesCount() < 1) return null;
     navigation.navigate(SongStringSearchRoute);
   };
 
@@ -52,7 +54,7 @@ const StringSearchButton: React.FC<Props> = ({
     }
   }, [position])();
 
-  if (bundlesCount() < 1) return null;
+  if (bundlesCount() == 0) return null;
 
   return <View style={[styles.containerBase, containerPositionStyle]}>
     <TouchableOpacity style={[styles.button, buttonPositionStyle]}

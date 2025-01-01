@@ -19,7 +19,7 @@ const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
     navigation.navigate(DatabasesRoute, { type: Types.Songs });
   };
 
-  if (bundlesCount() > 0) return null;
+  if (bundlesCount() != 0) return null;
 
   return <View style={styles.background}>
     <View style={styles.container}>
