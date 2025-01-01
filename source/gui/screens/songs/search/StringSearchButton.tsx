@@ -6,6 +6,7 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { useSongBundleCount } from "../../../components/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
@@ -16,6 +17,7 @@ const StringSearchButton: React.FC<Props> = ({
                                                navigation,
                                                position
                                              }) => {
+  const bundlesCount = useSongBundleCount();
   const styles = createStyles(useTheme());
 
   const onPress = () => {
@@ -49,6 +51,8 @@ const StringSearchButton: React.FC<Props> = ({
         };
     }
   }, [position])();
+
+  if (bundlesCount() < 1) return null;
 
   return <View style={[styles.containerBase, containerPositionStyle]}>
     <TouchableOpacity style={[styles.button, buttonPositionStyle]}
