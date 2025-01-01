@@ -1,9 +1,12 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { rollbar } from "../../logic/rollbar";
 import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
+import { SongBundle } from "../../logic/db/models/Songs";
+import Db from "../../logic/db/db";
+import { SongBundleSchema } from "../../logic/db/models/SongsSchema";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -140,3 +143,22 @@ export const useCollectionListener = <T>(objects: Realm.Results<Realm.Object<T> 
     });
   };
 };
+
+/**
+ * Returns a function that listens to the song bundle length in the database.
+ * Returns -1 if not loaded  yet.
+ */
+export const useSongBundleCount = (): () => number => {
+  const [bundlesCount, setBundlesCount] = useState<number>(-1);
+
+  useCollectionListener<SongBundle>(Db.songs.realm().objects(SongBundleSchema.name), () => {
+    try {
+      const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
+      setBundlesCount(result.length);
+    } catch (error) {
+      rollbar.error("Failed to load song bundles from database.", sanitizeErrorForRollbar(error));
+    }
+  });
+
+  return () => bundlesCount;
+}
