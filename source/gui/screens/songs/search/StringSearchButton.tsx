@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -6,6 +6,12 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { SongBundle } from "../../../../logic/db/models/Songs";
+import { useCollectionListener } from "../../../components/utils";
+import Db from "../../../../logic/db/db";
+import { SongBundleSchema } from "../../../../logic/db/models/SongsSchema";
+import { rollbar } from "../../../../logic/rollbar";
+import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
@@ -16,7 +22,17 @@ const StringSearchButton: React.FC<Props> = ({
                                                navigation,
                                                position
                                              }) => {
+  const [bundles, setBundles] = useState<SongBundle[]>([]);
   const styles = createStyles(useTheme());
+
+  useCollectionListener<SongBundle>(Db.songs.realm().objects(SongBundleSchema.name), () => {
+    try {
+      const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
+      setBundles(result.map(it => SongBundle.clone(it)));
+    } catch (error) {
+      rollbar.error("Failed to load song bundles from database for StringSearchButton.", sanitizeErrorForRollbar(error));
+    }
+  });
 
   const onPress = () => {
     navigation.navigate(SongStringSearchRoute);
@@ -49,6 +65,10 @@ const StringSearchButton: React.FC<Props> = ({
         };
     }
   }, [position])();
+
+  if (bundles.length < 1) {
+    return null;
+  }
 
   return <View style={[styles.containerBase, containerPositionStyle]}>
     <TouchableOpacity style={[styles.button, buttonPositionStyle]}

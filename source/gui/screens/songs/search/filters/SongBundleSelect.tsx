@@ -26,7 +26,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
       const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
       setBundles(result.map(it => SongBundle.clone(it)));
     } catch (error) {
-      rollbar.error("Failed to load song bundles from database for search screen.", sanitizeErrorForRollbar(error));
+      rollbar.error("Failed to load song bundles from database for SongBundleSelect.", sanitizeErrorForRollbar(error));
     }
 
     // This settings will also be updated, but the home page doesn't refresh,

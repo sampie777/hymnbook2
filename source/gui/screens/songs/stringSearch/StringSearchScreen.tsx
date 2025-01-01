@@ -149,7 +149,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       } catch (error) {
         if (error instanceof InterruptedError) return;
 
-        rollbar.error("Failed to fetch all songs from song database", {
+        rollbar.error("Failed to load and show all songs from song database", {
           ...sanitizeErrorForRollbar(error),
           searchText: searchText,
           immediateSearchText: immediateSearchText.current,
