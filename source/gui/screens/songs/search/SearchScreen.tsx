@@ -23,6 +23,7 @@ import { BackspaceKey, ClearKey, NumberKey } from "./InputKey";
 import { SearchResultItem } from "./SearchResultItem";
 import StringSearchButton from "./StringSearchButton";
 import SongBundleSelect from "./filters/SongBundleSelect";
+import DownloadInstructions from "./DownloadInstructions";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -215,13 +216,15 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
             renderItem={renderSearchResultItem}
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={styles.searchList}
-            importantForAccessibility={results.length > 0 ? undefined : "no"}/>
+            importantForAccessibility={results.length > 0 ? undefined : "no"} />
 
           {isStringSearchButtonsPositionTop()
           || inputValue.length > 0 || results.length > 0 ? undefined :
             <StringSearchButton navigation={navigation}
                                 position={stringSearchButtonPlacement} />
           }
+
+          <DownloadInstructions navigation={navigation} />
         </View>
 
         <View style={[styles.keyPad,
