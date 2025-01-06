@@ -80,10 +80,28 @@ export class DatabaseProvider {
     return this._isConnected;
   };
 
+  waitForConnection = (timeout: number): boolean => {
+    rollbar.warning("Waiting for connection to realm as realm was suddenly null");
+    this.connect();
+
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+      if (this.isConnected()) return true;
+    }
+
+    rollbar.error("Failed to connect to realm after timeout", { timeout: timeout });
+    return false;
+  }
+
   realm = () => {
+    if (this._realm == null) {
+      this.waitForConnection(1000);
+    }
+
     if (this._realm == null) {
       throw Error("Cannot use realm: realm is null");
     }
+
     return this._realm;
   };
 
