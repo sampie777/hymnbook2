@@ -36,7 +36,7 @@ export class AbcSubMelody {
       uuid: obj.uuid,
       name: obj.name,
       melody: obj.melody,
-      verseUuids: obj.verseUuids,
+      verseUuids: [...obj.verseUuids],
     }
   }
 }
