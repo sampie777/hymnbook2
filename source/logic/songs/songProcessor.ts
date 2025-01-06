@@ -47,22 +47,6 @@ export namespace SongProcessor {
     return a.name.localeCompare(b.name);
   };
 
-  export const deleteSongDatabase = (): Promise<Result> => {
-    Db.songs.deleteDb();
-
-    return Db.songs.connect()
-      .then(_ => new Result({ success: true, message: "Deleted all songs" }))
-      .catch(error => {
-        rollbar.error("Could not connect to local song database after deletions: " + error?.toString(), {
-          ...sanitizeErrorForRollbar(error)
-        });
-        return new Result({
-          success: false,
-          message: "Could not reconnect to local database after deletions: " + error
-        });
-      });
-  };
-
   export const deleteSongBundle = (bundle: SongBundle): string => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot delete song bundle: song database is not connected", {
