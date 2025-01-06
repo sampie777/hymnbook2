@@ -50,7 +50,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
   const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
 
-  const [document, setDocument] = useState<(Document & Realm.Object<Document>) | undefined>(undefined);
+  const [document, setDocument] = useState<Document | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
@@ -98,7 +98,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   }, [document?.id]);
 
   useLayoutEffect(() => {
-    if (document === undefined) {
+    if (document == undefined) {
       navigation.setOptions({
         title: ""
       });
@@ -127,7 +127,8 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
       // Document not found
     }
 
-    setDocument(newDocument);
+    setDocument(newDocument ? Document.clone(newDocument, { includeParent: true }) : undefined);
+    setDocument(newDocument ? Document.clone(newDocument, { includeParent: true }) : undefined);
   };
 
   const animate = (callback?: () => void) => {
