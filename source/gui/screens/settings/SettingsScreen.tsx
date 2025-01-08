@@ -103,6 +103,9 @@ const SettingsScreen: React.FC = () => {
 
   const developerSettings = <>
     <Header title={"Developer"} />
+    <SettingSwitchComponent title={"Tutorial completed"}
+                            onLongPress={(setValue) => setValue(false)}
+                            keyName={"tutorialCompleted"} />
     <SettingSwitchComponent title={"Survey completed"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"surveyCompleted"} />
