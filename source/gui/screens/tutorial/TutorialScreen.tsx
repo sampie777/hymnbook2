@@ -4,7 +4,7 @@ import Onboarding from 'react-native-onboarding-swiper';
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { displayName } from "../../../../app.json";
 import SongSearchTutorial from "./SongSearchTutorial";
-import { DatabasesRoute, ParamList } from "../../../navigation";
+import { DatabasesRoute, HomeRoute, ParamList } from "../../../navigation";
 import { Types } from "../downloads/TypeSelectBar";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Tutorial } from "../../../logic/tutorial";
@@ -18,7 +18,8 @@ const TutorialScreen: React.FC<Props> = ({navigation}) => {
 
   const finishTutorial = () => {
     Tutorial.complete();
-    navigation.replace(DatabasesRoute, { type: Types.Songs });
+    navigation.replace(HomeRoute);
+    navigation.navigate(DatabasesRoute, { type: Types.Songs });
   }
 
   return <View style={styles.container}>

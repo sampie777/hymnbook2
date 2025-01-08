@@ -74,7 +74,8 @@ const RootNavigation = () => {
     <RootNav.Screen name={TutorialRoute} component={TutorialScreen}
                     options={{
                       headerShown: false,
-                      orientation: "portrait"
+                      orientation: "portrait",
+                      gestureEnabled: false,
                     }} />
     <RootNav.Screen name={HomeRoute} component={HomeNavigation}
                     options={{ headerShown: false }} />
