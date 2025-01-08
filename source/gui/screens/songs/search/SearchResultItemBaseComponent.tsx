@@ -5,6 +5,30 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
 
+export const SearchResultItemAddButton: React.FC<{
+  songAddedToSongList?: boolean,
+  onPress?: () => void,
+  onLongPress?: () => void,
+}> = ({
+        songAddedToSongList,
+        onPress,
+        onLongPress,
+      }) => {
+  const styles = createStyles(useTheme());
+
+  return <TouchableOpacity onPress={onPress}
+                           onLongPress={onLongPress}
+                           style={styles.button}
+                           hitSlop={RectangularInset(styles.infoContainer.paddingVertical)}
+                           accessibilityLabel={"Add to song list"}>
+    <Icon name={songAddedToSongList ? "check" : "plus"}
+          size={styles.button.fontSize}
+          color={songAddedToSongList
+            ? styles.buttonHighlight.color as string
+            : styles.button.color as string} />
+  </TouchableOpacity>
+}
+
 export const SearchResultItemBaseComponent: React.FC<{
   songName: string,
   bundleName?: string,
@@ -42,17 +66,9 @@ export const SearchResultItemBaseComponent: React.FC<{
         }
       </View>
 
-      <TouchableOpacity onPress={onAddPress}
-                        onLongPress={onAddLongPress}
-                        style={styles.button}
-                        hitSlop={RectangularInset(styles.infoContainer.paddingVertical)}
-                        accessibilityLabel={"Add to song list"}>
-        <Icon name={songAddedToSongList ? "check" : "plus"}
-              size={styles.button.fontSize}
-              color={songAddedToSongList
-                ? styles.buttonHighlight.color as string
-                : styles.button.color as string} />
-      </TouchableOpacity>
+      <SearchResultItemAddButton onPress={onAddPress}
+                                 onLongPress={onAddLongPress}
+                                 songAddedToSongList={songAddedToSongList} />
     </OffscreenTouchableOpacity>;
   };
 
