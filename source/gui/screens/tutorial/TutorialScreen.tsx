@@ -36,7 +36,7 @@ const TutorialScreen: React.FC<Props> = ({navigation}) => {
           backgroundColor: styles.titlePage.backgroundColor.toString(),
           image: <Text style={styles.titleContent} numberOfLines={1} adjustsFontSizeToFit={true}>{displayName}</Text>,
           title: '',
-          subtitle: "Let's quickly go through the basics!",
+          subtitle: <Text style={[styles.text, styles.textOnPrimary]}>Let's quickly go through the basics!</Text>,
         },
         {
           backgroundColor: styles.page.backgroundColor.toString(),
@@ -52,8 +52,8 @@ const TutorialScreen: React.FC<Props> = ({navigation}) => {
         {
           backgroundColor: styles.titlePage.backgroundColor.toString(),
           image: <View style={styles.goToDownloadsPage}>
-            <Text style={styles.text}>To start using the app, you should first download the song bundles you want to use.</Text>
-            <Text style={styles.text}>Tap the button to start:</Text>
+            <Text style={[styles.text, styles.textOnPrimary]}>To start using the app, you should first download the song bundles you want to use.</Text>
+            <Text style={[styles.text, styles.textOnPrimary]}>Tap the button to start:</Text>
 
             <TouchableOpacity onPress={finishTutorial} style={styles.button}>
               <Text style={styles.downloadText}
@@ -80,6 +80,9 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontSize: 20,
     textAlign: "center",
     color: colors.text.default
+  },
+  textOnPrimary: {
+    color: colors.onPrimary,
   },
 
   titlePage: {
