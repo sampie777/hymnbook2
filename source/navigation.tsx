@@ -7,6 +7,7 @@ export enum VersePickerMethod {
   AddToSongListAndShowSearch,
 }
 
+export const TutorialRoute = "TutorialRoute";
 export const HomeRoute = "Home";
 export const SettingsRoute = "Settings";
 export const AboutRoute = "About";
@@ -22,6 +23,7 @@ export const DocumentSearchRoute = "DocumentSearch";
 export const DocumentRoute = "Document";
 
 export type ParamList = {
+  TutorialRoute: undefined,
   Home: undefined,
   Settings: undefined,
   About: undefined,

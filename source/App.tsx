@@ -20,7 +20,7 @@ import {
   ParamList,
   PrivacyPolicyRoute,
   SettingsRoute, SongListRoute,
-  SongRoute, SongSearchRoute, SongStringSearchRoute,
+  SongRoute, SongSearchRoute, SongStringSearchRoute, TutorialRoute,
   VersePickerRoute
 } from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
@@ -58,6 +58,7 @@ import AppContextProvider from "./gui/components/providers/AppContextProvider";
 import { rollbar } from "./logic/rollbar";
 import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
 import { AutoUpdater } from "./logic/autoUpdater";
+import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -70,6 +71,11 @@ const RootNavigation = () => {
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
                             }}>
+    <RootNav.Screen name={TutorialRoute} component={TutorialScreen}
+                    options={{
+                      headerShown: false,
+                      orientation: "portrait"
+                    }} />
     <RootNav.Screen name={HomeRoute} component={HomeNavigation}
                     options={{ headerShown: false }} />
     <RootNav.Screen name={SettingsRoute} component={SettingsScreen} />
