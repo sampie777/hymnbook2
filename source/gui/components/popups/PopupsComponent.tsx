@@ -21,7 +21,7 @@ const PopupsComponent: React.FC<ComponentProps> = ({ navigation }) => {
 
   const onLaunch = () => {
     if (Tutorial.needToShow()) {
-      navigation.navigate(TutorialRoute);
+      navigation.reset({index: 1, routes: [{name: TutorialRoute}]});
       return; // Don't show survey if tutorial is shown. Survey can be shown next time.
     }
 
