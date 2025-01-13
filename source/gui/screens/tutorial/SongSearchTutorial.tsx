@@ -1,30 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Animated, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
 import { SearchResultItemBaseComponent } from "../songs/search/SearchResultItemBaseComponent";
 
 interface Props {
 }
 
 const SongSearchTutorial: React.FC<Props> = ({}) => {
-  const opacity = new Animated.Value(0);
   const [hasPressedAnItem, setHasPressedAnItem] = useState(false);
   const [hasLongPressedAnItem, setHasLongPressedAnItem] = useState(false);
   const [hasAddedAnItem, setHasAddedAnItem] = useState(false);
   const [hasLongAddedAnItem, setHasLongAddedAnItem] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
-    }, 1500)
-
-    return () => {
-      opacity.setValue(0)
-    }
-  }, []);
 
   const onItemPress = () => {
     setHasPressedAnItem(true);
@@ -64,7 +49,7 @@ const SongSearchTutorial: React.FC<Props> = ({}) => {
     Alert.alert("Saving song", message);
   }
 
-  return <Animated.View style={[styles.container, { opacity: opacity }]}>
+  return <View style={styles.container}>
     <SearchResultItemBaseComponent songName={"Psalm 57"}
                                    bundleName={"Try pressing or long pressing me!"}
                                    onItemPress={onItemPress}
@@ -77,7 +62,7 @@ const SongSearchTutorial: React.FC<Props> = ({}) => {
                                    onItemLongPress={onItemLongPress}
                                    onAddPress={onAddPress}
                                    onAddLongPress={onAddLongPress} />
-  </Animated.View>;
+  </View>;
 };
 
 const styles = StyleSheet.create({
