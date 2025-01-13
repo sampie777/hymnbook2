@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
 import { Verse } from "../../../logic/db/models/Songs";
@@ -15,6 +15,7 @@ import ScreenHeader from "./ScreenHeader";
 import DeleteAllButton from "./DeleteAllButton";
 import { rollbar } from "../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../logic/utils";
+import SongListInstructions from "./SongListInstructions";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -139,6 +140,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.songList}
           ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
+          ListEmptyComponent={<SongListInstructions />}
           importantForAccessibility={list.length > 0 ? undefined : "no"}/>
       </View>
     );
