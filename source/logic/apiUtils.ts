@@ -37,6 +37,12 @@ export class BackendError extends HttpError {
   }
 }
 
+export const throwIfConnectionError = (error: any) => {
+  if (error instanceof Error && error.name == "TypeError" && error.message == "Network request failed") {
+    throw error;
+  }
+}
+
 const responseStatusToText = (response: Response): string => {
   if (response.statusText && response.statusText.length > 0) return response.statusText;
   const httpCodePair = Object.entries(HttpCode).find(([key, value]) => value === response.status);

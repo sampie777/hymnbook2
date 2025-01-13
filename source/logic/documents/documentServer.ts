@@ -1,6 +1,6 @@
 import { api } from "../api";
 import { rollbar } from "../rollbar";
-import { parseJscheduleResponse } from "../apiUtils";
+import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
 import {
   DocumentGroup as ServerDocumentGroup,
   ServerDocumentGroupUpdateStatus
@@ -19,6 +19,8 @@ export namespace DocumentServer {
         return groups;
       })
       .catch(error => {
+        throwIfConnectionError(error);
+
         rollbar.error(`Error fetching document groups`, {
           ...sanitizeErrorForRollbar(error),
           includeOther: includeOther
@@ -31,6 +33,8 @@ export namespace DocumentServer {
     api.documents.groups.updates()
       .then(r => parseJscheduleResponse<ServerDocumentGroupUpdateStatus[]>(r))
       .catch(error => {
+        throwIfConnectionError(error);
+
         rollbar.error(`Error fetching document group update status`, {
           ...sanitizeErrorForRollbar(error),
         });
@@ -45,6 +49,8 @@ export namespace DocumentServer {
     return api.documents.groups.get(group.uuid, loadGroups, loadItems, loadContent)
       .then(r => parseJscheduleResponse<ServerDocumentGroup>(r))
       .catch(error => {
+        throwIfConnectionError(error);
+
         rollbar.error(`Error fetching document group`, {
           ...sanitizeErrorForRollbar(error),
           documentGroup: group,
