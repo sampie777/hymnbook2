@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Onboarding from 'react-native-onboarding-swiper';
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { displayName } from "../../../../app.json";
@@ -8,6 +8,7 @@ import { DatabasesRoute, HomeRoute, ParamList } from "../../../navigation";
 import { Types } from "../downloads/TypeSelectBar";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Tutorial } from "../../../logic/tutorial";
+import TutorialFinishedScreen from "./TutorialFinishedScreen";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -44,18 +45,9 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
         }),
         {
           backgroundColor: styles.titlePage.backgroundColor.toString(),
-          image: <View style={styles.goToDownloadsPage}>
-            <Text style={[styles.text, styles.textOnPrimary]}>To start using the app, you should first download the song bundles you want to use.</Text>
-            <Text style={[styles.text, styles.textOnPrimary]}>Tap the button to start:</Text>
-
-            <TouchableOpacity onPress={finishTutorial} style={styles.button}>
-              <Text style={styles.downloadText}
-                    importantForAccessibility={"auto"}>
-                Let's get started! </Text>
-            </TouchableOpacity>
-          </View>,
+          image: <TutorialFinishedScreen onFinish={finishTutorial} subTitleStyles={styles.text} />,
           title: '',
-          subtitle: "",
+          subtitle: '',
         },
       ]} />
   </View>;
