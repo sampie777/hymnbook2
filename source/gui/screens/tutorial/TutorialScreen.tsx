@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Onboarding from 'react-native-onboarding-swiper';
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { displayName } from "../../../../app.json";
-import SongSearchTutorial from "./SongSearchTutorial";
+import { songSearchTutorialPage } from "./songsearch/SongSearchTutorial";
 import { DatabasesRoute, HomeRoute, ParamList } from "../../../navigation";
 import { Types } from "../downloads/TypeSelectBar";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -13,9 +13,8 @@ interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
 }
 
-const TutorialScreen: React.FC<Props> = ({navigation}) => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
+const TutorialScreen: React.FC<Props> = ({ navigation }) => {
+  const styles = createStyles(useTheme());
 
   const finishTutorial = () => {
     Tutorial.complete();
@@ -30,7 +29,7 @@ const TutorialScreen: React.FC<Props> = ({navigation}) => {
       bottomBarHighlight={false}
       controlStatusBar={false}
       showDone={false}
-      titleStyles={{fontSize: 30, color: theme.colors.text.header}}
+      titleStyles={styles.title}
       subTitleStyles={styles.text}
       pages={[
         {
@@ -39,17 +38,10 @@ const TutorialScreen: React.FC<Props> = ({navigation}) => {
           title: '',
           subtitle: <Text style={[styles.text, styles.textOnPrimary]}>Let's quickly go through the basics!</Text>,
         },
-        {
+        songSearchTutorialPage({
           backgroundColor: styles.page.backgroundColor.toString(),
-          image: <SongSearchTutorial />,
-          title: 'Songs',
-          subtitle: 'There are different ways to interact with a song:\n' +
-            '- Tap on the song name\n' +
-            '- Tap on the + button\n' +
-            '- Long press either\n' +
-            '\n' +
-            'Try it on the buttons above!',
-        },
+          subTitleStyles: styles.text,
+        }),
         {
           backgroundColor: styles.titlePage.backgroundColor.toString(),
           image: <View style={styles.goToDownloadsPage}>
@@ -77,10 +69,16 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   page: {
     backgroundColor: colors.background,
   },
+  title: {
+    fontSize: 30,
+    color: colors.text.header,
+    paddingHorizontal: 10,
+  },
   text: {
     fontSize: 20,
     textAlign: "center",
-    color: colors.text.default
+    color: colors.text.default,
+    paddingHorizontal: 10,
   },
   textOnPrimary: {
     color: colors.onPrimary,
@@ -99,7 +97,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   },
 
   goToDownloadsPage: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     alignItems: "center",
     gap: 20,
   },

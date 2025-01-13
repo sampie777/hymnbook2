@@ -1,16 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { Alert, StyleSheet, View } from "react-native";
-import { SearchResultItemBaseComponent } from "../songs/search/SearchResultItemBaseComponent";
+import { SearchResultItemBaseComponent } from "../../songs/search/SearchResultItemBaseComponent";
+import { getFontScaleSync } from "react-native-device-info";
 
 interface Props {
+  hasPressedAnItem: boolean,
+  setHasPressedAnItem: (value: boolean) => void,
+  hasLongPressedAnItem: boolean,
+  setHasLongPressedAnItem: (value: boolean) => void,
+  hasAddedAnItem: boolean,
+  setHasAddedAnItem: (value: boolean) => void,
+  hasLongAddedAnItem: boolean,
+  setHasLongAddedAnItem: (value: boolean) => void,
 }
 
-const SongSearchTutorial: React.FC<Props> = ({}) => {
-  const [hasPressedAnItem, setHasPressedAnItem] = useState(false);
-  const [hasLongPressedAnItem, setHasLongPressedAnItem] = useState(false);
-  const [hasAddedAnItem, setHasAddedAnItem] = useState(false);
-  const [hasLongAddedAnItem, setHasLongAddedAnItem] = useState(false);
-
+const SongSearchTutorialButtons: React.FC<Props> = ({
+                                               hasPressedAnItem, setHasPressedAnItem,
+                                               hasLongPressedAnItem, setHasLongPressedAnItem,
+                                               hasAddedAnItem, setHasAddedAnItem,
+                                               hasLongAddedAnItem, setHasLongAddedAnItem,
+                                             }) => {
   const onItemPress = () => {
     setHasPressedAnItem(true);
     let message = "You opened a song!";
@@ -49,15 +58,19 @@ const SongSearchTutorial: React.FC<Props> = ({}) => {
     Alert.alert("Saving song", message);
   }
 
+  console.debug("getFontScaleSync()", getFontScaleSync())
+
   return <View style={styles.container}>
+    {getFontScaleSync() > 1.5 ? null :  // Don't show this button when there's probably no space, as the FlatList/ScrollView doesn't work in the react-native-onboarding-swiper
     <SearchResultItemBaseComponent songName={"Psalm 57"}
-                                   bundleName={"Try pressing or long pressing me!"}
+                                   bundleName={hasPressedAnItem ? "Try pressing the + button!" : "Try pressing me!"}
                                    onItemPress={onItemPress}
                                    onItemLongPress={onItemLongPress}
                                    onAddPress={onAddPress}
                                    onAddLongPress={onAddLongPress} />
+    }
     <SearchResultItemBaseComponent songName={"Song 57"}
-                                   bundleName={"Or me!"}
+                                   bundleName={hasLongPressedAnItem ? "Try long pressing the + button!" : "Try long pressing me!"}
                                    onItemPress={onItemPress}
                                    onItemLongPress={onItemLongPress}
                                    onAddPress={onAddPress}
@@ -71,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SongSearchTutorial;
+export default SongSearchTutorialButtons;
