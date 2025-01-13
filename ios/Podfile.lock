@@ -500,7 +500,7 @@ PODS:
     - React-jsi (= 0.72.17)
     - React-logger (= 0.72.17)
     - React-perflogger (= 0.72.17)
-  - RealmJS (12.13.1):
+  - RealmJS (12.14.0):
     - React
   - RNCClipboard (1.12.1):
     - React-Core
@@ -806,7 +806,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: ff30efdf24f8ce62eb517a391ded3d99c4263bb0
   React-utils: 7959d4553163b61e01bbe83dbd80e58ca420aecb
   ReactCommon: 841449721eb2e004de2c3366844b0a03f329f2cb
-  RealmJS: 325a7b621587dd9945306d4cbfd6b641bc20e2dd
+  RealmJS: 054540707292206eadf069f110e79defb632a1b3
   RNCClipboard: d77213bfa269013bf4b857b7a9ca37ee062d8ef1
   RNDeviceInfo: db5c64a060e66e5db3102d041ebe3ef307a85120
   RNGestureHandler: b83cf821f60b7ec59827f0ed9e5b8c46b1de2c99
@@ -823,4 +823,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1763ab552ba7dac3473e47862d7ac2d6963d0f49
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
