@@ -58,8 +58,6 @@ const SongSearchTutorialButtons: React.FC<Props> = ({
     Alert.alert("Saving song", message);
   }
 
-  console.debug("getFontScaleSync()", getFontScaleSync())
-
   return <View style={styles.container}>
     {getFontScaleSync() > 1.5 ? null :  // Don't show this button when there's probably no space, as the FlatList/ScrollView doesn't work in the react-native-onboarding-swiper
     <SearchResultItemBaseComponent songName={"Psalm 57"}
