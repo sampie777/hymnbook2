@@ -14,7 +14,8 @@ interface Props {
 }
 
 const TutorialScreen: React.FC<Props> = ({navigation}) => {
-  const styles = createStyles(useTheme());
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   const finishTutorial = () => {
     Tutorial.complete();
@@ -29,7 +30,7 @@ const TutorialScreen: React.FC<Props> = ({navigation}) => {
       bottomBarHighlight={false}
       controlStatusBar={false}
       showDone={false}
-      titleStyles={{fontSize: 30, color: useTheme().colors.text.header}}
+      titleStyles={{fontSize: 30, color: theme.colors.text.header}}
       subTitleStyles={styles.text}
       pages={[
         {
