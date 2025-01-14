@@ -334,6 +334,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     <ConfirmationModal isOpen={requestDeleteForItem !== undefined}
                        onClose={() => setRequestDeleteForItem(undefined)}
                        onConfirm={onConfirmDelete}
+                       confirmationStyle={{color: useTheme().colors.text.error}}
                        message={`Delete all documents for ${requestDeleteForItem?.name}?`} />
 
     <Text style={styles.informationText}>Select documents to download or delete:</Text>

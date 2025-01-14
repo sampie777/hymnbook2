@@ -78,7 +78,6 @@ const MelodySettingsModal: React.FC<Props> = ({
                        } />
     }
     <ConfirmationModal isOpen={isIOS ? !showPicker : true}
-                       title={"Configuration"}
                        closeText={"Close"}
                        invertConfirmColor={false}
                        onClose={() => {

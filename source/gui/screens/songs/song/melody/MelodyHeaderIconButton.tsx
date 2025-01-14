@@ -44,7 +44,6 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
     <Menu>
       <MenuTrigger customStyles={{ TriggerTouchableComponent: TouchableOpacity }}>
         <View style={[styles.container, (shouldShowMelodyCount ? {} : styles.containerSingle)]}
-              hitSlop={{ top: 10, right: 0, bottom: 10, left: 10 }}
               accessibilityLabel={"Melody menu"}
               importantForAccessibility={"auto"}>
           <Icon name={"music"} style={styles.icon} />

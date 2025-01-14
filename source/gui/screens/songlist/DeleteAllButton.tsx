@@ -20,7 +20,7 @@ const DeleteAllButton: React.FC<Props> = ({ onPress }) => {
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: colors.delete,
+    borderColor: colors.text.error,
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -28,9 +28,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     marginHorizontal: 10
   },
   text: {
-    color: colors.delete,
+    color: colors.text.error,
     textAlign: "center",
-    fontSize: 18
+    fontSize: 18,
   }
 });
 

@@ -338,6 +338,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     <ConfirmationModal isOpen={requestDeleteForItem !== undefined}
                        onClose={() => setRequestDeleteForItem(undefined)}
                        onConfirm={onConfirmDelete}
+                       confirmationStyle={{color: useTheme().colors.text.error}}
                        message={`Delete all songs for ${requestDeleteForItem?.name}?`} />
 
 
