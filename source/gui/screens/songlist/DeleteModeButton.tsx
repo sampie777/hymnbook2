@@ -37,11 +37,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 15,
     right: 5,
     fontSize: 21,
-    color: "#ffb8b8",
+    color: "#ff8989",
     paddingVertical: 10
   },
   deleteModeButtonActive: {
-    color: colors.delete
+    color: colors.text.error,
   },
   text: {
     color: colors.text.default,

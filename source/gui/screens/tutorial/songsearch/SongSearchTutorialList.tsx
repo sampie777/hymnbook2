@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 
 interface ItemProps extends PropsWithChildren {
   isCompleted: boolean,
@@ -8,6 +9,8 @@ interface ItemProps extends PropsWithChildren {
 }
 
 const ListItem: React.FC<ItemProps> = ({ children, isCompleted, subTitleStyles }) => {
+  const styles = createStyles(useTheme());
+
   return <View style={styles.item}>
     <Icon name={isCompleted ? "check" : "genderless"}
           style={[styles.text, isCompleted ? styles.textCompleted : styles.textNotCompleted, styles.icon]} />
@@ -32,6 +35,8 @@ const SongSearchTutorialList: React.FC<Props> = ({
                                                    hasLongAddedAnItem,
                                                    subTitleStyles
                                                  }) => {
+  const styles = createStyles(useTheme());
+
   return <View style={styles.container}>
     <Text style={[subTitleStyles, styles.text]}>There are ways to interact with a song:</Text>
     <ListItem subTitleStyles={subTitleStyles} isCompleted={hasPressedAnItem}>
@@ -47,7 +52,7 @@ const SongSearchTutorialList: React.FC<Props> = ({
   </View>;
 };
 
-const styles = StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingHorizontal: 10,
   },
@@ -67,10 +72,10 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   textCompleted: {
-    color: "#0f0",
+    color: colors.text.success,
   },
   textNotCompleted: {
-    color: "#ff9100",
+    color: colors.text.warning,
   },
 });
 

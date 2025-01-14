@@ -94,7 +94,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 15,
     paddingRight: 22,
     fontSize: 18,
-    color: colors.delete
+    color: colors.text.error
   }
 });
 

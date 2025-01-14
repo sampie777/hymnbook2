@@ -24,7 +24,7 @@ const TutorialFinishedScreen: React.FC<Props> = ({ onFinish, subTitleStyles }) =
   </View>
 };
 
-const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     paddingHorizontal: 10,
     alignItems: "center",

@@ -1,5 +1,15 @@
 import React from "react";
-import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity, ScrollView } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  TouchableOpacity,
+  ScrollView,
+  StyleProp,
+  TextStyle
+} from "react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { RectangularInset } from "../utils";
@@ -16,6 +26,7 @@ interface ComponentProps {
   message?: string;
   showCloseButton?: boolean;
   children?: React.ReactNode;
+  confirmationStyle?: StyleProp<TextStyle>;
 }
 
 const ConfirmationModal: React.FC<ComponentProps> = ({
@@ -29,7 +40,8 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        title,
                                                        message,
                                                        showCloseButton = false,
-                                                       children
+                                                       children,
+                                                       confirmationStyle,
                                                      }) => {
   const styles = createStyles(useTheme());
   if (onDeny === undefined) {
@@ -81,7 +93,8 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                   style={[styles.buttonText,
                     styles.buttonConfirmText,
                     (invertConfirmColor ? styles.buttonConfirmTextInvert : {}),
-                    (onClose !== undefined ? {} : styles.soloButton)]}
+                    (onClose !== undefined ? {} : styles.soloButton),
+                    confirmationStyle]}
                   importantForAccessibility={"auto"}>
                   {confirmText}
                 </Text>
