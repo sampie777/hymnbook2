@@ -1,7 +1,7 @@
 import React from "react";
 import { Song } from "../../../logic/db/models/Songs";
 import { SongListSongModel } from "../../../logic/db/models/SongListModel";
-import { generateSongTitle } from "../../../logic/songs/utils";
+import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -26,6 +26,8 @@ const SongItem: React.FC<Props> = ({
                                      onLongPress
                                    }) => {
   const styles = createStyles(useTheme());
+  if (!isSongValid(songListSong.song)) return null;
+
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={styles.container}>

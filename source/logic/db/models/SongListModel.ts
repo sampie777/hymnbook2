@@ -20,13 +20,13 @@ export class SongListVerseModel {
 export class SongListSongModel {
   id: number;
   index: number;
-  song: Song;
-  selectedVerses: Array<SongListVerseModel>;
+  song: Song & ({} | Realm.Object<Song>);
+  selectedVerses: SongListVerseModel[];
 
   constructor(
     index: number,
     song: Song,
-    selectedVerses: Array<SongListVerseModel> = [],
+    selectedVerses: SongListVerseModel[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongListSongModelSchema)
   ) {
     this.id = id;
@@ -40,7 +40,7 @@ export class SongListSongModel {
 export class SongListModel {
   id: number;
   name: string;
-  songs: Array<SongListSongModel>;
+  songs: SongListSongModel[];
   createdAt: Date;
   modifiedAt: Date;
 
@@ -48,7 +48,7 @@ export class SongListModel {
     name: string,
     createdAt: Date = new Date(),
     modifiedAt: Date = new Date(),
-    songs: Array<SongListSongModel> = [],
+    songs: SongListSongModel[] = [],
     id = Db.songs.getIncrementedPrimaryKey(SongListModelSchema)
   ) {
     this.id = id;
