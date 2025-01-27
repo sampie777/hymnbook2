@@ -8,7 +8,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../logic/songs/songList";
 import { SongListSongModel } from "../../../logic/db/models/SongListModel";
 import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
-import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
+import { isSongValid, isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
@@ -19,7 +19,7 @@ import SongListInstructions from "./SongListInstructions";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
-    const [list, setList] = useState<Array<SongListSongModel>>([]);
+    const [list, setList] = useState<SongListSongModel[]>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
     const [listHasBeenChanged, setListHasBeenChanged] = useState(false);
     const styles = createStyles(useTheme());
@@ -95,7 +95,9 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       reloadSongList();
     };
 
-    const onSearchResultItemPress = (index: number, songListSong: SongListSongModel) => {
+    const onItemPress = (index: number, songListSong: SongListSongModel) => {
+      if (!isSongValid(songListSong.song)) return;
+
       navigation.navigate(SongRoute, {
         id: songListSong.song.id,
         uuid: songListSong.song.uuid,
@@ -104,11 +106,11 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       });
     };
 
-    const onSearchResultItemLongPress = (index: number, songListSong: SongListSongModel) => {
+    const onItemLongPress = (index: number, songListSong: SongListSongModel) => {
       setIsDeleteMode(true);
     };
 
-    const onSearchResultItemDeleteButtonPress = (index: number) => {
+    const onItemDeleteButtonPress = (index: number) => {
       // Check list length, because if the list is emptied using deleteAll, the GUI crashes when we also try to set
       // setListHasBeenChanged to true. This doesn't appear to be happening here, but better safe than sorry.
       if (list.length > 1) setListHasBeenChanged(true);
@@ -116,15 +118,17 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       SongList.deleteSongAtIndex(index);
     };
 
-    const renderSongListItem = ({ item }: { item: SongListSongModel }) => (
-      <SongItem index={item.index}
-                songListSong={item}
-                onPress={onSearchResultItemPress}
-                onLongPress={onSearchResultItemLongPress}
-                onDeleteButtonPress={onSearchResultItemDeleteButtonPress}
-                showDeleteButton={isDeleteMode}
-                showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
-    );
+    const renderSongListItem = ({ item }: { item: SongListSongModel }) => {
+      if (!isSongValid(item.song)) return null;
+
+      return <SongItem index={item.index}
+              songListSong={item}
+              onPress={onItemPress}
+              onLongPress={onItemLongPress}
+              onDeleteButtonPress={onItemDeleteButtonPress}
+              showDeleteButton={isDeleteMode}
+              showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
+  }
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
 
@@ -137,7 +141,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
         <FlatList
           data={list}
           renderItem={renderSongListItem}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => isSongValid(item.song) ? item.id.toString() : `invalidated_${Math.random() * 10000}`}
           contentContainerStyle={styles.songList}
           ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
           ListEmptyComponent={<SongListInstructions />}

@@ -5,6 +5,7 @@ import { SongListModelSchema } from "../db/models/SongListModelSchema";
 import { VerseSchema } from "../db/models/SongsSchema";
 import { rollbar } from "../rollbar";
 import { SongDbHelpers } from "./songDbHelpers";
+import { isSongValid } from "./utils";
 
 export default class SongList {
 
@@ -20,7 +21,7 @@ export default class SongList {
       .sorted("index")
       // Fix for when null objects come through when database is in transaction
       // (rollbar: #58 Cannot read property of undefined/null expression n)
-      .filter(it => it != null && it.song != null) as unknown as SongListSongModel[];
+      .filter(it => it != null && it.song != null);
   }
 
   static getAllSongLists(): Realm.Results<Realm.Object<SongListModel> & SongListModel> {
@@ -147,7 +148,10 @@ export default class SongList {
       return undefined;
     }
 
-    return songList.songs.find(it => it.index === index);
+    const song = songList.songs.find(it => it.index === index);
+    if (!isSongValid(song)) return undefined;
+
+    return song;
   }
 
   static previousSong(currentIndex: number): SongListSongModel | undefined {
