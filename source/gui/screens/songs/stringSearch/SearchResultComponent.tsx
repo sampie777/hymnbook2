@@ -5,13 +5,13 @@ import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
 import MatchedVersesSummary from "./MatchedVersesSummary";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>;
-  song: Song;
+  song: Song & Realm.Object<Song>;
   searchRegex: string;
   showSongBundle?: boolean;
   disable?: boolean;
@@ -31,12 +31,23 @@ const SearchResultComponent: React.FC<Props> = memo(({
                                                   isVerseMatch = false
                                                 }) => {
   const styles = createStyles(useTheme());
+  if (!song.isValid()) return null;
 
   const getSelectedVerses = () => !isVerseMatch ? []
     : SongSearch.getMatchedVerses(song, searchRegex)
       .map(it => Verse.toObject(it));
 
+  const checkIfSongIsStillValid = () => {
+    if (!song.isValid()) {
+      Alert.alert("Just a moment", "This song has been updated. Please reload the search results.");
+      return false;
+    }
+    return true;
+  }
+
   const onPress = () => {
+    if (!checkIfSongIsStillValid()) return;
+
     navigation.navigate(SongRoute, {
       id: song.id,
       uuid: song.uuid,
@@ -46,6 +57,8 @@ const SearchResultComponent: React.FC<Props> = memo(({
   };
 
   const onLongPress = () => {
+    if (!checkIfSongIsStillValid()) return;
+
     navigation.navigate(VersePickerRoute, {
       verses: song.verses?.map(it => Verse.toObject(it)),
       selectedVerses: getSelectedVerses(),
