@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
 import { rollbar } from "../../../../logic/rollbar";
@@ -126,7 +126,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       });
     }
 
-    // Prevent state update if the new state will by invalid anyway
+    // Prevent state update if the new state will be invalid anyway
     if (text != immediateSearchText.current) return;
     if (!isMounted()) return;
 
@@ -170,7 +170,15 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
     })
   }
 
+  const allSongs = useMemo(() => {
+    return searchResults
+      .filter(it => it.song.isValid())
+      .map(it => it.song);
+  }, [searchResults]);
+
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
+    if (!item.song.isValid()) return null;
+
     // Use the ref, as the state will cause unnecessary updates
     const searchRegex = SongSearch.makeSearchTextRegexable(immediateSearchText.current);
 
@@ -188,8 +196,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       return null;
     }
 
-    // Don't calculate title similarity for showAllSongs, as this call is very slow
-    const showSongBundle = isTitleSimilarToOtherSongs(item.song, searchResults.map(it => it.song));
+    const showSongBundle =
+      selectedBundleUuids.length == 1 ? false :
+        selectedBundleUuids.length > 3 && searchText.length == 0 ? true
+          : isTitleSimilarToOtherSongs(item.song, allSongs);
+
     return <SearchResultComponent navigation={navigation}
                                   searchRegex={searchRegex}
                                   showSongBundle={showSongBundle}
@@ -236,7 +247,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                 renderItem={renderContentItem}
                 initialNumToRender={10}
                 maxToRenderPerBatch={searchText.length > 0 ? 10 : 30} // Use 10 for a regex search because it's slower
-                keyExtractor={(it: SongSearch.SearchResult) => it.song.id.toString()}
+                keyExtractor={(it: SongSearch.SearchResult) => it.song.isValid() ? it.song.id.toString() : `invalidated_${Math.random() * 10000}`}
                 disableScrollViewPanResponder={true}
                 ListHeaderComponent={
                   <Text style={styles.resultsInfoText}>

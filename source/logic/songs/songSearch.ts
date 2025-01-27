@@ -10,7 +10,7 @@ export namespace SongSearch {
   export const verseMatchPoints = 1;
 
   export interface SearchResult {
-    song: Song;
+    song: Song & Realm.Object<Song>;
     points: number;
     isTitleMatch: boolean;
     isMetadataMatch: boolean;
@@ -118,7 +118,7 @@ export namespace SongSearch {
     return results;
   };
 
-  export const findByTitle = (text: string, selectedBundleUuids: string[] = []): Song[] => {
+  export const findByTitle = (text: string, selectedBundleUuids: string[] = []): (Song & Realm.Object<Song>)[] => {
     const metadataQuery = `SUBQUERY(metadata, $it, $it.type = "${SongMetadataType.AlternativeTitle}" AND $it.value LIKE[c] "*${text}*").@count > 0`;
     const songBundleQuery = selectedBundleUuids.length == 0 ? ""
       : `AND ${createSongBundleFilterQuery(selectedBundleUuids)}`;
@@ -132,7 +132,7 @@ export namespace SongSearch {
     return Array.from(results);
   };
 
-  export const findByVerse = (text: string, selectedBundleUuids: string[] = []): Song[] => {
+  export const findByVerse = (text: string, selectedBundleUuids: string[] = []): (Song & Realm.Object<Song>)[] => {
     let query = `verses.content LIKE[c] $0`;
     const args: any[] = [`*${text}*`];
 
