@@ -8,10 +8,7 @@ Copy the file `.env.template` to `.env` and update the values a needed.
 
 We start to move to the use of [asdf](https://asdf-vm.com/) as version manager for the build tools, like node. If you don't want to use this tool, you can see the required version in the [`.tool-versions`](./.tool-versions) file.
 
-**In case gradle whines about the wrong Java version**: we use the Java bundled with Android Studio. So before each `yarn build` or `yarn bundle` etc. commands, you need to make sure your `JAVA_HOME` is set to the right path:
-```shell
-export JAVA_HOME="${HOME}/.local/share/JetBrains/Toolbox/apps/android-studio/jbr" # Or similar
-```
+**In case gradle whines about the wrong Java version**: make sure you use the correct Java version. With gradle 8.0.1, you must use Java 17.
 
 Run `yarn install`.
 
