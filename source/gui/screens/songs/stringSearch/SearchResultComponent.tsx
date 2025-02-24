@@ -8,6 +8,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
 import MatchedVersesSummary from "./MatchedVersesSummary";
+import { isSongValid } from "../../../../logic/songs/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>;
@@ -31,14 +32,14 @@ const SearchResultComponent: React.FC<Props> = memo(({
                                                   isVerseMatch = false
                                                 }) => {
   const styles = createStyles(useTheme());
-  if (!song.isValid()) return null;
+  if (!isSongValid(song)) return null;
 
   const getSelectedVerses = () => !isVerseMatch ? []
     : SongSearch.getMatchedVerses(song, searchRegex)
       .map(it => Verse.toObject(it));
 
   const checkIfSongIsStillValid = () => {
-    if (!song.isValid()) {
+    if (!isSongValid(song)) {
       Alert.alert("Just a moment", "This song has been updated. Please reload the search results.");
       return false;
     }
