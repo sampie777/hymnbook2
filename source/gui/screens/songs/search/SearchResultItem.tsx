@@ -8,6 +8,7 @@ import SongList from "../../../../logic/songs/songList";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
 import { SearchResultItemBaseComponent } from "./SearchResultItemBaseComponent";
 import { Alert } from "react-native";
+import { isSongValid } from "../../../../logic/songs/utils";
 
 export const SearchResultItem: React.FC<{
   navigation: BottomTabNavigationProp<ParamList>,
@@ -37,7 +38,13 @@ export const SearchResultItem: React.FC<{
         }
       }, []));
 
+    if (!isSongValid(song)) return null;
+
     const addSongToSongList = () => {
+      if (!isSongValid(song)) {
+        return Alert.alert("Just a moment", "This song has been updated. Please reload the search results.");
+      }
+
       if (songAddedToSongList) {
         return; // Wait for cool down
       }
@@ -63,11 +70,19 @@ export const SearchResultItem: React.FC<{
     };
 
     const navigateToSong = () => {
+      if (!isSongValid(song)) {
+        return Alert.alert("Just a moment", "This song has been updated. Please reload the search results.");
+      }
+
       beforeNavigating?.();
       navigation.navigate(SongRoute, { id: song.id, uuid: song.uuid });
     };
 
     const navigateToVersePicker = () => {
+      if (!isSongValid(song)) {
+        return Alert.alert("Just a moment", "This song has been updated. Please reload the search results.");
+      }
+
       beforeNavigating?.();
       navigation.navigate(VersePickerRoute, {
         verses: song.verses?.map(it => Verse.toObject(it)),
@@ -80,6 +95,10 @@ export const SearchResultItem: React.FC<{
     };
 
     const navigateToVersePickerForSongList = () => {
+      if (!isSongValid(song)) {
+        return Alert.alert("Just a moment", "This song has been updated. Please reload the search results.");
+      }
+
       beforeNavigating?.();
       navigation.navigate(VersePickerRoute, {
         verses: song.verses?.map(it => Verse.toObject(it)),
