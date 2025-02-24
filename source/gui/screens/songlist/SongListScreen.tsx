@@ -144,7 +144,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
           keyExtractor={item => isSongValid(item.song) ? item.id.toString() : `invalidated_${Math.random() * 10000}`}
           contentContainerStyle={styles.songList}
           ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
-          ListEmptyComponent={<SongListInstructions />}
+          ListEmptyComponent={<SongListInstructions navigation={navigation} />}
           importantForAccessibility={list.length > 0 ? undefined : "no"}/>
       </View>
     );
