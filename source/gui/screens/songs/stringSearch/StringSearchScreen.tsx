@@ -14,7 +14,7 @@ import SearchInput from "../../documents/search/SearchInput";
 import SearchOptions from "./SearchOptions";
 import SearchResultComponent from "./SearchResultComponent";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
+import { isSongValid, isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
@@ -172,12 +172,12 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
 
   const allSongs = useMemo(() => {
     return searchResults
-      .filter(it => it.song.isValid())
+      .filter(it => isSongValid(it.song))
       .map(it => it.song);
   }, [searchResults]);
 
   const renderContentItem = useCallback(({ item }: { item: SongSearch.SearchResult }) => {
-    if (!item.song.isValid()) return null;
+    if (!isSongValid(item.song)) return null;
 
     // Use the ref, as the state will cause unnecessary updates
     const searchRegex = SongSearch.makeSearchTextRegexable(immediateSearchText.current);
@@ -247,7 +247,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                 renderItem={renderContentItem}
                 initialNumToRender={10}
                 maxToRenderPerBatch={searchText.length > 0 ? 10 : 30} // Use 10 for a regex search because it's slower
-                keyExtractor={(it: SongSearch.SearchResult) => it.song.isValid() ? it.song.id.toString() : `invalidated_${Math.random() * 10000}`}
+                keyExtractor={(it: SongSearch.SearchResult) => isSongValid(it.song) ? it.song.id.toString() : `invalidated_${Math.random() * 10000}`}
                 disableScrollViewPanResponder={true}
                 ListHeaderComponent={
                   <Text style={styles.resultsInfoText}>
