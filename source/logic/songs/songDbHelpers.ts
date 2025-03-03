@@ -70,6 +70,7 @@ export namespace SongDbHelpers {
           abcMelodies: null,
           metadata: null,
           _songBundles: null,
+          _songBundle: null,
         }
       });
       throw error;
