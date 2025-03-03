@@ -13,11 +13,9 @@ const useHistory = (
   const startTime = useRef<Date>(new Date());
 
   useEffect(() => {
-    console.log(song?.verses[viewIndex]?.name);
     checkViewTime();
     previousSong.current = song ? Song.clone(song, {includeVerses: true}) : undefined;
-    previousIndex.current = viewIndex;
-    if (song == undefined) return;
+    if (viewIndex != null && viewIndex >= 0) previousIndex.current = viewIndex;
 
     return () => checkViewTime();
   }, [viewIndex, song?.uuid]);

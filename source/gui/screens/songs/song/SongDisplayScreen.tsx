@@ -41,6 +41,7 @@ import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
 import useHistory from "../../../../logic/songs/history/useHistory";
+import { ViewabilityConfigCallbackPairs } from "@react-native/virtualized-lists/Lists/VirtualizedList";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -60,6 +61,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
+  const [viewIndexForHistory, setViewIndexForHistory] = useState(0);
   const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
@@ -75,7 +77,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
-  useHistory(song, viewIndex, route.params.selectedVerses);
+  useHistory(song, viewIndexForHistory, route.params.selectedVerses);
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>
@@ -282,12 +284,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
   };
 
-  const onListViewableItemsChanged = React.useRef(
+  const onListViewableItemsChangedForSongControls = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
       if (viewableItems.length === 0) {
         setViewIndex(-1);
       } else if (viewableItems[0].index !== null) {
         setViewIndex(viewableItems[0].index);
+      }
+    });
+
+  const onListViewableItemsChangedForHistory = React.useRef(
+    ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
+      if (viewableItems.length === 0) {
+        setViewIndexForHistory(-1);
+      } else if (viewableItems[0].index !== null) {
+        setViewIndexForHistory(viewableItems[0].index);
       }
     });
 
@@ -452,9 +463,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          highlightText={highlightText} />;
   };
 
-  const listViewabilityConfig = React.useRef({
-    itemVisiblePercentThreshold: 10
-  });
+  const listViewabilityConfigPairs = React.useRef<ViewabilityConfigCallbackPairs>([
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 10 },
+      onViewableItemsChanged: onListViewableItemsChangedForSongControls.current,
+    },
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 35 },
+      onViewableItemsChanged: onListViewableItemsChangedForHistory.current,
+    },
+  ]);
 
   // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
@@ -504,8 +522,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               keyExtractor={(item: Verse) => item.id.toString()}
               getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
-              onViewableItemsChanged={onListViewableItemsChanged.current}
-              viewabilityConfig={listViewabilityConfig.current}
+              viewabilityConfigCallbackPairs={listViewabilityConfigPairs.current}
               onEndReached={onListEndReached}
               onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
                 info: info,
