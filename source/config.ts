@@ -26,6 +26,12 @@ const config = {
   authWaitForAuthenticationTimeoutMs: 60000,
   authReauthenticateMaxRetries: 3,
 
-  fetchRetries: 5
+  fetchRetries: 5,
+
+  songs: {
+    history: {
+      minViewTimeMs: 12000,
+    }
+  }
 };
 export default config;

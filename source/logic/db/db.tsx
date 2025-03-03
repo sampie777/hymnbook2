@@ -8,7 +8,8 @@ import {
 import { SettingPatchSchema, SettingSchema } from "./models/SettingsSchema";
 import { DocumentGroupSchema, DocumentSchema } from "./models/DocumentsSchema";
 import { AbcMelodySchema, AbcSubMelodySchema } from "./models/AbcMelodiesSchema";
-import {isTestEnv} from "../utils";
+import { SongHistorySchema } from "./models/SongHistorySchema";
+import { isTestEnv } from "../utils";
 
 const generatePath = (name: string): string => {
   if (!isTestEnv()) return name;
@@ -23,9 +24,10 @@ const Db = {
     schemas: [
       AbcSubMelodySchema, AbcMelodySchema,
       SongMetadataSchema, VerseSchema, SongSchema, SongBundleSchema,
-      SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema
+      SongListVerseModelSchema, SongListSongModelSchema, SongListModelSchema,
+      SongHistorySchema,
     ],
-    schemaVersion: 13
+    schemaVersion: 14
   }),
   documents: new DatabaseProvider({
     path: generatePath("hymnbook_documents"),

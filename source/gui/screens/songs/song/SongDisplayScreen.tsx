@@ -40,6 +40,7 @@ import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
+import useHistory from "../../../../logic/songs/history/useHistory";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -73,6 +74,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
+
+  useHistory(song, viewIndex, route.params.selectedVerses);
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>
