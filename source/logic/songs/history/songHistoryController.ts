@@ -15,6 +15,18 @@ export namespace SongHistoryController {
     viewDurationMs: number = -1,
     action: SongHistoryAction = SongHistoryAction.Unknown,
   ) => {
+    if (!verse.uuid) {
+      return rollbar.error("Can't store verse in history as it has no uuid", {
+        verse: {
+          ...verse,
+          content: undefined,
+          abcLyrics: undefined,
+          _songs: undefined,
+          _song: undefined,
+        },
+      });
+    }
+
     if (!song) song = Verse.getSong(verse); // This doesn't work for some reason
     if (song == null) {
       return rollbar.error("Can't store verse in history as no song is found", {
@@ -26,6 +38,30 @@ export namespace SongHistoryController {
           _song: undefined,
         },
       });
+    }
+
+    if (!song.uuid) {
+      return rollbar.error(
+        "Can't store verse in history as its song has no uuid",
+        {
+          verse: {
+            ...verse,
+            content: undefined,
+            abcLyrics: undefined,
+            _songs: undefined,
+            _song: undefined,
+          },
+          song: {
+            ...song,
+            verses: undefined,
+            abcMelodies: undefined,
+            metadata: undefined,
+            lastUsedMelody: undefined,
+            _songBundles: undefined,
+            _songBundle: undefined,
+          },
+        },
+      );
     }
 
     const bundle = Song.getSongBundle(song);
@@ -49,6 +85,31 @@ export namespace SongHistoryController {
             _songBundles: undefined,
             _songBundle: undefined,
           },
+        },
+      );
+    }
+
+    if (!bundle.uuid) {
+      return rollbar.error(
+        "Can't store verse in history as its bundle has no uuid",
+        {
+          verse: {
+            ...verse,
+            content: undefined,
+            abcLyrics: undefined,
+            _songs: undefined,
+            _song: undefined,
+          },
+          song: {
+            ...song,
+            verses: undefined,
+            abcMelodies: undefined,
+            metadata: undefined,
+            lastUsedMelody: undefined,
+            _songBundles: undefined,
+            _songBundle: undefined,
+          },
+          bundle: {...bundle, songs: undefined},
         },
       );
     }
@@ -81,7 +142,7 @@ export namespace SongHistoryController {
         entry.id = result.id;
       });
     } catch (error) {
-      rollbar.error("Failed to store song history", {
+      rollbar.error('Failed to store song history', {
         ...sanitizeErrorForRollbar(error),
         verse: {
           ...verse,
