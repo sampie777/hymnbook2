@@ -105,7 +105,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   };
 
   const onDocumentPress = (document: Document) => {
-    navigation.navigate(DocumentRoute, { id: document.id });
+    navigation.navigate(DocumentRoute, { id: document.id, uuid: document.uuid });
   };
 
   const groups = (): Array<DbDocumentGroup> => {

@@ -3,7 +3,7 @@ import {rollbar} from '../../rollbar';
 import {DocumentHistory} from '../../db/models/documents/DocumentHistory';
 import Db from '../../db/db';
 import {DocumentHistorySchema} from '../../db/models/documents/DocumentHistorySchema';
-import { getPathForDocument } from "../utils";
+import {getPathForDocument} from '../utils';
 
 export namespace DocumentHistoryController {
   export const pushDocument = (
@@ -11,21 +11,39 @@ export namespace DocumentHistoryController {
     parent?: DocumentGroup,
     viewDurationMs: number = -1,
   ) => {
+    if (!document.uuid) {
+      return rollbar.error(
+        "Can't store document in history as it has no uuid",
+        {document: {...document, html: undefined, _parent: undefined}},
+      );
+    }
+
     if (!parent) parent = Document.getParent(document);
     if (parent == null) {
       return rollbar.error(
         "Can't store document in history as no parent is found",
+        {document: {...document, html: undefined, _parent: undefined}},
+      );
+    }
+
+    if (!parent.uuid) {
+      return rollbar.error(
+        "Can't store document in history as its parent has no uuid",
         {
-          document: {
-            ...document,
-            html: undefined,
+          document: {...document, html: undefined, _parent: undefined},
+          parent: {
+            ...parent,
+            groups: undefined,
+            items: undefined,
             _parent: undefined,
           },
         },
       );
     }
 
-    const path = getPathForDocument(document).map(it => it.name).join("  >  ");
+    const path = getPathForDocument(document)
+      .map(it => it.name)
+      .join('  >  ');
 
     const entry = new DocumentHistory(
       parent.uuid,
