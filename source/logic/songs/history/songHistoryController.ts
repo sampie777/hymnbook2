@@ -42,7 +42,6 @@ export namespace SongHistoryController {
   ) => {
     try {
       Db.songs.realm().write(() => {
-        console.debug(entry)
         const result = Db.songs.realm().create(SongHistorySchema.name, entry);
         entry.id = result.id;
       })

@@ -2,12 +2,10 @@ import Db from "../db";
 import { SongHistorySchema } from "./SongHistorySchema";
 
 export enum SongHistoryAction {
-  Scrolled = "Scrolled",
   ScrolledDown = "ScrolledDown",
   ScrolledUp = "ScrolledUp",
-  UseNextVerseButton = "UseNextVerseButton",
-  OpenedThisSpecificVerse = "OpenedThisSpecificVerse",
-  FirstVerseAfterSelectingVersesInVersePicker = "FirstVerseAfterSelectingVersesInVersePicker",
+  // UseNextVerseButton = "UseNextVerseButton",
+  // OpenedOnSelectedVerse = "OpenedOnSelectedVerse",
   OpenedSong = "OpenedSong",
   Unknown = "Unknown",
 }

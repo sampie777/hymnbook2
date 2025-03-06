@@ -59,6 +59,7 @@ import { rollbar } from "./logic/rollbar";
 import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
 import { AutoUpdater } from "./logic/autoUpdater";
 import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
+import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -237,7 +238,9 @@ const AppRoot: React.FC = () => {
       <NavigationContainer>
         <DeepLinkHandler>
           <UpdaterContextProvider>
-            <RootNavigation />
+            <SongHistoryProvider>
+              <RootNavigation />
+            </SongHistoryProvider>
           </UpdaterContextProvider>
         </DeepLinkHandler>
       </NavigationContainer>
