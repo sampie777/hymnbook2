@@ -18,6 +18,7 @@ export const SongSearchRoute = "SongSearch";
 export const SongListRoute = "SongList";
 export const SongRoute = "Song";
 export const SongStringSearchRoute = "SongStringSearchRoute";
+export const SongHistoryRoute = "SongHistoryRoute";
 export const VersePickerRoute = "VersePicker";
 export const DocumentSearchRoute = "DocumentSearch";
 export const DocumentRoute = "Document";
@@ -36,6 +37,7 @@ export type ParamList = {
 
   SongSearch: undefined,
   SongStringSearchRoute: undefined,
+  SongHistoryRoute: undefined,
   SongList: undefined,
   Song: {
     id?: number;

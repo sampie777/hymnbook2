@@ -37,6 +37,7 @@ export const SearchResultItemBaseComponent: React.FC<{
   onItemLongPress?: () => void,
   onAddPress?: () => void,
   onAddLongPress?: () => void,
+  fontScale?: number,
 }> =
   ({
      songName,
@@ -46,6 +47,7 @@ export const SearchResultItemBaseComponent: React.FC<{
      onItemLongPress,
      onAddPress,
      onAddLongPress,
+     fontScale = 1,
    }) => {
     const styles = createStyles(useTheme());
 
@@ -53,22 +55,24 @@ export const SearchResultItemBaseComponent: React.FC<{
                                       onLongPress={onItemLongPress}
                                       style={styles.container}>
       <View style={styles.infoContainer}>
-        <Text style={[styles.itemName, (bundleName ? {} : styles.itemExtraPadding)]}
+        <Text style={[styles.itemName, {fontSize: styles.itemName.fontSize * fontScale}, (bundleName ? {} : styles.itemExtraPadding)]}
               importantForAccessibility={"auto"}>
           {songName}
         </Text>
 
         {!bundleName ? undefined :
-          <Text style={styles.songBundleName}
+          <Text style={[styles.songBundleName, {fontSize: styles.songBundleName.fontSize * fontScale}]}
                 importantForAccessibility={"auto"}>
             {bundleName}
           </Text>
         }
       </View>
 
-      <SearchResultItemAddButton onPress={onAddPress}
-                                 onLongPress={onAddLongPress}
-                                 songAddedToSongList={songAddedToSongList} />
+      {onAddPress === undefined && onAddLongPress === undefined ? null :
+        <SearchResultItemAddButton onPress={onAddPress}
+                                   onLongPress={onAddLongPress}
+                                   songAddedToSongList={songAddedToSongList} />
+      }
     </OffscreenTouchableOpacity>;
   };
 
