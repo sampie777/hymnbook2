@@ -19,7 +19,7 @@ import {
   HomeRoute, OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
-  SettingsRoute, SongListRoute,
+  SettingsRoute, SongHistoryRoute, SongListRoute,
   SongRoute, SongSearchRoute, SongStringSearchRoute, TutorialRoute,
   VersePickerRoute
 } from "./navigation";
@@ -60,6 +60,7 @@ import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/prov
 import { AutoUpdater } from "./logic/autoUpdater";
 import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
 import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider";
+import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -107,6 +108,7 @@ const RootNavigation = () => {
                       verses: undefined,
                       selectedVerses: []
                     }} />
+    <RootNav.Screen name={SongHistoryRoute} component={SongHistoryScreen} options={{ title: "Song history" }} />
 
     <RootNav.Screen name={DocumentRoute} component={SingleDocument}
                     options={{
