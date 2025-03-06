@@ -32,6 +32,12 @@ const config = {
     history: {
       minViewTimeMs: 12000,
     }
+  },
+
+  documents: {
+    history: {
+      minViewTimeMs: 12000,
+    }
   }
 };
 export default config;

@@ -15,7 +15,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
-  AboutRoute, DatabasesRoute, DocumentRoute, DocumentSearchRoute,
+  AboutRoute, DatabasesRoute, DocumentHistoryRoute, DocumentRoute, DocumentSearchRoute,
   HomeRoute, OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
@@ -61,6 +61,7 @@ import { AutoUpdater } from "./logic/autoUpdater";
 import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
 import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider";
 import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
+import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -116,8 +117,10 @@ const RootNavigation = () => {
                       title: ""
                     }}
                     initialParams={{
-                      id: undefined
+                      id: undefined,
+                      uuid: undefined,
                     }} />
+    <RootNav.Screen name={DocumentHistoryRoute} component={DocumentHistoryScreen} options={{ title: "Document history" }} />
 
     <RootNav.Screen name={DatabasesRoute} component={DownloadsScreen}
                     initialParams={{

@@ -6,7 +6,7 @@ import { shareApp } from "../../../logic/utils";
 import { Survey } from "../../../logic/survey";
 import {
   AboutRoute,
-  DatabasesRoute,
+  DatabasesRoute, DocumentHistoryRoute,
   OtherMenuRoute,
   ParamList,
   SettingsRoute,
@@ -54,6 +54,12 @@ const OtherMenuScreen: React.FC<BottomTabScreenProps<ParamList, typeof OtherMenu
         route: SongHistoryRoute,
         name: "Song history",
         icon: (style) => <Icon name="music" style={style as StyleProp<any>} />,
+        isDeveloperOnly: true,
+      },
+      {
+        route: DocumentHistoryRoute,
+        name: "Document history",
+        icon: (style) => <Icon name="file-alt" style={style as StyleProp<any>} />,
         isDeveloperOnly: true,
       },
       {

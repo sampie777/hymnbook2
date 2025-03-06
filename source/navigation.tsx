@@ -22,6 +22,7 @@ export const SongHistoryRoute = "SongHistoryRoute";
 export const VersePickerRoute = "VersePicker";
 export const DocumentSearchRoute = "DocumentSearch";
 export const DocumentRoute = "Document";
+export const DocumentHistoryRoute = "DocumentHistoryRoute";
 
 export type ParamList = {
   TutorialRoute: undefined,
@@ -59,6 +60,8 @@ export type ParamList = {
 
   DocumentSearch: undefined,
   Document: {
-    id: number;
+    id?: number;
+    uuid?: string;
   },
+  DocumentHistoryRoute: undefined,
 }

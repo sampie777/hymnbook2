@@ -10,6 +10,7 @@ import { DocumentGroupSchema, DocumentSchema } from "./models/documents/Document
 import { AbcMelodySchema, AbcSubMelodySchema } from "./models/songs/AbcMelodiesSchema";
 import { SongHistorySchema } from "./models/songs/SongHistorySchema";
 import { isTestEnv } from "../utils";
+import { DocumentHistorySchema } from "./models/documents/DocumentHistorySchema";
 
 const generatePath = (name: string): string => {
   if (!isTestEnv()) return name;
@@ -32,9 +33,10 @@ const Db = {
   documents: new DatabaseProvider({
     path: generatePath("hymnbook_documents"),
     schemas: [
-      DocumentSchema, DocumentGroupSchema
+      DocumentSchema, DocumentGroupSchema,
+      DocumentHistorySchema,
     ],
-    schemaVersion: 6
+    schemaVersion: 8
   }),
   settings: new DatabaseProvider({
     path: generatePath("hymnbook_settings"),
