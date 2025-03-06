@@ -5,13 +5,11 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   GestureResponderEvent, View,
-  ScrollView as NativeScrollView
+  ScrollView as NativeScrollView, Alert
 } from "react-native";
-import Db from "../../../../logic/db/db";
 import Settings from "../../../../settings";
 import { rollbar } from "../../../../logic/rollbar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { DocumentSchema } from "../../../../logic/db/models/documents/DocumentsSchema";
 import { Document } from "../../../../logic/db/models/documents/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
@@ -33,6 +31,8 @@ import DocumentControls from "./DocumentControls";
 import DocumentBreadcrumb from "./DocumentsBreadcrumb";
 import AnimatedHtmlView from "../../../components/htmlView/AnimatedHtmlView";
 import OriginalHtmlViewer from "../../../components/htmlView/OriginalHtmlViewer";
+import useHistory from "../../../../logic/documents/history/useHistory";
+import { loadDocumentWithUuidOrId } from "../../../../logic/documents/utils";
 
 const Footer: React.FC<{ opacity: SharedValue<number> }> =
   ({ opacity }) => {
@@ -54,6 +54,9 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   const [scrollOffset, setScrollOffset] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(999);
   const [onPressed, setOnPressed] = useState(false);
+
+  useHistory(document);
+
   const animatedOpacity = useSharedValue(0);
   // Wrapping this value in a ref helps to fire the animation properties to the underlying elements, even if they're memoized
   const animatedScale = useRef(new RNAnimated.Value(0.95 * Settings.documentScale));
@@ -90,7 +93,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
     fadeInFallbackTimeout.current = setTimeout(() => {
       rollbar.warning("Document loading timed out", {
-        document: { ...document, _parent: null } ?? "null",
+        document: { ...document, _parent: null, html: null },
         SettingsSongFadeIn: Settings.songFadeIn
       });
       onHtmlViewLoaded();
@@ -111,24 +114,16 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   }, [document?.name]);
 
   const loadDocument = () => {
-    if (!Db.documents.isConnected()) {
-      return;
+    const dbDocument = loadDocumentWithUuidOrId(route.params.uuid, route.params.id)
+    setDocument(dbDocument ? Document.clone(dbDocument, { includeParent: true }) : undefined);
+
+    if (!dbDocument) {
+      Alert.alert("Document could not be found", "This probably happened because the database was updated. Try re-opening the document.")
+      rollbar.info("Document could not be found", {
+        "route.params.id": route.params.id,
+        "route.params.uuid": route.params.uuid,
+      })
     }
-
-    if (route.params.id === undefined) {
-      setDocument(undefined);
-      return;
-    }
-
-    const newDocument = Db.documents.realm()
-      .objectForPrimaryKey<Document>(DocumentSchema.name, route.params.id) ?? undefined;
-
-    if (newDocument == undefined) {
-      // Document not found
-    }
-
-    setDocument(newDocument ? Document.clone(newDocument, { includeParent: true }) : undefined);
-    setDocument(newDocument ? Document.clone(newDocument, { includeParent: true }) : undefined);
   };
 
   const animate = (callback?: () => void) => {

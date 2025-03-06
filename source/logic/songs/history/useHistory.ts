@@ -9,7 +9,7 @@ const useHistory = (
   viewIndex: number = -1,
   action: SongHistoryAction,
 ) => {
-  const previousSong = useRef<Song | undefined>(undefined);
+  const previousSong = useRef<Song | undefined>();
   const previousIndex = useRef<number>(0);
   const previousAction = useRef<SongHistoryAction>(SongHistoryAction.Unknown);
   const nextAction = useRef<SongHistoryAction>(SongHistoryAction.Unknown);

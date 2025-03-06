@@ -1,24 +1,59 @@
-import { Song, SongBundle, Verse } from "../../db/models/songs/Songs";
-import { SongHistory, SongHistoryAction } from "../../db/models/songs/SongHistory";
-import Db from "../../db/db";
-import { SongHistorySchema } from "../../db/models/songs/SongHistorySchema";
-import { rollbar } from "../../rollbar";
-import { sanitizeErrorForRollbar } from "../../utils";
+import {Song, SongBundle, Verse} from '../../db/models/songs/Songs';
+import {
+  SongHistory,
+  SongHistoryAction,
+} from '../../db/models/songs/SongHistory';
+import Db from '../../db/db';
+import {SongHistorySchema} from '../../db/models/songs/SongHistorySchema';
+import {rollbar} from '../../rollbar';
+import {sanitizeErrorForRollbar} from '../../utils';
 
 export namespace SongHistoryController {
   export const pushVerse = (
     verse: Verse,
     song?: Song,
     viewDurationMs: number = -1,
-    action: SongHistoryAction = SongHistoryAction.Unknown
+    action: SongHistoryAction = SongHistoryAction.Unknown,
   ) => {
     if (!song) song = Verse.getSong(verse); // This doesn't work for some reason
-    if (song == null) return console.error("Song is null")
+    if (song == null) {
+      return rollbar.error("Can't store verse in history as no song is found", {
+        verse: {
+          ...verse,
+          content: undefined,
+          abcLyrics: undefined,
+          _songs: undefined,
+          _song: undefined,
+        },
+      });
+    }
 
     const bundle = Song.getSongBundle(song);
-    if (bundle == null) return console.error("Bundle is null");
+    if (bundle == null) {
+      return rollbar.error(
+        "Can't store verse in history as no bundle is found",
+        {
+          verse: {
+            ...verse,
+            content: undefined,
+            abcLyrics: undefined,
+            _songs: undefined,
+            _song: undefined,
+          },
+          song: {
+            ...song,
+            verses: undefined,
+            abcMelodies: undefined,
+            metadata: undefined,
+            lastUsedMelody: undefined,
+            _songBundles: undefined,
+            _songBundle: undefined,
+          },
+        },
+      );
+    }
 
-    const entry: SongHistory = new SongHistory(
+    const entry = new SongHistory(
       bundle.uuid,
       bundle.name,
       song.uuid,
@@ -29,24 +64,24 @@ export namespace SongHistoryController {
       new Date(),
       viewDurationMs,
       action,
-    )
+    );
 
     saveToDatabase(entry, verse, song, bundle);
-  }
+  };
 
   const saveToDatabase = (
     entry: SongHistory,
     verse?: Verse,
     song?: Song,
-    bundle?: SongBundle
+    bundle?: SongBundle,
   ) => {
     try {
       Db.songs.realm().write(() => {
         const result = Db.songs.realm().create(SongHistorySchema.name, entry);
         entry.id = result.id;
-      })
+      });
     } catch (error) {
-      rollbar.error(`Failed to store song history`, {
+      rollbar.error("Failed to store song history", {
         ...sanitizeErrorForRollbar(error),
         verse: {
           ...verse,
@@ -64,7 +99,7 @@ export namespace SongHistoryController {
           _songBundles: undefined,
           _songBundle: undefined,
         },
-        bundle: { ...bundle, songs: undefined },
+        bundle: {...bundle, songs: undefined},
       });
     }
   };
