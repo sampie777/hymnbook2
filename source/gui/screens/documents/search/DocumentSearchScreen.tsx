@@ -5,14 +5,14 @@ import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
 import { sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { DocumentGroup, Document } from "../../../../logic/db/models/Documents";
+import { Document, DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
-import { DocumentGroupSchema } from "../../../../logic/db/models/DocumentsSchema";
+import { DocumentGroupSchema } from "../../../../logic/db/models/documents/DocumentsSchema";
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
 import { RectangularInset, useCollectionListener } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { ScrollView, View, Text, StyleSheet, BackHandler } from "react-native";
+import { BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import DocumentItem from "./DocumentItem";
 import DocumentGroupItem from "./DocumentGroupItem";
@@ -105,7 +105,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   };
 
   const onDocumentPress = (document: Document) => {
-    navigation.navigate(DocumentRoute, { id: document.id });
+    navigation.navigate(DocumentRoute, { id: document.id, uuid: document.uuid });
   };
 
   const groups = (): Array<DbDocumentGroup> => {
@@ -188,7 +188,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
         <HeaderIconButton onPress={previousLevel}
                           icon={"arrow-left"}
                           hitSlop={RectangularInset(10)}
-                          accessibilityLabel={"Back"}/>}
+                          accessibilityLabel={"Back"} />}
 
       <Text style={styles.pageTitle}>
         {group?.name || "Browse"}

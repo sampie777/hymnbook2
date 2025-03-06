@@ -2,31 +2,44 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import {
-  FlatList, Gesture, GestureDetector,
+  FlatList,
+  Gesture,
+  GestureDetector,
   GestureEvent,
-  PinchGestureHandler, PinchGestureHandlerEventPayload,
+  PinchGestureHandler,
+  PinchGestureHandlerEventPayload,
   State
 } from "react-native-gesture-handler";
 import ReAnimated, {
-  Easing as ReAnimatedEasing, runOnJS,
+  Easing as ReAnimatedEasing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming
 } from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
-import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/AbcMelodies";
+import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import {
   calculateVerseHeight,
   generateSongTitle,
   getDefaultMelody,
-  loadSongWithUuidOrId, storeLastUsedMelody
+  loadSongWithUuidOrId,
+  storeLastUsedMelody
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { Alert, Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
-import { StyleSheet, View, ViewToken } from "react-native";
+import {
+  Alert,
+  Animated,
+  BackHandler,
+  FlatList as NativeFlatList,
+  LayoutChangeEvent,
+  StyleSheet,
+  View,
+  ViewToken
+} from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
@@ -40,6 +53,8 @@ import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
+import { ViewabilityConfigCallbackPairs } from "@react-native/virtualized-lists/Lists/VirtualizedList";
+import { useSongHistory } from "../../../components/providers/SongHistoryProvider";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -56,6 +71,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
+  const history = useSongHistory();
 
   const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
@@ -100,10 +116,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
+    history.setSong(undefined);
   };
 
   useEffect(() => {
     verseHeights.current = {};
+    history.setSong(song);
 
     // If song is undefined, we're probably leaving this screen,
     // so we can ignore state and animation updates.
@@ -182,6 +200,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const loadSong = () => {
     const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
     setSong(dbSong ? Song.clone(dbSong, { includeVerses: true }) : undefined);
+    history.setSong(song);
 
     if (!dbSong) {
       Alert.alert("Song could not be found", "This probably happened because the database was updated. Try re-opening the song.")
@@ -279,12 +298,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
   };
 
-  const onListViewableItemsChanged = React.useRef(
+  const onListViewableItemsChangedForSongControls = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
       if (viewableItems.length === 0) {
         setViewIndex(-1);
       } else if (viewableItems[0].index !== null) {
         setViewIndex(viewableItems[0].index);
+      }
+    });
+
+  const onListViewableItemsChangedForHistory = React.useRef(
+    ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
+      if (viewableItems.length === 0) {
+        history.setIndex(-1);
+      } else if (viewableItems[0].index !== null) {
+        history.setIndex(viewableItems[0].index);
       }
     });
 
@@ -449,9 +477,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          highlightText={highlightText} />;
   };
 
-  const listViewabilityConfig = React.useRef({
-    itemVisiblePercentThreshold: 10
-  });
+  const listViewabilityConfigPairs = React.useRef<ViewabilityConfigCallbackPairs>([
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 10 },
+      onViewableItemsChanged: onListViewableItemsChangedForSongControls.current,
+    },
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 35 },
+      onViewableItemsChanged: onListViewableItemsChangedForHistory.current,
+    },
+  ]);
 
   // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
@@ -501,8 +536,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               keyExtractor={(item: Verse) => item.id.toString()}
               getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
-              onViewableItemsChanged={onListViewableItemsChanged.current}
-              viewabilityConfig={listViewabilityConfig.current}
+              viewabilityConfigCallbackPairs={listViewabilityConfigPairs.current}
               onEndReached={onListEndReached}
               onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
                 info: info,

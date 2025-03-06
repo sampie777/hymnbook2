@@ -1,4 +1,4 @@
-import Db from "../db";
+import Db from "../../db";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./SongsSchema";
 import { AbcMelody } from "./AbcMelodies";
 
@@ -82,6 +82,8 @@ export class Verse implements VerseProps {
   index: number;
   uuid: string;
   abcLyrics?: string;
+  _songs?: Song[];
+  _song?: Song;
 
   constructor(
     index: number,
@@ -111,6 +113,20 @@ export class Verse implements VerseProps {
       uuid: verse.uuid,
       abcLyrics: verse.abcLyrics,
     }
+  }
+
+  static getSong(verse?: Verse): Song | undefined {
+    if (verse === undefined) return undefined;
+
+    if (verse._song != undefined) return verse._song;
+
+    if (verse._songs === undefined || verse._songs.length === 0) {
+      verse._song = undefined;
+      return undefined;
+    }
+
+    verse._song = verse._songs[0];
+    return verse._song;
   }
 }
 

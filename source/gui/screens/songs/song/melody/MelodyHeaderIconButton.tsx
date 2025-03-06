@@ -1,15 +1,10 @@
 import React from "react";
-import { Song } from "../../../../../logic/db/models/Songs";
+import { Song } from "../../../../../logic/db/models/songs/Songs";
 import { hasMelodyToShow } from "../../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { ActivityIndicator, Text, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import {
-  Menu,
-  MenuOption,
-  MenuOptions,
-  MenuTrigger
-} from "react-native-popup-menu";
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
 
 interface Props {
   song: Song;

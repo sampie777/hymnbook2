@@ -1,10 +1,10 @@
 import Db from "../db/db";
 import config from "../../config";
-import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
-import { SongSchema } from "../db/models/SongsSchema";
+import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/songs/Songs";
+import { SongSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
-import { AbcMelody } from "../db/models/AbcMelodies";
+import { AbcMelody } from "../db/models/songs/AbcMelodies";
 import { distance } from "fastest-levenshtein";
 
 export enum VerseType {
@@ -45,8 +45,8 @@ export const getVerseShortName = (name: string): string => name.trim()
   .replace(/(end|slot|outro) */gi, "E");
 
 // Creates string like "1-3, 5" or "1, 2, 5" or similar based on the selected verses
-function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
-  const onlyVerses = (selectedVerses as Array<VerseProps>)
+function generateSongTitleVersesString(selectedVerses: { name: string }[]) {
+  const onlyVerses = selectedVerses
     .filter(it => /verse/i.test(it.name))
     .map(it => it.name.replace(/verse */gi, ""));
 
@@ -128,7 +128,7 @@ export const generateSongTitle = (song?: {
                                     name: string,
                                     verses: Verse[],
                                   },
-                                  selectedVerses?: Array<Verse>): string => {
+                                  selectedVerses?: { name: string }[]): string => {
   if (song == null) {
     return "";
   }

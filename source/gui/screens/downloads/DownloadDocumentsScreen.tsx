@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
+import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
@@ -9,21 +9,14 @@ import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../.
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView, Share,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import { DocumentUpdater } from "../../../logic/documents/updater/documentUpdater";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 import Db from "../../../logic/db/db";
-import { DocumentGroupSchema } from "../../../logic/db/models/DocumentsSchema";
+import { DocumentGroupSchema } from "../../../logic/db/models/documents/DocumentsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
 
 type ServerDataType = ServerDocumentGroup;
@@ -334,7 +327,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     <ConfirmationModal isOpen={requestDeleteForItem !== undefined}
                        onClose={() => setRequestDeleteForItem(undefined)}
                        onConfirm={onConfirmDelete}
-                       confirmationStyle={{color: useTheme().colors.text.error}}
+                       confirmationStyle={{ color: useTheme().colors.text.error }}
                        message={`Delete all documents for ${requestDeleteForItem?.name}?`} />
 
     <Text style={styles.informationText}>Select documents to download or delete:</Text>

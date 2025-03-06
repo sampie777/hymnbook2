@@ -1,5 +1,5 @@
-import Db from "../db";
-import config from "../../../config";
+import Db from "../../db";
+import config from "../../../../config";
 import { AbcMelodySchema, AbcSubMelodySchema } from "./AbcMelodiesSchema";
 import { VerseProps } from "./Songs";
 

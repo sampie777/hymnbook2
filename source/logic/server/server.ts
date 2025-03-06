@@ -3,7 +3,7 @@ import { rollbar } from "../rollbar";
 import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
 import { ServerSongBundleUpdateStatus, SongBundle } from "./models/ServerSongsModel";
 import { sanitizeErrorForRollbar } from "../utils";
-import { Song, SongAudio } from "../db/models/Songs";
+import { Song, SongAudio } from "../db/models/songs/Songs";
 
 export namespace Server {
   export const fetchSongBundles = (includeOther: boolean = false): Promise<SongBundle[]> => {

@@ -1,10 +1,7 @@
 import { api } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
-import {
-  DocumentGroup as ServerDocumentGroup,
-  ServerDocumentGroupUpdateStatus
-} from "../server/models/Documents";
+import { DocumentGroup as ServerDocumentGroup, ServerDocumentGroupUpdateStatus } from "../server/models/Documents";
 import { sanitizeErrorForRollbar } from "../utils";
 
 export namespace DocumentServer {

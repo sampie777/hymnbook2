@@ -1,4 +1,4 @@
-import { Verse, VerseProps } from "./logic/db/models/Songs";
+import { Verse, VerseProps } from "./logic/db/models/songs/Songs";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 
 export enum VersePickerMethod {
@@ -18,9 +18,11 @@ export const SongSearchRoute = "SongSearch";
 export const SongListRoute = "SongList";
 export const SongRoute = "Song";
 export const SongStringSearchRoute = "SongStringSearchRoute";
+export const SongHistoryRoute = "SongHistoryRoute";
 export const VersePickerRoute = "VersePicker";
 export const DocumentSearchRoute = "DocumentSearch";
 export const DocumentRoute = "Document";
+export const DocumentHistoryRoute = "DocumentHistoryRoute";
 
 export type ParamList = {
   TutorialRoute: undefined,
@@ -36,6 +38,7 @@ export type ParamList = {
 
   SongSearch: undefined,
   SongStringSearchRoute: undefined,
+  SongHistoryRoute: undefined,
   SongList: undefined,
   Song: {
     id?: number;
@@ -57,6 +60,8 @@ export type ParamList = {
 
   DocumentSearch: undefined,
   Document: {
-    id: number;
+    id?: number;
+    uuid?: string;
   },
+  DocumentHistoryRoute: undefined,
 }

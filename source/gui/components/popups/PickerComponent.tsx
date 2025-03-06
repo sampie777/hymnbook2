@@ -1,13 +1,6 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
-import {
-  FlatList,
-  ListRenderItemInfo,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { FlatList, ListRenderItemInfo, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface Props<T> {
   selectedValue: T,

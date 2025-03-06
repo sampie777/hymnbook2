@@ -1,4 +1,4 @@
-import Db from "../db";
+import Db from "../../db";
 import { Song, Verse } from "./Songs";
 import { SongListModelSchema, SongListSongModelSchema, SongListVerseModelSchema } from "./SongListModelSchema";
 

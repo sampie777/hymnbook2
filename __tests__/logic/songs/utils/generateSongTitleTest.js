@@ -1,4 +1,4 @@
-import { Song, Verse } from "../../../../source/logic/db/models/Songs";
+import { Song, Verse } from "../../../../source/logic/db/models/songs/Songs";
 import { generateSongTitle } from "../../../../source/logic/songs/utils";
 import { mockDb } from "../../../testUtils";
 

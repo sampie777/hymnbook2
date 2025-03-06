@@ -1,7 +1,7 @@
 import {loadSongWithUuidOrId} from "../../../../source/logic/songs/utils";
 import Db from "../../../../source/logic/db/db";
-import {SongBundleSchema, SongMetadataSchema, SongSchema} from "../../../../source/logic/db/models/SongsSchema";
-import {Song, SongBundle, SongMetadata, SongMetadataType} from "../../../../source/logic/db/models/Songs";
+import {SongBundleSchema, SongMetadataSchema, SongSchema} from "../../../../source/logic/db/models/songs/SongsSchema";
+import {Song, SongBundle, SongMetadata, SongMetadataType} from "../../../../source/logic/db/models/songs/Songs";
 
 describe("when loading a song from the database using uuid or id", () => {
     let song1 = new Song("Psalm 1", "", new Date(), new Date(), "song1-uuid", [], [], [

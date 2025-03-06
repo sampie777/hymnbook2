@@ -1,7 +1,7 @@
-import { Document, DocumentGroup } from "../db/models/Documents";
+import { Document, DocumentGroup } from "../db/models/documents/Documents";
 import Db from "../db/db";
 import { rollbar } from "../rollbar";
-import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
+import { DocumentGroupSchema, DocumentSchema } from "../db/models/documents/DocumentsSchema";
 import { sanitizeErrorForRollbar } from "../utils";
 
 export const getParentForDocumentGroup = (group: DocumentGroup): (DocumentGroup & Realm.Object<DocumentGroup>) | null => {
@@ -42,4 +42,34 @@ export const getPathForDocument = (document: Document): Array<Document | Documen
   }
 
   return path;
+};
+
+export const loadDocumentWithUuidOrId = (uuid?: string, id?: number): (Document & Realm.Object<Document>) | undefined => {
+  if (uuid == "") uuid = undefined;
+
+  if (uuid == undefined && id == undefined) {
+    return undefined;
+  }
+
+  if (!Db.documents.isConnected()) {
+    return undefined;
+  }
+
+  let query = `uuid = "${uuid}" OR id = ${id}`;
+  if (id == undefined) query = `uuid = "${uuid}"`;
+  if (uuid == undefined) query = `id = "${id}"`;
+
+  const documents = Db.documents.realm().objects<Document>(DocumentSchema.name)
+    .filtered(query);
+
+  if (documents.length == 0) return undefined;
+  if (documents.length > 1) {
+    rollbar.warning("Multiple documents found for UUID and ID search", {
+      uuid: uuid ?? (uuid === null ? "null" : "undefined"),
+      id: id ?? (id === null ? "null" : "undefined"),
+      documents: documents.map(it => ({ name: it.name, id: it.id, uuid: it.uuid }))
+    });
+  }
+
+  return documents[0];
 };

@@ -4,11 +4,11 @@ import {
   SongBundle as ServerSongBundle,
   SongVerse as ServerVerse
 } from "../../server/models/ServerSongsModel";
-import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../../db/models/Songs";
+import { Song, SongBundle, SongMetadata, SongMetadataType, Verse } from "../../db/models/songs/Songs";
 import Db from "../../db/db";
-import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../../db/models/SongsSchema";
-import { AbcMelodySchema, AbcSubMelodySchema } from "../../db/models/AbcMelodiesSchema";
-import { AbcMelody, AbcSubMelody } from "../../db/models/AbcMelodies";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../../db/models/songs/SongsSchema";
+import { AbcMelodySchema, AbcSubMelodySchema } from "../../db/models/songs/AbcMelodiesSchema";
+import { AbcMelody, AbcSubMelody } from "../../db/models/songs/AbcMelodies";
 import { dateFrom, sanitizeErrorForRollbar } from "../../utils";
 import { rollbar } from "../../rollbar";
 import config from "../../../config";

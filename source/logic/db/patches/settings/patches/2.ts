@@ -1,7 +1,7 @@
 import { delayed } from "../../../../utils";
 import Db from "../../../db";
-import { SongBundle } from "../../../models/Songs";
-import { SongBundleSchema } from "../../../models/SongsSchema";
+import { SongBundle } from "../../../models/songs/Songs";
+import { SongBundleSchema } from "../../../models/songs/SongsSchema";
 import Settings from "../../../../../settings";
 
 export const patch2_PreFillSettingsSongSearchSelectedSongBundleUuids = () => {

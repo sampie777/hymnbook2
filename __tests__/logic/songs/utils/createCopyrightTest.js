@@ -1,5 +1,5 @@
 import { createCopyright } from "../../../../source/logic/songs/utils";
-import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/Songs";
+import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/songs/Songs";
 
 describe("creating copyright for song", () => {
   const song = new Song("", "", new Date(), new Date(), "", [], [], [], 0, 1);

@@ -6,7 +6,7 @@ import { useFeatures } from "../../components/providers/FeaturesProvider";
 import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import UrlLink from "../../components/UrlLink";

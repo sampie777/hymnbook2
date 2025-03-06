@@ -1,7 +1,7 @@
 import SongList from "../../../../source/logic/songs/songList";
 import Db from "../../../../source/logic/db/db";
-import { SongListModel, SongListSongModel } from "../../../../source/logic/db/models/SongListModel";
-import { Song } from "../../../../source/logic/db/models/Songs";
+import { SongListModel, SongListSongModel } from "../../../../source/logic/db/models/songs/SongListModel";
+import { Song } from "../../../../source/logic/db/models/songs/Songs";
 import { mockDb } from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");

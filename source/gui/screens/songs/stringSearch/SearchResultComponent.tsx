@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/Songs";
+import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/songs/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
@@ -22,15 +22,15 @@ interface Props {
 }
 
 const SearchResultComponent: React.FC<Props> = memo(({
-                                                  navigation,
-                                                  song,
-                                                  searchRegex,
-                                                  showSongBundle,
-                                                  disable = false,
-                                                  isTitleMatch = false,
-                                                  isMetadataMatch = false,
-                                                  isVerseMatch = false
-                                                }) => {
+                                                       navigation,
+                                                       song,
+                                                       searchRegex,
+                                                       showSongBundle,
+                                                       disable = false,
+                                                       isTitleMatch = false,
+                                                       isMetadataMatch = false,
+                                                       isVerseMatch = false
+                                                     }) => {
   const styles = createStyles(useTheme());
   if (!isSongValid(song)) return null;
 

@@ -4,7 +4,8 @@ import { ThemeContextProps, useTheme } from "../../components/providers/ThemePro
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import Animated, {
-  cancelAnimation, Easing,
+  cancelAnimation,
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,

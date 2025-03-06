@@ -15,22 +15,27 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
-  AboutRoute, DatabasesRoute, DocumentRoute, DocumentSearchRoute,
-  HomeRoute, OtherMenuRoute,
+  AboutRoute,
+  DatabasesRoute,
+  DocumentHistoryRoute,
+  DocumentRoute,
+  DocumentSearchRoute,
+  HomeRoute,
+  OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
-  SettingsRoute, SongListRoute,
-  SongRoute, SongSearchRoute, SongStringSearchRoute, TutorialRoute,
+  SettingsRoute,
+  SongHistoryRoute,
+  SongListRoute,
+  SongRoute,
+  SongSearchRoute,
+  SongStringSearchRoute,
+  TutorialRoute,
   VersePickerRoute
 } from "./navigation";
-import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
+import { SongListModelSchema } from "./logic/db/models/songs/SongListModelSchema";
 import { ServerAuth } from "./logic/server/auth";
-import {
-  closeDatabases,
-  initDocumentDatabase,
-  initSettingsDatabase,
-  initSongDatabase
-} from "./logic/app";
+import { closeDatabases, initDocumentDatabase, initSettingsDatabase, initSongDatabase } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 import { runAsync, sanitizeErrorForRollbar } from "./logic/utils";
@@ -59,6 +64,9 @@ import { rollbar } from "./logic/rollbar";
 import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
 import { AutoUpdater } from "./logic/autoUpdater";
 import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
+import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider";
+import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
+import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -106,6 +114,7 @@ const RootNavigation = () => {
                       verses: undefined,
                       selectedVerses: []
                     }} />
+    <RootNav.Screen name={SongHistoryRoute} component={SongHistoryScreen} options={{ title: "Song history" }} />
 
     <RootNav.Screen name={DocumentRoute} component={SingleDocument}
                     options={{
@@ -113,8 +122,11 @@ const RootNavigation = () => {
                       title: ""
                     }}
                     initialParams={{
-                      id: undefined
+                      id: undefined,
+                      uuid: undefined,
                     }} />
+    <RootNav.Screen name={DocumentHistoryRoute} component={DocumentHistoryScreen}
+                    options={{ title: "Document history" }} />
 
     <RootNav.Screen name={DatabasesRoute} component={DownloadsScreen}
                     initialParams={{
@@ -237,7 +249,9 @@ const AppRoot: React.FC = () => {
       <NavigationContainer>
         <DeepLinkHandler>
           <UpdaterContextProvider>
-            <RootNavigation />
+            <SongHistoryProvider>
+              <RootNavigation />
+            </SongHistoryProvider>
           </UpdaterContextProvider>
         </DeepLinkHandler>
       </NavigationContainer>
