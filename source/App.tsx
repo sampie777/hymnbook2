@@ -15,22 +15,27 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
-  AboutRoute, DatabasesRoute, DocumentHistoryRoute, DocumentRoute, DocumentSearchRoute,
-  HomeRoute, OtherMenuRoute,
+  AboutRoute,
+  DatabasesRoute,
+  DocumentHistoryRoute,
+  DocumentRoute,
+  DocumentSearchRoute,
+  HomeRoute,
+  OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
-  SettingsRoute, SongHistoryRoute, SongListRoute,
-  SongRoute, SongSearchRoute, SongStringSearchRoute, TutorialRoute,
+  SettingsRoute,
+  SongHistoryRoute,
+  SongListRoute,
+  SongRoute,
+  SongSearchRoute,
+  SongStringSearchRoute,
+  TutorialRoute,
   VersePickerRoute
 } from "./navigation";
 import { SongListModelSchema } from "./logic/db/models/songs/SongListModelSchema";
 import { ServerAuth } from "./logic/server/auth";
-import {
-  closeDatabases,
-  initDocumentDatabase,
-  initSettingsDatabase,
-  initSongDatabase
-} from "./logic/app";
+import { closeDatabases, initDocumentDatabase, initSettingsDatabase, initSongDatabase } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 import { runAsync, sanitizeErrorForRollbar } from "./logic/utils";
@@ -120,7 +125,8 @@ const RootNavigation = () => {
                       id: undefined,
                       uuid: undefined,
                     }} />
-    <RootNav.Screen name={DocumentHistoryRoute} component={DocumentHistoryScreen} options={{ title: "Document history" }} />
+    <RootNav.Screen name={DocumentHistoryRoute} component={DocumentHistoryScreen}
+                    options={{ title: "Document history" }} />
 
     <RootNav.Screen name={DatabasesRoute} component={DownloadsScreen}
                     initialParams={{

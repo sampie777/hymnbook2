@@ -1,19 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, SectionList, StyleSheet, Text, View} from 'react-native';
-import {
-  ThemeContextProps,
-  useTheme,
-} from '../../../components/providers/ThemeProvider';
-import {SongHistory} from '../../../../logic/db/models/songs/SongHistory';
-import {SongHistorySchema} from '../../../../logic/db/models/songs/SongHistorySchema';
-import {ParamList, SongHistoryRoute, SongRoute} from '../../../../navigation';
+import React, { useEffect, useState } from 'react';
+import { Alert, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
+import { SongHistory } from '../../../../logic/db/models/songs/SongHistory';
+import { SongHistorySchema } from '../../../../logic/db/models/songs/SongHistorySchema';
+import { ParamList, SongHistoryRoute, SongRoute } from '../../../../navigation';
 import Db from '../../../../logic/db/db';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {
-  generateSongTitle,
-  loadSongWithUuidOrId,
-} from '../../../../logic/songs/utils';
-import {SearchResultItemBaseComponent} from '../search/SearchResultItemBaseComponent';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { generateSongTitle, loadSongWithUuidOrId, } from '../../../../logic/songs/utils';
+import { SearchResultItemBaseComponent } from '../search/SearchResultItemBaseComponent';
 
 type SongHistoryGroupedItem = {
   songTitle: string;
@@ -29,7 +23,7 @@ type Section = {
 
 const SongHistoryScreen: React.FC<
   NativeStackScreenProps<ParamList, typeof SongHistoryRoute>
-> = ({navigation}) => {
+> = ({ navigation }) => {
   const styles = createStyles(useTheme());
   const [groupedItems, setGroupedItems] = useState<Section[]>([]);
 
@@ -61,8 +55,8 @@ const SongHistoryScreen: React.FC<
       items.sort((a, b) => a.verseIndex - b.verseIndex);
       const uniqueVerseNames = new Set<string>(items.map(it => it.verseName));
       const songTitle = generateSongTitle(
-        {name: items[0].songName, verses: []},
-        Array.from(uniqueVerseNames.values()).map(it => ({name: it})),
+        { name: items[0].songName, verses: [] },
+        Array.from(uniqueVerseNames.values()).map(it => ({ name: it })),
       );
       return {
         songTitle,
@@ -128,10 +122,10 @@ const SongHistoryScreen: React.FC<
       return;
     }
 
-    navigation.navigate(SongRoute, {uuid: uuid});
+    navigation.navigate(SongRoute, { uuid: uuid });
   };
 
-  const renderItem = ({item}: {item: SongHistoryGroupedItem}) => (
+  const renderItem = ({ item }: { item: SongHistoryGroupedItem }) => (
     <SearchResultItemBaseComponent
       songName={item.songTitle}
       bundleName={item.bundleName}
@@ -140,7 +134,7 @@ const SongHistoryScreen: React.FC<
     />
   );
 
-  const renderSectionHeader = ({section}: {section: Section}) => (
+  const renderSectionHeader = ({ section }: { section: Section }) => (
     <View style={styles.headerContainer}>
       <Text style={styles.headerText}>{section.title}</Text>
     </View>
@@ -150,7 +144,7 @@ const SongHistoryScreen: React.FC<
     <View style={styles.container}>
       <SectionList
         sections={groupedItems}
-        renderItem={({item}) => renderItem({item})}
+        renderItem={({ item }) => renderItem({ item })}
         renderSectionHeader={renderSectionHeader}
         keyExtractor={item => item.timestamp.toString()}
       />
@@ -160,7 +154,7 @@ const SongHistoryScreen: React.FC<
 
 export default SongHistoryScreen;
 
-const createStyles = ({colors, fontFamily}: ThemeContextProps) =>
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) =>
   StyleSheet.create({
     container: {
       flex: 1,

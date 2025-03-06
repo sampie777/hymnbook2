@@ -1,7 +1,7 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import config from "../../config";
-import { Result, sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils";
 import { SongBundle, Verse } from "../db/models/songs/Songs";
 import { AbcMelody as ServerAbcMelody, SongBundle as ServerSongBundle, } from "../server/models/ServerSongsModel";
 import { SongBundleSchema } from "../db/models/songs/SongsSchema";

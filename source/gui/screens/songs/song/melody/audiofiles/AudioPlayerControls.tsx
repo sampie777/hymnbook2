@@ -5,7 +5,8 @@ import { ThemeContextProps, useTheme } from "../../../../../components/providers
 import TrackPlayer, {
   Event,
   PlaybackErrorEvent,
-  usePlaybackState, useProgress,
+  usePlaybackState,
+  useProgress,
   useTrackPlayerEvents
 } from "react-native-track-player";
 import { State } from "react-native-track-player/src/constants/State";

@@ -4,7 +4,7 @@ export const AbcSubMelodySchema: Realm.ObjectSchema = {
   name: "AbcSubMelody",
   properties: {
     id: "int",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     name: "string",
     melody: "string",
     verseUuids: "string[]"
@@ -16,7 +16,7 @@ export const AbcMelodySchema: Realm.ObjectSchema = {
   name: "AbcMelody",
   properties: {
     id: "int",
-    uuid: {type: "string", indexed: true},
+    uuid: { type: "string", indexed: true },
     name: "string",
     melody: "string",
     subMelodies: AbcSubMelodySchema.name + "[]",

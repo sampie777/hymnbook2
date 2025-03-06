@@ -1,9 +1,6 @@
 import React from 'react';
-import {
-  ThemeContextProps,
-  useTheme,
-} from '../../../components/providers/ThemeProvider';
-import {Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 interface ScreenProps {
   documentName: string;
@@ -12,10 +9,10 @@ interface ScreenProps {
 }
 
 const DocumentItemBaseComponent: React.FC<ScreenProps> = ({
-  documentName,
-  parentName,
-  onPress,
-}) => {
+                                                            documentName,
+                                                            parentName,
+                                                            onPress,
+                                                          }) => {
   const styles = createStyles(useTheme());
 
   return (
@@ -37,7 +34,7 @@ const DocumentItemBaseComponent: React.FC<ScreenProps> = ({
 
 export default DocumentItemBaseComponent;
 
-const createStyles = ({colors}: ThemeContextProps) =>
+const createStyles = ({ colors }: ThemeContextProps) =>
   StyleSheet.create({
     container: {
       marginBottom: 1,

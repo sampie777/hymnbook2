@@ -1,9 +1,9 @@
-import {Document, DocumentGroup} from '../../db/models/documents/Documents';
-import {rollbar} from '../../rollbar';
-import {DocumentHistory} from '../../db/models/documents/DocumentHistory';
+import { Document, DocumentGroup } from '../../db/models/documents/Documents';
+import { rollbar } from '../../rollbar';
+import { DocumentHistory } from '../../db/models/documents/DocumentHistory';
 import Db from '../../db/db';
-import {DocumentHistorySchema} from '../../db/models/documents/DocumentHistorySchema';
-import {getPathForDocument} from '../utils';
+import { DocumentHistorySchema } from '../../db/models/documents/DocumentHistorySchema';
+import { getPathForDocument } from '../utils';
 
 export namespace DocumentHistoryController {
   export const pushDocument = (
@@ -14,7 +14,7 @@ export namespace DocumentHistoryController {
     if (!document.uuid) {
       return rollbar.error(
         "Can't store document in history as it has no uuid",
-        {document: {...document, html: undefined, _parent: undefined}},
+        { document: { ...document, html: undefined, _parent: undefined } },
       );
     }
 
@@ -22,7 +22,7 @@ export namespace DocumentHistoryController {
     if (parent == null) {
       return rollbar.error(
         "Can't store document in history as no parent is found",
-        {document: {...document, html: undefined, _parent: undefined}},
+        { document: { ...document, html: undefined, _parent: undefined } },
       );
     }
 
@@ -30,7 +30,7 @@ export namespace DocumentHistoryController {
       return rollbar.error(
         "Can't store document in history as its parent has no uuid",
         {
-          document: {...document, html: undefined, _parent: undefined},
+          document: { ...document, html: undefined, _parent: undefined },
           parent: {
             ...parent,
             groups: undefined,

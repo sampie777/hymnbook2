@@ -12,7 +12,7 @@ const ScreenHeader: React.FC<Props> = ({ toggleDeleteMode, isDeleteMode = false,
   return <View style={styles.container}>
     <DeleteModeButton onPress={toggleDeleteMode}
                       isActivated={isDeleteMode}
-                      listHasBeenChanged={listHasBeenChanged}/>
+                      listHasBeenChanged={listHasBeenChanged} />
   </View>;
 };
 

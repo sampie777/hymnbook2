@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DatabasesRoute, ParamList } from "../../../../navigation";
 import { Types } from "../../downloads/TypeSelectBar";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
 interface ScreenProps {

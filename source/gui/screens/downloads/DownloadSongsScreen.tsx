@@ -10,14 +10,7 @@ import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar 
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView, Share,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
@@ -338,7 +331,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     <ConfirmationModal isOpen={requestDeleteForItem !== undefined}
                        onClose={() => setRequestDeleteForItem(undefined)}
                        onConfirm={onConfirmDelete}
-                       confirmationStyle={{color: useTheme().colors.text.error}}
+                       confirmationStyle={{ color: useTheme().colors.text.error }}
                        message={`Delete all songs for ${requestDeleteForItem?.name}?`} />
 
 

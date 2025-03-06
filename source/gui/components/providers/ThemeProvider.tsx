@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { Appearance, NativeEventSubscription } from "react-native";
-import { darkColors, lightColors, ThemeColors, ThemeFontFamilies, defaultFontFamilies } from "../../../logic/theme";
+import { darkColors, defaultFontFamilies, lightColors, ThemeColors, ThemeFontFamilies } from "../../../logic/theme";
 import Settings from "../../../settings";
 
 export interface ThemeContextProps {

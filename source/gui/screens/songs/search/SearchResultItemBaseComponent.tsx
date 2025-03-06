@@ -55,13 +55,14 @@ export const SearchResultItemBaseComponent: React.FC<{
                                       onLongPress={onItemLongPress}
                                       style={styles.container}>
       <View style={styles.infoContainer}>
-        <Text style={[styles.itemName, {fontSize: styles.itemName.fontSize * fontScale}, (bundleName ? {} : styles.itemExtraPadding)]}
-              importantForAccessibility={"auto"}>
+        <Text
+          style={[styles.itemName, { fontSize: styles.itemName.fontSize * fontScale }, (bundleName ? {} : styles.itemExtraPadding)]}
+          importantForAccessibility={"auto"}>
           {songName}
         </Text>
 
         {!bundleName ? undefined :
-          <Text style={[styles.songBundleName, {fontSize: styles.songBundleName.fontSize * fontScale}]}
+          <Text style={[styles.songBundleName, { fontSize: styles.songBundleName.fontSize * fontScale }]}
                 importantForAccessibility={"auto"}>
             {bundleName}
           </Text>

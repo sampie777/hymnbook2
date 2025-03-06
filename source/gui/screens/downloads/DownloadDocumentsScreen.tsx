@@ -9,14 +9,7 @@ import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../.
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView, Share,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
@@ -334,7 +327,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     <ConfirmationModal isOpen={requestDeleteForItem !== undefined}
                        onClose={() => setRequestDeleteForItem(undefined)}
                        onConfirm={onConfirmDelete}
-                       confirmationStyle={{color: useTheme().colors.text.error}}
+                       confirmationStyle={{ color: useTheme().colors.text.error }}
                        message={`Delete all documents for ${requestDeleteForItem?.name}?`} />
 
     <Text style={styles.informationText}>Select documents to download or delete:</Text>

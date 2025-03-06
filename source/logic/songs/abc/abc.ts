@@ -1,13 +1,5 @@
 import * as ABCJS from "abcjs";
-import {
-  AbcClef,
-  AbcLyric,
-  AbcPitchStartSlur,
-  KeySignature,
-  TuneObject,
-  VoiceItem,
-  VoiceItemNote
-} from "./abcjsTypes";
+import { AbcClef, AbcLyric, AbcPitchStartSlur, KeySignature, TuneObject, VoiceItem, VoiceItemNote } from "./abcjsTypes";
 import { sanitizeErrorForRollbar, validate } from "../../utils";
 import { Verse } from "../../db/models/songs/Songs";
 import { AbcMelody, AbcSubMelody } from "../../db/models/songs/AbcMelodies";

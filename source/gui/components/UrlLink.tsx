@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { Alert, View, TouchableOpacity, Text } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { openLink } from "../../logic/utils";
 
 const UrlLink: React.FC<PropsWithChildren<{

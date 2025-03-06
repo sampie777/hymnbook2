@@ -260,7 +260,7 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}
-                  isVisible={showDocumentsZoomSettings || showAdvancedSettings}/>
+                  isVisible={showDocumentsZoomSettings || showAdvancedSettings} />
           <SettingSwitchComponent title={"Enable zoom (experimental)"}
                                   description={"Use the experimental document viewer, which can be zoomed in/out. Let us know if you see something wrong."}
                                   onLongPress={(setValue) => setValue(true)}

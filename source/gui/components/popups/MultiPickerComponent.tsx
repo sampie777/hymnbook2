@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
-import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import ConfirmationModal from "./ConfirmationModal";
 
 interface Props<T> {
@@ -22,17 +17,17 @@ interface Props<T> {
 }
 
 const MultiPickerComponent = <T extends any>({
-                                   selectedValues,
-                                   values,
-                                   onCompleted,
-                                   onDenied,
-                                   rowContentRenderer,
-                                   keyExtractor,
-                                   title = "Make a selection",
-                                   closeText,
-                                   confirmText,
-                                   invertConfirmColor
-                                 }: Props<T>) => {
+                                               selectedValues,
+                                               values,
+                                               onCompleted,
+                                               onDenied,
+                                               rowContentRenderer,
+                                               keyExtractor,
+                                               title = "Make a selection",
+                                               closeText,
+                                               confirmText,
+                                               invertConfirmColor
+                                             }: Props<T>) => {
   const [_selectedValues, setSelectedValues] = useState<T[]>(selectedValues);
   const styles = createStyles(useTheme());
 

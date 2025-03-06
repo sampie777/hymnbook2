@@ -25,7 +25,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
 
   if (isDeveloperOnly && !appContext.developerMode) return null;
 
-  return (<TouchableOpacity onPress={onPress} style={[styles.container, isDeveloperOnly ? styles.containerDeveloperMode: {}]}>
+  return <TouchableOpacity onPress={onPress}
+                           style={[styles.container, isDeveloperOnly ? styles.containerDeveloperMode : {}]}>
     <View style={styles.iconContainer}>
       {icon?.(styles.icon)}
       {!hasNotification ? null : <View style={styles.badge}></View>}
@@ -35,7 +36,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       {text}
     </Text>
     {statusIcon}
-  </TouchableOpacity>);
+  </TouchableOpacity>
 };
 
 export default MenuItem;

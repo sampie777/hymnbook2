@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Alert, Animated,
-  Platform,
-  StyleProp,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle
-} from "react-native";
+import { Alert, Animated, Platform, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import Settings from "../../../settings";
 import { openLink } from "../../../logic/utils";
 import { rollbar } from "../../../logic/rollbar";
