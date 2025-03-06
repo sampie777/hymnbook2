@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Settings from "../../../../../settings";
 import { isIOS } from "../../../../../logic/utils";
-import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
+import { AbcMelody } from "../../../../../logic/db/models/songs/AbcMelodies";
 import TrackPlayer from "react-native-track-player";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";

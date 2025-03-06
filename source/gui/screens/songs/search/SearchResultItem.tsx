@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";

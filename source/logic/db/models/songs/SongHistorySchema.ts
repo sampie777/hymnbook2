@@ -1,6 +1,3 @@
-import Realm from "realm";
-
-
 export const SongHistorySchema: Realm.ObjectSchema = {
   name: "SongHistory",
   properties: {

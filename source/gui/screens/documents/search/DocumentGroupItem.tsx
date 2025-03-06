@@ -1,5 +1,5 @@
 import React from "react";
-import { DocumentGroup } from "../../../../logic/db/models/Documents";
+import { DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";

@@ -1,6 +1,6 @@
 import React from "react";
-import { Song } from "../../../logic/db/models/Songs";
-import { SongListSongModel } from "../../../logic/db/models/SongListModel";
+import { Song } from "../../../logic/db/models/songs/Songs";
+import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
 import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";

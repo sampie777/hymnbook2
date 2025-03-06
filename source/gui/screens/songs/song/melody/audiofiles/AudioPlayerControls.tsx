@@ -9,7 +9,7 @@ import TrackPlayer, {
   useTrackPlayerEvents
 } from "react-native-track-player";
 import { State } from "react-native-track-player/src/constants/State";
-import { Song } from "../../../../../../logic/db/models/Songs";
+import { Song } from "../../../../../../logic/db/models/songs/Songs";
 import { rollbar } from "../../../../../../logic/rollbar";
 import Animated, {
   Easing as ReAnimatedEasing,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
+import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
@@ -23,7 +23,7 @@ import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
 import { DocumentUpdater } from "../../../logic/documents/updater/documentUpdater";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 import Db from "../../../logic/db/db";
-import { DocumentGroupSchema } from "../../../logic/db/models/DocumentsSchema";
+import { DocumentGroupSchema } from "../../../logic/db/models/documents/DocumentsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
 
 type ServerDataType = ServerDocumentGroup;

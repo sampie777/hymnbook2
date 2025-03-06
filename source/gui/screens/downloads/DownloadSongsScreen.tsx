@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Config from "react-native-config";
-import { SongBundle, SongBundle as LocalSongBundle } from "../../../logic/db/models/Songs";
+import { SongBundle, SongBundle as LocalSongBundle } from "../../../logic/db/models/songs/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
@@ -25,7 +25,7 @@ import UrlLink from "../../components/UrlLink";
 import { SongUpdater } from "../../../logic/songs/updater/songUpdater";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 import Db from "../../../logic/db/db";
-import { SongBundleSchema } from "../../../logic/db/models/SongsSchema";
+import { SongBundleSchema } from "../../../logic/db/models/songs/SongsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
 
 type ServerDataType = ServerSongBundle;

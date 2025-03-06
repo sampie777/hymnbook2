@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/Songs";
+import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/songs/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";

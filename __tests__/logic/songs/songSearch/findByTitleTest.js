@@ -1,6 +1,6 @@
 import Db from "../../../../source/logic/db/db";
-import { SongBundleSchema, SongMetadataSchema, SongSchema } from "../../../../source/logic/db/models/SongsSchema";
-import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/Songs";
+import { SongBundleSchema, SongMetadataSchema, SongSchema } from "../../../../source/logic/db/models/songs/SongsSchema";
+import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/songs/Songs";
 import { SongSearch } from "../../../../source/logic/songs/songSearch";
 
 describe("Song search find songs by title", () => {

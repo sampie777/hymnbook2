@@ -8,8 +8,8 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";
 import { useCollectionListener } from "../../../../components/utils";
-import { SongBundle } from "../../../../../logic/db/models/Songs";
-import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
+import { SongBundle } from "../../../../../logic/db/models/songs/Songs";
+import { SongBundleSchema } from "../../../../../logic/db/models/songs/SongsSchema";
 
 interface Props {
   selectedBundleUuids: string[];

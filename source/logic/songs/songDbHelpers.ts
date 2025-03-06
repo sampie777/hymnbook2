@@ -1,7 +1,7 @@
-import { Song, SongBundle, SongMetadata, Verse } from "../db/models/Songs";
+import { Song, SongBundle, SongMetadata, Verse } from "../db/models/songs/Songs";
 import Db from "../db/db";
-import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/SongListModel";
-import { AbcMelody, AbcSubMelody } from "../db/models/AbcMelodies";
+import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/songs/SongListModel";
+import { AbcMelody, AbcSubMelody } from "../db/models/songs/AbcMelodies";
 import { rollbar } from "../rollbar";
 import { sanitizeErrorForRollbar } from "../utils";
 

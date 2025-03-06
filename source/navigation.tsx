@@ -1,4 +1,4 @@
-import { Verse, VerseProps } from "./logic/db/models/Songs";
+import { Verse, VerseProps } from "./logic/db/models/songs/Songs";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 
 export enum VersePickerMethod {

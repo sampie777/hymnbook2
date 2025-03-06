@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
-import { Verse } from "../../../../logic/db/models/Songs";
-import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
+import { Verse } from "../../../../logic/db/models/songs/Songs";
+import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
 import { ABC } from "../../../../logic/songs/abc/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";

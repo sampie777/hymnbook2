@@ -1,14 +1,14 @@
 import { DatabaseProvider } from "./dbProvider";
-import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./models/SongsSchema";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./models/songs/SongsSchema";
 import {
   SongListModelSchema,
   SongListSongModelSchema,
   SongListVerseModelSchema
-} from "./models/SongListModelSchema";
+} from "./models/songs/SongListModelSchema";
 import { SettingPatchSchema, SettingSchema } from "./models/SettingsSchema";
-import { DocumentGroupSchema, DocumentSchema } from "./models/DocumentsSchema";
-import { AbcMelodySchema, AbcSubMelodySchema } from "./models/AbcMelodiesSchema";
-import { SongHistorySchema } from "./models/SongHistorySchema";
+import { DocumentGroupSchema, DocumentSchema } from "./models/documents/DocumentsSchema";
+import { AbcMelodySchema, AbcSubMelodySchema } from "./models/songs/AbcMelodiesSchema";
+import { SongHistorySchema } from "./models/songs/SongHistorySchema";
 import { isTestEnv } from "../utils";
 
 const generatePath = (name: string): string => {

@@ -3,7 +3,7 @@ import { SongProcessor } from "../songProcessor";
 import { SongUpdater } from "./songUpdater";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
-import { SongBundle } from "../../db/models/Songs";
+import { SongBundle } from "../../db/models/songs/Songs";
 
 export namespace SongAutoUpdater {
   export const run = async (

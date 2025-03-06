@@ -1,6 +1,6 @@
 import React from "react";
 import Settings from "../../../../settings";
-import { Song } from "../../../../logic/db/models/Songs";
+import { Song } from "../../../../logic/db/models/songs/Songs";
 import { createHeader } from "../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Animated, StyleSheet } from "react-native";

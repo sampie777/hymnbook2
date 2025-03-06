@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
-import { SongAudio } from "../../../../../../logic/db/models/Songs";
+import { SongAudio } from "../../../../../../logic/db/models/songs/Songs";
 import { readableFileSizeSI } from "../../../../../../logic/utils";
 
 interface Props {

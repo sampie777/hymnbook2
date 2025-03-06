@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
+import { DocumentSchema } from "../../../../logic/db/models/documents/DocumentsSchema";
 import { DocumentRoute, ParamList } from "../../../../navigation";
-import { Document } from "../../../../logic/db/models/Documents";
+import { Document } from "../../../../logic/db/models/documents/Documents";
 import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";

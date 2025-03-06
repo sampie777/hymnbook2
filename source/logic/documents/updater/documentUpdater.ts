@@ -3,8 +3,8 @@ import { Result, sanitizeErrorForRollbar } from "../../utils";
 import { DocumentServer } from "../documentServer";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";
-import { DocumentGroupSchema, DocumentSchema } from "../../db/models/DocumentsSchema";
-import { DocumentGroup } from "../../db/models/Documents";
+import { DocumentGroupSchema, DocumentSchema } from "../../db/models/documents/DocumentsSchema";
+import { DocumentGroup } from "../../db/models/documents/Documents";
 import { DocumentProcessor } from "../documentProcessor";
 import { DocumentUpdaterUtils } from "./documentUpdaterUtils";
 

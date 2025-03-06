@@ -1,5 +1,5 @@
 import React from "react";
-import { Song } from "../../../../../logic/db/models/Songs";
+import { Song } from "../../../../../logic/db/models/songs/Songs";
 import { hasMelodyToShow } from "../../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import { ActivityIndicator, Text, StyleSheet, TouchableOpacity, View } from "react-native";

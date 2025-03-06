@@ -1,8 +1,8 @@
-import { Song, Verse } from "../db/models/Songs";
+import { Song, Verse } from "../db/models/songs/Songs";
 import Db from "../db/db";
-import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/SongListModel";
-import { SongListModelSchema } from "../db/models/SongListModelSchema";
-import { VerseSchema } from "../db/models/SongsSchema";
+import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/songs/SongListModel";
+import { SongListModelSchema } from "../db/models/songs/SongListModelSchema";
+import { VerseSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
 import { SongDbHelpers } from "./songDbHelpers";
 import { isSongValid } from "./utils";

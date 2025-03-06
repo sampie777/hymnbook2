@@ -1,4 +1,4 @@
-import { Verse } from "../../../../source/logic/db/models/Songs";
+import { Verse } from "../../../../source/logic/db/models/songs/Songs";
 import { getNextVerseIndex } from "../../../../source/logic/songs/utils";
 import { mockDb } from "../../../testUtils";
 

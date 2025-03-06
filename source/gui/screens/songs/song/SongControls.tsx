@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SongListSongModel } from "../../../../logic/db/models/SongListModel";
+import { SongListSongModel } from "../../../../logic/db/models/songs/SongListModel";
 import SongList from "../../../../logic/songs/songList";
 import { ParamList, SongRoute } from "../../../../navigation";
 import Settings from "../../../../settings";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import { getNextVerseIndex } from "../../../../logic/songs/utils";
 import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";

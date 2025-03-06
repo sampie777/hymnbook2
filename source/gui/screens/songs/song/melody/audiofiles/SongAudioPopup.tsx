@@ -3,12 +3,12 @@ import { StyleSheet, View, Text, ActivityIndicator, ScrollView } from "react-nat
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import ConfirmationModal from "../../../../../components/popups/ConfirmationModal";
 import AudioItem from "./AudioItem";
-import { Song, SongAudio } from "../../../../../../logic/db/models/Songs";
+import { Song, SongAudio } from "../../../../../../logic/db/models/songs/Songs";
 import { AudioFiles } from "../../../../../../logic/songs/audiofiles/audiofiles";
 import TrackPlayer from "react-native-track-player";
 import { ServerAuth } from "../../../../../../logic/server/auth";
 import { api } from "../../../../../../logic/api";
-import { AbcMelody } from "../../../../../../logic/db/models/AbcMelodies";
+import { AbcMelody } from "../../../../../../logic/db/models/songs/AbcMelodies";
 import { useIsMounted } from "../../../../../components/utils";
 
 interface Props {

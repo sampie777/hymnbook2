@@ -1,5 +1,5 @@
 import Settings from "../../settings";
-import { DocumentGroup, Document } from "../db/models/Documents";
+import { DocumentGroup, Document } from "../db/models/documents/Documents";
 
 export namespace DocumentSearch {
   export const searchForGroups = (groups: Array<DocumentGroup> | null,

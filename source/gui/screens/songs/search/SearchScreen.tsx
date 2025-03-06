@@ -6,7 +6,7 @@ import { getFontScale } from "react-native-device-info";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
 import config from "../../../../config";
-import { Song } from "../../../../logic/db/models/Songs";
+import { Song } from "../../../../logic/db/models/songs/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { isIOS, isPortraitMode } from "../../../../logic/utils";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";

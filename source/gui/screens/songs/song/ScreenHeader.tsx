@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Song } from "../../../../logic/db/models/Songs";
+import { Song } from "../../../../logic/db/models/songs/Songs";
 import { hasVisibleNameForPicker } from "../../../../logic/songs/versePicker";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import HeaderIconVersePicker from "./HeaderIconVersePicker";
