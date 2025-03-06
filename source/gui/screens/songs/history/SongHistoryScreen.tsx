@@ -15,6 +15,13 @@ import {
 } from '../../../../logic/songs/utils';
 import {SearchResultItemBaseComponent} from '../search/SearchResultItemBaseComponent';
 
+type SongHistoryGroupedItem = {
+  songTitle: string;
+  songUuid: string;
+  bundleName: string;
+  timestamp: Date;
+};
+
 const SongHistoryScreen: React.FC<
   NativeStackScreenProps<ParamList, typeof SongHistoryRoute>
 > = ({navigation}) => {
@@ -22,12 +29,7 @@ const SongHistoryScreen: React.FC<
   const [groupedItems, setGroupedItems] = useState<
     {
       title: string;
-      data: {
-        songTitle: string;
-        songUuid: string;
-        bundleName: string;
-        timestamp: Date;
-      }[];
+      data: SongHistoryGroupedItem[];
     }[]
   >([]);
 
@@ -76,12 +78,7 @@ const SongHistoryScreen: React.FC<
       (
         acc: {
           title: string;
-          data: {
-            songTitle: string;
-            songUuid: string;
-            bundleName: string;
-            timestamp: Date;
-          }[];
+          data: SongHistoryGroupedItem[];
         }[],
         item,
       ) => {
@@ -140,16 +137,7 @@ const SongHistoryScreen: React.FC<
     navigation.navigate(SongRoute, {uuid: uuid});
   };
 
-  const renderItem = ({
-    item,
-  }: {
-    item: {
-      songTitle: string;
-      songUuid: string;
-      bundleName: string;
-      timestamp: Date;
-    };
-  }) => (
+  const renderItem = ({item}: {item: SongHistoryGroupedItem}) => (
     <SearchResultItemBaseComponent
       songName={item.songTitle}
       bundleName={item.bundleName}
