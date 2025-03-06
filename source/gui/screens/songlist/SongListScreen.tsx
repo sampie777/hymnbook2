@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, Text, View } from "react-native";
+import { BackHandler, FlatList, StyleSheet, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
-import { Verse } from "../../../logic/db/models/Songs";
+import { Verse } from "../../../logic/db/models/songs/Songs";
 import { ParamList, SongListRoute, SongRoute } from "../../../navigation";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../logic/songs/songList";
-import { SongListSongModel } from "../../../logic/db/models/SongListModel";
-import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
+import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
+import { SongListModelSchema } from "../../../logic/db/models/songs/SongListModelSchema";
 import { isSongValid, isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import SongItem from "./SongItem";
@@ -122,13 +122,13 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       if (!isSongValid(item.song)) return null;
 
       return <SongItem index={item.index}
-              songListSong={item}
-              onPress={onItemPress}
-              onLongPress={onItemLongPress}
-              onDeleteButtonPress={onItemDeleteButtonPress}
-              showDeleteButton={isDeleteMode}
-              showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
-  }
+                       songListSong={item}
+                       onPress={onItemPress}
+                       onLongPress={onItemLongPress}
+                       onDeleteButtonPress={onItemDeleteButtonPress}
+                       showDeleteButton={isDeleteMode}
+                       showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
+    }
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
 
@@ -145,7 +145,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
           contentContainerStyle={styles.songList}
           ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
           ListEmptyComponent={<SongListInstructions navigation={navigation} />}
-          importantForAccessibility={list.length > 0 ? undefined : "no"}/>
+          importantForAccessibility={list.length > 0 ? undefined : "no"} />
       </View>
     );
   };

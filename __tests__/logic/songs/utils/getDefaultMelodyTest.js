@@ -1,6 +1,6 @@
 import { getDefaultMelody } from "../../../../source/logic/songs/utils";
-import { Song } from "../../../../source/logic/db/models/Songs";
-import { AbcMelody } from "../../../../source/logic/db/models/AbcMelodies";
+import { Song } from "../../../../source/logic/db/models/songs/Songs";
+import { AbcMelody } from "../../../../source/logic/db/models/songs/AbcMelodies";
 
 describe("test getting default melody for song", () => {
   const melody1 = new AbcMelody("Default", "", "", [], 1);

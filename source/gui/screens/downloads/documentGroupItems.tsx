@@ -1,5 +1,5 @@
 import React from "react";
-import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
+import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { languageAbbreviationToFullName } from "../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";

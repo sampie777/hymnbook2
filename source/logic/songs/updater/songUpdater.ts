@@ -3,7 +3,7 @@ import { sanitizeErrorForRollbar } from "../../utils";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";
 import { Server } from "../../server/server";
-import { SongBundle } from "../../db/models/Songs";
+import { SongBundle } from "../../db/models/songs/Songs";
 import { SongUpdaterUtils } from "./songUpdaterUtils";
 
 export namespace SongUpdater {

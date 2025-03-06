@@ -1,6 +1,7 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { useAppContext } from "../../components/providers/AppContextProvider";
 
 interface MenuItemProps {
   text: string;
@@ -8,6 +9,7 @@ interface MenuItemProps {
   onPress?: () => void;
   hasNotification?: boolean;
   statusIcon?: React.ReactNode;
+  isDeveloperOnly?: boolean;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
@@ -16,9 +18,15 @@ const MenuItem: React.FC<MenuItemProps> = ({
                                              onPress,
                                              hasNotification,
                                              statusIcon,
+                                             isDeveloperOnly,
                                            }) => {
   const styles = createStyles(useTheme());
-  return (<TouchableOpacity onPress={onPress} style={styles.container}>
+  const appContext = useAppContext();
+
+  if (isDeveloperOnly && !appContext.developerMode) return null;
+
+  return <TouchableOpacity onPress={onPress}
+                           style={[styles.container, isDeveloperOnly ? styles.containerDeveloperMode : {}]}>
     <View style={styles.iconContainer}>
       {icon?.(styles.icon)}
       {!hasNotification ? null : <View style={styles.badge}></View>}
@@ -28,7 +36,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       {text}
     </Text>
     {statusIcon}
-  </TouchableOpacity>);
+  </TouchableOpacity>
 };
 
 export default MenuItem;
@@ -42,6 +50,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     paddingLeft: 15,
     paddingRight: 15,
+  },
+  containerDeveloperMode: {
+    backgroundColor: "rgba(255,73,0,0.23)"
   },
   title: {
     flex: 1,

@@ -1,7 +1,7 @@
 import {DocumentProcessor} from "../../../source/logic/documents/documentProcessor";
 import Db from "../../../source/logic/db/db";
-import {DocumentGroupSchema, DocumentSchema} from "../../../source/logic/db/models/DocumentsSchema";
-import {Document, DocumentGroup} from "../../../source/logic/db/models/Documents";
+import {DocumentGroupSchema, DocumentSchema} from "../../../source/logic/db/models/documents/DocumentsSchema";
+import {Document, DocumentGroup} from "../../../source/logic/db/models/documents/Documents";
 import {
   Document as ServerDocument,
   DocumentGroup as ServerDocumentGroup,

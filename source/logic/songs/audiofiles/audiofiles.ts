@@ -1,4 +1,4 @@
-import { Song, SongAudio } from "../../db/models/Songs";
+import { Song, SongAudio } from "../../db/models/songs/Songs";
 import { Server } from "../../server/server";
 import TrackPlayer, { AppKilledPlaybackBehavior, Capability, RepeatMode } from "react-native-track-player";
 import { rollbar } from "../../rollbar";

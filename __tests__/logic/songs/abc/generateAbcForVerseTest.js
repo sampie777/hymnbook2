@@ -1,5 +1,5 @@
-import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
-import { Verse } from "../../../../source/logic/db/models/Songs";
+import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/songs/AbcMelodies";
+import { Verse } from "../../../../source/logic/db/models/songs/Songs";
 import { ABC } from "../../../../source/logic/songs/abc/abc";
 import { mockDb } from "../../../testUtils";
 

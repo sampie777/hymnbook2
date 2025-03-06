@@ -1,5 +1,5 @@
 import React from "react";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import VerseSummary from "./VerseSummary";
 

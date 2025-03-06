@@ -3,24 +3,19 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { rollbar } from "../../../../../logic/rollbar";
 import { generateSongTitle, loadSongWithUuidOrId } from "../../../../../logic/songs/utils";
 import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
-import { Verse, VerseProps } from "../../../../../logic/db/models/Songs";
+import { Verse, VerseProps } from "../../../../../logic/db/models/songs/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
   cleanSelectedVerses,
   clearOrSelectAll,
-  getMarginForVerses, hasVisibleNameForPicker,
+  getMarginForVerses,
+  hasVisibleNameForPicker,
   isVerseInList,
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
 import { RectangularInset } from "../../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  useWindowDimensions, Alert
-} from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
@@ -46,7 +41,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       headerRight: () => <HeaderIconButton icon={"check"}
                                            onPress={submit}
                                            hitSlop={RectangularInset(10)}
-                                           accessibilityLabel={"Done"}/>
+                                           accessibilityLabel={"Done"} />
     });
   }, [selectedVerses]);
 

@@ -15,11 +15,11 @@ interface Props {
 }
 
 const SongSearchTutorialButtons: React.FC<Props> = ({
-                                               hasPressedAnItem, setHasPressedAnItem,
-                                               hasLongPressedAnItem, setHasLongPressedAnItem,
-                                               hasAddedAnItem, setHasAddedAnItem,
-                                               hasLongAddedAnItem, setHasLongAddedAnItem,
-                                             }) => {
+                                                      hasPressedAnItem, setHasPressedAnItem,
+                                                      hasLongPressedAnItem, setHasLongPressedAnItem,
+                                                      hasAddedAnItem, setHasAddedAnItem,
+                                                      hasLongAddedAnItem, setHasLongAddedAnItem,
+                                                    }) => {
   const onItemPress = () => {
     setHasPressedAnItem(true);
     let message = "You opened a song!";
@@ -60,12 +60,12 @@ const SongSearchTutorialButtons: React.FC<Props> = ({
 
   return <View style={styles.container}>
     {getFontScaleSync() > 1.5 ? null :  // Don't show this button when there's probably no space, as the FlatList/ScrollView doesn't work in the react-native-onboarding-swiper
-    <SearchResultItemBaseComponent songName={"Psalm 57"}
-                                   bundleName={hasPressedAnItem ? "Try pressing the + button!" : "Try pressing me!"}
-                                   onItemPress={onItemPress}
-                                   onItemLongPress={onItemLongPress}
-                                   onAddPress={onAddPress}
-                                   onAddLongPress={onAddLongPress} />
+      <SearchResultItemBaseComponent songName={"Psalm 57"}
+                                     bundleName={hasPressedAnItem ? "Try pressing the + button!" : "Try pressing me!"}
+                                     onItemPress={onItemPress}
+                                     onItemLongPress={onItemLongPress}
+                                     onAddPress={onAddPress}
+                                     onAddLongPress={onAddLongPress} />
     }
     <SearchResultItemBaseComponent songName={"Song 57"}
                                    bundleName={hasLongPressedAnItem ? "Try long pressing the + button!" : "Try long pressing me!"}

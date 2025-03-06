@@ -1,7 +1,7 @@
 import Db from "../../../../source/logic/db/db";
-import { Song, SongBundle } from "../../../../source/logic/db/models/Songs";
-import { AbcMelody } from "../../../../source/logic/db/models/AbcMelodies";
-import { SongBundleSchema } from "../../../../source/logic/db/models/SongsSchema";
+import { Song, SongBundle } from "../../../../source/logic/db/models/songs/Songs";
+import { AbcMelody } from "../../../../source/logic/db/models/songs/AbcMelodies";
+import { SongBundleSchema } from "../../../../source/logic/db/models/songs/SongsSchema";
 import { SongUpdaterUtils } from "../../../../source/logic/songs/updater/songUpdaterUtils";
 
 describe("copy user settings during songbundle update", () => {

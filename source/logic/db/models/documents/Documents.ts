@@ -1,4 +1,4 @@
-import Db from "../db";
+import Db from "../../db";
 import { DocumentGroupSchema, DocumentSchema } from "./DocumentsSchema";
 
 export class Document {
@@ -133,7 +133,7 @@ export class DocumentGroup {
       !options.includeChildren ? [] :
         obj.groups?.map(it => DocumentGroup.clone(it, { ...options, includeParent: false })) ?? [],
       !options.includeChildren ? [] :
-        obj.items?.map(it => Document.clone(it, {includeParent: false})) ?? [],
+        obj.items?.map(it => Document.clone(it, { includeParent: false })) ?? [],
       obj.createdAt,
       obj.modifiedAt,
       obj.uuid,

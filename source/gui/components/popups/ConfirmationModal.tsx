@@ -1,14 +1,14 @@
 import React from "react";
 import {
   Modal,
-  StyleSheet,
-  View,
-  Text,
   Pressable,
-  TouchableOpacity,
   ScrollView,
   StyleProp,
-  TextStyle
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";

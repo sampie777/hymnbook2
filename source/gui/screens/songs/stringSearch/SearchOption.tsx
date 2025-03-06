@@ -14,7 +14,7 @@ const SearchOption: React.FC<Props> = ({ title, active, onPress }) => {
 
   return <TouchableOpacity style={[styles.container, (active ? styles.containerActive : {})]}
                            onPress={onPress}
-                           hitSlop={{top: 13, bottom: 13,}}>
+                           hitSlop={{ top: 13, bottom: 13, }}>
     <Text style={[styles.title, (active ? styles.titleActive : {})]}
           importantForAccessibility={"auto"}>
       {title}

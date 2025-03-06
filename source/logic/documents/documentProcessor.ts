@@ -1,9 +1,9 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import { Result, sanitizeErrorForRollbar } from "../utils";
-import { DocumentGroup } from "../db/models/Documents";
+import { DocumentGroup } from "../db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../server/models/Documents";
-import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
+import { DocumentGroupSchema } from "../db/models/documents/DocumentsSchema";
 import { DocumentDbHelpers } from "./documentDbHelpers";
 
 export namespace DocumentProcessor {
