@@ -2,13 +2,17 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import {
-  FlatList, Gesture, GestureDetector,
+  FlatList,
+  Gesture,
+  GestureDetector,
   GestureEvent,
-  PinchGestureHandler, PinchGestureHandlerEventPayload,
+  PinchGestureHandler,
+  PinchGestureHandlerEventPayload,
   State
 } from "react-native-gesture-handler";
 import ReAnimated, {
-  Easing as ReAnimatedEasing, runOnJS,
+  Easing as ReAnimatedEasing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming
@@ -22,11 +26,20 @@ import {
   calculateVerseHeight,
   generateSongTitle,
   getDefaultMelody,
-  loadSongWithUuidOrId, storeLastUsedMelody
+  loadSongWithUuidOrId,
+  storeLastUsedMelody
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { Alert, Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
-import { StyleSheet, View, ViewToken } from "react-native";
+import {
+  Alert,
+  Animated,
+  BackHandler,
+  FlatList as NativeFlatList,
+  LayoutChangeEvent,
+  StyleSheet,
+  View,
+  ViewToken
+} from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
@@ -40,8 +53,8 @@ import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
-import useHistory from "../../../../logic/songs/history/useHistory";
 import { ViewabilityConfigCallbackPairs } from "@react-native/virtualized-lists/Lists/VirtualizedList";
+import { useSongHistory } from "../../../components/providers/SongHistoryProvider";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -58,10 +71,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
+  const history = useSongHistory();
 
   const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
-  const [viewIndexForHistory, setViewIndexForHistory] = useState(0);
   const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
@@ -76,8 +89,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
-
-  useHistory(song, viewIndexForHistory, route.params.selectedVerses);
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>
@@ -105,10 +116,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
+    history.setSong(undefined);
   };
 
   useEffect(() => {
     verseHeights.current = {};
+    history.setSong(song);
 
     // If song is undefined, we're probably leaving this screen,
     // so we can ignore state and animation updates.
@@ -187,6 +200,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const loadSong = () => {
     const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
     setSong(dbSong ? Song.clone(dbSong, { includeVerses: true }) : undefined);
+    history.setSong(song);
 
     if (!dbSong) {
       Alert.alert("Song could not be found", "This probably happened because the database was updated. Try re-opening the song.")
@@ -296,9 +310,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const onListViewableItemsChangedForHistory = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
       if (viewableItems.length === 0) {
-        setViewIndexForHistory(-1);
+        history.setIndex(-1);
       } else if (viewableItems[0].index !== null) {
-        setViewIndexForHistory(viewableItems[0].index);
+        history.setIndex(viewableItems[0].index);
       }
     });
 
