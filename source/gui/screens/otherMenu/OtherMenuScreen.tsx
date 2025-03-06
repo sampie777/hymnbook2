@@ -6,7 +6,8 @@ import { shareApp } from "../../../logic/utils";
 import { Survey } from "../../../logic/survey";
 import {
   AboutRoute,
-  DatabasesRoute, DocumentHistoryRoute,
+  DatabasesRoute,
+  DocumentHistoryRoute,
   OtherMenuRoute,
   ParamList,
   SettingsRoute,

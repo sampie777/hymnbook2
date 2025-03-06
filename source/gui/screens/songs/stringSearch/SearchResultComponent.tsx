@@ -22,15 +22,15 @@ interface Props {
 }
 
 const SearchResultComponent: React.FC<Props> = memo(({
-                                                  navigation,
-                                                  song,
-                                                  searchRegex,
-                                                  showSongBundle,
-                                                  disable = false,
-                                                  isTitleMatch = false,
-                                                  isMetadataMatch = false,
-                                                  isVerseMatch = false
-                                                }) => {
+                                                       navigation,
+                                                       song,
+                                                       searchRegex,
+                                                       showSongBundle,
+                                                       disable = false,
+                                                       isTitleMatch = false,
+                                                       isMetadataMatch = false,
+                                                       isVerseMatch = false
+                                                     }) => {
   const styles = createStyles(useTheme());
   if (!isSongValid(song)) return null;
 

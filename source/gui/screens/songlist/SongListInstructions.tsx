@@ -14,9 +14,8 @@ const SongListInstructions: React.FC<Props> = ({ navigation }) => {
   const styles = createStyles(useTheme());
 
   return <View style={styles.container}>
-    <Text style={styles.text}>Go to the {"  "}<Icon name="music" style={styles.screenIcon} />{"  "} songs screen, search for a
-      song and
-      tap (or hold) the following button to add it to this list:</Text>
+    <Text style={styles.text}>Go to the {"  "}<Icon name="music" style={styles.screenIcon} />{"  "} songs screen, search
+      for a song and tap (or hold) the following button to add it to this list:</Text>
     <SearchResultItemAddButton onPress={() => navigation.navigate(SongSearchRoute)} />
   </View>;
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Document} from '../../../../logic/db/models/documents/Documents';
+import { Document } from '../../../../logic/db/models/documents/Documents';
 import DocumentItemBaseComponent from './DocumentItemBaseComponent';
 
 interface ScreenProps {
@@ -9,10 +9,10 @@ interface ScreenProps {
 }
 
 const DocumentItem: React.FC<ScreenProps> = ({
-  document,
-  onPress,
-  searchText,
-}) => {
+                                               document,
+                                               onPress,
+                                               searchText,
+                                             }) => {
   const hasSearchText = searchText !== undefined && searchText.length > 0;
 
   return (

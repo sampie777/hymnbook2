@@ -1,14 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, SectionList, StyleSheet, Text, View} from 'react-native';
-import {
-  ThemeContextProps,
-  useTheme,
-} from '../../../components/providers/ThemeProvider';
-import {DocumentHistory} from '../../../../logic/db/models/documents/DocumentHistory';
-import {DocumentHistorySchema} from '../../../../logic/db/models/documents/DocumentHistorySchema';
-import {ParamList, DocumentHistoryRoute, DocumentRoute} from '../../../../navigation';
+import React, { useEffect, useState } from 'react';
+import { Alert, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
+import { DocumentHistory } from '../../../../logic/db/models/documents/DocumentHistory';
+import { DocumentHistorySchema } from '../../../../logic/db/models/documents/DocumentHistorySchema';
+import { DocumentHistoryRoute, DocumentRoute, ParamList } from '../../../../navigation';
 import Db from '../../../../logic/db/db';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { loadDocumentWithUuidOrId } from "../../../../logic/documents/utils";
 import DocumentItemBaseComponent from "../search/DocumentItemBaseComponent";
 
@@ -26,7 +23,7 @@ type Section = {
 
 const DocumentHistoryScreen: React.FC<
   NativeStackScreenProps<ParamList, typeof DocumentHistoryRoute>
-> = ({navigation}) => {
+> = ({ navigation }) => {
   const styles = createStyles(useTheme());
   const [groupedItems, setGroupedItems] = useState<Section[]>([]);
 
@@ -120,10 +117,10 @@ const DocumentHistoryScreen: React.FC<
       return;
     }
 
-    navigation.navigate(DocumentRoute, {uuid: uuid});
+    navigation.navigate(DocumentRoute, { uuid: uuid });
   };
 
-  const renderItem = ({item}: {item: DocumentHistoryGroupedItem}) => (
+  const renderItem = ({ item }: { item: DocumentHistoryGroupedItem }) => (
     <DocumentItemBaseComponent
       documentName={item.documentTitle}
       parentName={item.path}
@@ -131,7 +128,7 @@ const DocumentHistoryScreen: React.FC<
     />
   );
 
-  const renderSectionHeader = ({section}: {section: Section}) => (
+  const renderSectionHeader = ({ section }: { section: Section }) => (
     <View style={styles.headerContainer}>
       <Text style={styles.headerText}>{section.title}</Text>
     </View>
@@ -141,7 +138,7 @@ const DocumentHistoryScreen: React.FC<
     <View style={styles.container}>
       <SectionList
         sections={groupedItems}
-        renderItem={({item}) => renderItem({item})}
+        renderItem={({ item }) => renderItem({ item })}
         renderSectionHeader={renderSectionHeader}
         keyExtractor={item => item.timestamp.toString()}
       />
@@ -151,7 +148,7 @@ const DocumentHistoryScreen: React.FC<
 
 export default DocumentHistoryScreen;
 
-const createStyles = ({colors, fontFamily}: ThemeContextProps) =>
+const createStyles = ({ colors, fontFamily }: ThemeContextProps) =>
   StyleSheet.create({
     container: {
       flex: 1,

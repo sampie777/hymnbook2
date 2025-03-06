@@ -1,25 +1,25 @@
 import { useEffect, useRef } from "react";
-import {Document} from '../../db/models/documents/Documents';
+import { Document } from '../../db/models/documents/Documents';
 import config from "../../../config";
 import { DocumentHistoryController } from "./documentHistoryController";
 
 const useHistory = (
-  document: Document | undefined= undefined,
+  document: Document | undefined = undefined,
 ) => {
   const previousDocument = useRef<Document | undefined>();
   const startTime = useRef<Date | undefined>();
 
   useEffect(() => {
     checkViewTime();
-    
+
     // Update values
-    previousDocument.current = document ? Document.clone(document, {includeParent: true}): undefined;
-    
+    previousDocument.current = document ? Document.clone(document, { includeParent: true }) : undefined;
+
     return () => {
       checkViewTime();
     }
   }, [document?.uuid]);
-  
+
   useEffect(() => () => checkViewTime(), []);
 
   const checkViewTime = () => {

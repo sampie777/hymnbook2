@@ -1,7 +1,7 @@
 import React from "react";
 import { DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 
@@ -11,7 +11,11 @@ interface ScreenProps<T extends DocumentGroup> {
   searchText?: string;
 }
 
-const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<DocumentGroup>>> = ({ group, onPress, searchText }) => {
+const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<DocumentGroup>>> = ({
+                                                                                                 group,
+                                                                                                 onPress,
+                                                                                                 searchText
+                                                                                               }) => {
   const styles = createStyles(useTheme());
 
   return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>

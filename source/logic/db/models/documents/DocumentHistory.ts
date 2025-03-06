@@ -1,5 +1,5 @@
 import Db from '../../db';
-import {DocumentHistorySchema} from './DocumentHistorySchema';
+import { DocumentHistorySchema } from './DocumentHistorySchema';
 
 export class DocumentHistory {
   id: number;

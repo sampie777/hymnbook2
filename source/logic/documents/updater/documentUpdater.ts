@@ -1,5 +1,5 @@
 import { DocumentGroup as ServerDocumentGroup } from "../../server/models/Documents";
-import { Result, sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils";
 import { DocumentServer } from "../documentServer";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";
@@ -58,7 +58,7 @@ export namespace DocumentUpdater {
   const updateAndSaveDocumentGroup = (group: ServerDocumentGroup) => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot update documents: document database is not connected");
-      throw new Error ("Database is not connected");
+      throw new Error("Database is not connected");
     }
 
     if (group.items == null && group.groups == null) {

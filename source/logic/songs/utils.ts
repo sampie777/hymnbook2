@@ -1,6 +1,6 @@
 import Db from "../db/db";
 import config from "../../config";
-import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/songs/Songs";
+import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/songs/Songs";
 import { SongSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
@@ -45,7 +45,7 @@ export const getVerseShortName = (name: string): string => name.trim()
   .replace(/(end|slot|outro) */gi, "E");
 
 // Creates string like "1-3, 5" or "1, 2, 5" or similar based on the selected verses
-function generateSongTitleVersesString(selectedVerses: {name: string}[]) {
+function generateSongTitleVersesString(selectedVerses: { name: string }[]) {
   const onlyVerses = selectedVerses
     .filter(it => /verse/i.test(it.name))
     .map(it => it.name.replace(/verse */gi, ""));
@@ -128,7 +128,7 @@ export const generateSongTitle = (song?: {
                                     name: string,
                                     verses: Verse[],
                                   },
-                                  selectedVerses?: {name: string}[]): string => {
+                                  selectedVerses?: { name: string }[]): string => {
   if (song == null) {
     return "";
   }

@@ -1,12 +1,9 @@
-import {Song, SongBundle, Verse} from '../../db/models/songs/Songs';
-import {
-  SongHistory,
-  SongHistoryAction,
-} from '../../db/models/songs/SongHistory';
+import { Song, SongBundle, Verse } from '../../db/models/songs/Songs';
+import { SongHistory, SongHistoryAction, } from '../../db/models/songs/SongHistory';
 import Db from '../../db/db';
-import {SongHistorySchema} from '../../db/models/songs/SongHistorySchema';
-import {rollbar} from '../../rollbar';
-import {sanitizeErrorForRollbar} from '../../utils';
+import { SongHistorySchema } from '../../db/models/songs/SongHistorySchema';
+import { rollbar } from '../../rollbar';
+import { sanitizeErrorForRollbar } from '../../utils';
 
 export namespace SongHistoryController {
   export const pushVerse = (
@@ -109,7 +106,7 @@ export namespace SongHistoryController {
             _songBundles: undefined,
             _songBundle: undefined,
           },
-          bundle: {...bundle, songs: undefined},
+          bundle: { ...bundle, songs: undefined },
         },
       );
     }
@@ -160,7 +157,7 @@ export namespace SongHistoryController {
           _songBundles: undefined,
           _songBundle: undefined,
         },
-        bundle: {...bundle, songs: undefined},
+        bundle: { ...bundle, songs: undefined },
       });
     }
   };

@@ -46,7 +46,7 @@ export namespace DocumentDbPatch {
   const removeDocumentObjectsWithoutParents = () => {
     removeObjectsWithoutParents(Db.documents,
       [
-        { schemaName: DocumentGroupSchema.name, parentLink: '_parent', extraQuery: 'AND isRoot = false'},
+        { schemaName: DocumentGroupSchema.name, parentLink: '_parent', extraQuery: 'AND isRoot = false' },
         { schemaName: DocumentSchema.name, parentLink: '_parent', },
       ]);
   }

@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   Animated as RNAnimated,
-  StyleSheet,
-  NativeSyntheticEvent,
+  GestureResponderEvent,
   NativeScrollEvent,
-  GestureResponderEvent, View,
-  ScrollView as NativeScrollView, Alert
+  NativeSyntheticEvent,
+  ScrollView as NativeScrollView,
+  StyleSheet,
+  View
 } from "react-native";
 import Settings from "../../../../settings";
 import { rollbar } from "../../../../logic/rollbar";
@@ -16,7 +18,11 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { isIOS, keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import {
-  GestureEvent, PinchGestureHandler, PinchGestureHandlerEventPayload, ScrollView as GestureScrollView, State
+  GestureEvent,
+  PinchGestureHandler,
+  PinchGestureHandlerEventPayload,
+  ScrollView as GestureScrollView,
+  State
 } from "react-native-gesture-handler";
 import Animated, {
   Easing,

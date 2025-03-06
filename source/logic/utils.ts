@@ -20,12 +20,12 @@ export class Result<T = any> {
   data?: T;
 
   constructor({ success, message, error, data }:
-                {
-                  success: boolean,
-                  message?: string,
-                  error?: Error,
-                  data?: T,
-                }) {
+              {
+                success: boolean,
+                message?: string,
+                error?: Error,
+                data?: T,
+              }) {
     this.success = success;
     this.message = message;
     this.error = error;
