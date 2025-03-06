@@ -1,5 +1,5 @@
 import { SongBundle as ServerSongBundle } from "../../../../source/logic/server/models/ServerSongsModel";
-import { SongBundle } from "../../../../source/logic/db/models/Songs";
+import { SongBundle } from "../../../../source/logic/db/models/songs/Songs";
 import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
 import { mockDb } from "../../../testUtils";
 

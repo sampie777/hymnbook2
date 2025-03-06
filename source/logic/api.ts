@@ -1,6 +1,6 @@
 import { ServerAuth } from "./server/auth";
 import { databaseHost, hymnbookHost } from "../../app.json";
-import { Song, SongAudio } from "./db/models/Songs";
+import { Song, SongAudio } from "./db/models/songs/Songs";
 import Settings from "../settings";
 import fetchBuilder from "fetch-retry";
 import config from "../config";

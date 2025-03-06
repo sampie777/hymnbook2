@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { SongBundle } from "../../../../../logic/db/models/Songs";
+import { SongBundle } from "../../../../../logic/db/models/songs/Songs";
 import Db from "../../../../../logic/db/db";
 import { rollbar } from "../../../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
-import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
+import { SongBundleSchema } from "../../../../../logic/db/models/songs/SongsSchema";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";
 

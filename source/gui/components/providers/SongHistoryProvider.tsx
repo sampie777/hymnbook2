@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useState } from "react";
-import { Song } from "../../../logic/db/models/Songs";
-import { SongHistoryAction } from "../../../logic/db/models/SongHistory";
+import { Song } from "../../../logic/db/models/songs/Songs";
+import { SongHistoryAction } from "../../../logic/db/models/songs/SongHistory";
 import useHistory from "../../../logic/songs/history/useHistory";
 
 export interface SongHistoryProviderProps {

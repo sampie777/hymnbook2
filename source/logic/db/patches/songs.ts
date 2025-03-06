@@ -1,12 +1,12 @@
 import Db from "../db";
-import { SongBundle } from "../models/Songs";
-import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../models/SongsSchema";
+import { SongBundle } from "../models/songs/Songs";
+import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../models/songs/SongsSchema";
 import { SongProcessor } from "../../songs/songProcessor";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
-import { AbcMelodySchema } from "../models/AbcMelodiesSchema";
+import { AbcMelodySchema } from "../models/songs/AbcMelodiesSchema";
 import { removeObjectsWithoutParents } from "./utils";
-import { SongListSongModelSchema, SongListVerseModelSchema } from "../models/SongListModelSchema";
+import { SongListSongModelSchema, SongListVerseModelSchema } from "../models/songs/SongListModelSchema";
 
 export namespace SongDbPatch {
   /**

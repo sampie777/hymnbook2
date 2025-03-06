@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Db from "../../../logic/db/db";
-import { SongListModelSchema } from "../../../logic/db/models/SongListModelSchema";
+import { SongListModelSchema } from "../../../logic/db/models/songs/SongListModelSchema";
 import SongList from "../../../logic/songs/songList";
 import Settings from "../../../settings";
 import { objectToArrayIfNotAlready, sanitizeErrorForRollbar } from "../../../logic/utils";

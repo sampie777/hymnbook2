@@ -1,7 +1,7 @@
-import { Document, DocumentGroup } from "../db/models/Documents";
+import { Document, DocumentGroup } from "../db/models/documents/Documents";
 import Db from "../db/db";
 import { rollbar } from "../rollbar";
-import { DocumentGroupSchema } from "../db/models/DocumentsSchema";
+import { DocumentGroupSchema } from "../db/models/documents/DocumentsSchema";
 import { sanitizeErrorForRollbar } from "../utils";
 
 export const getParentForDocumentGroup = (group: DocumentGroup): (DocumentGroup & Realm.Object<DocumentGroup>) | null => {

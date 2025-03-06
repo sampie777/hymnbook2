@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
 import Db from "../../../logic/db/db";
 import { ParamList, TutorialRoute } from "../../../navigation";
-import { SongSchema } from "../../../logic/db/models/SongsSchema";
+import { SongSchema } from "../../../logic/db/models/songs/SongsSchema";
 import { Survey } from "../../../logic/survey";
 import { StyleSheet, View } from "react-native";
 import SurveyModal from "./SurveyModal";

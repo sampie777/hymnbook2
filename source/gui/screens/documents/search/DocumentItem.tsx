@@ -1,5 +1,5 @@
 import React from "react";
-import { Document } from "../../../../logic/db/models/Documents";
+import { Document } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 

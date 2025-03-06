@@ -1,6 +1,6 @@
 import Db from "../db/db";
-import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/Songs";
-import { SongBundleSchema, SongSchema } from "../db/models/SongsSchema";
+import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/songs/Songs";
+import { SongBundleSchema, SongSchema } from "../db/models/songs/SongsSchema";
 import { InterruptedError } from "../InterruptedError";
 import config from "../../config";
 

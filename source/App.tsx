@@ -23,7 +23,7 @@ import {
   SongRoute, SongSearchRoute, SongStringSearchRoute, TutorialRoute,
   VersePickerRoute
 } from "./navigation";
-import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
+import { SongListModelSchema } from "./logic/db/models/songs/SongListModelSchema";
 import { ServerAuth } from "./logic/server/auth";
 import {
   closeDatabases,

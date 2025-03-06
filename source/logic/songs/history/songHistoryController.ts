@@ -1,7 +1,7 @@
-import { Song, SongBundle, Verse } from "../../db/models/Songs";
-import { SongHistory, SongHistoryAction } from "../../db/models/SongHistory";
+import { Song, SongBundle, Verse } from "../../db/models/songs/Songs";
+import { SongHistory, SongHistoryAction } from "../../db/models/songs/SongHistory";
 import Db from "../../db/db";
-import { SongHistorySchema } from "../../db/models/SongHistorySchema";
+import { SongHistorySchema } from "../../db/models/songs/SongHistorySchema";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
 

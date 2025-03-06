@@ -1,4 +1,4 @@
-import Db from "../db";
+import Db from "../../db";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "./SongsSchema";
 import { AbcMelody } from "./AbcMelodies";
 

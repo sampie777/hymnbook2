@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import { Song } from "../../db/models/Songs";
+import { Song } from "../../db/models/songs/Songs";
 import config from "../../../config";
 import { SongHistoryController } from "./songHistoryController";
-import { SongHistoryAction } from "../../db/models/SongHistory";
+import { SongHistoryAction } from "../../db/models/songs/SongHistory";
 
 const useHistory = (
   song: Song | undefined = undefined,

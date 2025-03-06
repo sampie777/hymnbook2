@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { rollbar } from "../../../../../logic/rollbar";
 import { generateSongTitle, loadSongWithUuidOrId } from "../../../../../logic/songs/utils";
 import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
-import { Verse, VerseProps } from "../../../../../logic/db/models/Songs";
+import { Verse, VerseProps } from "../../../../../logic/db/models/songs/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
   cleanSelectedVerses,

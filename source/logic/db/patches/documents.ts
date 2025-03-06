@@ -1,8 +1,8 @@
 import Db from "../db";
 import { rollbar } from "../../rollbar";
 import { sanitizeErrorForRollbar } from "../../utils";
-import { DocumentGroup } from "../models/Documents";
-import { DocumentGroupSchema, DocumentSchema } from "../models/DocumentsSchema";
+import { DocumentGroup } from "../models/documents/Documents";
+import { DocumentGroupSchema, DocumentSchema } from "../models/documents/DocumentsSchema";
 import { DocumentProcessor } from "../../documents/documentProcessor";
 import { removeObjectsWithoutParents } from "./utils";
 

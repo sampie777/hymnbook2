@@ -4,8 +4,8 @@ import {
   ThemeContextProps,
   useTheme,
 } from '../../../components/providers/ThemeProvider';
-import {SongHistory} from '../../../../logic/db/models/SongHistory';
-import {SongHistorySchema} from '../../../../logic/db/models/SongHistorySchema';
+import {SongHistory} from '../../../../logic/db/models/songs/SongHistory';
+import {SongHistorySchema} from '../../../../logic/db/models/songs/SongHistorySchema';
 import {ParamList, SongHistoryRoute, SongRoute} from '../../../../navigation';
 import db from '../../../../logic/db/db';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';

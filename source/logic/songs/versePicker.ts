@@ -1,5 +1,5 @@
 import { ScaledSize } from "react-native";
-import { VerseProps } from "../db/models/Songs";
+import { VerseProps } from "../db/models/songs/Songs";
 
 export interface getMarginForVersesConfig {
   minMargin?: number;

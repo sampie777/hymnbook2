@@ -1,4 +1,4 @@
-import Db from "../db";
+import Db from "../../db";
 import { DocumentGroupSchema, DocumentSchema } from "./DocumentsSchema";
 
 export class Document {

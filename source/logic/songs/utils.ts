@@ -1,10 +1,10 @@
 import Db from "../db/db";
 import config from "../../config";
-import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
-import { SongSchema } from "../db/models/SongsSchema";
+import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/songs/Songs";
+import { SongSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
-import { AbcMelody } from "../db/models/AbcMelodies";
+import { AbcMelody } from "../db/models/songs/AbcMelodies";
 import { distance } from "fastest-levenshtein";
 
 export enum VerseType {

@@ -19,9 +19,9 @@ import ReAnimated, {
 } from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
-import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/AbcMelodies";
+import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import {
   calculateVerseHeight,
   generateSongTitle,

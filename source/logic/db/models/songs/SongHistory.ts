@@ -1,4 +1,4 @@
-import Db from "../db";
+import Db from "../../db";
 import { SongHistorySchema } from "./SongHistorySchema";
 
 export enum SongHistoryAction {
