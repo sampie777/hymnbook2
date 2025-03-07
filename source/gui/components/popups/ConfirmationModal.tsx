@@ -1,5 +1,15 @@
 import React from "react";
-import { Modal, StyleSheet, View, Text, Pressable, TouchableOpacity, ScrollView } from "react-native";
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View
+} from "react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { RectangularInset } from "../utils";
@@ -16,6 +26,7 @@ interface ComponentProps {
   message?: string;
   showCloseButton?: boolean;
   children?: React.ReactNode;
+  confirmationStyle?: StyleProp<TextStyle>;
 }
 
 const ConfirmationModal: React.FC<ComponentProps> = ({
@@ -29,7 +40,8 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                                                        title,
                                                        message,
                                                        showCloseButton = false,
-                                                       children
+                                                       children,
+                                                       confirmationStyle,
                                                      }) => {
   const styles = createStyles(useTheme());
   if (onDeny === undefined) {
@@ -46,14 +58,15 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <View style={styles.modalHeader}>
-            {!showCloseButton ? undefined : <View style={styles.headerCloseButton} />}
+            {!showCloseButton ? <View /> : <View style={styles.headerCloseButton} />}
 
             <Text style={styles.modalTitle}>{title}</Text>
 
-            {!showCloseButton ? undefined :
+            {!showCloseButton ? <View /> :
               <TouchableOpacity style={styles.headerCloseButton}
                                 onPress={onClose}
-                                hitSlop={RectangularInset(10)}>
+                                hitSlop={RectangularInset(10)}
+                                accessibilityLabel={"Close popup"}>
                 <Icon name={"times"} style={styles.headerCloseButtonText} />
               </TouchableOpacity>
             }
@@ -67,7 +80,10 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
             {onDeny === undefined ? undefined :
               <Pressable style={[styles.button, (onConfirm !== undefined ? {} : styles.soloButton)]}
                          onPress={onDeny}>
-                <Text style={[styles.buttonText, styles.buttonDenyText]}>{closeText}</Text>
+                <Text style={[styles.buttonText, styles.buttonDenyText]}
+                      importantForAccessibility={"auto"}>
+                  {closeText}
+                </Text>
               </Pressable>
             }
             {onConfirm === undefined ? undefined :
@@ -77,7 +93,11 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                   style={[styles.buttonText,
                     styles.buttonConfirmText,
                     (invertConfirmColor ? styles.buttonConfirmTextInvert : {}),
-                    (onClose !== undefined ? {} : styles.soloButton)]}>{confirmText}</Text>
+                    (onClose !== undefined ? {} : styles.soloButton),
+                    confirmationStyle]}
+                  importantForAccessibility={"auto"}>
+                  {confirmText}
+                </Text>
               </Pressable>
             }
           </View>

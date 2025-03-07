@@ -18,9 +18,14 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
                            style={styles.deleteModeButton}
                            hitSlop={{ top: 10, right: 10, bottom: isIOS ? 5 : 10, left: 10 }}>
     {isActivated
-      ? <Text style={styles.text}>{listHasBeenChanged ? "Done" : "Cancel"}</Text>
+      ? <Text style={styles.text}
+              importantForAccessibility={"auto"}
+              accessibilityLabel={listHasBeenChanged ? "Done" : "Cancel delete mode"}>
+        {listHasBeenChanged ? "Done" : "Cancel"}
+      </Text>
       : <Icon name={"trash-alt"}
               solid={isActivated}
+              accessibilityLabel={"Enable delete mode"}
               size={styles.deleteModeButton.fontSize}
               color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
     }
@@ -32,11 +37,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingHorizontal: 15,
     right: 5,
     fontSize: 21,
-    color: "#ffb8b8",
+    color: "#ff8989",
     paddingVertical: 10
   },
   deleteModeButtonActive: {
-    color: colors.delete
+    color: colors.text.error,
   },
   text: {
     color: colors.text.default,

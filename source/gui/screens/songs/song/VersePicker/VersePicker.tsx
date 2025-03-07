@@ -1,27 +1,21 @@
 import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import Db from "../../../../../logic/db/db";
-import { SongSchema } from "../../../../../logic/db/models/SongsSchema";
 import { rollbar } from "../../../../../logic/rollbar";
-import { generateSongTitle } from "../../../../../logic/songs/utils";
+import { generateSongTitle, loadSongWithUuidOrId } from "../../../../../logic/songs/utils";
 import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
-import { Song, Verse, VerseProps } from "../../../../../logic/db/models/Songs";
+import { Verse, VerseProps } from "../../../../../logic/db/models/songs/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
+  cleanSelectedVerses,
   clearOrSelectAll,
-  getMarginForVerses, hasVisibleNameForPicker,
+  getMarginForVerses,
+  hasVisibleNameForPicker,
   isVerseInList,
   toggleVerseInList
 } from "../../../../../logic/songs/versePicker";
 import { RectangularInset } from "../../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  useWindowDimensions, Alert
-} from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
@@ -30,8 +24,8 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VerseP
 }
 
 const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
-  const [selectedVerses, setSelectedVerses] = useState<Array<VerseProps>>(route.params.selectedVerses || []);
   const verses: Array<Verse> = route.params.verses || [];
+  const [selectedVerses, setSelectedVerses] = useState<VerseProps[]>(cleanSelectedVerses(route.params.selectedVerses, verses) || []);
   const songListIndex: number | undefined = route.params.songListIndex;
   const styles = createStyles(useTheme());
   const versePickerItemStyles = createVersePickerItemStyles(useTheme());
@@ -46,7 +40,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () => <HeaderIconButton icon={"check"}
                                            onPress={submit}
-                                           hitSlop={RectangularInset(10)} />
+                                           hitSlop={RectangularInset(10)}
+                                           accessibilityLabel={"Done"} />
     });
   }, [selectedVerses]);
 
@@ -90,22 +85,15 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
   const showSong = (verses: Verse[]) => {
     navigation.replace(SongRoute, {
       id: route.params.songId,
+      uuid: route.params.songUuid,
       selectedVerses: verses,
       highlightText: route.params.highlightText
     });
   };
 
   const addToSongListAndShowSearch = (verses: Verse[]) => {
-    if (route.params.songId === undefined) {
-      return;
-    }
-
-    const song = Db.songs.realm()
-      .objectForPrimaryKey(SongSchema.name, route.params.songId) as (Song & Realm.Object | undefined);
-
-    if (song === undefined) {
-      return;
-    }
+    const song = loadSongWithUuidOrId(route.params.songUuid, route.params.songId);
+    if (song === undefined) return;
 
     let addedSongListSongModel;
     try {
@@ -119,9 +107,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       Alert.alert("Could not add song to songlist: " + error);
       return;
     }
-    if (addedSongListSongModel === undefined) {
-      return;
-    }
+
+    if (addedSongListSongModel === undefined) return;
 
     SongList.saveSelectedVersesForSong(addedSongListSongModel.index, verses);
 

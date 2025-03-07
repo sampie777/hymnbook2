@@ -8,8 +8,8 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";
 import { useCollectionListener } from "../../../../components/utils";
-import { SongBundle } from "../../../../../logic/db/models/Songs";
-import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
+import { SongBundle } from "../../../../../logic/db/models/songs/Songs";
+import { SongBundleSchema } from "../../../../../logic/db/models/songs/SongsSchema";
 
 interface Props {
   selectedBundleUuids: string[];
@@ -26,7 +26,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
       const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
       setBundles(result.map(it => SongBundle.clone(it)));
     } catch (error) {
-      rollbar.error("Failed to load song bundles from database for search screen.", sanitizeErrorForRollbar(error));
+      rollbar.error("Failed to load song bundles from database for SongBundleSelect.", sanitizeErrorForRollbar(error));
     }
 
     // This settings will also be updated, but the home page doesn't refresh,
@@ -45,9 +45,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
 
   const selectedBundles = bundles.filter(it => selectedBundleUuids.includes(it.uuid));
 
-  if (bundles.length <= 1) {
-    return null;
-  }
+  if (bundles.length <= 1) return null;
 
   return <View style={styles.container}>
     {!isOpen ? null : <SongBundlePicker bundles={bundles}
@@ -57,6 +55,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
                                         title={"Search only in the selected bundles"} />}
 
     <TouchableOpacity style={styles.button}
+                      accessibilityLabel={"Select song bundles"}
                       onPress={() => setIsOpen(true)}>
       <Icon name={"filter"} style={styles.icon} />
       <Icon name={isOpen ? "caret-left" : "sort-down"} style={styles.icon} />

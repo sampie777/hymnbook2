@@ -14,7 +14,8 @@ const IconLabel: React.FC<Props> = ({ text, iconSource, iconSize = 60, iconStyle
   const styles = createStyles(useTheme(), iconSize);
   return <View style={styles.container}>
     <View style={styles.textContainer}>
-      <Text style={[styles.text, textStyle]}>
+      <Text style={[styles.text, textStyle]}
+            importantForAccessibility={"auto"}>
         {text}
       </Text>
     </View>

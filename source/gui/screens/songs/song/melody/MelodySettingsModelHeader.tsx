@@ -20,17 +20,17 @@ const MelodySettingsModelHeader: React.FC<Props> = ({ title, iconName, hideBorde
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
-    marginTop: 15,
+    marginTop: 25,
     borderTopWidth: 1,
-    borderColor: colors.border.default,
-    paddingTop: 15,
+    borderColor: colors.border.lightVariant,
+    paddingTop: 20,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 10
   },
   noBorder: {
-    marginTop: 5,
+    marginTop: 0,
     borderTopWidth: 0,
     paddingTop: 0
   },

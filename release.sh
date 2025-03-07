@@ -71,7 +71,7 @@ function releaseMinor {
   retry git pull
   git merge develop || exit 1
 
-  # Create patch version
+  # Create version
   npm --no-git-tag-version version minor || exit 1
   RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
 
@@ -87,7 +87,7 @@ function releaseMajor {
   retry git pull
   git merge develop || exit 1
 
-  # Create patch version
+  # Create version
   npm --no-git-tag-version version major || exit 1
   RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
 
@@ -106,7 +106,6 @@ function pushAndRelease {
   git add ios/hymnbook2/Info.plist || exit 1
   git commit -m "version release: ${RELEASE_VERSION}" || exit 1
   git tag "v${RELEASE_VERSION}" || exit 1
-  retry git push -u origin master --tags
 
   yarn build || exit 1
   echo
@@ -118,6 +117,8 @@ function pushAndRelease {
   echo "BUNDLE DONE"
   echo
   echo
+
+  retry git push -u origin master --tags
 
   retry ./upload_source_map.sh
 }
@@ -145,14 +146,20 @@ case $command in
   patch)
     releasePatch
     setNextDevelopmentVersion
+    xdg-open android/app/build/outputs/apk/release
+    xdg-open android/app/build/outputs/bundle/release
     ;;
   minor)
     releaseMinor
     setNextDevelopmentVersion
+    xdg-open android/app/build/outputs/apk/release
+    xdg-open android/app/build/outputs/bundle/release
     ;;
   major)
     releaseMajor
     setNextDevelopmentVersion
+    xdg-open android/app/build/outputs/apk/release
+    xdg-open android/app/build/outputs/bundle/release
     ;;
   setNextDevelopmentVersion)
     setNextDevelopmentVersion

@@ -63,9 +63,10 @@ describe("test survey", () => {
     Settings.surveyCompleted = false;
     Settings.appOpenedTimes = config.surveyMinimumAppOpenedTimes + config.surveyDisplayInterval;
 
-    let date = new Date(1662273000758); // Sunday 8:30
+    let date = new Date(1662269400758); // Sunday 7:30
 
-    expect(Survey.needToShow(date)).toBe(true);  // Sunday 8:30
+    expect(Survey.needToShow(date)).toBe(true);  // Sunday 7:30
+    expect(Survey.needToShow(new Date(date.setHours(8)))).toBe(false);  // Sunday 8:30
     expect(Survey.needToShow(new Date(date.setHours(9)))).toBe(false);  // Sunday 9:30
     expect(Survey.needToShow(new Date(date.setHours(10)))).toBe(false);  // Sunday 10:30
     expect(Survey.needToShow(new Date(date.setHours(11)))).toBe(false);  // Sunday 11:30
@@ -80,9 +81,10 @@ describe("test survey", () => {
     Settings.surveyCompleted = false;
     Settings.appOpenedTimes = config.surveyMinimumAppOpenedTimes + config.surveyDisplayInterval;
 
-    let date = new Date(1662359400758); // Monday 8:30
+    let date = new Date(1662355800758); // Monday 7:30
 
-    expect(Survey.needToShow(date)).toBe(true);  // Monday 8:30
+    expect(Survey.needToShow(date)).toBe(true);  // Monday 7:30
+    expect(Survey.needToShow(new Date(date.setHours(8)))).toBe(true);  // Monday 8:30
     expect(Survey.needToShow(new Date(date.setHours(9)))).toBe(true);  // Monday 9:30
     expect(Survey.needToShow(new Date(date.setHours(10)))).toBe(true);  // Monday 10:30
     expect(Survey.needToShow(new Date(date.setHours(11)))).toBe(true);  // Monday 11:30

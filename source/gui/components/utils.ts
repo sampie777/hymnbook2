@@ -1,10 +1,12 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { rollbar } from "../../logic/rollbar";
 import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
 import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils";
 import { useFocusEffect } from "@react-navigation/native";
-import { CollectionChangeCallback } from "realm";
+import { SongBundle } from "../../logic/db/models/songs/Songs";
+import Db from "../../logic/db/db";
+import { SongBundleSchema } from "../../logic/db/models/songs/SongsSchema";
 
 export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 export const AnimatedG = Animated.createAnimatedComponent(G);
@@ -118,22 +120,45 @@ export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: fa
 };
 
 
-export const useCollectionListener = <T>(objects: Realm.Results<T & Realm.Object>, onChange: () => void) => {
+export const useCollectionListener = <T>(objects: Realm.Results<Realm.Object<T> & T>, onChange: () => void) => {
   const isMounted = useIsMounted({ trackFocus: true });
 
   useFocusEffect(useCallback(() => {
-    objects.addListener(onCollectionChange);
+    try {
+      objects.addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+    }
     return () => {
       objects.removeListener(onCollectionChange);
     };
   }, []));
 
-  const onCollectionChange: CollectionChangeCallback<T> = () => {
+  const onCollectionChange = () => {
     runAsync(() => {
       // This is needed, as the removeListener doesn't seem to correctly work.
-      if (!isMounted) return;
+      if (!isMounted()) return;
 
       onChange();
     });
   };
 };
+
+/**
+ * Returns a function that listens to the song bundle length in the database.
+ * Returns -1 if not loaded  yet.
+ */
+export const useSongBundleCount = (): () => number => {
+  const [bundlesCount, setBundlesCount] = useState<number>(-1);
+
+  useCollectionListener<SongBundle>(Db.songs.realm().objects(SongBundleSchema.name), () => {
+    try {
+      const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
+      setBundlesCount(result.length);
+    } catch (error) {
+      rollbar.error("Failed to load song bundles from database.", sanitizeErrorForRollbar(error));
+    }
+  });
+
+  return () => bundlesCount;
+}

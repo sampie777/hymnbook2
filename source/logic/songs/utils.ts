@@ -1,10 +1,10 @@
 import Db from "../db/db";
 import config from "../../config";
-import { Song, SongBundle, SongMetadataType, Verse, VerseProps } from "../db/models/Songs";
-import { SongSchema } from "../db/models/SongsSchema";
+import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/songs/Songs";
+import { SongSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
-import { AbcMelody } from "../db/models/AbcMelodies";
+import { AbcMelody } from "../db/models/songs/AbcMelodies";
 import { distance } from "fastest-levenshtein";
 
 export enum VerseType {
@@ -45,8 +45,8 @@ export const getVerseShortName = (name: string): string => name.trim()
   .replace(/(end|slot|outro) */gi, "E");
 
 // Creates string like "1-3, 5" or "1, 2, 5" or similar based on the selected verses
-function generateSongTitleVersesString(selectedVerses: Array<Verse>) {
-  const onlyVerses = (selectedVerses as Array<VerseProps>)
+function generateSongTitleVersesString(selectedVerses: { name: string }[]) {
+  const onlyVerses = selectedVerses
     .filter(it => /verse/i.test(it.name))
     .map(it => it.name.replace(/verse */gi, ""));
 
@@ -128,7 +128,7 @@ export const generateSongTitle = (song?: {
                                     name: string,
                                     verses: Verse[],
                                   },
-                                  selectedVerses?: Array<Verse>): string => {
+                                  selectedVerses?: { name: string }[]): string => {
   if (song == null) {
     return "";
   }
@@ -183,7 +183,7 @@ export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean =
   const stripNameDownToEssentials = (it: string) => it.replace(/ [0-9(\[].*$/g, "").trim();
 
   const songBundle = Song.getSongBundle(item);
-  const nameWithoutNumber = stripNameDownToEssentials(item.name)
+  const nameWithoutNumber = stripNameDownToEssentials(item.name);
   return songs.some(it =>
     it.id !== item.id
     && Song.getSongBundle(it)?.id !== songBundle?.id
@@ -215,16 +215,34 @@ export const hasMelodyToShow = (song?: Song) => {
   return true;
 };
 
-export const loadSongWithId = (id?: number): Song & Realm.Object | undefined => {
-  if (!Db.songs.isConnected()) {
-    return;
-  }
+export const loadSongWithUuidOrId = (uuid?: string, id?: number): (Song & Realm.Object<Song>) | undefined => {
+  if (uuid == "") uuid = undefined;
 
-  if (id === undefined) {
+  if (uuid == undefined && id == undefined) {
     return undefined;
   }
 
-  return Db.songs.realm().objectForPrimaryKey(SongSchema.name, id) ?? undefined;
+  if (!Db.songs.isConnected()) {
+    return undefined;
+  }
+
+  let query = `uuid = "${uuid}" OR id = ${id}`;
+  if (id == undefined) query = `uuid = "${uuid}"`;
+  if (uuid == undefined) query = `id = "${id}"`;
+
+  const songs = Db.songs.realm().objects<Song>(SongSchema.name)
+    .filtered(query);
+
+  if (songs.length == 0) return undefined;
+  if (songs.length > 1) {
+    rollbar.warning("Multiple songs found for UUID and ID search", {
+      uuid: uuid ?? (uuid === null ? "null" : "undefined"),
+      id: id ?? (id === null ? "null" : "undefined"),
+      songs: songs.map(it => ({ name: it.name, id: it.id, uuid: it.uuid }))
+    });
+  }
+
+  return songs[0];
 };
 
 export const isSongLanguageDifferentFromSongBundle = (song?: Song, bundle?: SongBundle): boolean => {
@@ -309,6 +327,16 @@ export const getDefaultMelody = (song?: Song): AbcMelody | undefined => {
   return defaultMelody ? defaultMelody : song.abcMelodies[0];
 };
 
+export const storeLastUsedMelody = (song: Song, melody?: AbcMelody) => {
+  const dbSong = Db.songs.realm().objectForPrimaryKey<Song>(SongSchema.name, song.id);
+  if (!dbSong) return;
+
+  const dbMelody = dbSong.abcMelodies.find(it => it.id == melody?.id);
+  Db.songs.realm().write(() => {
+    dbSong.lastUsedMelody = dbMelody;
+  });
+}
+
 export const calculateVerseHeight = (index: number, verseHeights: Record<number, number>): {
   length: number;
   offset: number;
@@ -333,8 +361,8 @@ export const calculateVerseHeight = (index: number, verseHeights: Record<number,
   let totalHeight = 0;
   let count = 0;
   Object.entries(verseHeights)
-    .filter(([key, value]) => +key < index)
-    .forEach(([key, value]) => {
+    .filter(([key]) => +key < index)
+    .forEach(([, value]) => {
       totalHeight += value;
       count++;
     });
@@ -346,3 +374,8 @@ export const calculateVerseHeight = (index: number, verseHeights: Record<number,
     index: index
   };
 };
+
+export const isSongValid = (song: unknown) =>
+  song != null
+  && typeof (song as Realm.Object<Song>).isValid === 'function'
+  && (song as Realm.Object<Song>).isValid();

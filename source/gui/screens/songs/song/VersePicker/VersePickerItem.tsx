@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { Verse } from "../../../../../logic/db/models/Songs";
+import { Verse } from "../../../../../logic/db/models/songs/Songs";
 import { getVerseShortName, getVerseType, VerseType } from "../../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 
@@ -49,7 +49,8 @@ const VersePickerItem: React.FC<ComponentProps> = ({
                              left: horizontalMargin,
                              right: horizontalMargin
                            }}>
-    <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}>
+    <Text style={[styles.text, (!isSelected ? {} : styles.textSelected)]}
+          importantForAccessibility={"auto"}>
       {getVerseShortName(verse.name)}
     </Text>
   </TouchableOpacity>;

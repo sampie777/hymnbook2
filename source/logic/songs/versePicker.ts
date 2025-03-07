@@ -1,5 +1,5 @@
 import { ScaledSize } from "react-native";
-import { VerseProps } from "../db/models/Songs";
+import { VerseProps } from "../db/models/songs/Songs";
 
 export interface getMarginForVersesConfig {
   minMargin?: number;
@@ -56,3 +56,5 @@ export const clearOrSelectAll = (selectedVerses: Array<VerseProps>, allVerses: A
 };
 
 export const hasVisibleNameForPicker = (verse: VerseProps) => verse.name.replace(/verse/gi, "").trim() !== "";
+
+export const cleanSelectedVerses = (data: VerseProps[], pool: VerseProps[]) => data.filter(selected => pool.some(it => it.id == selected.id));

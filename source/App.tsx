@@ -12,29 +12,33 @@ import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CollectionChangeCallback } from "realm";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
-  AboutRoute, DatabasesRoute, DocumentRoute, DocumentSearchRoute,
-  HomeRoute, OtherMenuRoute,
+  AboutRoute,
+  DatabasesRoute,
+  DocumentHistoryRoute,
+  DocumentRoute,
+  DocumentSearchRoute,
+  HomeRoute,
+  OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
-  SettingsRoute, SongListRoute,
-  SongRoute, SongSearchRoute, SongStringSearchRoute,
+  SettingsRoute,
+  SongHistoryRoute,
+  SongListRoute,
+  SongRoute,
+  SongSearchRoute,
+  SongStringSearchRoute,
+  TutorialRoute,
   VersePickerRoute
 } from "./navigation";
-import { SongListModelSchema } from "./logic/db/models/SongListModelSchema";
+import { SongListModelSchema } from "./logic/db/models/songs/SongListModelSchema";
 import { ServerAuth } from "./logic/server/auth";
-import {
-  closeDatabases,
-  initDocumentDatabase,
-  initSettingsDatabase,
-  initSongDatabase
-} from "./logic/app";
+import { closeDatabases, initDocumentDatabase, initSettingsDatabase, initSongDatabase } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
-import { runAsync } from "./logic/utils";
+import { runAsync, sanitizeErrorForRollbar } from "./logic/utils";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";
@@ -56,6 +60,13 @@ import FeaturesProvider, { useFeatures } from "./gui/components/providers/Featur
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
 import { MenuProvider } from "react-native-popup-menu";
 import AppContextProvider from "./gui/components/providers/AppContextProvider";
+import { rollbar } from "./logic/rollbar";
+import UpdaterContextProvider, { useUpdaterContext } from "./gui/components/providers/UpdaterContextProvider";
+import { AutoUpdater } from "./logic/autoUpdater";
+import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
+import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider";
+import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
+import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -68,6 +79,12 @@ const RootNavigation = () => {
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
                             }}>
+    <RootNav.Screen name={TutorialRoute} component={TutorialScreen}
+                    options={{
+                      headerShown: false,
+                      orientation: "portrait",
+                      gestureEnabled: false,
+                    }} />
     <RootNav.Screen name={HomeRoute} component={HomeNavigation}
                     options={{ headerShown: false }} />
     <RootNav.Screen name={SettingsRoute} component={SettingsScreen} />
@@ -85,6 +102,7 @@ const RootNavigation = () => {
                     }}
                     initialParams={{
                       id: undefined,
+                      uuid: undefined,
                       songListIndex: undefined,
                       selectedVerses: []
                     }} />
@@ -96,6 +114,7 @@ const RootNavigation = () => {
                       verses: undefined,
                       selectedVerses: []
                     }} />
+    <RootNav.Screen name={SongHistoryRoute} component={SongHistoryScreen} options={{ title: "Song history" }} />
 
     <RootNav.Screen name={DocumentRoute} component={SingleDocument}
                     options={{
@@ -103,8 +122,11 @@ const RootNavigation = () => {
                       title: ""
                     }}
                     initialParams={{
-                      id: undefined
+                      id: undefined,
+                      uuid: undefined,
                     }} />
+    <RootNav.Screen name={DocumentHistoryRoute} component={DocumentHistoryScreen}
+                    options={{ title: "Document history" }} />
 
     <RootNav.Screen name={DatabasesRoute} component={DownloadsScreen}
                     initialParams={{
@@ -115,6 +137,7 @@ const RootNavigation = () => {
 
 const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -123,14 +146,21 @@ const HomeNavigation: React.FC = () => {
   }, []);
 
   const onLaunch = () => {
-    Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    try {
+      Db.songs.realm().objects(SongListModelSchema.name).addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle collection change", sanitizeErrorForRollbar(error));
+    }
+
+    AutoUpdater.run(updaterContext)
+      .catch(error => rollbar.error("Failed to run auto updater", sanitizeErrorForRollbar(error)));
   };
 
   const onExit = () => {
     Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
   };
 
-  const onCollectionChange: CollectionChangeCallback<Object> = () => {
+  const onCollectionChange = () => {
     setSongListSize(SongList.list().length);
   };
 
@@ -191,10 +221,13 @@ const AppRoot: React.FC = () => {
       .then(() => {
         // Don't return, as that will hold up the app loading. Authentication should be done async.
         ServerAuth.authenticate()
-          .catch(error => Alert.alert(
-            "Authenticating error",
-            "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
-          ));
+          .catch(error => {
+            rollbar.error("Failed to authenticate with song server", sanitizeErrorForRollbar(error))
+            Alert.alert(
+              "Authenticating error",
+              "Failed to authenticate with song server.\nThis is normally only done once after app install.\n\n" + error
+            )
+          });
 
         if (!features.loaded) features.loadFeatures();
       })
@@ -215,7 +248,11 @@ const AppRoot: React.FC = () => {
     {isLoading ? undefined :
       <NavigationContainer>
         <DeepLinkHandler>
-          <RootNavigation />
+          <UpdaterContextProvider>
+            <SongHistoryProvider>
+              <RootNavigation />
+            </SongHistoryProvider>
+          </UpdaterContextProvider>
         </DeepLinkHandler>
       </NavigationContainer>
     }

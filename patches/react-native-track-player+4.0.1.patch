@@ -1,3 +1,25 @@
+diff --git a/node_modules/react-native-track-player/android/build.gradle b/node_modules/react-native-track-player/android/build.gradle
+index 046d096..b2db9a4 100644
+--- a/node_modules/react-native-track-player/android/build.gradle
++++ b/node_modules/react-native-track-player/android/build.gradle
+@@ -18,8 +18,17 @@ def getExtOrIntegerDefault(name) {
+ }
+
+ android {
++    buildFeatures {
++        buildConfig = true
++    }
++
+     compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
+
++    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
++    if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
++        namespace "com.doublesymmetry.trackplayer"
++    }
++
+     defaultConfig {
+         minSdkVersion getExtOrIntegerDefault('minSdkVersion') // RN's minimum version
+         targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
 diff --git a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
 index 9d6d869..cb49aa6 100644
 --- a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
@@ -21,5 +43,5 @@ index 9d6d869..cb49aa6 100644
 +            )
 +        }
      }
- 
+
      @MainThread

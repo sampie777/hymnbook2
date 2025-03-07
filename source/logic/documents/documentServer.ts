@@ -1,7 +1,7 @@
 import { api } from "../api";
 import { rollbar } from "../rollbar";
-import { parseJscheduleResponse } from "../apiUtils";
-import { DocumentGroup as ServerDocumentGroup, DocumentGroup } from "../server/models/Documents";
+import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
+import { DocumentGroup as ServerDocumentGroup, ServerDocumentGroupUpdateStatus } from "../server/models/Documents";
 import { sanitizeErrorForRollbar } from "../utils";
 
 export namespace DocumentServer {
@@ -16,6 +16,8 @@ export namespace DocumentServer {
         return groups;
       })
       .catch(error => {
+        throwIfConnectionError(error);
+
         rollbar.error(`Error fetching document groups`, {
           ...sanitizeErrorForRollbar(error),
           includeOther: includeOther
@@ -24,7 +26,19 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroup = (group: DocumentGroup | { uuid: string }, {
+  export const fetchDocumentGroupUpdates = (): Promise<ServerDocumentGroupUpdateStatus[]> =>
+    api.documents.groups.updates()
+      .then(r => parseJscheduleResponse<ServerDocumentGroupUpdateStatus[]>(r))
+      .catch(error => {
+        throwIfConnectionError(error);
+
+        rollbar.error(`Error fetching document group update status`, {
+          ...sanitizeErrorForRollbar(error),
+        });
+        throw error;
+      });
+
+  export const fetchDocumentGroup = (group: { uuid: string }, {
     loadGroups = false,
     loadItems = false,
     loadContent = false
@@ -32,6 +46,8 @@ export namespace DocumentServer {
     return api.documents.groups.get(group.uuid, loadGroups, loadItems, loadContent)
       .then(r => parseJscheduleResponse<ServerDocumentGroup>(r))
       .catch(error => {
+        throwIfConnectionError(error);
+
         rollbar.error(`Error fetching document group`, {
           ...sanitizeErrorForRollbar(error),
           documentGroup: group,
@@ -43,7 +59,7 @@ export namespace DocumentServer {
       });
   };
 
-  export const fetchDocumentGroupWithChildrenAndContent = (group: DocumentGroup): Promise<ServerDocumentGroup> =>
+  export const fetchDocumentGroupWithChildrenAndContent = (group: { uuid: string }): Promise<ServerDocumentGroup> =>
     fetchDocumentGroup(group, {
       loadGroups: true,
       loadItems: true,

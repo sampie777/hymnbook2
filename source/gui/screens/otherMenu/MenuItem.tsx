@@ -1,28 +1,42 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { useAppContext } from "../../components/providers/AppContextProvider";
 
 interface MenuItemProps {
   text: string;
   icon?: (style?: StyleProp<TextStyle> | undefined) => React.ReactNode;
   onPress?: () => void;
   hasNotification?: boolean;
+  statusIcon?: React.ReactNode;
+  isDeveloperOnly?: boolean;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
                                              text,
                                              icon,
                                              onPress,
-                                             hasNotification
+                                             hasNotification,
+                                             statusIcon,
+                                             isDeveloperOnly,
                                            }) => {
   const styles = createStyles(useTheme());
-  return (<TouchableOpacity onPress={onPress} style={styles.container}>
+  const appContext = useAppContext();
+
+  if (isDeveloperOnly && !appContext.developerMode) return null;
+
+  return <TouchableOpacity onPress={onPress}
+                           style={[styles.container, isDeveloperOnly ? styles.containerDeveloperMode : {}]}>
     <View style={styles.iconContainer}>
       {icon?.(styles.icon)}
       {!hasNotification ? null : <View style={styles.badge}></View>}
     </View>
-    <Text style={styles.title}>{text}</Text>
-  </TouchableOpacity>);
+    <Text style={styles.title}
+          importantForAccessibility={"auto"}>
+      {text}
+    </Text>
+    {statusIcon}
+  </TouchableOpacity>
 };
 
 export default MenuItem;
@@ -34,7 +48,11 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border.default,
     borderBottomWidth: 1,
     alignItems: "center",
-    paddingLeft: 15
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  containerDeveloperMode: {
+    backgroundColor: "rgba(255,73,0,0.23)"
   },
   title: {
     flex: 1,
@@ -56,7 +74,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   badge: {
     position: "absolute",
-    backgroundColor: colors.badge.medium,
+    backgroundColor: colors.text.warning,
     width: 8,
     height: 8,
     borderRadius: 8,

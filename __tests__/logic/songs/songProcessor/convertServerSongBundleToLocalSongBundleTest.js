@@ -7,9 +7,9 @@ import {
   SongMetadata as ServerSongMetadata,
   SongMetadataType as ServerSongMetadataType,
 } from "../../../../source/logic/server/models/ServerSongsModel";
-import { Song, SongBundle, SongMetadataType, Verse } from "../../../../source/logic/db/models/Songs";
-import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/AbcMelodies";
-import { SongUpdaterUtils } from "../../../../source/logic/songs/songUpdaterUtils";
+import { Song, SongBundle, SongMetadataType, Verse } from "../../../../source/logic/db/models/songs/Songs";
+import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/songs/AbcMelodies";
+import { SongUpdaterUtils } from "../../../../source/logic/songs/updater/songUpdaterUtils";
 import { mockDb } from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");

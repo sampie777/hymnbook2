@@ -63,8 +63,12 @@ const SliderComponent: React.FC<Props> = ({
 
     {onReset === undefined ? undefined :
       <TouchableOpacity style={styles.resetContainer}
-                        onPress={onReset}>
-        <Text style={styles.resetText}>Reset value</Text>
+                        onPress={onReset}
+                        hitSlop={{ bottom: 10 }}>
+        <Text style={styles.resetText}
+              importantForAccessibility={"auto"}>
+          Reset value
+        </Text>
       </TouchableOpacity>
     }
   </View>;

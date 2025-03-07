@@ -1,14 +1,14 @@
 import { ServerAuth } from "./server/auth";
 import { databaseHost, hymnbookHost } from "../../app.json";
-import { Song, SongAudio } from "./db/models/Songs";
+import { Song, SongAudio } from "./db/models/songs/Songs";
 import Settings from "../settings";
 import fetchBuilder from "fetch-retry";
 import config from "../config";
 
-export const fetchRetry = fetchBuilder(fetch, {retries: config.fetchRetries});
+export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
-const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
+export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>
@@ -37,10 +37,7 @@ export const api = {
       get(`${databaseApiEndpoint}/songs/bundles/${uuid}?loadSongs=${loadSongs ? "true" : "false"}` +
         `&loadVerses=${loadVerses ? "true" : "false"}` +
         `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
-    getWithSongs: (uuid: string,
-                   loadVerses = true,
-                   loadAbcMelodies = true) =>
-      api.songBundles.get(uuid, true, loadVerses, loadAbcMelodies)
+    updates: () => get(`${databaseApiEndpoint}/songs/bundles/updates`),
   },
 
   songs: {
@@ -61,7 +58,8 @@ export const api = {
       get: (uuid: string, loadGroups?: boolean, loadItems?: boolean, loadContent?: boolean) =>
         get(`${databaseApiEndpoint}/documents/groups/${uuid}?loadGroups=${loadGroups ? "true" : "false"}` +
           `&loadItems=${loadItems ? "true" : "false"}` +
-          `&loadContent=${loadContent ? "true" : "false"}`)
+          `&loadContent=${loadContent ? "true" : "false"}`),
+      updates: () => get(`${databaseApiEndpoint}/documents/groups/updates`),
     }
   },
 

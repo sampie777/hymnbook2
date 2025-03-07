@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { SongBundle } from "../../../../../logic/db/models/Songs";
+import { SongBundle } from "../../../../../logic/db/models/songs/Songs";
 import Db from "../../../../../logic/db/db";
 import { rollbar } from "../../../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
-import { SongBundleSchema } from "../../../../../logic/db/models/SongsSchema";
+import { SongBundleSchema } from "../../../../../logic/db/models/songs/SongsSchema";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";
 
@@ -28,7 +28,7 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
       const result = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name);
       setBundles(result.map(it => SongBundle.clone(it)));
     } catch (error) {
-      rollbar.error("Failed to load song bundles from database for search screen.", sanitizeErrorForRollbar(error));
+      rollbar.error("Failed to load song bundles from database for string search screen.", sanitizeErrorForRollbar(error));
     }
   };
 
@@ -59,10 +59,14 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
 
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
-      <Text style={styles.text} numberOfLines={2}>
+      <Text style={styles.text}
+            numberOfLines={2}
+            importantForAccessibility={"auto"}>
         Song bundles:
       </Text>
-      <Text style={[styles.text, styles.value]} numberOfLines={2}>
+      <Text style={[styles.text, styles.value]}
+            numberOfLines={2}
+            importantForAccessibility={"auto"}>
         {selectedBundlesText()}
       </Text>
 
