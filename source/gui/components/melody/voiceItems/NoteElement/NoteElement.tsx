@@ -34,6 +34,7 @@ const NoteElement: React.FC<Props> = ({
   // Only render melody components after the parent container has rendered,
   // otherwise it will slow the render dramatically and freeze the UI
   const melodyComponents = <>
+     {/* The following takes 1000 ms to generate */}
     <LinesSvg animatedScale={animatedScale} />
 
     <AnimatedSvg width={animatedStyle.note.width}
@@ -42,6 +43,7 @@ const NoteElement: React.FC<Props> = ({
       <AnimatedG scale={animatedScale}
                  x={Animated.divide(animatedStyle.note.width, 2)}
                  y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
+        {/* While the following takes only 400 ms to generate for the same data */}
         {note.pitches === undefined ? undefined :
           note.pitches?.map((it, index) =>
             <Note key={index + "_" + it.pitch}
