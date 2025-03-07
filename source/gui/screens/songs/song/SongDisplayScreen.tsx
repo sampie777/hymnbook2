@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import {
-  FlatList, Gesture, GestureDetector,
+  FlatList,
+  Gesture,
+  GestureDetector,
   GestureEvent,
   PinchGestureHandler,
   PinchGestureHandlerEventPayload,
@@ -20,7 +22,6 @@ import Settings from "../../../../settings";
 import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
-import Db from "../../../../logic/db/db";
 import {
   calculateVerseHeight,
   generateSongTitle,
@@ -71,7 +72,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
   const history = useSongHistory();
-  const zoomFactor = Settings.debug_zoomFactor;
 
   const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
@@ -286,17 +286,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     shouldMelodyShowWhenSongIsLoaded.current = false;
   };
 
-  const calculateZoomSpeed = (event: GestureEvent<PinchGestureHandlerEventPayload>) => 1 - (1 - event.nativeEvent.scale) * zoomFactor;
-
   const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    animatedScale.setValue(Settings.songScale * calculateZoomSpeed(event));
+    animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
   };
 
   const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     if (event.nativeEvent.state === State.END) {
       verseHeights.current = {};
-      animatedScale.setValue(Settings.songScale * calculateZoomSpeed(event));
-      Settings.songScale *= calculateZoomSpeed(event);
+      animatedScale.setValue(Settings.songScale * event.nativeEvent.scale);
+      Settings.songScale *= event.nativeEvent.scale;
     }
   };
 
@@ -419,7 +417,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     offset: number;
     index: number
   } => {
-    if (Settings.debug_verseHeightCalculationReturnsZero || data == null || data.length == 0 || verseHeights.current == null) {
+    if (data == null || data.length == 0 || verseHeights.current == null) {
       return {
         length: 0,
         offset: 0,
@@ -536,7 +534,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               renderItem={renderContentItem}
               initialNumToRender={20}
               keyExtractor={(item: Verse) => item.id.toString()}
-              getItemLayout={!Settings.debug_neverCalculateVerseHeight && (Settings.debug_alwaysCalculateVerseHeight || (song && song?.verses.length > 20)) ? calculateVerseLayout : undefined}
+              getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
               viewabilityConfigCallbackPairs={listViewabilityConfigPairs.current}
               onEndReached={onListEndReached}
@@ -552,7 +550,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               })}
               ListHeaderComponent={<Header song={song} scale={animatedScale} />}
               ListFooterComponent={<Footer song={song} scale={animatedScale} />}
-              removeClippedSubviews={Settings.debug_removeClippedSubviews} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
+              removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
             />
           </ReAnimated.View>
         </GestureDetector>
@@ -587,8 +585,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   contentSectionList: {
     paddingLeft: 30,
     paddingTop: 5,
-    paddingRight: 20,
-    borderWidth: Settings.debug_drawSongVerseBorderVerseList ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
+    paddingRight: 20
   }
 });
