@@ -41,7 +41,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const animatedStyle = {
     container: {
       paddingTop: Animated.multiply(scale, 10),
-      paddingBottom: Animated.multiply(scale, 35)
+      paddingBottom: Animated.multiply(scale, 15)
     },
     title: {
       fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 19) : 19,
@@ -171,6 +171,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         {highlightText == null
           ? renderContent()
           : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
+        {"\n"}
       </MainTextComponent>
     }
 
