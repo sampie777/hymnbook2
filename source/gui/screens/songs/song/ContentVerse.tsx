@@ -106,7 +106,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       return renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent);
     }
 
-    const content = Settings.debug_addWhitespaceAfterEachVerseLine ? verse.content.replace(/\n/g, " \n") : verse.content;
+    let content = Settings.debug_addWhitespaceAfterEachVerseLine ? verse.content.replace(/\n/g, " \n") : verse.content;
+    for(let i = 0; i < Settings.debug_addNewLinesAfterVerse * 100; i++) content += "\n";
+
     const TextComponent = Settings.debug_useAnimatedTextComponentForExtraComponents ? Animated.Text : Text;
     let resultComponent = <>{content}</>;
 
@@ -129,6 +131,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     if (Settings.debug_addInvisibleTextAfterVerse) {
       resultComponent = <>{resultComponent}<TextComponent style={{ color: "#fff0" }}> . . . . . . . . . .</TextComponent></>;
     }
+
+    // for(let i = 0; i < Settings.debug_addNewLinesAfterVerse * 100; i++) resultComponent = <>{resultComponent}<TextComponent>{"\n"}</TextComponent></>;
 
     return resultComponent;
   };
@@ -157,9 +161,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     }
 
     {!Settings.debug_ignoreShowMelody && isMelodyLoaded && isMelodyAvailable() ? undefined :
+      /* @ts-ignore */
       <MainTextComponent style={[styles.text, animatedStyle.text]}
-                     selectable={Settings.enableTextSelection}
-                     textBreakStrategy={"balanced"}
+                         selectable={Settings.enableTextSelection}
+                         textBreakStrategy={"balanced"}
                          adjustsFontSizeToFit={Settings.debug_adjustsFontSizeToFit}
                          allowFontScaling={Settings.debug_allowFontScaling}
                          onTextLayout={Settings.debug_logOnTextLayout ? onTextLayout : undefined}>

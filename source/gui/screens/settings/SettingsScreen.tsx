@@ -152,6 +152,12 @@ const SettingsScreen: React.FC = () => {
                             onLongPress={(setValue) => setValue(true)}
                             keyName={"debug_includeFontPadding"} />
     <Header title={""}/>
+    <SettingsSliderComponent title={"[debug] New lines after verse"}
+                             keyName={"debug_addNewLinesAfterVerse"}
+                             minValue={0.0}
+                             maxValue={4 / 100}
+                             valueRender={(it) => it * 100 + ""}
+                             defaultValue={0.0} />
     <SettingSwitchComponent title={"[debug] addWhitespaceAfterEachVerseLine"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"debug_addWhitespaceAfterEachVerseLine"} />

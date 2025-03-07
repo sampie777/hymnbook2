@@ -61,6 +61,7 @@ class SettingsClass extends SettingsBaseClass {
   tutorialCompleted = false;
   shareUsageData = process.env.NODE_ENV !== "development";
   debug_addWhitespaceAfterEachVerseLine = false;
+  debug_addNewLinesAfterVerse = 0;
   debug_renderEachVerseLineAsTextComponent = false;
   debug_useAnimatedTextComponentForVerse = true;
   debug_useAnimatedTextComponentForExtraComponents = true;
