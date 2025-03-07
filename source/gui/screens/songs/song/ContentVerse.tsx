@@ -107,7 +107,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     }
 
     let content = Settings.debug_addWhitespaceAfterEachVerseLine ? verse.content.replace(/\n/g, " \n") : verse.content;
-    for(let i = 0; i < Settings.debug_addNewLinesAfterVerse * 100; i++) content += "\n";
+    content += "\n".repeat(Settings.debug_addNewLinesAfterVerse * 100);
 
     const TextComponent = Settings.debug_useAnimatedTextComponentForExtraComponents ? Animated.Text : Text;
     let resultComponent = <>{content}</>;
