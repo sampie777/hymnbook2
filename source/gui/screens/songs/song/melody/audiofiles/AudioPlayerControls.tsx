@@ -5,11 +5,12 @@ import { ThemeContextProps, useTheme } from "../../../../../components/providers
 import TrackPlayer, {
   Event,
   PlaybackErrorEvent,
-  usePlaybackState, useProgress,
+  usePlaybackState,
+  useProgress,
   useTrackPlayerEvents
 } from "react-native-track-player";
 import { State } from "react-native-track-player/src/constants/State";
-import { Song } from "../../../../../../logic/db/models/Songs";
+import { Song } from "../../../../../../logic/db/models/songs/Songs";
 import { rollbar } from "../../../../../../logic/rollbar";
 import Animated, {
   Easing as ReAnimatedEasing,
@@ -121,7 +122,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
       <TouchableOpacity style={styles.button}
                         onPress={restart}
                         onLongPress={() => Alert.alert("Restart audio",
-                          "Click this button to let the audio play from the beginning.")}>
+                          "Click this button to let the audio play from the beginning.")}
+                        accessibilityLabel={"Restart audio"}>
         <Icon name={"undo"}
               style={styles.icon} />
       </TouchableOpacity>
@@ -134,7 +136,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
         <TouchableOpacity style={styles.button}
                           onPress={play}
                           onLongPress={() => Alert.alert("Play/pause audio",
-                            "Click this button to pause or resume the playing of the audio.")}>
+                            "Click this button to pause or resume the playing of the audio.")}
+                          accessibilityLabel={playerState.state == State.Playing ? "Pause audio" : "Play audio"}>
           <Icon name={playerState.state == State.Playing ? "pause" : "play"}
                 style={styles.icon} />
         </TouchableOpacity>
@@ -142,7 +145,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
 
       <View style={styles.buttonGroup}>
         <TouchableOpacity style={styles.button}
-                          onPress={showMelodySettings}>
+                          onPress={showMelodySettings}
+                          accessibilityLabel={"Audio settings"}>
           <Icon name={"cog"}
                 style={styles.icon} />
         </TouchableOpacity>
@@ -150,7 +154,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
         <TouchableOpacity style={styles.button}
                           onPress={stop}
                           onLongPress={() => Alert.alert("Close player",
-                            "Click this button to stop the audio and close the player.")}>
+                            "Click this button to stop the audio and close the player.")}
+                          accessibilityLabel={"Stop audio"}>
           <Icon name={"times"}
                 style={styles.icon} />
         </TouchableOpacity>

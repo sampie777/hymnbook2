@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/Documents";
+import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
@@ -8,18 +8,20 @@ import { rollbar } from "../../../logic/rollbar";
 import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { useIsMounted } from "../../components/utils";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView, Share,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { debounce, useIsMounted } from "../../components/utils";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
+import { DocumentUpdater } from "../../../logic/documents/updater/documentUpdater";
+import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
+import Db from "../../../logic/db/db";
+import { DocumentGroupSchema } from "../../../logic/db/models/documents/DocumentsSchema";
+import { CollectionChangeSet, OrderedCollection } from "realm";
+
+type ServerDataType = ServerDocumentGroup;
+type LocalDataType = LocalDocumentGroup;
+type ItemType = DocumentGroup;
 
 interface ComponentProps {
   setIsProcessing?: (value: boolean) => void;
@@ -33,15 +35,18 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                                              dismissPromptForUuid
                                                            }) => {
   const isMounted = useIsMounted();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLocalGroupsLoading, setIsLocalGroupsLoading] = useState(true);
-  const [isGroupLoading, setIsGroupLoading] = useState(false);
-  const [serverGroups, setServerGroups] = useState<Array<ServerDocumentGroup>>([]);
-  const [localGroups, setLocalGroups] = useState<Array<LocalDocumentGroup & Realm.Object>>([]);
-  const [requestDownloadForGroup, setRequestDownloadForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
-  const [requestUpdateForGroup, setRequestUpdateForGroup] = useState<ServerDocumentGroup | undefined>(undefined);
-  const [requestDeleteForGroup, setRequestDeleteForGroup] = useState<LocalDocumentGroup | undefined>(undefined);
+  const [isProcessingLocalData, setIsProcessingLocalData] = useState(false);
+  const [isServerDataLoading, setIsServerDataLoading] = useState(false);
+  const [isLocalDataLoading, setIsLocalDataLoading] = useState(true);
+  const [isSpecificItemLoading, setIsSpecificItemLoading] = useState(false);
+
+  const [serverData, setServerData] = useState<ServerDataType[]>([]);
+  const [localData, setLocalData] = useState<LocalDataType[]>([]);
+  const [requestDownloadForItem, setRequestDownloadForItem] = useState<ServerDataType | undefined>(undefined);
+  const [requestUpdateForItem, setRequestUpdateForItem] = useState<ServerDataType | undefined>(undefined);
+  const [requestDeleteForItem, setRequestDeleteForItem] = useState<LocalDataType | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -50,41 +55,83 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   }, []);
 
   const onOpen = () => {
-    loadLocalDocumentGroups();
-    fetchDocumentGroups();
+    fetchServerData();
+    try {
+      Db.documents.realm().objects<ItemType>(DocumentGroupSchema.name)
+        .filtered(`isRoot = true`)
+        .addListener(onCollectionChange);
+    } catch (error) {
+      rollbar.error("Failed to handle DocumentGroup collection change", sanitizeErrorForRollbar(error));
+    }
   };
 
   const onClose = () => {
+    Db.documents.realm().objects<ItemType>(DocumentGroupSchema.name)
+      .filtered(`isRoot = true`)
+      .removeListener(onCollectionChange);
   };
 
   useEffect(() => {
     if (!isMounted()) return;
 
     // Let user navigate when the screen is still loading the data
-    if (serverGroups.length === 0) {
-      return;
-    }
-    setIsProcessing?.(isLoading);
-  }, [isLoading]);
+    if (serverData.length === 0) return;
+
+    setIsProcessing?.(isProcessingLocalData);
+  }, [isProcessingLocalData]);
 
   useEffect(() => {
-    if (isLocalGroupsLoading) return;
-    loadAndPromptSpecificGroup();
-  }, [promptForUuid, isLocalGroupsLoading]);
+    if (isLocalDataLoading) return;
+    loadAndPromptSpecificItem();
+  }, [promptForUuid, isLocalDataLoading]);
 
-  const loadAndPromptSpecificGroup = () => {
+  const processLocalDataChanges = (collection: OrderedCollection<Realm.Object<ItemType> & ItemType>) => {
+    if (!isMounted()) return;
+    setIsLocalDataLoading(true);
+
+    try {
+      const data: ItemType[] = collection
+        .sorted(`name`)
+        .map(it => DocumentGroup.clone(it, { includeChildren: true, includeParent: false }))
+
+      const distinctData: ItemType[] = [];
+      data.forEach(item => {
+        if (distinctData.some(it => it.uuid == item.uuid)) return;
+        distinctData.push(item);
+      })
+
+      setLocalData(distinctData);
+
+      if (filterLanguage === "") {
+        setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(distinctData));
+      }
+    } catch (error) {
+      rollbar.error("Failed to load local DocumentGroups from collection change", sanitizeErrorForRollbar(error));
+    }
+
+    setIsLocalDataLoading(false);
+  };
+
+  const processLocalDataChangesDebounced = debounce(processLocalDataChanges, 300);
+
+  const onCollectionChange = (collection: OrderedCollection<Realm.Object<ItemType> & ItemType>, changes: CollectionChangeSet) => {
+    if (!isMounted()) return;
+    processLocalDataChangesDebounced(collection, changes);
+  }
+
+  const loadAndPromptSpecificItem = () => {
     if (!promptForUuid) return;
-    if (localGroups.find(it => it.uuid === promptForUuid)) return;
+    if (localData.find(it => it.uuid === promptForUuid)) return;
 
-    setIsGroupLoading(true);
+    setIsSpecificItemLoading(true);
     DocumentServer.fetchDocumentGroup({ uuid: promptForUuid }, {})
       .then(data => {
         if (!isMounted()) return;
 
-        if (localGroups.find(it => it.uuid === promptForUuid)) return;
+        if (localData.find(it => it.uuid === promptForUuid)) return;
 
         setFilterLanguage(data.language);
-        setRequestDownloadForGroup(data);
+        setRequestDownloadForItem(data);
       })
       .catch(error => {
         if (error.name == "TypeError" && error.message == "Network request failed") {
@@ -97,44 +144,16 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         dismissPromptForUuid?.();
 
         if (!isMounted()) return;
-        setIsGroupLoading(false);
+        setIsSpecificItemLoading(false);
       });
   };
 
-  const loadLocalDocumentGroups = () => {
-    setIsLoading(true);
-    setIsLocalGroupsLoading(true);
-
-    const result = DocumentProcessor.loadLocalDocumentRoot();
-    result.alert();
-    result.throwIfException();
-
-    if (!isMounted()) return;
-
-    if (result.data !== undefined) {
-      setLocalGroups(result.data);
-    } else {
-      setLocalGroups([]);
-    }
-
-    if (filterLanguage === "") {
-      if (result.data !== undefined) {
-        setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(result.data));
-      } else {
-        setFilterLanguage("");
-      }
-    }
-
-    setIsLoading(false);
-    setIsLocalGroupsLoading(false);
-  };
-
-  const fetchDocumentGroups = () => {
-    setIsLoading(true);
+  const fetchServerData = () => {
+    setIsServerDataLoading(true);
     DocumentServer.fetchDocumentGroups()
       .then(data => {
         if (!isMounted()) return;
-        setServerGroups(data);
+        setServerData(data);
       })
       .catch(error => {
         if (error.name == "TypeError" && error.message == "Network request failed") {
@@ -145,158 +164,138 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       })
       .finally(() => {
         if (!isMounted()) return;
-        setIsLoading(false);
+        setIsServerDataLoading(false);
       });
   };
 
   const applyUuidUpdateForPullRequest8 = () => {
-    DocumentProcessor.updateLocalGroupsWithUuid(localGroups, serverGroups);
+    DocumentUpdater.updateLocalGroupsWithUuid(localData, serverData);
   };
-  useEffect(applyUuidUpdateForPullRequest8, [serverGroups]);
+  useEffect(applyUuidUpdateForPullRequest8, [serverData]);
 
-  const isPopupOpen = () => requestDeleteForGroup !== undefined || requestDownloadForGroup !== undefined;
+  const isPopupOpen = () => requestDeleteForItem !== undefined || requestDownloadForItem !== undefined;
 
-  const shareDocumentGroup = (it: LocalDocumentGroup | ServerDocumentGroup) => {
+  const shareItem = (it: LocalDataType | ServerDataType) => {
     return Share.share({
       message: `Download documents for ${it.name}\n\n${DeepLinking.generateLinkForDocumentGroup(it)}`
     })
-      .then(r => rollbar.debug("Document group shared.", {
+      .then(r => rollbar.debug("DocumentGroup shared.", {
         shareAction: r,
         bundle: it
       }))
-      .catch(error => rollbar.warning("Failed to share document group", {
+      .catch(error => rollbar.warning("Failed to share DocumentGroup", {
         ...sanitizeErrorForRollbar(error),
         bundle: it
       }));
   };
 
-  const onDocumentGroupPress = (group: ServerDocumentGroup) => {
-    if (isLoading || isPopupOpen()) {
-      return;
-    }
+  const onServerItemPress = (item: ServerDataType) => {
+    if (isProcessingLocalData || isPopupOpen()) return;
 
-    setRequestDownloadForGroup(group);
+    setRequestDownloadForItem(item);
   };
 
-  const onLocalDocumentGroupPress = (group: LocalDocumentGroup) => {
-    if (isLoading || isPopupOpen()) {
-      return;
-    }
+  const onLocalItemPress = (item: LocalDataType) => {
+    if (isProcessingLocalData || isPopupOpen()) return;
 
-    if (DocumentProcessor.hasUpdate(serverGroups, group)) {
-      const serverGroup = DocumentProcessor.getMatchingServerGroup(serverGroups, group);
-      if (serverGroup !== undefined) {
-        return setRequestUpdateForGroup(serverGroup);
+    if (DocumentProcessor.hasUpdate(serverData, item)) {
+      const serverItem = DocumentProcessor.getMatchingServerGroup(serverData, item);
+      if (serverItem !== undefined) {
+        return setRequestUpdateForItem(serverItem);
       }
     }
 
-    setRequestDeleteForGroup(group);
+    setRequestDeleteForItem(item);
   };
 
-  const onConfirmDownloadDocumentGroup = () => {
-    const serverDocumentGroup = requestDownloadForGroup;
-    setRequestDownloadForGroup(undefined);
+  const onConfirmDownload = () => {
+    const item = requestDownloadForItem;
+    setRequestDownloadForItem(undefined);
 
-    if (isLoading || serverDocumentGroup === undefined) {
-      return;
-    }
+    if (isProcessingLocalData || item === undefined) return;
 
-    downloadDocumentGroup(serverDocumentGroup);
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === item.uuid);
+    if (isUpdating) return;
+
+    downloadItem(item);
   };
 
-  const onConfirmUpdateDocumentGroup = () => {
-    const group = requestUpdateForGroup;
-    setRequestUpdateForGroup(undefined);
+  const onConfirmUpdate = () => {
+    const item = requestUpdateForItem;
+    setRequestUpdateForItem(undefined);
 
-    if (isLoading || group === undefined) {
-      return;
-    }
+    if (isProcessingLocalData || item === undefined) return;
 
-    updateDocumentGroup(group);
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === item.uuid);
+    if (isUpdating) return;
+
+    updateItem(item);
   };
 
-  const downloadDocumentGroup = (group: ServerDocumentGroup) => {
-    setIsLoading(true);
+  const downloadItem = (item: ServerDataType) => saveItem(item, false);
+  const updateItem = (item: ServerDataType) => saveItem(item, true);
 
-    DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then(data => {
-        if (!isMounted()) return;
-        saveDocumentGroup(data);
-      })
+  const saveItem = (item: ServerDataType, isUpdate: boolean) => {
+    if (!isMounted()) return;
+    setIsProcessingLocalData(true);
+    updaterContext.addDocumentGroupUpdating(item);
+
+    const call = isUpdate
+      ? DocumentUpdater.fetchAndUpdateDocumentGroup(item)
+      : DocumentUpdater.fetchAndSaveDocumentGroup(item);
+
+    call
+      .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
       .catch(error => {
+        rollbar.error("Failed to import DocumentGroup", {
+          ...sanitizeErrorForRollbar(error),
+          isUpdate: isUpdate,
+          item: item,
+        });
+
         if (error.name == "TypeError" && error.message == "Network request failed") {
-          Alert.alert("Error", `Could not download ${group.name}. Make sure your internet connection is working or try again later.`)
+          Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. Make sure your internet connection is working or try again later.`);
         } else {
-          Alert.alert("Error", `Could not download ${group.name}. \n${error}\n\nTry again later.`);
+          Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. \n${error}\n\nTry again later.`);
         }
       })
       .finally(() => {
         if (!isMounted()) return;
-        setIsLoading(false);
-      });
-  };
-
-  const saveDocumentGroup = (group: ServerDocumentGroup) => {
-    setIsLoading(true);
-
-    const result = DocumentProcessor.saveDocumentGroupToDatabase(group);
-    result.alert();
-    result.throwIfException();
-
-    if (!isMounted()) return;
-
-    setIsLoading(false);
-    loadLocalDocumentGroups();
-  };
-
-  const updateDocumentGroup = (group: ServerDocumentGroup) => {
-    setIsLoading(true);
-
-    DocumentProcessor.fetchAndUpdateDocumentGroup(group)
-      .then(result => {
-        result.alert();
-        result.throwIfException();
-      })
-      .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
-          Alert.alert("Error", `Could not update ${group.name}. Make sure your internet connection is working or try again later.`)
-        } else {
-          Alert.alert("Error", `Could not update ${group.name}. \n${error}\n\nTry again later.`);
-        }
+        setIsProcessingLocalData(false);
       })
       .finally(() => {
-        if (!isMounted()) return;
-        setLocalGroups([]);
-        setIsLoading(false);
-        loadLocalDocumentGroups();
-      });
+        // Do this here after the state has been called, otherwise we get realm invalidation errors
+        updaterContext.removeDocumentGroupUpdating(item);
+      })
   };
 
-  const onConfirmDeleteDocumentGroup = () => {
-    const group = requestDeleteForGroup;
-    setRequestDeleteForGroup(undefined);
+  const onConfirmDelete = () => {
+    const item = requestDeleteForItem;
+    setRequestDeleteForItem(undefined);
 
-    if (isLoading || group === undefined) {
+    if (isProcessingLocalData || item === undefined) return;
+
+    const isUpdating = updaterContext.documentGroupsUpdating.some(it => it.uuid === item.uuid);
+    if (isUpdating) {
+      Alert.alert("Could not delete", "This group is being updated. Please wait until this operation is done and try again.")
       return;
     }
 
-    deleteDocumentGroup(group);
+    deleteItem(item);
   };
 
-  const deleteDocumentGroup = (group: LocalDocumentGroup) => {
-    setIsLoading(true);
+  const deleteItem = (item: LocalDataType) => {
+    setIsProcessingLocalData(true);
+    updaterContext.removeDocumentGroupUpdating(item);
 
-    const result = DocumentProcessor.deleteDocumentGroup(group);
+    const result = DocumentProcessor.deleteDocumentGroup(item);
     result.alert();
+    setIsProcessingLocalData(false);
     result.throwIfException();
-
-    if (!isMounted()) return;
-
-    loadLocalDocumentGroups();
   };
 
-  const getAllLanguagesFromGroups = (groups: Array<ServerDocumentGroup>) => {
-    const languages = DocumentProcessor.getAllLanguagesFromDocumentGroups(groups);
+  const getAllLanguagesFromServerData = (data: ServerDataType[]) => {
+    const languages = DocumentProcessor.getAllLanguagesFromDocumentGroups(data);
 
     if (languages.length > 0 && filterLanguage === "") {
       if (languages.includes("AF")) {
@@ -312,70 +311,70 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const isOfSelectedLanguage = (it: { language: string }) =>
     filterLanguage === ShowAllLanguagesValue || it.language.toUpperCase() === filterLanguage.toUpperCase();
 
-  return (
-    <View style={styles.container}>
-      <ConfirmationModal isOpen={requestDownloadForGroup !== undefined}
-                         onClose={() => setRequestDownloadForGroup(undefined)}
-                         onConfirm={onConfirmDownloadDocumentGroup}
-                         invertConfirmColor={true}
-                         message={`Download documents for ${requestDownloadForGroup?.name}?`} />
+  return <View style={styles.container}>
+    <ConfirmationModal isOpen={requestDownloadForItem !== undefined}
+                       onClose={() => setRequestDownloadForItem(undefined)}
+                       onConfirm={onConfirmDownload}
+                       invertConfirmColor={true}
+                       message={`Download documents for ${requestDownloadForItem?.name}?`} />
 
-      <ConfirmationModal isOpen={requestUpdateForGroup !== undefined}
-                         onClose={() => setRequestUpdateForGroup(undefined)}
-                         onConfirm={onConfirmUpdateDocumentGroup}
-                         invertConfirmColor={true}
-                         message={`Update ${requestUpdateForGroup?.name}?`} />
+    <ConfirmationModal isOpen={requestUpdateForItem !== undefined}
+                       onClose={() => setRequestUpdateForItem(undefined)}
+                       onConfirm={onConfirmUpdate}
+                       invertConfirmColor={true}
+                       message={`Update ${requestUpdateForItem?.name}?`} />
 
-      <ConfirmationModal isOpen={requestDeleteForGroup !== undefined}
-                         onClose={() => setRequestDeleteForGroup(undefined)}
-                         onConfirm={onConfirmDeleteDocumentGroup}
-                         message={`Delete all documents for ${requestDeleteForGroup?.name}?`} />
+    <ConfirmationModal isOpen={requestDeleteForItem !== undefined}
+                       onClose={() => setRequestDeleteForItem(undefined)}
+                       onConfirm={onConfirmDelete}
+                       confirmationStyle={{ color: useTheme().colors.text.error }}
+                       message={`Delete all documents for ${requestDeleteForItem?.name}?`} />
 
-      <Text style={styles.informationText}>Select documents to download or delete:</Text>
+    <Text style={styles.informationText}>Select documents to download or delete:</Text>
 
-      <LanguageSelectBar languages={getAllLanguagesFromGroups(serverGroups)}
-                         selectedLanguage={filterLanguage}
-                         onLanguageClick={setFilterLanguage}
-                         itemCountPerLanguage={itemCountPerLanguage(localGroups)} />
+    <LanguageSelectBar languages={getAllLanguagesFromServerData(serverData)}
+                       selectedLanguage={filterLanguage}
+                       onLanguageClick={setFilterLanguage}
+                       itemCountPerLanguage={itemCountPerLanguage(localData)} />
 
-      <ScrollView nestedScrollEnabled={true}
-                  style={styles.listContainer}
-                  refreshControl={<RefreshControl onRefresh={fetchDocumentGroups}
-                                                  tintColor={styles.refreshControl.color}
-                                                  refreshing={isLoading || isGroupLoading} />}>
+    <ScrollView nestedScrollEnabled={true}
+                style={styles.listContainer}
+                refreshControl={<RefreshControl onRefresh={fetchServerData}
+                                                tintColor={styles.refreshControl.color}
+                                                refreshing={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />}>
 
-        {localGroups.filter(it => it.isValid())
-          .filter(isOfSelectedLanguage)
-          .map((group: LocalDocumentGroup) =>
-            <LocalDocumentGroupItem key={group.uuid + group.name}
-                                    group={group}
-                                    onPress={onLocalDocumentGroupPress}
-                                    onLongPress={shareDocumentGroup}
-                                    hasUpdate={DocumentProcessor.hasUpdate(serverGroups, group)}
-                                    disabled={isLoading || isGroupLoading} />)}
+      {localData
+        .filter(isOfSelectedLanguage)
+        .map((item: LocalDataType) =>
+          <LocalDocumentGroupItem key={item.uuid + item.name}
+                                  group={item}
+                                  onPress={onLocalItemPress}
+                                  onLongPress={shareItem}
+                                  hasUpdate={DocumentProcessor.hasUpdate(serverData, item)}
+                                  disabled={isProcessingLocalData || isSpecificItemLoading} />)}
 
-        {serverGroups.filter(it => !DocumentProcessor.isGroupLocal(localGroups, it))
-          .filter(isOfSelectedLanguage)
-          .map((group: ServerDocumentGroup) =>
-            <ServerDocumentGroupItem key={group.uuid + group.name}
-                                     group={group}
-                                     onPress={onDocumentGroupPress}
-                                     onLongPress={shareDocumentGroup}
-                                     disabled={isLoading || isGroupLoading} />)}
+      {serverData
+        .filter(it => !DocumentProcessor.isGroupLocal(localData, it))
+        .filter(isOfSelectedLanguage)
+        .map((item: ServerDataType) =>
+          <ServerDocumentGroupItem key={item.uuid + item.name}
+                                   group={item}
+                                   onPress={onServerItemPress}
+                                   onLongPress={shareItem}
+                                   disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />)}
 
-        {serverGroups.length > 0 ? undefined :
-          <Text style={styles.emptyListText}>
-            {isLoading || isGroupLoading ? "Loading..." : "No online data available..."}
-          </Text>
-        }
-        {isLoading || serverGroups.length === 0 || serverGroups.filter(isOfSelectedLanguage).length > 0 ? undefined :
-          <Text style={styles.emptyListText}>
-            No documents found for language "{languageAbbreviationToFullName(filterLanguage)}"...
-          </Text>
-        }
-      </ScrollView>
-    </View>
-  );
+      {serverData.length > 0 ? undefined :
+        <Text style={styles.emptyListText}>
+          {isServerDataLoading || isSpecificItemLoading ? "Loading..." : "No online data available..."}
+        </Text>
+      }
+      {isLocalDataLoading || isServerDataLoading || serverData.length === 0 || serverData.filter(isOfSelectedLanguage).length > 0 ? undefined :
+        <Text style={styles.emptyListText}>
+          No documents found for language "{languageAbbreviationToFullName(filterLanguage)}"...
+        </Text>
+      }
+    </ScrollView>
+  </View>;
 };
 
 export default DownloadDocumentsScreen;
@@ -396,7 +395,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text.default
   },
 
-  listContainer: { flex: 1 },
+  listContainer: {
+    flex: 1,
+    minHeight: 100,
+  },
 
   emptyListText: {
     padding: 20,

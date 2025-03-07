@@ -6,12 +6,15 @@ import Settings from "../settings";
 import { ThemeContextProps } from "../gui/components/providers/ThemeProvider";
 import { sanitizeErrorForRollbar } from "./utils";
 import { AudioFiles } from "./songs/audiofiles/audiofiles";
+import { SongDbPatch } from "./db/patches/songs";
+import { DocumentDbPatch } from "./db/patches/documents";
+import { SettingsDbPatch } from "./db/patches/settings/patching";
 
 export const closeDatabases = () => {
   Settings.store();
-  Db.documents.disconnect();
-  Db.songs.disconnect();
-  Db.settings.disconnect();
+  Db.documents.queueDisconnect();
+  Db.songs.queueDisconnect();
+  Db.settings.queueDisconnect();
 };
 
 export const initSettingsDatabase = (theme?: ThemeContextProps) =>
@@ -20,12 +23,16 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
       rollbar.error("Could not connect to local settings database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not connect to local settings database: " + error);
     })
+
     .then(() => Settings.load())
     .catch(error => {
       rollbar.error("Could not load settings from database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not load settings from database: " + error);
     })
-    .then(() => Settings.patch())
+
+    .then(SettingsDbPatch.patch)
+    .catch(error => rollbar.error("Could not apply patches to settings database", sanitizeErrorForRollbar(error)))
+
     .then(() => {
       theme?.reload();
       Settings.appOpenedTimes++;
@@ -45,11 +52,15 @@ export const initSongDatabase = () =>
     .catch(error => {
       rollbar.error("Could not connect to local song database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not connect to local song database: " + error);
-    });
+    })
+    .then(SongDbPatch.patch)
+    .catch(error => rollbar.error("Could not apply patches to song database", sanitizeErrorForRollbar(error)));
 
 export const initDocumentDatabase = () =>
   Db.documents.connect()
     .catch(error => {
       rollbar.error("Could not connect to local document database: " + error.toString(), sanitizeErrorForRollbar(error));
       Alert.alert("Could not connect to local document database: " + error);
-    });
+    })
+    .then(DocumentDbPatch.patch)
+    .catch(error => rollbar.error("Could not apply patches to document database", sanitizeErrorForRollbar(error)));

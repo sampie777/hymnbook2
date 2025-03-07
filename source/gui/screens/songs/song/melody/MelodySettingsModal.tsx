@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Settings from "../../../../../settings";
 import { isIOS } from "../../../../../logic/utils";
-import { AbcMelody } from "../../../../../logic/db/models/AbcMelodies";
+import { AbcMelody } from "../../../../../logic/db/models/songs/AbcMelodies";
 import TrackPlayer from "react-native-track-player";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -71,13 +71,13 @@ const MelodySettingsModal: React.FC<Props> = ({
                        onDenied={closePicker}
                        onCompleted={it => setMelody(it)}
                        rowContentRenderer={(item, isSelected) =>
-                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}>
+                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
+                               importantForAccessibility={"auto"}>
                            {item.name}
                          </Text>
                        } />
     }
     <ConfirmationModal isOpen={isIOS ? !showPicker : true}
-                       title={"Configuration"}
                        closeText={"Close"}
                        invertConfirmColor={false}
                        onClose={() => {
@@ -97,6 +97,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                          onPress={() => {
                            Settings.showMelodyForAllVerses = !showMelodyForAllVerses;
                            setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
+                         }}
+                         onLongPress={() => {
+                           Settings.showMelodyForAllVerses = false;
+                           setShowMelodyForAllVerses?.(false);
                          }} />
 
         <View style={styles.melodyContainer}>
@@ -105,8 +109,10 @@ const MelodySettingsModal: React.FC<Props> = ({
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
-            <Text style={styles.selectedLanguage}>
-              {melodies.length === 0 ? "No melodies available"
+            <Text style={styles.selectedLanguage}
+                  importantForAccessibility={"auto"}>
+              {melodies.length === 0
+                ? "No melodies available"
                 : (selectedMelody?.name ?? "No default set")}
             </Text>
             {melodies?.length < 2 ? undefined : <Icon name={"caret-down"} style={styles.arrow} />}

@@ -1,4 +1,4 @@
-import { Verse, VerseProps } from "./logic/db/models/Songs";
+import { Verse, VerseProps } from "./logic/db/models/songs/Songs";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
 
 export enum VersePickerMethod {
@@ -7,6 +7,7 @@ export enum VersePickerMethod {
   AddToSongListAndShowSearch,
 }
 
+export const TutorialRoute = "TutorialRoute";
 export const HomeRoute = "Home";
 export const SettingsRoute = "Settings";
 export const AboutRoute = "About";
@@ -17,11 +18,14 @@ export const SongSearchRoute = "SongSearch";
 export const SongListRoute = "SongList";
 export const SongRoute = "Song";
 export const SongStringSearchRoute = "SongStringSearchRoute";
+export const SongHistoryRoute = "SongHistoryRoute";
 export const VersePickerRoute = "VersePicker";
 export const DocumentSearchRoute = "DocumentSearch";
 export const DocumentRoute = "Document";
+export const DocumentHistoryRoute = "DocumentHistoryRoute";
 
 export type ParamList = {
+  TutorialRoute: undefined,
   Home: undefined,
   Settings: undefined,
   About: undefined,
@@ -34,9 +38,11 @@ export type ParamList = {
 
   SongSearch: undefined,
   SongStringSearchRoute: undefined,
+  SongHistoryRoute: undefined,
   SongList: undefined,
   Song: {
     id?: number;
+    uuid?: string;
     songListIndex?: number;
     selectedVerses?: Verse[];
     highlightText?: string;
@@ -47,12 +53,15 @@ export type ParamList = {
     method: VersePickerMethod
     songListIndex?: number, // Not used when method=ShowSong|AddToSongListAndShowSearch, otherwise still optional
     songId?: number;  // Required when method=ShowSong|AddToSongListAndShowSearch
+    songUuid?: string;  // Required when method=ShowSong|AddToSongListAndShowSearch
     songName?: string;
     highlightText?: string;
   },
 
   DocumentSearch: undefined,
   Document: {
-    id: number;
+    id?: number;
+    uuid?: string;
   },
+  DocumentHistoryRoute: undefined,
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Animated, LayoutChangeEvent, StyleSheet, Text } from "react-native";
-import { Verse } from "../../../../logic/db/models/Songs";
-import { AbcMelody } from "../../../../logic/db/models/AbcMelodies";
+import { Verse } from "../../../../logic/db/models/songs/Songs";
+import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
 import { ABC } from "../../../../logic/songs/abc/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
@@ -157,16 +157,15 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     }
 
     {!Settings.debug_ignoreShowMelody && isMelodyLoaded && isMelodyAvailable() ? undefined :
-      /* @ts-ignore */
-      <MainTextComponent
-        style={[styles.text, animatedStyle.text]}
-        selectable={Settings.enableTextSelection}
-        textBreakStrategy={"balanced"}
-        adjustsFontSizeToFit={Settings.debug_adjustsFontSizeToFit}
-        allowFontScaling={Settings.debug_allowFontScaling}
-        onTextLayout={Settings.debug_logOnTextLayout ? onTextLayout : undefined}
-      >
-        {renderContent()}
+      <MainTextComponent style={[styles.text, animatedStyle.text]}
+                     selectable={Settings.enableTextSelection}
+                     textBreakStrategy={"balanced"}
+                         adjustsFontSizeToFit={Settings.debug_adjustsFontSizeToFit}
+                         allowFontScaling={Settings.debug_allowFontScaling}
+                         onTextLayout={Settings.debug_logOnTextLayout ? onTextLayout : undefined}>
+        {highlightText == null
+          ? renderContent()
+          : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
       </MainTextComponent>
     }
 

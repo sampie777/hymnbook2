@@ -1,6 +1,6 @@
-import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/Songs";
+import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/songs/Songs";
 import Db from "../../../../source/logic/db/db";
-import { SongBundleSchema, SongMetadataSchema, SongSchema } from "../../../../source/logic/db/models/SongsSchema";
+import { SongBundleSchema, SongMetadataSchema, SongSchema } from "../../../../source/logic/db/models/songs/SongsSchema";
 import { SongSearch } from "../../../../source/logic/songs/songSearch";
 
 describe("Song search find songs by text", () => {
@@ -42,7 +42,7 @@ describe("Song search find songs by text", () => {
   });
 
   afterAll(() => {
-    Db.songs.disconnect();
+    Db.songs.deleteDb();
   });
 
   it("find by alternative and main titles", () => {

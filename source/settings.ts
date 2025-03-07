@@ -51,10 +51,14 @@ class SettingsClass extends SettingsBaseClass {
   authStatus = AccessRequestStatus.UNKNOWN;
   authDeniedReason = "";
 
-  // Survey
-  surveyCompleted = false;
+  // Updates
+  autoUpdateDatabasesCheckIntervalInDays = 7;
+  autoUpdateDatabasesLastCheckTimestamp = 0;
+  autoUpdateOverWifiOnly = true;
 
   // Other
+  surveyCompleted = false;
+  tutorialCompleted = false;
   shareUsageData = process.env.NODE_ENV !== "development";
   debug_addWhitespaceAfterEachVerseLine = false;
   debug_renderEachVerseLineAsTextComponent = false;

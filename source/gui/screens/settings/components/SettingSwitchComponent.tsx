@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Switch, Text,  TouchableWithoutFeedback, View } from "react-native";
+import { StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import Settings from "../../../../settings";
 import { BaseSettingProps, createStyles as settingComponentCreateStyles } from "./SettingComponent";
@@ -54,24 +54,29 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
     });
   }
 
-  return (
-    <TouchableWithoutFeedback
-      onLongPress={onLongPress === undefined ? undefined : () => onLongPress(setValue, keyName)}>
-      <View
-        style={[baseStyles.container, styles.switchContainer, (lessObviousStyling ? {} : baseStyles.whiteContainer)]}>
-        <View style={baseStyles.titleContainer}>
-          <Text style={baseStyles.titleText}>{title}</Text>
-          {description === undefined ? undefined : <Text style={baseStyles.descriptionText}>{description}</Text>}
-        </View>
-        {value === undefined ? undefined :
-          <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
-                  trackColor={{ true: undefined, false: styles.switchComponent.backgroundColor }}
-                  thumbColor={styles.switchComponent.color}
-                  ios_backgroundColor={styles.switchComponent.backgroundColor}
-                  value={_value} />}
+  return <TouchableWithoutFeedback
+    onLongPress={onLongPress === undefined ? undefined : () => onLongPress(setValue, keyName)}>
+    <View
+      style={[baseStyles.container, styles.switchContainer, (lessObviousStyling ? {} : baseStyles.whiteContainer)]}>
+      <View style={baseStyles.titleContainer}>
+        <Text style={baseStyles.titleText}
+              importantForAccessibility={"auto"}>
+          {title}
+        </Text>
+        {description === undefined ? undefined :
+          <Text style={baseStyles.descriptionText}
+                importantForAccessibility={"auto"}>
+            {description}
+          </Text>}
       </View>
-    </TouchableWithoutFeedback>
-  );
+      {value === undefined ? undefined :
+        <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
+                trackColor={{ true: undefined, false: styles.switchComponent.backgroundColor }}
+                thumbColor={styles.switchComponent.color}
+                ios_backgroundColor={styles.switchComponent.backgroundColor}
+                value={_value} />}
+    </View>
+  </TouchableWithoutFeedback>;
 };
 
 

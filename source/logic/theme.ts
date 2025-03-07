@@ -22,6 +22,9 @@ export interface ThemeColors {
       foreground: ColorValue,
       background: ColorValue,
     },
+    success: ColorValue,
+    warning: ColorValue,
+    error: ColorValue,
   },
   verseTitle: ColorValue,
   url: ColorValue,
@@ -33,6 +36,7 @@ export interface ThemeColors {
     default: ColorValue,
     light: ColorValue,
     variant: ColorValue,
+    lightVariant: ColorValue,
   },
   notes: {
     color: ColorValue,
@@ -42,10 +46,6 @@ export interface ThemeColors {
     thumb: ColorValue,
     background?: ColorValue,
   },
-  badge: {
-    medium: ColorValue,
-  },
-  delete: ColorValue,
 }
 
 export const lightColors: ThemeColors = {
@@ -68,7 +68,10 @@ export const lightColors: ThemeColors = {
     highlighted: {
       foreground: "#000",
       background: "#ccc"
-    }
+    },
+    success: "#0b0",
+    warning: "#ff9100",
+    error: "#fb4141",
   },
   verseTitle: "#333",
   url: "#57a4fd",
@@ -79,7 +82,8 @@ export const lightColors: ThemeColors = {
   border: {
     default: "#ddd",
     light: "#eee",
-    variant: "#ccc"
+    variant: "#ccc",
+    lightVariant: "#ccc",
   },
   notes: {
     color: "#222",
@@ -89,10 +93,6 @@ export const lightColors: ThemeColors = {
     thumb: isIOS ? "#fff" : "dodgerblue",
     background: "#eee"
   },
-  badge: {
-    medium: "#ff9100"
-  },
-  delete: "#f17c7c",
 };
 
 export const darkColors: ThemeColors = {
@@ -115,7 +115,10 @@ export const darkColors: ThemeColors = {
     highlighted: {
       foreground: "#fff",
       background: "#6a6a6a"
-    }
+    },
+    success: "#0b0",
+    warning: "#ff9100",
+    error: "#ff7272",
   },
   verseTitle: "#e0e0e0",
   url: "#57a4fd",
@@ -126,7 +129,8 @@ export const darkColors: ThemeColors = {
   border: {
     default: "#202020",
     light: "#202020",
-    variant: "#aaa"
+    variant: "#aaa",
+    lightVariant: "#777",
   },
   notes: {
     color: "#d0d0d0",
@@ -136,10 +140,6 @@ export const darkColors: ThemeColors = {
     thumb: isIOS ? "#fff" : "dodgerblue",
     background: undefined
   },
-  badge: {
-    medium: "#ff9100"
-  },
-  delete: "#f17c7c",
 };
 
 export interface ThemeFontFamilies {
@@ -149,7 +149,7 @@ export interface ThemeFontFamilies {
 }
 
 export const defaultFontFamilies: ThemeFontFamilies = {
-  sansSerif: "Roboto",
+  sansSerif: "Roboto-Regular",
   sansSerifLight: "Roboto-Light",
   sansSerifThin: "Roboto-Thin"
 };

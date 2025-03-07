@@ -6,7 +6,7 @@ import { useFeatures } from "../../components/providers/FeaturesProvider";
 import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import UrlLink from "../../components/UrlLink";
@@ -85,13 +85,17 @@ const AboutScreen: React.FC<{
           <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`}>
             <View style={styles.row}>
               <FontAwesome5Icon name={"envelope"} style={styles.webpageLink} />
-              <Text style={styles.webpageLink}>Mail me</Text>
+              <Text style={styles.webpageLink}
+                    importantForAccessibility={"auto"}>
+                Mail me
+              </Text>
             </View>
           </UrlLink>
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate(PrivacyPolicyRoute)}>
-          <Text style={styles.webpageLink}>
+          <Text style={styles.webpageLink}
+                importantForAccessibility={"auto"}>
             Privacy Policy
           </Text>
         </TouchableOpacity>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SongListSongModel } from "../../../../logic/db/models/SongListModel";
+import { SongListSongModel } from "../../../../logic/db/models/songs/SongListModel";
 import SongList from "../../../../logic/songs/songList";
 import { ParamList, SongRoute } from "../../../../navigation";
 import Settings from "../../../../settings";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import { getNextVerseIndex } from "../../../../logic/songs/utils";
 import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
@@ -45,6 +45,7 @@ const SongControls: React.FC<ComponentProps> =
     const goToSongListSong = (songListSong: SongListSongModel) => {
       requestAnimationFrame(() => navigation.navigate(SongRoute, {
         id: songListSong.song.id,
+        uuid: songListSong.song.uuid,
         songListIndex: songListSong.index,
         selectedVerses: songListSong.selectedVerses.map(it => Verse.toObject(it.verse))
       }));
@@ -102,7 +103,8 @@ const SongControls: React.FC<ComponentProps> =
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(previousSong)}
-                          hitSlop={RectangularInset(20)}>
+                          hitSlop={RectangularInset(20)}
+                          accessibilityLabel={"Previous song"}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
@@ -122,7 +124,8 @@ const SongControls: React.FC<ComponentProps> =
                           activeOpacity={canJumpToNextVerse() ? 0.7 : 1}
                           onPress={jumpToNextVerse}
                           onLongPress={jumpToLastVerse}
-                          hitSlop={RectangularInset(20)}>
+                          hitSlop={{ ...RectangularInset(20), right: 10 }}
+                          accessibilityLabel={"Next verse"}>
           <Icon name={"chevron-down"}
                 style={[
                   styles.buttonText,
@@ -136,7 +139,8 @@ const SongControls: React.FC<ComponentProps> =
         (songListIndex === undefined ? undefined : <View style={styles.buttonBase} />) :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
                           onPress={() => goToSongListSong(nextSong)}
-                          hitSlop={{...RectangularInset(20), left: 10}}>
+                          hitSlop={{ ...RectangularInset(20), left: 10 }}
+                          accessibilityLabel={"Next song"}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}

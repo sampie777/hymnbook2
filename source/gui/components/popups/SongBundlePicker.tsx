@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MultiPickerComponent from "./MultiPickerComponent";
-import { SongBundle } from "../../../logic/db/models/Songs";
+import { SongBundle } from "../../../logic/db/models/songs/Songs";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { languageAbbreviationToFullName } from "../../../logic/utils";
 
@@ -25,14 +25,16 @@ const SongBundlePicker: React.FC<Props> = ({ bundles, selectedBundles, onConfirm
                                onCompleted={onConfirm}
                                rowContentRenderer={(item, isSelected) =>
                                  <View style={styles.container}>
-                                   <Text style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}>
+                                   <Text style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}
+                                         importantForAccessibility={"auto"}>
                                      {item.name}
                                    </Text>
 
                                    {!showLanguage ? null :
                                      <View style={styles.infoContainer}>
                                        {item.language === undefined || item.language === "" ? undefined :
-                                         <Text style={styles.infoText}>
+                                         <Text style={styles.infoText}
+                                               importantForAccessibility={"auto"}>
                                            {languageAbbreviationToFullName(item.language)}
                                          </Text>
                                        }

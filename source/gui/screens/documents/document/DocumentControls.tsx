@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import Db from "../../../../logic/db/db";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { DocumentSchema } from "../../../../logic/db/models/DocumentsSchema";
+import { DocumentSchema } from "../../../../logic/db/models/documents/DocumentsSchema";
 import { DocumentRoute, ParamList } from "../../../../navigation";
-import { Document } from "../../../../logic/db/models/Documents";
+import { Document } from "../../../../logic/db/models/documents/Documents";
 import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -117,7 +117,7 @@ const DocumentControls: React.FC<Props> =
     const nextDocument = getNextDocument();
 
     const goToDocument = (doc: Document) => {
-      requestAnimationFrame(() => navigation.navigate(DocumentRoute, { id: doc.id }));
+      requestAnimationFrame(() => navigation.navigate(DocumentRoute, { id: doc.id, uuid: doc.uuid }));
     };
 
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -126,7 +126,8 @@ const DocumentControls: React.FC<Props> =
       {previousDocument === undefined ? undefined :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(previousDocument)}
-                                  hitSlop={RectangularInset(20)}>
+                                  hitSlop={RectangularInset(20)}
+                                  accessibilityLabel={"Previous document"}>
           <Icon name={"chevron-left"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}
@@ -142,7 +143,8 @@ const DocumentControls: React.FC<Props> =
         ) :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(nextDocument)}
-                                  hitSlop={RectangularInset(20)}>
+                                  hitSlop={RectangularInset(20)}
+                                  accessibilityLabel={"Next document"}>
           <Icon name={"chevron-right"}
                 color={styles.buttonText.color as string}
                 size={styles.buttonText.fontSize}

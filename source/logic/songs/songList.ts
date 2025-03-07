@@ -1,13 +1,15 @@
-import { Song, Verse } from "../db/models/Songs";
+import { Song, Verse } from "../db/models/songs/Songs";
 import Db from "../db/db";
-import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/SongListModel";
-import { SongListModelSchema } from "../db/models/SongListModelSchema";
-import { VerseSchema } from "../db/models/SongsSchema";
+import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/songs/SongListModel";
+import { SongListModelSchema } from "../db/models/songs/SongListModelSchema";
+import { VerseSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
+import { SongDbHelpers } from "./songDbHelpers";
+import { isSongValid } from "./utils";
 
 export default class SongList {
 
-  static list(): Array<SongListSongModel> {
+  static list(): SongListSongModel[] {
     const songList = this.getFirstSongList();
     if (songList === undefined) return [];
 
@@ -19,10 +21,10 @@ export default class SongList {
       .sorted("index")
       // Fix for when null objects come through when database is in transaction
       // (rollbar: #58 Cannot read property of undefined/null expression n)
-      .filter(it => it != null && it.song != null) as unknown as Array<SongListSongModel>;
+      .filter(it => it != null && it.song != null);
   }
 
-  static getAllSongLists(): Realm.Results<SongListModel> {
+  static getAllSongLists(): Realm.Results<Realm.Object<SongListModel> & SongListModel> {
     return Db.songs.realm().objects<SongListModel>(SongListModelSchema.name);
   }
 
@@ -108,7 +110,7 @@ export default class SongList {
     Db.songs.realm().write(() => {
       // Delete all models with no song
       songList.songs.filter(it => it.song == null)
-        .forEach(it => Db.songs.realm().delete(it));
+        .forEach(SongDbHelpers.deleteSongListSong);
 
       songList.songs = songList.songs.filter(it => it.song != null);
     });
@@ -134,7 +136,7 @@ export default class SongList {
     if (songList === undefined) return undefined;
 
     Db.songs.realm().write(() => {
-      Db.songs.realm().delete(songList.songs);
+      for (const child of songList.songs) SongDbHelpers.deleteSongListSong(child);
     });
   }
 
@@ -146,7 +148,10 @@ export default class SongList {
       return undefined;
     }
 
-    return songList.songs.find(it => it.index === index);
+    const song = songList.songs.find(it => it.index === index);
+    if (!isSongValid(song)) return undefined;
+
+    return song;
   }
 
   static previousSong(currentIndex: number): SongListSongModel | undefined {
@@ -157,16 +162,15 @@ export default class SongList {
     return this.getSongAtIndex(currentIndex + 1);
   }
 
-  static saveSelectedVersesForSong(index: number, verses: Array<Verse>) {
+  static saveSelectedVersesForSong(index: number, verses: Verse[]) {
     const songListSong = SongList.getSongAtIndex(index);
     if (songListSong === undefined) return;
 
-    if (verses.length === 0) {
-      Db.songs.realm().write(() => {
-        Db.songs.realm().delete(songListSong.selectedVerses);
-      });
-      return;
-    }
+    Db.songs.realm().write(() => {
+      for (const child of songListSong.selectedVerses) SongDbHelpers.deleteSongListVerse(child);
+    });
+
+    if (verses.length === 0) return;
 
     // "id IN [..]" currently not supported by Realm.
     // See: https://github.com/realm/realm-js/issues/2781#issuecomment-607213640
@@ -177,8 +181,6 @@ export default class SongList {
       .sorted("index");
 
     Db.songs.realm().write(() => {
-      Db.songs.realm().delete(songListSong.selectedVerses);
-
       dbVerses.forEach(it => songListSong.selectedVerses.push(new SongListVerseModel(it)));
     });
   };

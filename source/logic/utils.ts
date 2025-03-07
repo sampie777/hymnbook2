@@ -4,6 +4,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { rollbar } from "./rollbar";
 import config from "../config";
 import { stringMd5 } from "react-native-quick-md5";
+import { locale } from "./locale";
 
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
@@ -19,12 +20,12 @@ export class Result<T = any> {
   data?: T;
 
   constructor({ success, message, error, data }:
-                {
-                  success: boolean,
-                  message?: string,
-                  error?: Error,
-                  data?: T,
-                }) {
+              {
+                success: boolean,
+                message?: string,
+                error?: Error,
+                data?: T,
+              }) {
     this.success = success;
     this.message = message;
     this.error = error;
@@ -44,6 +45,11 @@ export class Result<T = any> {
       throw this.error;
     }
   }
+}
+
+export const alertAndThrow = (error: Error | unknown, title = "Error") => {
+  Alert.alert(title, error?.toString());
+  throw error;
 }
 
 export function capitalize(word: string) {
@@ -118,11 +124,92 @@ export const objectToArrayIfNotAlready = (obj: any) => {
 
 const languageAbbreviationMap = {
   "AF": "Afrikaans",
-  "NL": "Nederlands",
-  "EN": "English",
+  "AM": "አማርኛ",
+  "AR": "العربية",
+  "AZ": "Azərbaycan",
+  "BG": "Български",
+  "BN": "বাংলা",
+  "BS": "Bosanski",
+  "CS": "Čeština",
+  "CY": "Cymraeg",
+  "DA": "Dansk",
   "DE": "Deutsch",
-  "FA": "Français"
+  "EL": "Ελληνικά",
+  "EN": "English",
+  "ES": "Español",
+  "ET": "Eesti",
+  "EU": "Euskara",
+  "FA": "فارسی",
+  "FI": "Suomi",
+  "FR": "Français",
+  "GA": "Gaeilge",
+  "GL": "Galego",
+  "GU": "ગુજરાતી",
+  "HA": "Hausa",
+  "HE": "עברית",
+  "HI": "हिन्दी",
+  "HR": "Hrvatski",
+  "HU": "Magyar",
+  "HY": "Հայերեն",
+  "ID": "Bahasa Indonesia",
+  "IG": "Igbo",
+  "IS": "Íslenska",
+  "IT": "Italiano",
+  "JA": "日本語",
+  "KA": "ქართული",
+  "KK": "Қазақ",
+  "KM": "ខ្មែរ",
+  "KN": "ಕನ್ನಡ",
+  "KO": "한국어",
+  "KY": "Кыргыз",
+  "LO": "ລາວ",
+  "LT": "Lietuvių",
+  "LV": "Latviešu",
+  "MG": "Malagasy",
+  "ML": "മലയാളം",
+  "MN": "Монгол",
+  "MR": "मराठी",
+  "MS": "Bahasa Melayu",
+  "MT": "Malti",
+  "MY": "မြန်မာ",
+  "NE": "नेपाली",
+  "NL": "Nederlands",
+  "NO": "Norsk",
+  "NY": "Chichewa",
+  "OR": "ଓଡ଼ିଆ",
+  "PA": "ਪੰਜਾਬੀ",
+  "PL": "Polski",
+  "PS": "پښتو",
+  "PT": "Português",
+  "RW": "Kinyarwanda",
+  "RO": "Română",
+  "RU": "Русский",
+  "SD": "سنڌي",
+  "SI": "සිංහල",
+  "SK": "Slovenčina",
+  "SL": "Slovenščina",
+  "SQ": "Shqip",
+  "SR": "Српски",
+  "ST": "Sesotho",
+  "SV": "Svenska",
+  "SW": "Kiswahili",
+  "TA": "தமிழ்",
+  "TE": "తెలుగు",
+  "TH": "ไทย",
+  "TL": "Tagalog",
+  "TN": "Setswana",
+  "TR": "Türkçe",
+  "UG": "Uyghur",
+  "UK": "Українська",
+  "UR": "اردو",
+  "UZ": "Oʻzbek",
+  "VI": "Tiếng Việt",
+  "XH": "isiXhosa",
+  "YO": "Yorùbá",
+  "ZH": "中文",
+  "ZU": "isiZulu"
 };
+
 export const languageAbbreviationToFullName = (abbreviation: string) => {
   // @ts-ignore
   return languageAbbreviationMap[abbreviation.toUpperCase()] || abbreviation;
@@ -191,6 +278,8 @@ export const delayed = <T>(callback: () => T, delay: number) => new Promise<T>(r
       resolve(await callback()),
     delay));
 
+export const delay = (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout))
+
 // According to: https://askubuntu.com/a/222650
 export const readableFileSizeSI = (size: number): string => {
   if (size < 1000) return `${size} bytes`;
@@ -208,3 +297,30 @@ export const readableFileSizeIEC = (size: number): string => {
 }
 
 export const hash = (value: string): string => stringMd5(value);
+
+export const isTestEnv = () => process.env.JEST_WORKER_ID !== undefined || process.env.NODE_ENV === 'test';
+
+export const format = (date: Date | string, format: string) => {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
+  return format
+    .replace(/%dd/g, date.getDate().toString().padStart(2, '0'))
+    .replace(/%d/g, date.getDate().toString())
+    .replace(/%mmmm/g, locale.en.constants.date.months[date.getMonth()])
+    .replace(/%mmm/g, locale.en.constants.date.months_short[date.getMonth()])
+    .replace(/%mm/g, (date.getMonth() + 1).toString().padStart(2, '0'))
+    .replace(/%m/g, (date.getMonth() + 1).toString())
+    .replace(/%YYYY/g, date.getFullYear().toString())
+    .replace(/%YY/g, (date.getFullYear() % 100).toString())
+    .replace(/%Y/g, date.getFullYear().toString())
+    .replace(/%HH/g, date.getHours().toString().padStart(2, '0'))
+    .replace(/%H/g, date.getHours().toString())
+    .replace(/%MM/g, date.getMinutes().toString().padStart(2, '0'))
+    .replace(/%M/g, date.getMinutes().toString())
+    .replace(/%SS/g, date.getSeconds().toString().padStart(2, '0'))
+    .replace(/%S/g, date.getSeconds().toString())
+    .replace(/%f/g, date.getMilliseconds().toString().padStart(3, '0'));
+}
+
+export const consoleDir = (data: any) => console.debug(JSON.stringify(data, null, 2))

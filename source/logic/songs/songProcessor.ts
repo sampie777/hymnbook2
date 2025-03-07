@@ -1,31 +1,27 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import config from "../../config";
-import { Result, sanitizeErrorForRollbar } from "../utils";
-import { SongBundle, Verse } from "../db/models/Songs";
-import {
-  AbcMelody as ServerAbcMelody,
-  SongBundle as ServerSongBundle,
-} from "../server/models/ServerSongsModel";
-import { SongBundleSchema } from "../db/models/SongsSchema";
-import { AbcMelody } from "../db/models/AbcMelodies";
+import { sanitizeErrorForRollbar } from "../utils";
+import { SongBundle, Verse } from "../db/models/songs/Songs";
+import { AbcMelody as ServerAbcMelody, SongBundle as ServerSongBundle, } from "../server/models/ServerSongsModel";
+import { SongBundleSchema } from "../db/models/songs/SongsSchema";
+import { AbcMelody } from "../db/models/songs/AbcMelodies";
 import SongList from "./songList";
 import Settings from "../../settings";
+import { SongDbHelpers } from "./songDbHelpers";
 
 export namespace SongProcessor {
 
-  export const loadLocalSongBundles = (): Result<Array<SongBundle & Realm.Object> | undefined> => {
+  export const loadLocalSongBundles = (): (SongBundle & Realm.Object<SongBundle>)[] => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot load local song bundles: song database is not connected");
-      return new Result({ success: false, message: "Database is not connected" });
+      throw new Error("Database is not connected");
     }
 
-    const bundles = Db.songs.realm()
+    return Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
       .sorted(`name`)
       .map(it => it);  // Convert to array. Array.from() will crash tests
-
-    return new Result({ success: true, data: bundles });
   };
 
   export const getExistingBundle = (bundle: { uuid: string }) => {
@@ -51,45 +47,36 @@ export namespace SongProcessor {
     return a.name.localeCompare(b.name);
   };
 
-  export const deleteSongDatabase = (): Promise<Result> => {
-    Db.songs.deleteDb();
-
-    return Db.songs.connect()
-      .then(_ => new Result({ success: true, message: "Deleted all songs" }))
-      .catch(error => {
-        rollbar.error("Could not connect to local song database after deletions: " + error?.toString(), {
-          ...sanitizeErrorForRollbar(error)
-        });
-        return new Result({
-          success: false,
-          message: "Could not reconnect to local database after deletions: " + error
-        });
-      });
-  };
-
-  export const deleteSongBundle = (bundle: SongBundle): Result => {
+  export const deleteSongBundle = (bundle: SongBundle): string => {
     if (!Db.songs.isConnected()) {
       rollbar.warning("Cannot delete song bundle: song database is not connected", {
         bundle: { ...bundle, songs: null }
       });
-      return new Result({ success: false, message: "Database is not connected" });
+      throw new Error("Database is not connected");
     }
 
-    const songCount = bundle.songs.length;
-    const bundleName = bundle.name;
-    const bundleUuid = bundle.uuid;
+    const dbBundle = Db.songs.realm().objectForPrimaryKey<SongBundle>(SongBundleSchema.name, bundle.id);
+    if (!dbBundle) {
+      rollbar.error(`Trying to delete song bundle which does not exist in database`, {
+        bundle: { ...bundle, songs: null }
+      });
+      throw Error(`Could not find song bundle ${bundle.name} in database`);
+    }
+
+    const songCount = dbBundle.songs.length;
+    const bundleName = dbBundle.name;
+    const bundleUuid = dbBundle.uuid;
 
     try {
       Db.songs.realm().write(() => {
-        Db.songs.realm().delete(bundle.songs);
-        Db.songs.realm().delete(bundle);
+        SongDbHelpers.deleteSongBundle(dbBundle);
       });
     } catch (error) {
       rollbar.error("Failed to delete song bundle", {
         ...sanitizeErrorForRollbar(error),
         bundle: { ...bundle, songs: null }
       });
-      return new Result({ success: false, message: `Could not delete (outdated) songs for ${bundleName}` });
+      throw new Error(`Could not delete (outdated) song bundle ${bundleName}`);
     }
 
     SongList.cleanUpAllSongLists();
@@ -98,15 +85,15 @@ export namespace SongProcessor {
     Settings.songStringSearchSelectedBundlesUuids = Settings.songStringSearchSelectedBundlesUuids.filter(it => it != bundleUuid);
     Settings.store();
 
-    return new Result({ success: true, message: `Deleted all ${songCount} songs for ${bundleName}` });
+    return `Deleted all ${songCount} songs for ${bundleName}`;
   };
 
-  export const getAllLanguagesFromBundles = (bundles: Array<ServerSongBundle | SongBundle>) => {
+  export const getAllLanguagesFromBundles = (bundles: (ServerSongBundle | SongBundle)[]) => {
     if (bundles.length === 0) {
       return [];
     }
 
-    const languages: Array<string> = [];
+    const languages: string[] = [];
     bundles.forEach(it => {
       if (!languages.includes(it.language)) {
         languages.push(it.language);
@@ -116,7 +103,7 @@ export namespace SongProcessor {
     return languages;
   };
 
-  export const determineDefaultFilterLanguage = (bundles: Array<ServerSongBundle | SongBundle>): string => {
+  export const determineDefaultFilterLanguage = (bundles: (ServerSongBundle | SongBundle)[]): string => {
     if (bundles.length === 0) {
       return "";
     }

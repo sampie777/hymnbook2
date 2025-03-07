@@ -25,7 +25,6 @@ ios/.xcode.env.local
 # Android/IntelliJ
 #
 build/
-.idea
 .gradle
 local.properties
 *.iml
@@ -88,3 +87,7 @@ rsa_key
 rsa_key.pub
 
 *.log
+hymnbook_songs.broken
+
+.idea
+!.idea/codeStyles/

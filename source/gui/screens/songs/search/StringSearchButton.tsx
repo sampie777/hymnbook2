@@ -6,6 +6,7 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { useSongBundleCount } from "../../../components/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
@@ -16,9 +17,12 @@ const StringSearchButton: React.FC<Props> = ({
                                                navigation,
                                                position
                                              }) => {
+  const bundlesCount = useSongBundleCount();
   const styles = createStyles(useTheme());
 
   const onPress = () => {
+    // Allow button to be shown, but not operational, when the app is first loading
+    if (bundlesCount() < 1) return null;
     navigation.navigate(SongStringSearchRoute);
   };
 
@@ -50,8 +54,11 @@ const StringSearchButton: React.FC<Props> = ({
     }
   }, [position])();
 
+  if (bundlesCount() == 0) return null;
+
   return <View style={[styles.containerBase, containerPositionStyle]}>
     <TouchableOpacity style={[styles.button, buttonPositionStyle]}
+                      accessibilityLabel={"Search song text"}
                       onPress={onPress}>
       <Icon name={"search"} style={[styles.icon, iconPositionStyle]} />
     </TouchableOpacity>

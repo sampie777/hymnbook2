@@ -4,19 +4,37 @@
 
 ### Setup
 
-Copy the file `.env.template` to `.env` and update the values a needed.
+#### Environment/Tools (at the moment of writing this)
+> - Java 17 (JDK)
+> - Node 18
+> - Yarn 1.x
+> - Android SDK 34 (see android/build.gradle)
+> - Android Build Tools 34.0.0 (see android/build.gradle)
+> - NDK 25.1.8937393 (see android/build.gradle)
 
-We start to move to the use of [asdf](https://asdf-vm.com/) as version manager for the build tools, like node. If you don't want to use this tool, you can see the required version in the [`.tool-versions`](./.tool-versions) file.
+---
 
-**In case gradle whines about the wrong Java version**: we use the Java bundled with Android Studio. So before each `yarn build` or `yarn bundle` etc. commands, you need to make sure your `JAVA_HOME` is set to the right path:
-```shell
-export JAVA_HOME="${HOME}/.local/share/JetBrains/Toolbox/apps/android-studio/jbr" # Or similar
-```
+- Copy the file `.env.template` to `.env` and update the values a needed.
+- Make sure your gradle settings (`~/.gradle/gradle.properties`) are set correctly with the following and that there is a `hymnbookUploadKey.keystore` file in `android/app/`:
+  ```
+  HYMNBOOK_UPLOAD_STORE_FILE=hymnbookUploadKey.keystore
+  HYMNBOOK_UPLOAD_KEY_ALIAS=hymnbookUploadKey
+  HYMNBOOK_UPLOAD_STORE_PASSWORD=
+  HYMNBOOK_UPLOAD_KEY_PASSWORD=
+  ```
+- Run `yarn install`.
 
-Run `yarn install`.
+Now you can run `yarn build` to see if everything works correctly. Clean up the error if any:
+- Make sure you have a `ANDROID_HOME` environment variable set
 
-> Don't use node v19 as Realm installation will [hang](https://github.com/realm/realm-js/issues/5136)
 
+~~> Don't use node v19 as Realm installation will [hang](https://github.com/realm/realm-js/issues/5136)~~
+
+~~We start to move to the use of [asdf](https://asdf-vm.com/) as version manager for the build tools, like node. If you don't want to use this tool, you can see the required version in the [`.tool-versions`](./.tool-versions) file.~~
+
+~~**In case gradle whines about the wrong Java version**: make sure you use the correct Java version. With gradle 8.0.1, you must use Java 17.~~
+
+---
 
 #### Android
 

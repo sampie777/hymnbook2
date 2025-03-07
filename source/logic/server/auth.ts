@@ -37,15 +37,15 @@ export namespace ServerAuth {
 
     let authenticationProcess;
     if (Settings.authRequestId === undefined || Settings.authRequestId === "") {
-      authenticationProcess = _requestAccess();
+      authenticationProcess = _requestAccess;
     } else if (Settings.authJwt === undefined || Settings.authJwt === "") {
-      authenticationProcess = _retrieveAccessJWT();
+      authenticationProcess = _retrieveAccessJWT;
     } else {
       // Already authenticated
-      authenticationProcess = emptyPromiseWithValue(getJwt());
+      authenticationProcess = () => emptyPromiseWithValue(getJwt());
     }
 
-    return authenticationProcess
+    return authenticationProcess()
       .finally(() => {
         _isAuthenticating = false;
       });

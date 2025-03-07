@@ -1,6 +1,6 @@
 import { SongBundle as ServerSongBundle } from "../../../../source/logic/server/models/ServerSongsModel";
 import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
-import { SongBundle } from "../../../../source/logic/db/models/Songs";
+import { SongBundle } from "../../../../source/logic/db/models/songs/Songs";
 import { mockDb } from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");

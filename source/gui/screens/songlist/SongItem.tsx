@@ -1,7 +1,7 @@
 import React from "react";
-import { Song } from "../../../logic/db/models/Songs";
-import { SongListSongModel } from "../../../logic/db/models/SongListModel";
-import { generateSongTitle } from "../../../logic/songs/utils";
+import { Song } from "../../../logic/db/models/songs/Songs";
+import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
+import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -26,16 +26,20 @@ const SongItem: React.FC<Props> = ({
                                      onLongPress
                                    }) => {
   const styles = createStyles(useTheme());
+  if (!isSongValid(songListSong.song)) return null;
+
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={styles.container}>
     <View style={styles.infoContainer}>
-      <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}>
+      <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}
+            importantForAccessibility={"auto"}>
         {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
       </Text>
 
       {!showSongBundle ? undefined :
-        <Text style={styles.songBundleName}>
+        <Text style={styles.songBundleName}
+              importantForAccessibility={"auto"}>
           {Song.getSongBundle(songListSong.song)?.name}
         </Text>
       }
@@ -43,7 +47,8 @@ const SongItem: React.FC<Props> = ({
 
     {!showDeleteButton ? undefined :
       <TouchableOpacity style={styles.button}
-                        onPress={() => onDeleteButtonPress(index)}>
+                        onPress={() => onDeleteButtonPress(index)}
+                        accessibilityLabel={`Delete ${songListSong.song.name}`}>
         <Icon name={"trash-alt"}
               size={styles.button.fontSize}
               color={styles.button.color} />
@@ -91,7 +96,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     padding: 15,
     paddingRight: 22,
     fontSize: 18,
-    color: colors.delete
+    color: colors.text.error
   }
 });
 

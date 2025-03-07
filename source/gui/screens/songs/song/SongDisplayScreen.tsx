@@ -4,30 +4,41 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   FlatList, Gesture, GestureDetector,
   GestureEvent,
-  PinchGestureHandler, PinchGestureHandlerEventPayload,
+  PinchGestureHandler,
+  PinchGestureHandlerEventPayload,
   State
 } from "react-native-gesture-handler";
 import ReAnimated, {
-  Easing as ReAnimatedEasing, runOnJS,
+  Easing as ReAnimatedEasing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming
 } from "react-native-reanimated";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
-import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/AbcMelodies";
+import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
+import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import Db from "../../../../logic/db/db";
-import { Song, Verse } from "../../../../logic/db/models/Songs";
 import {
   calculateVerseHeight,
   generateSongTitle,
   getDefaultMelody,
-  loadSongWithId
+  loadSongWithUuidOrId,
+  storeLastUsedMelody
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
-import { Animated, BackHandler, FlatList as NativeFlatList, LayoutChangeEvent } from "react-native";
-import { StyleSheet, View, ViewToken } from "react-native";
+import {
+  Alert,
+  Animated,
+  BackHandler,
+  FlatList as NativeFlatList,
+  LayoutChangeEvent,
+  StyleSheet,
+  View,
+  ViewToken
+} from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
@@ -41,6 +52,8 @@ import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
+import { ViewabilityConfigCallbackPairs } from "@react-native/virtualized-lists/Lists/VirtualizedList";
+import { useSongHistory } from "../../../components/providers/SongHistoryProvider";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -57,9 +70,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
+  const history = useSongHistory();
   const zoomFactor = Settings.debug_zoomFactor;
 
-  const [song, setSong] = useState<Song & Realm.Object | undefined>(undefined);
+  const [song, setSong] = useState<Song | undefined>(undefined);
   const [viewIndex, setViewIndex] = useState(0);
   const [showSongAudioModal, setShowSongAudioModal] = useState(false);
   const [showMelodySettings, setShowMelodySettings] = useState(false);
@@ -89,7 +103,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     React.useCallback(() => {
       onFocus();
       return onBlur;
-    }, [route.params.id])
+    }, [route.params.id, route.params.uuid])
   );
 
   const onFocus = () => {
@@ -102,10 +116,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
+    history.setSong(undefined);
   };
 
   useEffect(() => {
     verseHeights.current = {};
+    history.setSong(song);
 
     // If song is undefined, we're probably leaving this screen,
     // so we can ignore state and animation updates.
@@ -128,9 +144,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (song == null) return;
     if (selectedMelody?.id == song.lastUsedMelody?.id) return;
 
-    Db.songs.realm().write(() => {
-      song.lastUsedMelody = selectedMelody;
-    });
+    try {
+      storeLastUsedMelody(song, selectedMelody);
+    } catch (error) {
+      rollbar.error("Failed to store new lastUsedMelody", {
+        ...sanitizeErrorForRollbar(error),
+        song: { ...song, verses: null },
+        selectedMelody: selectedMelody,
+      });
+    }
   }, [selectedMelody]);
 
   useEffect(() => {
@@ -176,13 +198,27 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const loadSong = () => {
-    setSong(loadSongWithId(route.params.id));
+    const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
+    setSong(dbSong ? Song.clone(dbSong, { includeVerses: true }) : undefined);
+    history.setSong(song);
+
+    if (!dbSong) {
+      Alert.alert("Song could not be found", "This probably happened because the database was updated. Try re-opening the song.")
+      rollbar.info("Song could not be found", {
+        "route.params.id": route.params.id,
+        "route.params.uuid": route.params.uuid,
+        isMounted: isMounted(),
+        isFocused: _isFocused.current,
+        songList: getSongListInformationForErrorReporting()
+      })
+    }
   };
 
   const openVersePicker = (useSong?: Song) => {
     if (useSong === undefined) {
       rollbar.warning("Can't open versepicker for undefined song.", {
         "route.params.id": route.params.id,
+        "route.params.uuid": route.params.uuid,
         isMounted: isMounted(),
         isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
@@ -264,12 +300,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     }
   };
 
-  const onListViewableItemsChanged = React.useRef(
+  const onListViewableItemsChangedForSongControls = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
       if (viewableItems.length === 0) {
         setViewIndex(-1);
       } else if (viewableItems[0].index !== null) {
         setViewIndex(viewableItems[0].index);
+      }
+    });
+
+  const onListViewableItemsChangedForHistory = React.useRef(
+    ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
+      if (viewableItems.length === 0) {
+        history.setIndex(-1);
+      } else if (viewableItems[0].index !== null) {
+        history.setIndex(viewableItems[0].index);
       }
     });
 
@@ -385,7 +430,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     return calculateVerseHeight(index, verseHeights.current);
   };
 
-  // When verse is shown (either no verses as selected or this verse selected no matter if its first or not)
+  // When verse is shown (either no verses as selected or this verse selected no matter if it's first or not)
   // and the verse custom melody isn't shown yet
   const isVerseVisibleAndHasUniqueMelody = (verse: Verse, selectedVerses: Verse[]): boolean => {
     if (!selectedMelody) return false;
@@ -397,7 +442,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (!melody) return false;
 
     const melodyHash = hash(melody);
-    if(shownMelodyHashes.includes(melodyHash)) return false;
+    if (shownMelodyHashes.includes(melodyHash)) return false;
 
     shownMelodyHashes.push(melodyHash);
     return true;
@@ -434,9 +479,16 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          highlightText={highlightText} />;
   };
 
-  const listViewabilityConfig = React.useRef({
-    itemVisiblePercentThreshold: 10
-  });
+  const listViewabilityConfigPairs = React.useRef<ViewabilityConfigCallbackPairs>([
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 10 },
+      onViewableItemsChanged: onListViewableItemsChangedForSongControls.current,
+    },
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 35 },
+      onViewableItemsChanged: onListViewableItemsChangedForHistory.current,
+    },
+  ]);
 
   // With NativeFlatList, pinch-to-zoom won't work properly on Android
   const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
@@ -445,7 +497,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     {!showSongAudioModal || song === undefined ? undefined :
       <SongAudioPopup song={song}
                       selectedMelody={selectedMelody}
-                      onClose={() => setShowSongAudioModal(false)} />}
+                      onClose={() => {
+                        if (!isMounted()) return;
+                        setShowSongAudioModal(false)
+                      }} />}
 
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
@@ -477,14 +532,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             <VerseList
               ref={flatListComponentRef}
               waitFor={isIOS ? undefined : pinchGestureHandlerRef}
-              data={(song?.verses as (Realm.Results<Verse> | undefined))?.sorted("index")}
+              data={song?.verses}
               renderItem={renderContentItem}
               initialNumToRender={20}
               keyExtractor={(item: Verse) => item.id.toString()}
               getItemLayout={!Settings.debug_neverCalculateVerseHeight && (Settings.debug_alwaysCalculateVerseHeight || (song && song?.verses.length > 20)) ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
-              onViewableItemsChanged={onListViewableItemsChanged.current}
-              viewabilityConfig={listViewabilityConfig.current}
+              viewabilityConfigCallbackPairs={listViewabilityConfigPairs.current}
               onEndReached={onListEndReached}
               onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
                 info: info,
@@ -505,8 +559,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
         <LoadingOverlay text={null}
                         isVisible={
-                          route.params.id !== undefined
-                          && (song === undefined || song.id !== route.params.id)}
+                          (route.params.id != undefined && route.params.uuid != undefined)
+                          && (song === undefined || (song.id !== route.params.id && song.uuid !== route.params.uuid))}
                         animate={Settings.songFadeIn} />
       </View>
     </PinchGestureHandler>

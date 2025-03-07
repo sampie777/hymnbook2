@@ -1,5 +1,5 @@
 import { isSongLanguageDifferentFromSongBundle } from "../../../../source/logic/songs/utils";
-import { Song, SongBundle } from "../../../../source/logic/db/models/Songs";
+import { Song, SongBundle } from "../../../../source/logic/db/models/songs/Songs";
 
 describe("test if song language is different from bundle", () => {
   const song = new Song("", "", "", "", new Date(), new Date(), "", [], [], 0, 1);

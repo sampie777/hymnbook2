@@ -1,219 +1,54 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
-import { dateFrom, Result, sanitizeErrorForRollbar } from "../utils";
-import { Document, DocumentGroup } from "../db/models/Documents";
-import { DocumentGroup as ServerDocumentGroup, Document as ServerDocument } from "../server/models/Documents";
-import { DocumentGroupSchema, DocumentSchema } from "../db/models/DocumentsSchema";
-import { DocumentServer } from "./documentServer";
+import { Result, sanitizeErrorForRollbar } from "../utils";
+import { DocumentGroup } from "../db/models/documents/Documents";
+import { DocumentGroup as ServerDocumentGroup } from "../server/models/Documents";
+import { DocumentGroupSchema } from "../db/models/documents/DocumentsSchema";
+import { DocumentDbHelpers } from "./documentDbHelpers";
 
 export namespace DocumentProcessor {
-  interface ConversionState {
-    groupId: number;
-    documentId: number;
-    totalDocuments: number;
-  }
-
-  export const saveDocumentGroupToDatabase = (group: ServerDocumentGroup): Result => {
-    if (!Db.documents.isConnected()) {
-      rollbar.warning("Cannot save local document group to database: document database is not connected");
-      return new Result({ success: false, message: "Database is not connected" });
-    }
-
-    if (group.items == null && group.groups == null) {
-      rollbar.warning("Document group contains no documents or groups: " + group.name, group);
-      return new Result({ success: false, message: "Document group contains no documents or groups" });
-    }
-
-    const existingGroup = Db.documents.realm()
-      .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
-    if (existingGroup.length > 0) {
-      return new Result({ success: false, message: `Document group ${group.name} already exists` });
-    }
-
-    const conversionState: ConversionState = {
-      groupId: Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema),
-      documentId: Db.documents.getIncrementedPrimaryKey(DocumentSchema),
-      totalDocuments: 0
-    };
-    const documentGroup = convertServerDocumentGroupToLocalDocumentGroup(group, conversionState, true);
-
-    try {
-      Db.documents.realm().write(() => {
-        Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
-      });
-    } catch (error) {
-      rollbar.error(`Failed to import documents`, sanitizeErrorForRollbar(error));
-      return new Result({
-        success: false,
-        message: `Failed to import documents: ${error}`,
-        error: error as Error
-      });
-    }
-
-    return new Result({
-      success: true,
-      message: `${documentGroup.name} added!`
-    });
-  };
-
-  export const convertServerDocumentGroupToLocalDocumentGroup = (group: ServerDocumentGroup, conversionState: ConversionState, isRoot: boolean = false): DocumentGroup => {
-    const privateConversionState: ConversionState = {
-      groupId: conversionState.groupId,
-      documentId: conversionState.documentId,
-      totalDocuments: 0
-    };
-
-    const groups = group.groups
-      ?.sort((a, b) => a.name.localeCompare(b.name))
-      ?.map(it => convertServerDocumentGroupToLocalDocumentGroup(it, privateConversionState)) || [];
-
-    const items = group.items
-      ?.sort((a, b) => a.index - b.index)
-      ?.map(it => convertServerDocumentToLocalDocument(it, privateConversionState)) || [];
-
-    privateConversionState.totalDocuments += items.length;
-
-    conversionState.groupId = privateConversionState.groupId;
-    conversionState.documentId = privateConversionState.documentId;
-    conversionState.totalDocuments += privateConversionState.totalDocuments;
-
-    return new DocumentGroup(
-      group.name,
-      group.language,
-      groups,
-      items,
-      dateFrom(group.createdAt),
-      dateFrom(group.modifiedAt),
-      group.uuid,
-      group.hash,
-      privateConversionState.totalDocuments,
-      isRoot,
-      conversionState.groupId++
-    );
-  };
-
-  const convertServerDocumentToLocalDocument = (document: ServerDocument, conversionState: ConversionState): Document => {
-    return new Document(
-      document.name,
-      document.content,
-      document.language,
-      document.index,
-      dateFrom(document.createdAt),
-      dateFrom(document.modifiedAt),
-      document.uuid,
-      conversionState.documentId++
-    );
-  };
-
-
-  export const fetchAndUpdateDocumentGroup = (group: ServerDocumentGroup): Promise<Result> => {
-    return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
-      .then(updateAndSaveDocumentGroup);
-  };
-
-  const updateAndSaveDocumentGroup = (group: ServerDocumentGroup): Result => {
-    if (!Db.documents.isConnected()) {
-      rollbar.warning("Cannot update documents: document database is not connected");
-      return new Result({ success: false, message: "Database is not connected" });
-    }
-
-    if (group.items == null && group.groups == null) {
-      rollbar.warning("New document group contains no documents or groups: " + group.name, group);
-      return new Result({
-        success: false,
-        message: `New update contains no documents. If this is correct, please manually remove ${group.name}.`
-      });
-    }
-
-    const conversionState: ConversionState = {
-      groupId: Db.documents.getIncrementedPrimaryKey(DocumentGroupSchema),
-      documentId: Db.documents.getIncrementedPrimaryKey(DocumentSchema),
-      totalDocuments: 0
-    };
-    const documentGroup = convertServerDocumentGroupToLocalDocumentGroup(group, conversionState, true);
-
-    const existingGroup = Db.documents.realm()
-      .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
-    if (existingGroup.length === 0) {
-      rollbar.warning("To-be-updated document group doesn't exists locally: " + group.name, group);
-    }
-
-    try {
-      Db.documents.realm().write(() => {
-        Db.documents.realm().create(DocumentGroupSchema.name, documentGroup);
-      });
-    } catch (error) {
-      rollbar.error(`Failed to update documents`, sanitizeErrorForRollbar(error));
-      return new Result({ success: false, message: `Failed to update documents: ${error}`, error: error as Error });
-    }
-
-    if (existingGroup.length > 0) {
-      const deleteResult = deleteDocumentGroup(existingGroup[0]);
-      if (!deleteResult.success) {
-        return deleteResult;
-      }
-    }
-
-    return new Result({ success: true, message: `${documentGroup.name} updated!` });
-  };
-
-  export const loadLocalDocumentRoot = (): Result<Array<DocumentGroup & Realm.Object> | undefined> => {
+  export const loadLocalDocumentRoot = (): (DocumentGroup & Realm.Object<DocumentGroup>)[] => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot load local document groups: document database is not connected");
-      return new Result({ success: false, message: "Database is not connected" });
+      throw new Error("Database is not connected");
     }
 
-    const groups = Db.documents.realm()
+    return Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
       .filtered(`isRoot = true`)
       .sorted(`name`)
       .map(it => it);  // Convert to array. Array.from() will crash tests
-
-    return new Result({ success: true, data: groups });
-  };
-
-  export const deleteDocumentDatabase = (): Promise<Result> => {
-    Db.documents.deleteDb();
-
-    return Db.documents.connect()
-      .then(_ => new Result({ success: true, message: "Deleted all documents" }))
-      .catch(error => {
-        rollbar.error("Could not connect to local document database after deletions: " + error?.toString(), sanitizeErrorForRollbar(error));
-        return new Result({
-          success: false,
-          message: "Could not reconnect to local database after deletions: " + error
-        });
-      });
   };
 
   export const deleteDocumentGroup = (group: DocumentGroup): Result => {
     if (!Db.documents.isConnected()) {
-      rollbar.warning("Cannot delete document group: document database is not connected");
+      rollbar.warning("Cannot delete document group: document database is not connected", {
+        group: { ...group, groups: null, items: null, _parent: null }
+      });
       return new Result({ success: false, message: "Database is not connected" });
     }
 
-    const deleteGroup = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name).find(it => it.id === group.id);
-    if (deleteGroup === null || deleteGroup === undefined) {
+    const dbGroup = Db.documents.realm().objectForPrimaryKey<DocumentGroup>(DocumentGroupSchema.name, group.id);
+    if (!dbGroup) {
       rollbar.error(`Trying to delete document group which does not exist in database`, {
-        group: group
+        group: { ...group, groups: null, items: null, _parent: null }
       });
-      return new Result({ success: false, message: `Cannot find document group ${group.name} in database` });
+      return new Result({ success: false, message: `Could not find document group ${group.name} in database` });
     }
 
-    const groupName = deleteGroup.name;
+    const groupName = dbGroup.name;
 
-    // Shallow copy
-    const deleteGroups = deleteGroup.groups?.slice(0) || [];
-    deleteGroups.forEach(it => {
-      deleteDocumentGroup(it);
-    });
-
-    Db.documents.realm().write(() => {
-      Db.documents.realm().delete(deleteGroup.items);
-      Db.documents.realm().delete(deleteGroup);
-    });
+    try {
+      Db.documents.realm().write(() => {
+        DocumentDbHelpers.deleteDocumentGroup(dbGroup);
+      });
+    } catch (error) {
+      rollbar.error("Failed to delete document group", {
+        ...sanitizeErrorForRollbar(error),
+        group: { ...group, groups: null, items: null, _parent: null }
+      });
+      throw new Error(`Could not delete (outdated) documents for ${groupName}`);
+    }
 
     return new Result({ success: true, message: `Deleted all for ${groupName}` });
   };
@@ -264,31 +99,5 @@ export namespace DocumentProcessor {
 
   export const isGroupLocal = (localGroups: DocumentGroup[], group: ServerDocumentGroup) => {
     return localGroups.some(it => it.uuid == group.uuid);
-  };
-
-  export const updateLocalGroupsWithUuid = (localGroups: DocumentGroup[], serverGroups: ServerDocumentGroup[]) => {
-    if (serverGroups.length === 0) {
-      return;
-    }
-
-    localGroups
-      .filter(it => it.uuid == "")
-      .forEach(it => {
-        const serverGroup = serverGroups.find(serverGroup => serverGroup.name == it.name);
-        if (serverGroup === undefined) {
-          return;
-        }
-
-        try {
-          Db.documents.realm().write(() => {
-            it.uuid = serverGroup.uuid;
-          });
-        } catch (error) {
-          rollbar.error(`Failed to update document group with new UUID`, {
-            ...sanitizeErrorForRollbar(error),
-            group: { ...it, groups: null, items: null }
-          });
-        }
-      });
   };
 }

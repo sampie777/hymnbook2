@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Alert, Animated,
-  Platform,
-  StyleProp,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle
-} from "react-native";
+import { Alert, Animated, Platform, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import Settings from "../../../settings";
 import { openLink } from "../../../logic/utils";
 import { rollbar } from "../../../logic/rollbar";
@@ -141,6 +133,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
     <Animated.Text key={index}
+                   importantForAccessibility={node.data != null && node.data.length > 0 ? undefined : "no"}
                    style={[mergedStyles.defaultText, args?.["style"]]}
                    dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>

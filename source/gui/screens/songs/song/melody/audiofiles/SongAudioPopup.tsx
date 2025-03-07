@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, ActivityIndicator, ScrollView } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import ConfirmationModal from "../../../../../components/popups/ConfirmationModal";
 import AudioItem from "./AudioItem";
-import { Song, SongAudio } from "../../../../../../logic/db/models/Songs";
+import { Song, SongAudio } from "../../../../../../logic/db/models/songs/Songs";
 import { AudioFiles } from "../../../../../../logic/songs/audiofiles/audiofiles";
 import TrackPlayer from "react-native-track-player";
 import { ServerAuth } from "../../../../../../logic/server/auth";
 import { api } from "../../../../../../logic/api";
-import { AbcMelody } from "../../../../../../logic/db/models/AbcMelodies";
+import { AbcMelody } from "../../../../../../logic/db/models/songs/AbcMelodies";
+import { useIsMounted } from "../../../../../components/utils";
 
 interface Props {
   song: Song;
@@ -17,10 +18,11 @@ interface Props {
 }
 
 const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
-  const styles = createStyles(useTheme());
+  const isMounted = useIsMounted();
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<SongAudio[]>([]);
   const [selectedItem, setSelectedItem] = useState<SongAudio | undefined>();
+  const styles = createStyles(useTheme());
 
   useEffect(() => {
     fetchItems();
@@ -39,13 +41,24 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
   }, [items]);
 
   const fetchItems = () => {
+    if (!isMounted()) return;
     setIsLoading(true);
-    AudioFiles.fetchAll(song)
-      .then(setItems)
-      .finally(() => setIsLoading(false));
+
+    // Clone `song` as it could be set undefined in `SongDisplayScreen.tsx` while the data is being fetched
+    const clonedSong = Song.clone(song);
+
+    AudioFiles.fetchAll(clonedSong)
+      .then(data => {
+        if (!isMounted()) return;
+        setItems(data);
+      })
+      .finally(() => {
+        if (!isMounted()) return;
+        setIsLoading(false);
+      });
   };
 
-  const downloadFile = async () => {
+  const playFile = async () => {
     const item = selectedItem;
     if (item === undefined) return;
 
@@ -68,7 +81,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
                             confirmText={"Play"}
                             invertConfirmColor={true}
                             onClose={onClose}
-                            onConfirm={selectedItem === undefined ? undefined : downloadFile}
+                            onConfirm={selectedItem === undefined ? undefined : playFile}
                             showCloseButton={true}>
     <View style={styles.container}>
       <Text style={styles.text}>
