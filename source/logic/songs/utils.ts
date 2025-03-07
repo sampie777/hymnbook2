@@ -179,14 +179,19 @@ export const getNextVerseIndex = (verses: Array<Verse>, currentIndex: number) =>
 };
 
 export const isTitleSimilarToOtherSongs = (item: Song, songs: Song[]): boolean => {
+  if (!isSongValid(item)) return false;
+
   // Remove any arbitrary information, like song number, 1e/2e beryming, (english), ...
   const stripNameDownToEssentials = (it: string) => it.replace(/ [0-9(\[].*$/g, "").trim();
 
-  const songBundle = Song.getSongBundle(item);
+  const songBundleId = Song.getSongBundle(item)?.id;
   const nameWithoutNumber = stripNameDownToEssentials(item.name);
+  const itemId = item.id
+
   return songs.some(it =>
-    it.id !== item.id
-    && Song.getSongBundle(it)?.id !== songBundle?.id
+    isSongValid(it)
+    && it.id !== itemId
+    && Song.getSongBundle(it)?.id !== songBundleId
     // Names are the same if there's at max only 1 character different
     && distance(nameWithoutNumber, stripNameDownToEssentials(it.name)) <= 1
   );
