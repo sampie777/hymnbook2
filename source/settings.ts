@@ -60,37 +60,6 @@ class SettingsClass extends SettingsBaseClass {
   surveyCompleted = false;
   tutorialCompleted = false;
   shareUsageData = process.env.NODE_ENV !== "development";
-  debug_addWhitespaceAfterEachVerseLine = false;
-  debug_addNewLinesAfterVerse = 0;
-  debug_renderEachVerseLineAsTextComponent = false;
-  debug_useAnimatedTextComponentForVerse = true;
-  debug_useAnimatedTextComponentForExtraComponents = true;
-  debug_addWhitespacesAfterVerse = false;
-  debug_addInvisibleCharactersAfterVerse = false;
-  debug_addInvisibleTextAfterVerse = false;
-  debug_adjustsFontSizeToFit = false;
-  debug_allowFontScaling = true;
-  debug_logOnTextLayout = false;
-  debug_drawSongVerseBorders = false;
-  debug_ignoreShowMelody = false;
-  debug_maxVerseWidth = false;
-  debug_mediumVerseWidth = false;
-  debug_removeClippedSubviews = false;
-  debug_alwaysCalculateVerseHeight = false;
-  debug_useFlexForVerses = false;
-  debug_useFlexForVersesContent = false;
-
-  debug_drawSongVerseBorderOpaque = false;
-  debug_drawSongVerseBorderContainer = false;
-  debug_drawSongVerseBorderTitle = false;
-  debug_drawSongVerseBorderText = false;
-  debug_drawSongVerseBorderVerseList = false;
-  debug_verseWidth = 1.0;
-  debug_zoomFactor = 1.0;
-  debug_verseHeightCalculationReturnsZero = false;
-  debug_neverCalculateVerseHeight = false;
-  debug_letterSpacing = 0.0;
-  debug_includeFontPadding = true;
 }
 
 const Settings = new SettingsClass();

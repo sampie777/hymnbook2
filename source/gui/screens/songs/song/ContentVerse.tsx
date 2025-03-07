@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Animated, LayoutChangeEvent, StyleSheet, Text } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
@@ -8,10 +8,8 @@ import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { renderTextWithCustomReplacements } from "../../../components/utils";
 import MelodyView from "../../../components/melody/MelodyView";
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
-import { rollbar } from "../../../../logic/rollbar";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -36,26 +34,39 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [textLineWidth, setTextLineWidth] = useState<{text: string, width: number}[]>([]);
+  const [content, setContent] = useState(verse.content);
 
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: {
       paddingTop: Animated.multiply(scale, 10),
-      paddingBottom: Animated.multiply(scale, 15)
+      paddingBottom: Animated.multiply(scale, 35)
     },
     title: {
-      fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 19) : 19,
-      paddingBottom: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 5) : 5
+      fontSize: Animated.multiply(scale, 19),
+      paddingBottom: Animated.multiply(scale, 5)
     },
     titleLarge: {
-      fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 30) : 30,
-      paddingBottom: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 5) : 5
+      fontSize: Animated.multiply(scale, 30),
+      paddingBottom: Animated.multiply(scale, 5)
     },
     text: {
-      fontSize: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 20) : 20,
-      lineHeight: Settings.debug_useAnimatedTextComponentForVerse ? Animated.multiply(scale, 30) : 30
+      fontSize: Animated.multiply(scale, 20),
+      lineHeight: Animated.multiply(scale, 30)
     }
   };
+
+  const hasUpdated = useRef<boolean>(false);
+  useEffect(() => {
+    if (hasUpdated.current) return;
+    if (containerWidth == 0) return;
+    if (textLineWidth.length == 0) return;
+
+    setContent(generateContent());
+    hasUpdated.current = true;
+  }, [containerWidth, textLineWidth]);
 
   const styleForVerseType = (type: VerseType) => {
     switch (type) {
@@ -101,106 +112,77 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const memoizedAbc = useMemo(() => ABC.generateAbcForVerse(verse, activeMelody), [activeMelody?.id]);
 
-  const renderContent = () => {
-    if (highlightText != null) {
-      return renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent);
+  const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) =>
+    setTextLineWidth(e.nativeEvent.lines.map(it => ({
+      text: it.text,
+      width: it.width,
+    })));
+
+  const onTextContainerLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width);
+
+  const generateContent = () => {
+    if (containerWidth == 0) return verse.content;
+    if (textLineWidth.length == 0) return verse.content;
+
+    const result: string[] = [];
+
+    const lines = verse.content.split("\n");
+    let lastTextWidthIndex = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const textWidthIndex = textLineWidth
+        .findIndex((it, index) => index >= lastTextWidthIndex && line.startsWith(it.text.trim()))
+      lastTextWidthIndex = textWidthIndex;
+
+      const textWidth = textLineWidth[textWidthIndex];
+      if (textWidth == undefined) {
+        console.debug(line, textLineWidth)
+        return "";
+      }
+      result.push(line + (textWidth.width < containerWidth ? "" : "\r"))
     }
-
-    let content = Settings.debug_addWhitespaceAfterEachVerseLine ? verse.content.replace(/\n/g, " \n") : verse.content;
-    content += "\n".repeat(Settings.debug_addNewLinesAfterVerse * 100);
-
-    const TextComponent = Settings.debug_useAnimatedTextComponentForExtraComponents ? Animated.Text : Text;
-    let resultComponent = <>{content}</>;
-
-    if (Settings.debug_renderEachVerseLineAsTextComponent) {
-      resultComponent = <>{
-        content
-          .split("\n")
-          .map((it, i) => <TextComponent key={i + it}>{i > 0 ? "\n" : ""}{it}</TextComponent>)
-      }</>;
-    }
-
-    if (Settings.debug_addWhitespacesAfterVerse) {
-      resultComponent = <>{resultComponent}<TextComponent>{" "}{" "}{" "}{" "}{" "}{" "}{" "}{" "}{" "}{" "}</TextComponent></>;
-    }
-
-    if (Settings.debug_addInvisibleCharactersAfterVerse) {
-      resultComponent = <>{resultComponent}<TextComponent>{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}{"‎"}</TextComponent></>;
-    }
-
-    if (Settings.debug_addInvisibleTextAfterVerse) {
-      resultComponent = <>{resultComponent}<TextComponent style={{ color: "#fff0" }}> . . . . . . . . . .</TextComponent></>;
-    }
-
-    // for(let i = 0; i < Settings.debug_addNewLinesAfterVerse * 100; i++) resultComponent = <>{resultComponent}<TextComponent>{"\n"}</TextComponent></>;
-
-    return resultComponent;
-  };
-
-  const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) => {
-    rollbar.debug("onTextLayout", {
-      verse: verse,
-      event: e,
-      lines: JSON.stringify(e.nativeEvent.lines),
-      songs: verse._songs ? verse._songs[0].name : undefined
-    });
-  };
-
-  const MainTextComponent = Settings.debug_useAnimatedTextComponentForVerse ? Animated.Text : Text;
+    return result.join("\n");
+  }
 
   return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
     {displayName.length === 0 ? undefined :
-      <MainTextComponent style={[
+      <Animated.Text style={[
         styles.title,
         specificStyleForTitle(),
         animatedStyle.title,
         styleForVerseType(getVerseType(verse))
       ]}>
         {displayName}
-      </MainTextComponent>
+      </Animated.Text>
     }
 
-    {!Settings.debug_ignoreShowMelody && isMelodyLoaded && isMelodyAvailable() ? undefined :
-      /* @ts-ignore */
-      <MainTextComponent style={[styles.text, animatedStyle.text]}
-                         selectable={Settings.enableTextSelection}
-                         textBreakStrategy={"balanced"}
-                         adjustsFontSizeToFit={Settings.debug_adjustsFontSizeToFit}
-                         allowFontScaling={Settings.debug_allowFontScaling}
-                         onTextLayout={Settings.debug_logOnTextLayout ? onTextLayout : undefined}>
-        {highlightText == null
-          ? renderContent()
-          : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
-        {"\n"}
-      </MainTextComponent>
+    {isMelodyLoaded && isMelodyAvailable() ? undefined :
+      <Animated.Text style={[styles.text, animatedStyle.text]}
+                     selectable={Settings.enableTextSelection}
+                     onLayout={onTextContainerLayout}
+                     onTextLayout={onTextLayout}
+                     textBreakStrategy={"balanced"}>
+        {/*{verse.content + "\r\n".repeat(textLineWidth.filter(it => it >= containerWidth).length)}*/}
+        {content}
+      </Animated.Text>
     }
 
-    {Settings.debug_ignoreShowMelody || !isMelodyAvailable() ? undefined :
-      <MelodyView onLoaded={onMelodyLoaded}
-                  abc={memoizedAbc}
-                  animatedScale={scale}
-                  melodyScale={melodyScale} />}
+    {!isMelodyAvailable() ? undefined : <MelodyView onLoaded={onMelodyLoaded}
+                                                    abc={memoizedAbc}
+                                                    animatedScale={scale}
+                                                    melodyScale={melodyScale} />}
   </Animated.View>;
 };
 
 export default ContentVerse;
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
-  container: {
-    borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderContainer ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
-    width: Settings.debug_maxVerseWidth ? "100%" : (Settings.debug_mediumVerseWidth ? "90%" : `${Math.round(Settings.debug_verseWidth * 100)}%`),
-    flex: Settings.debug_useFlexForVerses ? 1 : undefined,
-    flexDirection: Settings.debug_useFlexForVersesContent ? "column" : undefined
-  },
+  container: {},
   title: {
     color: colors.verseTitle,
     textTransform: "lowercase",
     fontFamily: fontFamily.sansSerifLight,
-    fontStyle: "italic",
-    borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderTitle ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
-    flex: 10
+    fontStyle: "italic"
   },
 
   titleNotSelected: {},
@@ -224,11 +206,6 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
 
   text: {
     color: colors.text.default,
-    borderWidth: Settings.debug_drawSongVerseBorders || Settings.debug_drawSongVerseBorderText ? 1 : undefined,
-    borderColor: Settings.debug_drawSongVerseBorderOpaque ? colors.background : "#0000",
-    flex: Settings.debug_useFlexForVersesContent ? 1 : undefined,
-    letterSpacing: Settings.debug_letterSpacing,
-    includeFontPadding: Settings.debug_includeFontPadding
   },
   textHighlighted: {
     color: colors.text.highlighted.foreground,
