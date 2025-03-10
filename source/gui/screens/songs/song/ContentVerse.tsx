@@ -5,11 +5,12 @@ import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
 import { ABC } from "../../../../logic/songs/abc/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
-import { getVerseType, VerseType } from "../../../../logic/songs/utils";
+import { generateVerseContentWithCorrectWidth, getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import MelodyView from "../../../components/melody/MelodyView";
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
+import { renderTextWithCustomReplacements } from "../../../components/utils";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -35,7 +36,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const isSelected = isVerseInList(selectedVerses, verse);
   const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [textLineWidth, setTextLineWidth] = useState<{text: string, width: number}[]>([]);
+  const [textLineWidth, setTextLineWidth] = useState<{ text: string, width: number }[]>([]);
   const [content, setContent] = useState(verse.content);
 
   const styles = createStyles(useTheme());
@@ -57,16 +58,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       lineHeight: Animated.multiply(scale, 30)
     }
   };
-
-  const hasUpdated = useRef<boolean>(false);
-  useEffect(() => {
-    if (hasUpdated.current) return;
-    if (containerWidth == 0) return;
-    if (textLineWidth.length == 0) return;
-
-    setContent(generateContent());
-    hasUpdated.current = true;
-  }, [containerWidth, textLineWidth]);
 
   const styleForVerseType = (type: VerseType) => {
     switch (type) {
@@ -100,6 +91,16 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     setIsMelodyLoaded(true);
   };
 
+  const hasCalculatedLineWidths = useRef<boolean>(false);
+  useEffect(() => {
+    if (hasCalculatedLineWidths.current) return;
+    if (containerWidth == 0) return;
+    if (textLineWidth.length == 0) return;
+
+    setContent(generateVerseContentWithCorrectWidth(verse.content, containerWidth, textLineWidth));
+    hasCalculatedLineWidths.current = true;
+  }, [containerWidth, textLineWidth]);
+
   // Shorten name
   const displayName = SongProcessor.verseShortName(verse);
 
@@ -120,30 +121,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const onTextContainerLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width);
 
-  const generateContent = () => {
-    if (containerWidth == 0) return verse.content;
-    if (textLineWidth.length == 0) return verse.content;
-
-    const result: string[] = [];
-
-    const lines = verse.content.split("\n");
-    let lastTextWidthIndex = -1;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const textWidthIndex = textLineWidth
-        .findIndex((it, index) => index >= lastTextWidthIndex && line.startsWith(it.text.trim()))
-      lastTextWidthIndex = textWidthIndex;
-
-      const textWidth = textLineWidth[textWidthIndex];
-      if (textWidth == undefined) {
-        console.debug(line, textLineWidth)
-        return "";
-      }
-      result.push(line + (textWidth.width < containerWidth ? "" : "\r"))
-    }
-    return result.join("\n");
-  }
-
   return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
     {displayName.length === 0 ? undefined :
       <Animated.Text style={[
@@ -162,8 +139,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                      onLayout={onTextContainerLayout}
                      onTextLayout={onTextLayout}
                      textBreakStrategy={"balanced"}>
-        {/*{verse.content + "\r\n".repeat(textLineWidth.filter(it => it >= containerWidth).length)}*/}
-        {content}
+        {highlightText == null
+          ? content
+          : renderTextWithCustomReplacements(content, highlightText, createHighlightedTextComponent)}
       </Animated.Text>
     }
 
