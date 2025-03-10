@@ -16,13 +16,33 @@ import DeleteAllButton from "./DeleteAllButton";
 import { rollbar } from "../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../logic/utils";
 import SongListInstructions from "./SongListInstructions";
+import { SongHistoryController } from "../../../logic/songs/history/songHistoryController";
+import { useCollectionListener } from "../../components/utils";
+import { SongHistorySchema } from "../../../logic/db/models/songs/SongHistorySchema";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
     const [list, setList] = useState<SongListSongModel[]>([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
     const [listHasBeenChanged, setListHasBeenChanged] = useState(false);
+    const [lastSeenSongListSongIndex, setLastSeenSongListSongIndex] = useState<number | undefined>();
     const styles = createStyles(useTheme());
+
+    const getLastSeenSongIndexFromHistory = () => {
+      const lastSongListItemId = SongHistoryController.getLastSongListItemId();
+      if (lastSongListItemId == undefined) {
+        return setLastSeenSongListSongIndex(undefined);
+      }
+
+      const item = list.find(it => it.id == lastSongListItemId);
+
+      // Check if item still exists or is in the active list
+      if (item == undefined) {
+        return setLastSeenSongListSongIndex(undefined);
+      }
+
+      setLastSeenSongListSongIndex(item.index);
+    };
 
     useEffect(() => {
       onLaunch();
@@ -38,6 +58,8 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     };
 
     const onExit = () => Db.songs.realm().objects(SongListModelSchema.name).removeListener(onCollectionChange);
+
+    useCollectionListener(Db.songs.realm().objects(SongHistorySchema.name), getLastSeenSongIndexFromHistory, [list]);
 
     React.useLayoutEffect(() => {
       navigation.setOptions({
@@ -63,6 +85,8 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       if (isDeleteMode && list.length === 0) {
         setIsDeleteMode(false);
       }
+
+      getLastSeenSongIndexFromHistory();
     }, [list]);
 
     useFocusEffect(
@@ -127,7 +151,8 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
                        onLongPress={onItemLongPress}
                        onDeleteButtonPress={onItemDeleteButtonPress}
                        showDeleteButton={isDeleteMode}
-                       showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))} />
+                       showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))}
+                       markAsSeen={item.index <= (lastSeenSongListSongIndex ?? -1)} />
     }
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
@@ -136,18 +161,16 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       SongList.clearAll();
     };
 
-    return (
-      <View style={styles.container}>
-        <FlatList
-          data={list}
-          renderItem={renderSongListItem}
-          keyExtractor={item => isSongValid(item.song) ? item.id.toString() : `invalidated_${Math.random() * 10000}`}
-          contentContainerStyle={styles.songList}
-          ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
-          ListEmptyComponent={<SongListInstructions navigation={navigation} />}
-          importantForAccessibility={list.length > 0 ? undefined : "no"} />
-      </View>
-    );
+    return <View style={styles.container}>
+      <FlatList
+        data={list}
+        renderItem={renderSongListItem}
+        keyExtractor={item => isSongValid(item.song) ? item.id.toString() : `invalidated_${Math.random() * 10000}`}
+        contentContainerStyle={styles.songList}
+        ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
+        ListEmptyComponent={<SongListInstructions navigation={navigation} />}
+        importantForAccessibility={list.length > 0 ? undefined : "no"} />
+    </View>
   };
 
 export default SongListScreen;

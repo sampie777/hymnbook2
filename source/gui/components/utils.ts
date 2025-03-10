@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { DependencyList, useCallback, useEffect, useRef, useState } from "react";
 import { rollbar } from "../../logic/rollbar";
 import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
@@ -120,7 +120,11 @@ export const useIsMounted = (options: { trackFocus: boolean } = { trackFocus: fa
 };
 
 
-export const useCollectionListener = <T>(objects: Realm.Results<Realm.Object<T> & T>, onChange: () => void) => {
+export const useCollectionListener = <T>(
+  objects: Realm.Results<Realm.Object<T> & T>,
+  onChange: () => void,
+  deps: DependencyList = []
+) => {
   const isMounted = useIsMounted({ trackFocus: true });
 
   useFocusEffect(useCallback(() => {
@@ -132,7 +136,7 @@ export const useCollectionListener = <T>(objects: Realm.Results<Realm.Object<T> 
     return () => {
       objects.removeListener(onCollectionChange);
     };
-  }, []));
+  }, deps));
 
   const onCollectionChange = () => {
     runAsync(() => {
