@@ -33,8 +33,6 @@ const SongItem: React.FC<Props> = ({
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={[styles.container]}>
-    <View style={[styles.seenMarkerPassive, (!showDeleteButton && markAsSeen ? styles.seenMarkerActive : {})]} />
-
     <View style={styles.infoContainer}>
       <Text
         style={[
@@ -74,15 +72,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
-  },
-  seenMarkerPassive: {
-    marginHorizontal: 2,
-    backgroundColor: colors.surface1,
-    width: 4,
-    alignSelf: "stretch"
-  },
-  seenMarkerActive: {
-    backgroundColor: colors.primary.variant,
   },
 
   infoContainer: {
