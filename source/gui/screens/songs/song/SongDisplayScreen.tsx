@@ -122,6 +122,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   useEffect(() => {
     verseHeights.current = {};
     history.setSong(song);
+    history.setSongListItem(SongList.getSongAtIndex(route.params.songListIndex));
 
     // If song is undefined, we're probably leaving this screen,
     // so we can ignore state and animation updates.
