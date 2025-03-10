@@ -324,3 +324,27 @@ export const format = (date: Date | string, format: string) => {
 }
 
 export const consoleDir = (data: any) => console.debug(JSON.stringify(data, null, 2))
+
+// Thanks Copilot
+if (!String.prototype.repeat) {
+  String.prototype.repeat = function(count) {
+    if (count < 0) throw new RangeError('repeat count must be non-negative');
+    if (count === Infinity) throw new RangeError('repeat count must be less than infinity');
+
+    count = Math.floor(count);
+    if (this.length === 0 || count === 0) return '';
+
+    let result = '';
+    let pattern = this;
+    while (count > 0) {
+      if (count % 2 === 1) {
+        result += pattern;
+      }
+      count = Math.floor(count / 2);
+      if (count > 0) {
+        pattern += pattern;
+      }
+    }
+    return result;
+  };
+}
