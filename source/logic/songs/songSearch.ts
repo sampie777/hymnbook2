@@ -73,18 +73,19 @@ export namespace SongSearch {
                        searchInVerses: boolean,
                        selectedBundleUuids: string[],
                        shouldCancel?: () => boolean): SearchResult[] => {
-    const results: SearchResult[] = [];
+    // Use the song ID as index, to increase song lookup speed
+    const results: { [key: number]: SearchResult } = {};
 
     if (searchInTitles) {
       findByTitle(text, selectedBundleUuids).forEach(it => {
         const points = calculateMatchPointsForTitleMatch(it, text);
-        results.push({
+        results[it.id] = {
           song: it,
           points: points,
           isTitleMatch: points === titleMatchPoints,
           isMetadataMatch: points !== titleMatchPoints,
           isVerseMatch: false
-        });
+        };
       });
     }
 
@@ -95,28 +96,26 @@ export namespace SongSearch {
       findByVerse(text, selectedBundleUuids).forEach((it) => {
         if (shouldCancel?.()) throw new InterruptedError();
 
-        const id = it.id; // By taking this out of the loop, run time is reduced by 33 %
-        const existingResult = results.find(result => result.song.id === id);
-
-        // Most time-consuming part: calculating how much the match is worth
+        // Calculating how much the match is worth
         const points = calculateMatchPointsForVerseMatch(it, text);
 
+        const existingResult = results[it.id];
         if (existingResult != null) {
           existingResult.points += points;
           existingResult.isVerseMatch = true;
         } else {
-          results.push({
+          results[it.id] = {
             song: it,
             points: points,
             isTitleMatch: false,
             isMetadataMatch: false,
             isVerseMatch: true
-          });
+          };
         }
       });
     }
 
-    return results;
+    return Object.values(results);
   };
 
   export const findByTitle = (text: string, selectedBundleUuids: string[] = []): (Song & Realm.Object<Song>)[] => {
