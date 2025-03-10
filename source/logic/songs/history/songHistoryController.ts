@@ -4,6 +4,7 @@ import Db from '../../db/db';
 import { SongHistorySchema } from '../../db/models/songs/SongHistorySchema';
 import { rollbar } from '../../rollbar';
 import { sanitizeErrorForRollbar } from '../../utils';
+import { SongListSongModel } from "../../db/models/songs/SongListModel";
 
 export namespace SongHistoryController {
   export const pushVerse = (
@@ -11,6 +12,7 @@ export namespace SongHistoryController {
     song?: Song,
     viewDurationMs: number = -1,
     action: SongHistoryAction = SongHistoryAction.Unknown,
+    songListSong: SongListSongModel | undefined = undefined,
   ) => {
     if (!verse.uuid) {
       return rollbar.error("Can't store verse in history as it has no uuid", {
@@ -122,6 +124,7 @@ export namespace SongHistoryController {
       new Date(),
       viewDurationMs,
       action,
+      songListSong?.id,
     );
 
     saveToDatabase(entry, verse, song, bundle);
@@ -161,4 +164,20 @@ export namespace SongHistoryController {
       });
     }
   };
+
+  export const getLastSongListItemId = (): number | undefined => {
+    try {
+      const lastHistoryItem = Db.songs.realm()
+        .objects<SongHistory>(SongHistorySchema.name)
+        .filtered('songListItemId != null')
+        .sorted('timestamp', true)[0];
+
+      if (lastHistoryItem && lastHistoryItem.songListItemId != null) {
+        return lastHistoryItem.songListItemId;
+      }
+    } catch (error) {
+      rollbar.error('Failed to get last song list item ID from history', sanitizeErrorForRollbar(error));
+    }
+    return undefined;
+  }
 }
