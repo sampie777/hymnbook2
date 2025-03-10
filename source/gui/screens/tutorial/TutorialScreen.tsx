@@ -9,17 +9,21 @@ import { Types } from "../downloads/TypeSelectBar";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Tutorial } from "../../../logic/tutorial";
 import TutorialFinishedScreen from "./TutorialFinishedScreen";
+import { useSongBundleCount } from "../../components/utils";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
 }
 
 const TutorialScreen: React.FC<Props> = ({ navigation }) => {
+  const bundlesCount = useSongBundleCount();
   const styles = createStyles(useTheme());
 
   const finishTutorial = () => {
     Tutorial.complete();
     navigation.replace(HomeRoute);
+
+    if (bundlesCount() > 0) return;
     navigation.navigate(DatabasesRoute, { type: Types.Songs });
   }
 
@@ -45,7 +49,9 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
         }),
         {
           backgroundColor: styles.titlePage.backgroundColor.toString(),
-          image: <TutorialFinishedScreen onFinish={finishTutorial} subTitleStyles={styles.text} />,
+          image: <TutorialFinishedScreen onFinish={finishTutorial}
+                                         subTitleStyles={styles.text}
+                                         bundlesCount={bundlesCount()} />,
           title: '',
           subtitle: '',
         },
