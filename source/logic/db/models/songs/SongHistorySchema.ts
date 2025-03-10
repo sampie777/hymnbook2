@@ -12,6 +12,7 @@ export const SongHistorySchema: Realm.ObjectSchema = {
     timestamp: "date",
     viewDurationMs: "int",
     action: "string",
+    songListItemId: "int?",
   },
   primaryKey: "id"
 };

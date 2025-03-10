@@ -3,15 +3,18 @@ import { Song } from "../../db/models/songs/Songs";
 import config from "../../../config";
 import { SongHistoryController } from "./songHistoryController";
 import { SongHistoryAction } from "../../db/models/songs/SongHistory";
+import { SongListSongModel } from "../../db/models/songs/SongListModel";
 
 const useHistory = (
   song: Song | undefined = undefined,
   viewIndex: number = -1,
   action: SongHistoryAction,
+  songListItem: SongListSongModel | undefined = undefined,
 ) => {
   const previousSong = useRef<Song | undefined>();
   const previousIndex = useRef<number>(0);
   const previousAction = useRef<SongHistoryAction>(SongHistoryAction.Unknown);
+  const previousSongListItem = useRef<SongListSongModel>();
   const nextAction = useRef<SongHistoryAction>(SongHistoryAction.Unknown);
   const startTime = useRef<Date | undefined>();
 
@@ -34,6 +37,7 @@ const useHistory = (
     if (viewIndex != null && viewIndex >= 0) previousIndex.current = viewIndex;
 
     previousAction.current = nextAction.current;
+    previousSongListItem.current = songListItem;
 
     return () => checkViewTime();
   }, [viewIndex, song?.uuid]);
@@ -75,7 +79,7 @@ const useHistory = (
     if (difference < config.songs.history.minViewTimeMs) return;
 
     const verse = currentPreviousSong.verses[previousIndex.current];
-    SongHistoryController.pushVerse(verse, currentPreviousSong, difference, previousAction.current);
+    SongHistoryController.pushVerse(verse, currentPreviousSong, difference, previousAction.current, previousSongListItem.current);
   }
 };
 

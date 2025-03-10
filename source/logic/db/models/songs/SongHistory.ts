@@ -22,6 +22,7 @@ export class SongHistory {
   timestamp: Date;
   viewDurationMs: number;
   action: SongHistoryAction;
+  songListItemId: number | undefined;
 
   constructor(
     bundleUuid: string,
@@ -34,6 +35,7 @@ export class SongHistory {
     timestamp: Date = new Date(),
     viewDurationMs: number = 0,
     action: SongHistoryAction = SongHistoryAction.Unknown,
+    songListItemId: number | undefined = undefined,
     id = Db.songs.getIncrementedPrimaryKey(SongHistorySchema)
   ) {
     this.id = id;
@@ -47,5 +49,6 @@ export class SongHistory {
     this.timestamp = timestamp;
     this.viewDurationMs = viewDurationMs;
     this.action = action;
+    this.songListItemId = songListItemId;
   }
 }
