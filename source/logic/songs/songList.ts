@@ -140,7 +140,9 @@ export default class SongList {
     });
   }
 
-  static getSongAtIndex(index: number): SongListSongModel | undefined {
+  static getSongAtIndex(index: number | undefined): SongListSongModel | undefined {
+    if (index == undefined) return undefined;
+
     const songList = this.getFirstSongList();
     if (songList === undefined) return undefined;
 
