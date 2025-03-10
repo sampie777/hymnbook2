@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
@@ -19,7 +19,7 @@ interface ContentVerseProps {
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;
-  onLayout?: (event: LayoutChangeEvent) => void;
+  onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
 }
 
@@ -121,7 +121,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const onTextContainerLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width);
 
-  return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={onLayout}>
+  return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={e => onLayout?.(verse, e)}>
     {displayName.length === 0 ? undefined :
       <Animated.Text style={[
         styles.title,
@@ -152,7 +152,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   </Animated.View>;
 };
 
-export default ContentVerse;
+export default memo(ContentVerse);
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
   container: {},
