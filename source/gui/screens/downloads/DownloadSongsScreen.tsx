@@ -245,16 +245,16 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     call
       .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
       .catch(error => {
-        rollbar.error("Failed to import SongBundle", {
-          ...sanitizeErrorForRollbar(error),
-          isUpdate: isUpdate,
-          item: item,
-        });
-
         if (error.name == "TypeError" && error.message == "Network request failed") {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. Make sure your internet connection is working or try again later.`);
         } else {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. \n${error}\n\nTry again later.`);
+
+          rollbar.error("Failed to import SongBundle", {
+            ...sanitizeErrorForRollbar(error),
+            isUpdate: isUpdate,
+            item: item,
+          });
         }
       })
       .finally(() => {
