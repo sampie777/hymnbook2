@@ -14,6 +14,7 @@ interface Props {
   onDeleteButtonPress: (index: number) => void,
   showDeleteButton: boolean,
   showSongBundle?: boolean,
+  markAsSeen?: boolean,
 }
 
 const SongItem: React.FC<Props> = ({
@@ -23,17 +24,25 @@ const SongItem: React.FC<Props> = ({
                                      onDeleteButtonPress,
                                      showDeleteButton,
                                      showSongBundle,
-                                     onLongPress
+                                     onLongPress,
+                                     markAsSeen,
                                    }) => {
   const styles = createStyles(useTheme());
   if (!isSongValid(songListSong.song)) return null;
 
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
-                           style={styles.container}>
+                           style={[styles.container]}>
+    <View style={[styles.seenMarkerPassive, (!showDeleteButton && markAsSeen ? styles.seenMarkerActive : {})]} />
+
     <View style={styles.infoContainer}>
-      <Text style={[styles.itemName, (showSongBundle ? {} : styles.itemExtraPadding)]}
-            importantForAccessibility={"auto"}>
+      <Text
+        style={[
+          styles.itemName,
+          (showSongBundle ? {} : styles.itemExtraPadding),
+          (!showDeleteButton && markAsSeen ? styles.itemNameSeen : {})
+        ]}
+        importantForAccessibility={"auto"}>
         {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
       </Text>
 
@@ -61,10 +70,19 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     marginBottom: 1,
     backgroundColor: colors.surface1,
-    borderColor: colors.border.default,
+    borderBottomColor: colors.border.default,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
+  },
+  seenMarkerPassive: {
+    marginHorizontal: 2,
+    backgroundColor: colors.surface1,
+    width: 4,
+    alignSelf: "stretch"
+  },
+  seenMarkerActive: {
+    backgroundColor: colors.primary.variant,
   },
 
   infoContainer: {
@@ -85,11 +103,14 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingTop: 2,
     paddingHorizontal: 15,
     fontSize: 20,
-    color: colors.text.default
+    color: colors.text.default,
   },
   itemExtraPadding: {
     paddingTop: 5,
     paddingBottom: 7
+  },
+  itemNameSeen: {
+    fontStyle: "italic",
   },
 
   button: {
