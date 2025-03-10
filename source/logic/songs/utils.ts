@@ -384,3 +384,27 @@ export const isSongValid = (song: unknown) =>
   song != null
   && typeof (song as Realm.Object<Song>).isValid === 'function'
   && (song as Realm.Object<Song>).isValid();
+
+export const generateVerseContentWithCorrectWidth = (
+  content: string,
+  maxWidth: number,
+  textLinesWidths: {
+    text: string,
+    width: number
+  }[]) => {
+  if (maxWidth == 0) return content;
+  if (textLinesWidths.length == 0) return content;
+
+  let lastTextWidthIndex = -1;
+
+  return content
+    .split("\n")
+    .map(line => {
+      lastTextWidthIndex = textLinesWidths
+        .findIndex((it, index) => index >= lastTextWidthIndex && line.startsWith(it.text.trim()))
+
+      const textWidth = textLinesWidths[lastTextWidthIndex];
+      return line + (textWidth != undefined && textWidth.width < maxWidth ? "" : "\r");
+    })
+    .join("\n");
+}
