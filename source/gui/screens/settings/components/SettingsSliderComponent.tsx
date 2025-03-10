@@ -5,6 +5,8 @@ import { GenericSettingProps, SettingComponent } from "./SettingComponent";
 
 interface NumberSettingProps extends GenericSettingProps<number> {
   defaultValue?: number;
+  minValue?: number,
+  maxValue?: number,
 }
 
 const SettingsSliderComponent: React.FC<NumberSettingProps> = ({
@@ -17,7 +19,9 @@ const SettingsSliderComponent: React.FC<NumberSettingProps> = ({
                                                                  valueRender,
                                                                  isVisible = true,
                                                                  lessObviousStyling = false,
-                                                                 defaultValue
+                                                                 defaultValue,
+                                                                 minValue = 0.5,
+                                                                 maxValue = 2
                                                                }) => {
   if (!isVisible) {
     return null;
@@ -59,7 +63,9 @@ const SettingsSliderComponent: React.FC<NumberSettingProps> = ({
                               }
                             }}
                             onDenied={() => setShowSlider(false)}
-                            defaultValue={defaultValue === undefined ? undefined : defaultValue * 100} />
+                            defaultValue={defaultValue === undefined ? undefined : defaultValue * 100}
+                            minValue={minValue * 100}
+                            maxValue={maxValue * 100} />
     }
     <SettingComponent<number> title={title}
                               keyName={keyName}
