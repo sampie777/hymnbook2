@@ -11,6 +11,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import MelodyView from "../../../components/melody/MelodyView";
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
+import { runAsync } from "../../../../logic/utils";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -34,6 +35,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      highlightText
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
+  const [showMelody, setShowMelody] = useState(false);
   const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
   const [textLineWidth, setTextLineWidth] = useState<{ text: string, width: number }[]>([]);
@@ -83,6 +85,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     setIsMelodyLoaded(false);
     if (activeMelody !== undefined) {
       setIsMelodyLoading(isMelodyAvailable());
+      runAsync(() => setShowMelody(true));
+    } else {
+      setShowMelody(false)
     }
   }, [activeMelody?.id]);
 
@@ -145,7 +150,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       </Animated.Text>
     }
 
-    {!isMelodyAvailable() ? undefined : <MelodyView onLoaded={onMelodyLoaded}
+    {!(showMelody && isMelodyAvailable()) ? undefined : <MelodyView onLoaded={onMelodyLoaded}
                                                     abc={memoizedAbc}
                                                     animatedScale={scale}
                                                     melodyScale={melodyScale} />}
