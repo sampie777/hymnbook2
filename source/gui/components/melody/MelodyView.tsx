@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { getFontScale } from "react-native-device-info";
+import React, { memo, useMemo } from "react";
+import { getFontScaleSync } from "react-native-device-info";
 import { Animated, StyleSheet, View } from "react-native";
 import { AbcConfig } from "./config";
 import { ABC } from "../../../logic/songs/abc/abc";
@@ -15,41 +15,16 @@ interface Props {
 }
 
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
-  const [systemFontScale, setSystemFontScale] = useState(1);
-  const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
-  const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
-
-  getFontScale().then(scale => setSystemFontScale(scale));
-
   const animatedScaleMelody = useMemo(() =>
     Animated.multiply(animatedScale,
-      Animated.multiply(systemFontScale,
+      Animated.multiply(getFontScaleSync(),
         Animated.multiply(AbcConfig.baseScale, melodyScale))) as unknown as Animated.Value, [])
 
-  const memoizedAbc = useMemo(() => ABC.parse(abc), [abc]);
+  const abcSong = ABC.parse(abc);
 
-  useEffect(() => {
-    setAbcSong(memoizedAbc);
-  }, [abc]);
+  if (abcSong === undefined) return null;
 
-  if (abcSong === undefined) {
-    return null;
-  }
-
-  const onLayoutLoaded = () => {
-    onLoaded();
-    setIsLayoutLoaded(true);
-  };
-
-  return <View style={[
-    styles.container,
-    {
-      // Hide view while melody is loading
-      position: isLayoutLoaded ? "relative" : "absolute",
-      opacity: isLayoutLoaded ? 1 : 0
-    }
-  ]}
-               onLayout={onLayoutLoaded}>
+  return <View style={styles.container} onLayout={onLoaded}>
     <Clef animatedScale={animatedScaleMelody}
           clef={abcSong.clef} />
     <Key animatedScale={animatedScaleMelody}
@@ -73,4 +48,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MelodyView;
+export default memo(MelodyView);

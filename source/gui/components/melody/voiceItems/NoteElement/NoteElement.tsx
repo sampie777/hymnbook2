@@ -72,19 +72,4 @@ const createStyles = () => StyleSheet.create({
   }
 });
 
-const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
-  prevProps.animatedScale === nextProps.animatedScale &&
-  prevProps.note.rest?.type === nextProps.note.rest?.type &&
-  prevProps.note.duration === nextProps.note.duration &&
-  prevProps.note.pitches?.length === nextProps.note.pitches?.length &&
-  (
-    (prevProps.note.pitches === undefined && nextProps.note.pitches === undefined) ||
-    ((prevProps.note.pitches !== undefined && nextProps.note.pitches !== undefined) &&
-      prevProps.note.pitches?.every((it, i) =>
-        it.pitch === nextProps.note.pitches![i].pitch &&
-        it.accidental === nextProps.note.pitches![i].accidental
-      )
-    )
-  );
-
-export default memo(NoteElement, propsAreEqual);
+export default NoteElement

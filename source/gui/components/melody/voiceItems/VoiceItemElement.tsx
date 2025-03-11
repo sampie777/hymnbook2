@@ -24,4 +24,4 @@ const VoiceItemElement: React.FC<Props> = ({ item, animatedScaleText, animatedSc
   }
 };
 
-export default memo(VoiceItemElement);
+export default VoiceItemElement;
