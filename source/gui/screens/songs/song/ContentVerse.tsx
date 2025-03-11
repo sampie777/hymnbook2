@@ -1,5 +1,5 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, LayoutChangeEvent, StyleSheet } from "react-native";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Animated, LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
@@ -91,10 +91,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     }
   }, [activeMelody?.id]);
 
-  const onMelodyLoaded = () => {
+  const onMelodyLoaded = useCallback(() => {
     setIsMelodyLoading(false);
     setIsMelodyLoaded(true);
-  };
+  }, []);
 
   const hasCalculatedLineWidths = useRef<boolean>(false);
   useEffect(() => {
@@ -150,10 +150,20 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       </Animated.Text>
     }
 
-    {!(showMelody && isMelodyAvailable()) ? undefined : <MelodyView onLoaded={onMelodyLoaded}
-                                                    abc={memoizedAbc}
-                                                    animatedScale={scale}
-                                                    melodyScale={melodyScale} />}
+    {!(showMelody && isMelodyAvailable()) ? undefined :
+      <View style={{
+        // Hide view while melody is loading. Do this outside the MelodyView component to avoid re-renders
+        position: isMelodyLoaded ? "relative" : "absolute",
+        opacity: isMelodyLoaded ? 1 : 0
+      }}>
+        <MelodyView
+          onLoaded={onMelodyLoaded}
+          abc={memoizedAbc}
+          animatedScale={scale}
+          melodyScale={melodyScale}
+        />
+      </View>
+    }
   </Animated.View>;
 };
 
