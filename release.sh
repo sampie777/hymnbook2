@@ -2,10 +2,6 @@
 
 progname=$(basename $0)
 
-if [ -d ~/.local/share/JetBrains/Toolbox/apps/android-studio/jbr ]; then
-	export JAVA_HOME=~/.local/share/JetBrains/Toolbox/apps/android-studio/jbr
-fi
-
 function usage {
   cat << HEREDOC
 
