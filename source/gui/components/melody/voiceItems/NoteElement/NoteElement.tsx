@@ -10,13 +10,11 @@ import { AnimatedG, AnimatedSvg } from "../../../utils";
 
 interface Props {
   note: VoiceItemNote;
-  showMelodyLines: boolean;
   animatedScale: Animated.Value;
 }
 
 const NoteElement: React.FC<Props> = ({
                                         note,
-                                        showMelodyLines,
                                         animatedScale
                                       }) => {
   const styles = createStyles();
@@ -59,7 +57,7 @@ const NoteElement: React.FC<Props> = ({
   </>;
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
-    {!showMelodyLines ? undefined : melodyComponents}
+    {melodyComponents}
   </Animated.View>;
 };
 
@@ -75,7 +73,6 @@ const createStyles = () => StyleSheet.create({
 });
 
 const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
-  prevProps.showMelodyLines === nextProps.showMelodyLines &&
   prevProps.animatedScale === nextProps.animatedScale &&
   prevProps.note.rest?.type === nextProps.note.rest?.type &&
   prevProps.note.duration === nextProps.note.duration &&

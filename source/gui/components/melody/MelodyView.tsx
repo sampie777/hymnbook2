@@ -17,15 +17,14 @@ interface Props {
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
   const [systemFontScale, setSystemFontScale] = useState(1);
   const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
-  const [showMelodyLines, setShowMelodyLines] = useState(false);
   const [abcSong, setAbcSong] = useState<ABC.Song | undefined>(undefined);
 
   getFontScale().then(scale => setSystemFontScale(scale));
 
-  const animatedScaleMelody =
+  const animatedScaleMelody = useMemo(() =>
     Animated.multiply(animatedScale,
       Animated.multiply(systemFontScale,
-        Animated.multiply(AbcConfig.baseScale, melodyScale))) as unknown as Animated.Value;
+        Animated.multiply(AbcConfig.baseScale, melodyScale))) as unknown as Animated.Value, [])
 
   const memoizedAbc = useMemo(() => ABC.parse(abc), [abc]);
 
@@ -40,7 +39,6 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded
   const onLayoutLoaded = () => {
     onLoaded();
     setIsLayoutLoaded(true);
-    setShowMelodyLines(true);
   };
 
   return <View style={[
@@ -60,9 +58,9 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded
     {abcSong.melody.map((it, index) =>
       <VoiceItemElement key={index}
                         item={it}
-                        showMelodyLines={showMelodyLines}
                         animatedScaleText={animatedScale}
-                        animatedScaleMelody={animatedScaleMelody} />)}
+                        animatedScaleMelody={animatedScaleMelody}
+      />)}
   </View>;
 };
 
