@@ -62,7 +62,6 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRo
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useIsMounted({ trackFocus: true });
-  const _isFocused = useRef(false); // todo: Temporary value to analyze "Failed to scroll to index" cause
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
   const flatListComponentRef = useRef<FlatList<Verse>>(null);
@@ -105,13 +104,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [route.params.id, route.params.uuid]));
 
   const onFocus = () => {
-    _isFocused.current = true;
     keepScreenAwake(Settings.keepScreenAwake);
     loadSong();
   };
 
   const onBlur = () => {
-    _isFocused.current = false;
     keepScreenAwake(false);
     setSong(undefined);
     history.setSong(undefined);
@@ -139,6 +136,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id]);
 
   useEffect(() => {
+    if (song == null) return;
+    // Wait for the song to be loaded
+    if (song?.id != route.params.id || song?.uuid != route.params.uuid) return;
+
     delayScrollToFirstVerse();
   }, [song?.id, route.params.selectedVerses]);
 
@@ -211,7 +212,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         "route.params.id": route.params.id,
         "route.params.uuid": route.params.uuid,
         isMounted: isMounted(),
-        isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
       })
     }
@@ -223,7 +223,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         "route.params.id": route.params.id,
         "route.params.uuid": route.params.uuid,
         isMounted: isMounted(),
-        isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
       });
       return;
@@ -273,7 +272,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
         viewIndex: viewIndex,
-        isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
       });
     }
@@ -342,7 +340,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelody: showMelody,
         isMelodyLoading: isMelodyLoading,
         viewIndex: viewIndex,
-        isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
       });
       scrollToFirstVerse();
@@ -401,10 +398,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         ...sanitizeErrorForRollbar(error),
         scrollIndex: scrollIndex,
         songName: song?.name ?? "null",
+        songId: song?.id ?? "null",
+        routeParamId: route.params.id,
         verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
         isMounted: isMounted(),
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
-        isFocused: _isFocused.current,
         songList: getSongListInformationForErrorReporting()
       });
     }
@@ -544,11 +542,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
                 info: info,
                 songName: song?.name ?? "null",
+                songId: song?.id ?? "null",
+                routeParamId: route.params.id,
                 verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
                 isMounted: isMounted(),
                 viewIndex: viewIndex,
                 selectedVerses: route.params.selectedVerses?.map(it => it.name),
-                isFocused: _isFocused.current,
                 songList: getSongListInformationForErrorReporting()
               })}
               ListHeaderComponent={<Header song={song} scale={animatedScale.current} />}
