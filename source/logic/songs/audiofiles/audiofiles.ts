@@ -1,6 +1,13 @@
 import { Song, SongAudio } from "../../db/models/songs/Songs";
 import { Server } from "../../server/server";
-import TrackPlayer, { AppKilledPlaybackBehavior, Capability, RepeatMode } from "react-native-track-player";
+import TrackPlayer, {
+  AndroidAudioContentType,
+  AppKilledPlaybackBehavior,
+  Capability,
+  IOSCategory,
+  IOSCategoryMode,
+  RepeatMode
+} from "react-native-track-player";
 import { rollbar } from "../../rollbar";
 import { executeInForeGround, sanitizeErrorForRollbar } from "../../utils";
 import Settings from "../../../settings";
@@ -28,7 +35,10 @@ export namespace AudioFiles {
   const setupPlayer = async (): Promise<boolean> => {
     try {
       await TrackPlayer.setupPlayer({
-        backBuffer: 120
+        backBuffer: 120,
+        androidAudioContentType: AndroidAudioContentType.Music,
+        iosCategory: IOSCategory.SoloAmbient,
+        iosCategoryMode: IOSCategoryMode.Default
       });
     } catch (error) {
       if (error instanceof Error && error.message === "The player has already been initialized via setupPlayer.") {
