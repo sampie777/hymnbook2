@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { ActivityIndicator, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
-import { isIOS } from "../../logic/utils";
+import LoadingIndicator from "./LoadingIndicator";
 
 
 interface Props {
@@ -44,9 +44,7 @@ const LoadingOverlay: React.FC<Props> =
 
     return (
       <Animated.View style={[styles.container, animatedStyleContainer]}>
-        <ActivityIndicator style={styles.icon}
-                           size={isIOS ? "large" : styles.icon.fontSize}
-                           color={styles.icon.color} />
+        <LoadingIndicator />
         {text === "" || text === null ? null : <Text style={styles.text}>{text}</Text>}
       </Animated.View>
     );
@@ -67,11 +65,6 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     justifyContent: "center",
     alignItems: "center",
     zIndex: 9
-  },
-  icon: {
-    fontSize: 80,
-    color: colors.text.lighter,
-    opacity: 0.7
   },
   text: {
     paddingTop: 10,
