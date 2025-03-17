@@ -29,15 +29,15 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     const styles = createStyles(useTheme());
 
     const getLastSeenSongIndexFromHistory = () => {
-      const lastSongListItemId = SongHistoryController.getLastSongListItemId();
-      if (lastSongListItemId == undefined) {
+      const lastSongListItem = SongHistoryController.getLastSongListItem();
+      if (lastSongListItem == undefined) {
         return setLastSeenSongListSongIndex(undefined);
       }
 
-      const item = list.find(it => it.id == lastSongListItemId);
+      const item = list.find(it => it.id == lastSongListItem.songListItemId);
 
       // Check if item still exists or is in the active list
-      if (item == undefined) {
+      if (item == undefined || !(item.song.uuid == lastSongListItem.songUuid || item.song.id == lastSongListItem.id)) {
         return setLastSeenSongListSongIndex(undefined);
       }
 
