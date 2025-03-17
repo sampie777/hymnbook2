@@ -165,7 +165,7 @@ export namespace SongHistoryController {
     }
   };
 
-  export const getLastSongListItemId = (): number | undefined => {
+  export const getLastSongListItem = (): SongHistory | undefined => {
     try {
       const lastHistoryItem = Db.songs.realm()
         .objects<SongHistory>(SongHistorySchema.name)
@@ -173,10 +173,10 @@ export namespace SongHistoryController {
         .sorted('timestamp', true)[0];
 
       if (lastHistoryItem && lastHistoryItem.songListItemId != null) {
-        return lastHistoryItem.songListItemId;
+        return lastHistoryItem;
       }
     } catch (error) {
-      rollbar.error('Failed to get last song list item ID from history', sanitizeErrorForRollbar(error));
+      rollbar.error('Failed to get last song list item from history', sanitizeErrorForRollbar(error));
     }
     return undefined;
   }
