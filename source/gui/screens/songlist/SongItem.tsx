@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Song } from "../../../logic/db/models/songs/Songs";
 import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
 import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { runAsync } from "../../../logic/utils";
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 interface Props {
   index: number,
@@ -27,8 +29,19 @@ const SongItem: React.FC<Props> = ({
                                      onLongPress,
                                      markAsSeen,
                                    }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
   const styles = createStyles(useTheme());
   if (!isSongValid(songListSong.song)) return null;
+
+  const onDelete = () => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    runAsync(() => {
+      onDeleteButtonPress(index);
+      setIsDeleting(false);
+    })
+  }
 
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
@@ -54,11 +67,15 @@ const SongItem: React.FC<Props> = ({
 
     {!showDeleteButton ? undefined :
       <TouchableOpacity style={styles.button}
-                        onPress={() => onDeleteButtonPress(index)}
+                        disabled={isDeleting}
+                        onPress={onDelete}
                         accessibilityLabel={`Delete ${songListSong.song.name}`}>
-        <Icon name={"trash-alt"}
-              size={styles.button.fontSize}
-              color={styles.button.color} />
+        {isDeleting
+          ? <LoadingIndicator size={20} />
+          : <Icon name={"trash-alt"}
+                  size={styles.button.fontSize}
+                  color={styles.button.color} />
+        }
       </TouchableOpacity>
     }
   </TouchableOpacity>;

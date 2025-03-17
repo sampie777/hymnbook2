@@ -98,9 +98,28 @@ export default class SongList {
     const songList = this.getFirstSongList();
     if (songList === undefined) return;
 
+    const child = songList.songs.find(it => it.index == index);
+    if (child == undefined) {
+      rollbar.warning("Could not find songlist song at index to delete", {
+        index: index,
+        songList: {
+          ...songList, songs: songList.songs.map(it => ({
+            ...it, song: {
+              ...it.song,
+              verses: null,
+              abcMelodies: null,
+              metadata: null,
+              _songBundles: null,
+              _songBundle: null,
+            }
+          }))
+        }
+      })
+      return;
+    }
+
     Db.songs.realm().write(() => {
-      songList.songs.splice(
-        songList.songs.findIndex(it => it.index === index), 1);
+      SongDbHelpers.deleteSongListSong(child);
     });
 
     this.cleanUpSongListFromNullsAndCorrectIndices(songList);
