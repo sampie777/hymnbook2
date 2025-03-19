@@ -38,6 +38,13 @@ const config = {
     history: {
       minViewTimeMs: 12000,
     }
+  },
+
+  stripe: {
+    publicKey: {
+      live: Config.HYMNBOOK_STRIPE_PUBLISHABLE_KEY ?? "",
+      test: Config.HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY ?? "",
+    }
   }
 };
 export default config;

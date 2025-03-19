@@ -9,6 +9,7 @@ export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
 export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
+// export const hymnbookApiEndpoint = `http://192.168.0.148:3000/api/v1`;
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>
@@ -68,5 +69,17 @@ export const api = {
       `&build_number=${buildNumber}` +
       `&client_id=${clientId}` +
       `&os=${os}` +
-      `&app_opened_times=${appOpenedTimes}`)
+      `&app_opened_times=${appOpenedTimes}`),
+
+  donations: {
+    stripe: {
+      paymentSheet: (amount: number, currency: string) => fetch(`${hymnbookApiEndpoint}/stripe/payment-sheet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ amount: amount, currency: currency })
+      })
+    },
+    paypal: "https://www.paypal.com/donate/?hosted_button_id=6KTU5JNVS699E",
+    buyMeACoffee: "https://www.buymeacoffee.com/sajansen"
+  }
 };

@@ -18,6 +18,7 @@ import { useUpdaterContext } from "../../components/providers/UpdaterContextProv
 import Db from "../../../logic/db/db";
 import { DocumentGroupSchema } from "../../../logic/db/models/documents/DocumentsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
+import { isConnectionError } from "../../../logic/apiUtils";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 
 type ServerDataType = ServerDocumentGroup;
@@ -135,7 +136,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         setRequestDownloadForItem(data);
       })
       .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
+        if (isConnectionError(error)) {
           Alert.alert("Error", "Could not load documents group. Make sure your internet connection is working or try again later.")
         } else {
           Alert.alert("Error", `Could not load documents group. \n${error}\n\nTry again later.`);
@@ -157,7 +158,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         setServerData(data);
       })
       .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
+        if (isConnectionError(error)) {
           Alert.alert("Error", "Could not load documents. Make sure your internet connection is working or try again later.")
         } else {
           Alert.alert("Error", `Could not load documents. \n${error}\n\nTry again later.`);
@@ -248,7 +249,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     call
       .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
       .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
+        if (isConnectionError(error)) {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. Make sure your internet connection is working or try again later.`);
         } else {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. \n${error}\n\nTry again later.`);

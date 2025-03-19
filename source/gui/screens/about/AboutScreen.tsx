@@ -10,7 +10,9 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-nati
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import UrlLink from "../../components/UrlLink";
-import IconLabel from "../../components/IconLabel";
+import PayPalPaymentButton from "../../components/donations/PayPalPaymentButton";
+import BuyMeACoffeePaymentButton from "../../components/donations/BuyMeACoffeePaymentButton";
+import DonationForm from "../../components/donations/DonationForm";
 
 
 const AboutScreen: React.FC<{
@@ -55,26 +57,23 @@ const AboutScreen: React.FC<{
         </Text>
       </View>
 
-      {!goldenEgg ? undefined :
-        <View style={styles.donationContainer}>
-          <Text style={[styles.contentText, styles.contributionText]}>
-            This app is made free in order to make the access to Christian songs available for everyone with a digital
-            device. As no profit is made, this app fully depend on donations. If you want to contribute or show your
-            thanks, please consider donating using one of the following options:
-          </Text>
+      <View style={styles.donationContainer}>
+        <Text style={[styles.contentText, styles.contributionText]}>
+          This app is made free in order to make the access to Christian songs available for everyone with a digital
+          device. As no profit is made, this app fully depend on donations.
+          If you want to contribute or show your thanks, please consider donating:
+        </Text>
 
+        <DonationForm />
+
+        {!goldenEgg ? undefined :
           <View style={styles.donationLinksContainer}>
-            <UrlLink url={"https://www.buymeacoffee.com/sajansen"} style={styles.donationLink}>
-              <IconLabel text={"Buy me a coffee"}
-                         iconSource={require("./buymeacoffee-logo.jpeg")} />
-            </UrlLink>
-            <UrlLink url={"https://www.paypal.com/donate/?hosted_button_id=6KTU5JNVS699E"} style={styles.donationLink}>
-              <IconLabel text={"Donate using Paypal"}
-                         iconSource={require("./paypal-logo.png")} />
-            </UrlLink>
+            <Text style={[styles.contentText, styles.contributionText]}>You can also use these options:</Text>
+            <BuyMeACoffeePaymentButton />
+            <PayPalPaymentButton />
           </View>
-        </View>
-      }
+        }
+      </View>
 
       <View style={styles.footerContainer}>
         <Text style={[styles.contentText, styles.footerText]}>
@@ -187,7 +186,7 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   donationContainer: {
     alignItems: "center",
     paddingTop: 60,
-    paddingBottom: 70,
+    paddingBottom: 60,
     backgroundColor: colors.surface1
   },
   contributionText: {
@@ -197,7 +196,9 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: 30,
+    marginBottom: 15,
   },
   donationLink: {
     marginBottom: 20,

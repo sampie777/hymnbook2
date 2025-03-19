@@ -37,13 +37,15 @@ export class BackendError extends HttpError {
   }
 }
 
+export const isConnectionError = (error: any) => "name" in error && "message" in error && error.name == "TypeError" && error.message == "Network request failed";
+
 export const throwIfConnectionError = (error: any) => {
-  if (error instanceof Error && error.name == "TypeError" && error.message == "Network request failed") {
+  if (isConnectionError(error)) {
     throw error;
   }
 }
 
-const responseStatusToText = (response: Response): string => {
+export const responseStatusToText = (response: Response): string => {
   if (response.statusText && response.statusText.length > 0) return response.statusText;
   const httpCodePair = Object.entries(HttpCode).find(([key, value]) => value === response.status);
   if (httpCodePair) return httpCodePair[0];

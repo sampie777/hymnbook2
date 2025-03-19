@@ -21,6 +21,7 @@ import Db from "../../../logic/db/db";
 import { SongBundleSchema } from "../../../logic/db/models/songs/SongsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
+import { isConnectionError } from "../../../logic/apiUtils";
 
 type ServerDataType = ServerSongBundle;
 type LocalDataType = LocalSongBundle;
@@ -133,7 +134,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
         setRequestDownloadForItem(data);
       })
       .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
+        if (isConnectionError(error)) {
           Alert.alert("Error", "Could not load song bundle. Make sure your internet connection is working or try again later.");
         } else {
           Alert.alert("Error", `Could not load song bundle. \n${error}\n\nTry again later.`);
@@ -155,7 +156,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
         setServerData(data);
       })
       .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
+        if (isConnectionError(error)) {
           Alert.alert("Error", "Could not load song bundles. Make sure your internet connection is working or try again later.");
         } else {
           Alert.alert("Error", `Could not load song bundles. \n${error}\n\nTry again later.`);
@@ -246,7 +247,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     call
       .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
       .catch(error => {
-        if (error.name == "TypeError" && error.message == "Network request failed") {
+        if (isConnectionError(error)) {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. Make sure your internet connection is working or try again later.`);
         } else {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. \n${error}\n\nTry again later.`);
