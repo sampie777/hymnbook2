@@ -34,6 +34,18 @@ export class SongListSongModel {
     this.song = song;
     this.selectedVerses = selectedVerses;
   }
+
+  static clone(obj: SongListSongModel): SongListSongModel {
+    return {
+      id: obj.id,
+      index: obj.index,
+      song: Song.clone(obj.song),
+      selectedVerses: obj.selectedVerses.map(it => ({
+        id: it.id,
+        verse: Verse.toObject(it.verse)
+      }))
+    }
+  }
 }
 
 
