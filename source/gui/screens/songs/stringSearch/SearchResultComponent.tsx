@@ -9,6 +9,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
 import MatchedVersesSummary from "./MatchedVersesSummary";
 import { isSongValid } from "../../../../logic/songs/utils";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>;
@@ -85,21 +86,29 @@ const SearchResultComponent: React.FC<Props> = memo(({
   return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled : {})]}
                            onPress={disable ? undefined : onPress}
                            onLongPress={disable ? undefined : onLongPress}>
-    <View style={styles.titleContainer}>
-      <Text style={styles.songName}
-            importantForAccessibility={"auto"}>
-        {!isTitleMatch ? song.name :
-          renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
-        }
-        {!showSongBundle ? undefined :
-          <Text style={styles.songBundleName}>
-            {"  -  "}{Song.getSongBundle(song)?.name}
-          </Text>
-        }
-      </Text>
+    <View style={styles.headerContainer}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.songName}
+              importantForAccessibility={"auto"}>
+          {!isTitleMatch ? song.name :
+            renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
+          }
+        </Text>
 
-      {alternativeTitle == null ? undefined :
-        <Text style={styles.alternativeTitle}
+        {!showSongBundle ? null :
+          <View style={styles.songBundleContainer}>
+            <Text style={styles.extraInfoText}>
+              <Icon name={"book"} />
+            </Text>
+            <Text style={styles.extraInfoText}>
+              {Song.getSongBundle(song)?.name}
+            </Text>
+          </View>
+        }
+      </View>
+
+      {!alternativeTitle ? undefined :
+        <Text style={[styles.extraInfoText, styles.alternativeTitle]}
               importantForAccessibility={"auto"}>
           {renderTextWithCustomReplacements(alternativeTitle, searchRegex, createHighlightedTextComponent)}
         </Text>
@@ -131,31 +140,43 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     opacity: 0.4
   },
 
-  titleContainer: {
+  headerContainer: {
     flex: 1,
     flexDirection: "column",
     alignItems: "flex-start",
     paddingVertical: 4
   },
 
-  songName: {
-    paddingTop: 2,
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    columnGap: 25,
+    flexWrap: "wrap",
+    width: "100%",
     paddingHorizontal: 15,
+    paddingTop: 2,
+  },
+
+  songName: {
     fontSize: 18,
     color: colors.text.default
   },
 
-  songBundleName: {
+  extraInfoText: {
     fontSize: 14,
     color: colors.text.lighter,
     fontStyle: "italic"
   },
 
+  songBundleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+
   alternativeTitle: {
     paddingHorizontal: 15,
-    fontSize: 14,
-    color: colors.text.lighter,
-    fontStyle: "italic"
   },
 
   verseContainer: {

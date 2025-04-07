@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Song } from "../../../logic/db/models/songs/Songs";
+import { Song, SongMetadataType } from "../../../logic/db/models/songs/Songs";
 import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
 import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -7,6 +7,7 @@ import { ThemeContextProps, useTheme } from "../../components/providers/ThemePro
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { runAsync } from "../../../logic/utils";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import SongExtraInfo from "../../components/SongExtraInfo";
 
 interface Props {
   index: number,
@@ -43,6 +44,9 @@ const SongItem: React.FC<Props> = ({
     })
   }
 
+  const alternativeTitle = songListSong.song.metadata
+    .find(it => it.type === SongMetadataType.AlternativeTitle)?.value;
+
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={[styles.container]}>
@@ -50,19 +54,16 @@ const SongItem: React.FC<Props> = ({
       <Text
         style={[
           styles.itemName,
-          (showSongBundle ? {} : styles.itemExtraPadding),
+          (showSongBundle || alternativeTitle ? {} : styles.itemExtraPadding),
           (!showDeleteButton && markAsSeen ? styles.itemNameSeen : {})
         ]}
         importantForAccessibility={"auto"}>
         {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
       </Text>
 
-      {!showSongBundle ? undefined :
-        <Text style={styles.songBundleName}
-              importantForAccessibility={"auto"}>
-          {Song.getSongBundle(songListSong.song)?.name}
-        </Text>
-      }
+      <SongExtraInfo alternativeTitle={alternativeTitle}
+                     songBundle={showSongBundle ? Song.getSongBundle(songListSong.song)?.name : undefined}
+                     width={"100%"} />
     </View>
 
     {!showDeleteButton ? undefined :
@@ -96,13 +97,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     paddingVertical: 8
-  },
-
-  songBundleName: {
-    paddingHorizontal: 15,
-    fontSize: 14,
-    color: colors.text.lighter,
-    fontStyle: "italic"
   },
 
   itemName: {
