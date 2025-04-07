@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
 import { sanitizeErrorForRollbar } from "../../../../logic/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
-import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
+import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/songs/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
@@ -110,8 +110,12 @@ export const SearchResultItem: React.FC<{
       });
     };
 
+    const alternativeTitle = song.metadata
+      .find(it => it.type === SongMetadataType.AlternativeTitle)?.value;
+
     return <SearchResultItemBaseComponent
       songName={song.name}
+      alternativeTitle={alternativeTitle}
       bundleName={showSongBundle ? Song.getSongBundle(song)?.name : undefined}
       songAddedToSongList={songAddedToSongList}
       onItemPress={navigateToSong}

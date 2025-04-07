@@ -4,6 +4,7 @@ import { RectangularInset } from "../../../components/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
+import SongExtraInfo from "../../../components/SongExtraInfo";
 
 export const SearchResultItemAddButton: React.FC<{
   songAddedToSongList?: boolean,
@@ -31,6 +32,7 @@ export const SearchResultItemAddButton: React.FC<{
 
 export const SearchResultItemBaseComponent: React.FC<{
   songName: string,
+  alternativeTitle?: string,
   bundleName?: string,
   songAddedToSongList?: boolean,
   onItemPress?: () => void,
@@ -41,6 +43,7 @@ export const SearchResultItemBaseComponent: React.FC<{
 }> =
   ({
      songName,
+     alternativeTitle,
      bundleName,
      songAddedToSongList,
      onItemPress,
@@ -56,17 +59,17 @@ export const SearchResultItemBaseComponent: React.FC<{
                                       style={styles.container}>
       <View style={styles.infoContainer}>
         <Text
-          style={[styles.itemName, { fontSize: styles.itemName.fontSize * fontScale }, (bundleName ? {} : styles.itemExtraPadding)]}
+          style={[
+            styles.itemName,
+            { fontSize: styles.itemName.fontSize * fontScale },
+            (bundleName || alternativeTitle ? {} : styles.itemExtraPadding)
+          ]}
           importantForAccessibility={"auto"}>
           {songName}
         </Text>
 
-        {!bundleName ? undefined :
-          <Text style={[styles.songBundleName, { fontSize: styles.songBundleName.fontSize * fontScale }]}
-                importantForAccessibility={"auto"}>
-            {bundleName}
-          </Text>
-        }
+        <SongExtraInfo alternativeTitle={alternativeTitle}
+                       songBundle={bundleName} />
       </View>
 
       {onAddPress === undefined && onAddLongPress === undefined ? null :
@@ -92,13 +95,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     paddingVertical: 8
-  },
-
-  songBundleName: {
-    paddingHorizontal: 15,
-    fontSize: 14,
-    color: colors.text.lighter,
-    fontStyle: "italic"
   },
 
   itemName: {
