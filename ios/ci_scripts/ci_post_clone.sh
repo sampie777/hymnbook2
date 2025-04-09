@@ -27,5 +27,8 @@ yarn install
 echo "===== Running pod update ====="
 pwd
 pod update
+git add ios
+git commit -m "ios: updated podfile"
+git push origin master
 echo "===== Running pod install ====="
 pod install
