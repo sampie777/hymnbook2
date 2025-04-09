@@ -116,6 +116,9 @@ function pushAndRelease {
 
   retry git push -u origin master --tags
 
+  xdg-open android/app/build/outputs/apk/release
+  xdg-open android/app/build/outputs/bundle/release
+
   retry ./upload_source_map.sh
 }
 
@@ -142,20 +145,14 @@ case $command in
   patch)
     releasePatch
     setNextDevelopmentVersion
-    xdg-open android/app/build/outputs/apk/release
-    xdg-open android/app/build/outputs/bundle/release
     ;;
   minor)
     releaseMinor
     setNextDevelopmentVersion
-    xdg-open android/app/build/outputs/apk/release
-    xdg-open android/app/build/outputs/bundle/release
     ;;
   major)
     releaseMajor
     setNextDevelopmentVersion
-    xdg-open android/app/build/outputs/apk/release
-    xdg-open android/app/build/outputs/bundle/release
     ;;
   setNextDevelopmentVersion)
     setNextDevelopmentVersion
