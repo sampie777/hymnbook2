@@ -26,4 +26,4 @@ yarn install
 
 echo "===== Running pod install ====="
 pwd
-pod install
+pod install --repo-update
