@@ -5,6 +5,7 @@ import FilterButton from "./filters/FilterButton";
 import OrderByComponent from "./filters/OrderByComponent";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import SongBundleSelect from "./filters/SongBundleSelect";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 interface Props {
   isTitleActive?: boolean;
@@ -37,12 +38,13 @@ const SearchOptions: React.FC<Props> = ({
     </View>
 
     {!showOrder ? null :
-      <View style={styles.column}>
+      <Animated.View style={styles.column}
+                     entering={FadeInUp.duration(200)}>
         <OrderByComponent value={sortOrder}
                           onChange={onSortOrderChange} />
         <SongBundleSelect selectedBundleUuids={selectedBundleUuids}
                           onChange={onSelectedBundleUuidsChange} />
-      </View>
+      </Animated.View>
     }
   </View>;
 };

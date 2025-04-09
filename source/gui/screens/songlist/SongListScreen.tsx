@@ -20,6 +20,7 @@ import { SongHistoryController } from "../../../logic/songs/history/songHistoryC
 import { useCollectionListener } from "../../components/utils";
 import { SongHistorySchema } from "../../../logic/db/models/songs/SongHistorySchema";
 import DraggableFlatList, { DragEndParams, RenderItemParams } from "react-native-draggable-flatlist";
+import Animated, { FadeOutUp } from "react-native-reanimated";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -142,15 +143,17 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     };
 
     const renderSongListItem = ({ item, drag, isActive }: RenderItemParams<SongListSongModel>) => {
-      return <SongItem index={item.index}
-                       songListSong={item}
-                       onPress={onItemPress}
-                       onLongPress={drag}
-                       onDeleteButtonPress={onItemDeleteButtonPress}
-                       showDeleteButton={isDeleteMode}
-                       showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))}
-                       markAsSeen={item.index <= (lastSeenSongListSongIndex ?? -1)}
-                       isDragging={isActive} />
+      return <Animated.View exiting={FadeOutUp.duration(300)}>
+        <SongItem index={item.index}
+                  songListSong={item}
+                  onPress={onItemPress}
+                  onLongPress={drag}
+                  onDeleteButtonPress={onItemDeleteButtonPress}
+                  showDeleteButton={isDeleteMode}
+                  showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))}
+                  markAsSeen={item.index <= (lastSeenSongListSongIndex ?? -1)}
+                  isDragging={isActive} />
+      </Animated.View>
     }
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
