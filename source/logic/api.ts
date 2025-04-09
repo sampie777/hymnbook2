@@ -9,7 +9,7 @@ export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
 export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
-// export const hymnbookApiEndpoint = `http://192.168.0.148:3000/api/v1`;
+export const developmentApiEndpoint = `http://192.168.0.148:3000/api/v1`;
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>
@@ -73,7 +73,7 @@ export const api = {
 
   donations: {
     stripe: {
-      paymentSheet: (amount: number, currency: string) => fetch(`${hymnbookApiEndpoint}/stripe/payment-sheet`, {
+      paymentSheet: (amount: number, currency: string) => fetch(`${process.env.NODE_ENV !== "development" ? hymnbookApiEndpoint : developmentApiEndpoint}/stripe/payment-sheet`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', },
         body: JSON.stringify({ amount: amount, currency: currency })

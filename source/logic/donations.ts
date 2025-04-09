@@ -60,12 +60,12 @@ export namespace Donations {
       googlePay: {
         merchantCountryCode: 'NL',
         testEnv: isTest,
-        buttonType: ButtonType.Donate,
+        buttonType: ButtonType.Pay,
         label: "Support with"
       },
       applePay: {
         merchantCountryCode: "NL",
-        buttonType: ButtonType.Donate
+        buttonType: ButtonType.Support
       },
       primaryButtonLabel: `Support with ${currency} ${amount.toFixed(2)}`
     });
