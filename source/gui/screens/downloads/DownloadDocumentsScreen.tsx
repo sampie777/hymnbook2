@@ -18,6 +18,7 @@ import { useUpdaterContext } from "../../components/providers/UpdaterContextProv
 import Db from "../../../logic/db/db";
 import { DocumentGroupSchema } from "../../../logic/db/models/documents/DocumentsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
+import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 
 type ServerDataType = ServerDocumentGroup;
 type LocalDataType = LocalDocumentGroup;
@@ -345,23 +346,29 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
       {localData
         .filter(isOfSelectedLanguage)
-        .map((item: LocalDataType) =>
-          <LocalDocumentGroupItem key={item.uuid + item.name}
-                                  group={item}
-                                  onPress={onLocalItemPress}
-                                  onLongPress={shareItem}
-                                  hasUpdate={DocumentProcessor.hasUpdate(serverData, item)}
-                                  disabled={isProcessingLocalData || isSpecificItemLoading} />)}
+        .map((item: LocalDataType, index) =>
+          <Animated.View key={item.uuid + item.name}
+                         entering={FadeInUp.duration(200).delay(index * 30)}
+                         exiting={FadeOut.duration(200).delay(index * 30)}>
+            <LocalDocumentGroupItem group={item}
+                                    onPress={onLocalItemPress}
+                                    onLongPress={shareItem}
+                                    hasUpdate={DocumentProcessor.hasUpdate(serverData, item)}
+                                    disabled={isProcessingLocalData || isSpecificItemLoading} />
+          </Animated.View>)}
 
       {serverData
         .filter(it => !DocumentProcessor.isGroupLocal(localData, it))
         .filter(isOfSelectedLanguage)
-        .map((item: ServerDataType) =>
-          <ServerDocumentGroupItem key={item.uuid + item.name}
-                                   group={item}
-                                   onPress={onServerItemPress}
-                                   onLongPress={shareItem}
-                                   disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />)}
+        .map((item: ServerDataType, index) =>
+          <Animated.View key={item.uuid + item.name}
+                         entering={FadeInUp.duration(200).delay(index * 30)}
+                         exiting={FadeOut.duration(200).delay(index * 30)}>
+            <ServerDocumentGroupItem group={item}
+                                     onPress={onServerItemPress}
+                                     onLongPress={shareItem}
+                                     disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />
+          </Animated.View>)}
 
       {serverData.length > 0 ? undefined :
         <Text style={styles.emptyListText}>
