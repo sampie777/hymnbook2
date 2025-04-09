@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, FlatList, StyleSheet, View } from "react-native";
+import { BackHandler, StyleSheet, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Db from "../../../logic/db/db";
 import { Verse } from "../../../logic/db/models/songs/Songs";
@@ -8,7 +8,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../logic/songs/songList";
 import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
 import { SongListModelSchema } from "../../../logic/db/models/songs/SongListModelSchema";
-import { isSongValid, isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
+import { isTitleSimilarToOtherSongs } from "../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
@@ -19,6 +19,8 @@ import SongListInstructions from "./SongListInstructions";
 import { SongHistoryController } from "../../../logic/songs/history/songHistoryController";
 import { useCollectionListener } from "../../components/utils";
 import { SongHistorySchema } from "../../../logic/db/models/songs/SongHistorySchema";
+import DraggableFlatList, { DragEndParams, RenderItemParams } from "react-native-draggable-flatlist";
+import Animated, { FadeOutUp } from "react-native-reanimated";
 
 const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongListRoute>> =
   ({ navigation }) => {
@@ -104,7 +106,7 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     };
 
     const reloadSongList = () => {
-      setList(SongList.list());
+      setList(SongList.list().map(it => SongListSongModel.clone(it)))
     };
 
     const onBackPress = (): boolean => {
@@ -120,8 +122,6 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
     };
 
     const onItemPress = (index: number, songListSong: SongListSongModel) => {
-      if (!isSongValid(songListSong.song)) return;
-
       navigation.navigate(SongRoute, {
         id: songListSong.song.id,
         uuid: songListSong.song.uuid,
@@ -142,17 +142,18 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       SongList.deleteSongAtIndex(index);
     };
 
-    const renderSongListItem = ({ item }: { item: SongListSongModel }) => {
-      if (!isSongValid(item.song)) return null;
-
-      return <SongItem index={item.index}
-                       songListSong={item}
-                       onPress={onItemPress}
-                       onLongPress={onItemLongPress}
-                       onDeleteButtonPress={onItemDeleteButtonPress}
-                       showDeleteButton={isDeleteMode}
-                       showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))}
-                       markAsSeen={item.index <= (lastSeenSongListSongIndex ?? -1)} />
+    const renderSongListItem = ({ item, drag, isActive }: RenderItemParams<SongListSongModel>) => {
+      return <Animated.View exiting={FadeOutUp.duration(300)}>
+        <SongItem index={item.index}
+                  songListSong={item}
+                  onPress={onItemPress}
+                  onLongPress={drag}
+                  onDeleteButtonPress={onItemDeleteButtonPress}
+                  showDeleteButton={isDeleteMode}
+                  showSongBundle={isTitleSimilarToOtherSongs(item.song, list.map(it => it.song))}
+                  markAsSeen={item.index <= (lastSeenSongListSongIndex ?? -1)}
+                  isDragging={isActive} />
+      </Animated.View>
     }
 
     const toggleDeleteMode = () => setIsDeleteMode(it => !it);
@@ -161,11 +162,17 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
       SongList.clearAll();
     };
 
+    const onDragEnd = (data: DragEndParams<SongListSongModel>) => {
+      SongList.moveSong(data.from, data.to > data.from ? data.to + 1 : data.to)
+    };
+
     return <View style={styles.container}>
-      <FlatList
+      <DraggableFlatList
         data={list}
+        style={{ height: "100%" }}
         renderItem={renderSongListItem}
-        keyExtractor={item => isSongValid(item.song) ? item.id.toString() : `invalidated_${Math.random() * 10000}`}
+        keyExtractor={item => item.id.toString()}
+        onDragEnd={onDragEnd}
         contentContainerStyle={styles.songList}
         ListFooterComponent={isDeleteMode && list.length > 0 ? <DeleteAllButton onPress={clearAll} /> : undefined}
         ListEmptyComponent={<SongListInstructions navigation={navigation} />}
@@ -187,6 +194,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
     paddingBottom: 10,
-    paddingTop: 6
+    paddingTop: 6,
   }
 });

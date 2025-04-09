@@ -382,8 +382,10 @@ export const calculateVerseHeight = (index: number, verseHeights: Record<number,
 
 export const isSongValid = (song: unknown) =>
   song != null
-  && typeof (song as Realm.Object<Song>).isValid === 'function'
-  && (song as Realm.Object<Song>).isValid();
+  && (
+    typeof (song as Realm.Object<Song>).isValid !== 'function'
+    || (song as Realm.Object<Song>).isValid()
+  );
 
 export const generateVerseContentWithCorrectWidth = (
   content: string,
