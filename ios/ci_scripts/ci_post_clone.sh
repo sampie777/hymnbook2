@@ -27,8 +27,9 @@ yarn install
 echo "===== Running pod update ====="
 pwd
 pod update
+git config --global user.name "S. Jansen"
 git add ../../ios
 git commit -m "ios: updated podfile"
-git push
+git push --set-upstream origin feature/repo-update
 echo "===== Running pod install ====="
 pod install
