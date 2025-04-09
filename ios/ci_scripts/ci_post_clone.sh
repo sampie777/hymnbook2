@@ -25,5 +25,12 @@ echo "===== Running yarn install ====="
 yarn install
 
 echo "===== Running pod install ====="
-pwd
-pod install --repo-update
+function podInstall {
+  pod install && return
+  echo "  === Running pod update ===  "
+  pod update
+  echo "  === Running pod install ===  "
+  pod install && return
+  exit 1
+}
+podInstall
