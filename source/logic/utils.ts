@@ -215,7 +215,7 @@ export const languageAbbreviationToFullName = (abbreviation: string) => {
   return languageAbbreviationMap[abbreviation.toUpperCase()] || abbreviation;
 };
 
-export const runAsync = (f: () => any) => setTimeout(f, 0);
+export const runAsync = (f: () => any, timeout: number = 0) => setTimeout(f, timeout);
 
 export const emptyPromise = (): Promise<null> => Promise.resolve(null);
 export const emptyPromiseWithValue = <T>(value: T): Promise<T> => Promise.resolve(value);

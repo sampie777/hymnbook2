@@ -20,6 +20,7 @@ import { useUpdaterContext } from "../../components/providers/UpdaterContextProv
 import Db from "../../../logic/db/db";
 import { SongBundleSchema } from "../../../logic/db/models/songs/SongsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
+import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 
 type ServerDataType = ServerSongBundle;
 type LocalDataType = LocalSongBundle;
@@ -361,23 +362,29 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
 
       {localData
         .filter(isOfSelectedLanguage)
-        .map((item: LocalDataType) =>
-          <LocalSongBundleItem key={item.uuid + item.name}
-                               bundle={item}
-                               onPress={onLocalItemPress}
-                               onLongPress={shareItem}
-                               hasUpdate={SongProcessor.hasUpdate(serverData, item)}
-                               disabled={isProcessingLocalData || isSpecificItemLoading} />)}
+        .map((item: LocalDataType, index) =>
+          <Animated.View key={item.uuid + item.name}
+                         entering={FadeInUp.duration(200).delay(index * 30)}
+                         exiting={FadeOut.duration(200).delay(index * 30)}>
+            <LocalSongBundleItem bundle={item}
+                                 onPress={onLocalItemPress}
+                                 onLongPress={shareItem}
+                                 hasUpdate={SongProcessor.hasUpdate(serverData, item)}
+                                 disabled={isProcessingLocalData || isSpecificItemLoading} />
+          </Animated.View>)}
 
       {serverData
         .filter(it => !SongProcessor.isBundleLocal(localData, it))
         .filter(isOfSelectedLanguage)
-        .map((item: ServerDataType) =>
-          <SongBundleItem key={item.uuid + item.name}
-                          bundle={item}
-                          onPress={onServerItemPress}
-                          onLongPress={shareItem}
-                          disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />)}
+        .map((item: ServerDataType, index) =>
+          <Animated.View key={item.uuid + item.name}
+                         entering={FadeInUp.duration(200).delay(index * 30)}
+                         exiting={FadeOut.duration(200).delay(index * 30)}>
+            <SongBundleItem bundle={item}
+                            onPress={onServerItemPress}
+                            onLongPress={shareItem}
+                            disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />
+          </Animated.View>)}
 
       {serverData.length > 0 ? undefined :
         <Text style={styles.emptyListText}>

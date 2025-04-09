@@ -18,6 +18,7 @@ interface Props {
   showDeleteButton: boolean,
   showSongBundle?: boolean,
   markAsSeen?: boolean,
+  isDragging?: boolean,
 }
 
 const SongItem: React.FC<Props> = ({
@@ -29,6 +30,7 @@ const SongItem: React.FC<Props> = ({
                                      showSongBundle,
                                      onLongPress,
                                      markAsSeen,
+                                     isDragging,
                                    }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const styles = createStyles(useTheme());
@@ -49,7 +51,7 @@ const SongItem: React.FC<Props> = ({
 
   return <TouchableOpacity onPress={() => onPress(index, songListSong)}
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
-                           style={[styles.container]}>
+                           style={[styles.container, (isDragging ? styles.dragging : {})]}>
     <View style={styles.infoContainer}>
       <Text
         style={[
@@ -90,6 +92,21 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center"
+  },
+  dragging: {
+    opacity: 1,
+    borderRadius: 5,
+    marginLeft: 7,
+    marginRight: 5,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
   },
 
   infoContainer: {
