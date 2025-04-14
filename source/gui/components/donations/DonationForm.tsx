@@ -104,6 +104,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     padding: 16,
     width: '100%',
+    paddingHorizontal: 40,
   },
 
   row: {

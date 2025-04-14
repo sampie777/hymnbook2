@@ -13,13 +13,16 @@ import UrlLink from "../../components/UrlLink";
 import PayPalPaymentButton from "../../components/donations/PayPalPaymentButton";
 import BuyMeACoffeePaymentButton from "../../components/donations/BuyMeACoffeePaymentButton";
 import DonationForm from "../../components/donations/DonationForm";
+import { isAndroid, isIOS } from "../../../logic/utils";
 
 
 const AboutScreen: React.FC<{
   navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute>
 }> = ({ navigation }) => {
   const styles = createStyles(useTheme());
-  const { goldenEgg } = useFeatures();
+  const { goldenEgg, enableGooglePay, enableApplePay } = useFeatures();
+
+  const enableDonationForm = (enableGooglePay && isAndroid) || (enableApplePay && isIOS);
 
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
@@ -64,11 +67,15 @@ const AboutScreen: React.FC<{
           If you want to contribute or show your thanks, please consider donating:
         </Text>
 
-        <DonationForm />
+        {enableDonationForm
+          ? <DonationForm />
+          : <Text style={[styles.contentText]}>{isAndroid ? "Google Pay" : (isIOS ? "Apple Pay" : "This")} feature is not available yet.</Text>}
 
         {!goldenEgg ? undefined :
           <View style={styles.donationLinksContainer}>
-            <Text style={[styles.contentText, styles.contributionText]}>You can also use these options:</Text>
+            {enableDonationForm
+              ? <Text style={[styles.contentText, styles.contributionText]}>You can also use these options:</Text>
+              : null}
             <BuyMeACoffeePaymentButton />
             <PayPalPaymentButton />
           </View>
