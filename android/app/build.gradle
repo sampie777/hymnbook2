@@ -154,6 +154,7 @@ dependencies {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
     
+    implementation "com.android.billingclient:billing:6.0.1"
     implementation 'com.stripe:stripe-android:20.44.0'
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
