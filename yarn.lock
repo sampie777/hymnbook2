@@ -2815,10 +2815,10 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@stripe/stripe-react-native@0.38.0":
-  version "0.38.0"
-  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.38.0.tgz#e91f897b6a50899274ff631027d2b3411e631583"
-  integrity sha512-OK/FdF+2CRgiZEgVpql61Iz5K1x+OOVxP9WyCJeA39Cf7MK9EYSuNugoF+dZqXG4otDkUe1ffKYX2OiBU1qGKQ==
+"@stripe/stripe-react-native@0.42.0":
+  version "0.42.0"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.42.0.tgz#b5c27c60561fe4d18493b78696a0be85c584bb3c"
+  integrity sha512-iV8PpDJ913CBoyq1zDtAARpsZtA8dxRFsXhc7KXsIpw2qCEqlNPSrCP4LAxI7UufJLa/gYRR1xYfnH1GXCKPfw==
 
 "@tsconfig/react-native@3.0.2":
   version "3.0.2"
