@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import StripePaymentButton from './StripePaymentButton';
 import PickerComponent from "../popups/PickerComponent";
@@ -20,6 +20,12 @@ const DonationForm: React.FC<Props> = ({}) => {
   const [currency, setCurrency] = useState<Donations.Currency>(initialCurrency);
   const [showPicker, setShowPicker] = useState(false);
   const [shouldCapturePayment, setShouldCapturePayment] = useState(true);
+
+  useEffect(() => {
+    const minAmount = currency.increment ?? 1;
+    if (amount >= minAmount) return;
+    setAmount(minAmount);
+  }, [currency]);
 
   const openPicker = () => setShowPicker(true);
   const closePicker = () => setShowPicker(false);
