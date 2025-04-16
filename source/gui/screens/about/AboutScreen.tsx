@@ -61,8 +61,8 @@ const AboutScreen: React.FC<{
       <View style={styles.donationContainer}>
         <Text style={[styles.contentText, styles.contributionText]}>
           This app is made free in order to make the access to Christian songs available for everyone with a digital
-          device. As no profit is made, this app fully depend on donations.
-          If you want to contribute or show your thanks, please consider donating:
+          device. As no profit is made, this app fully depends on donations.
+          If you want to show your thanks, please consider supporting this good cause:
         </Text>
 
         {enableSystemPay
