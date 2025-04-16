@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
-import { useAppContext } from "../providers/AppContextProvider";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import LoadingIndicator from "../LoadingIndicator";
 import { rollbar } from "../../../logic/rollbar";
 import { isConnectionError } from '../../../logic/apiUtils';
 import { Donations } from "../../../logic/donations";
-import { ValidationError } from "../../../logic/utils";
+import { isDevelopmentEnv, ValidationError } from "../../../logic/utils";
 import { useIsMounted } from "../utils";
 import config from "../../../config";
 
@@ -19,7 +18,6 @@ interface Props {
 
 const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", capturePayment = true }) => {
   const isMounted = useIsMounted();
-  const appContext = useAppContext();
   const styles = createStyles(useTheme());
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
@@ -44,7 +42,12 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
     setLoading(true);
 
     try {
-      await Donations.initializePaymentSheet(initPaymentSheet, finalAmount, finalCurrency, appContext.developerMode, capturePayment);
+      await Donations.initializePaymentSheet(
+        initPaymentSheet,
+        finalAmount,
+        finalCurrency,
+        isDevelopmentEnv,
+        capturePayment);
       if (!isMounted()) return;
 
       const { error } = await presentPaymentSheet();
@@ -79,7 +82,7 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
   };
 
   return <StripeProvider
-    publishableKey={appContext.developerMode ? config.stripe.publicKey.test : config.stripe.publicKey.live}
+    publishableKey={isDevelopmentEnv ? config.stripe.publicKey.test : config.stripe.publicKey.live}
     merchantIdentifier="merchant.nl.sajansen.hymnbook2" // required for Apple Pay
     // urlScheme="hymnbook" // required for 3D Secure and bank redirects
   >

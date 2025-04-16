@@ -6,6 +6,8 @@ import config from "../config";
 import { stringMd5 } from "react-native-quick-md5";
 import { locale } from "./locale";
 
+export const isDevelopmentEnv = process.env.NODE_ENV === "development";
+
 export function dateFrom(date: Date | string): Date {
   if (typeof date === "string") {
     return new Date(date);

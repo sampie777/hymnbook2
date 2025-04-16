@@ -4,6 +4,7 @@ import { Song, SongAudio } from "./db/models/songs/Songs";
 import Settings from "../settings";
 import fetchBuilder from "fetch-retry";
 import config from "../config";
+import { isDevelopmentEnv } from "./utils";
 
 export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
@@ -74,7 +75,7 @@ export const api = {
   donations: {
     stripe: {
       paymentSheet: (amount: number, currency: string, clientId: string, capturePayment: boolean = true) =>
-        fetch(`${process.env.NODE_ENV !== "development" ? hymnbookApiEndpoint : developmentApiEndpoint}/stripe/payment-sheet`, {
+        fetch(`${!isDevelopmentEnv ? hymnbookApiEndpoint : developmentApiEndpoint}/stripe/payment-sheet`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({

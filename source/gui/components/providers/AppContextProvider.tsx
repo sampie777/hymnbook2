@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useState } from "react";
+import { isDevelopmentEnv } from "../../../logic/utils";
 
 export interface AppContextProps {
   developerMode: boolean;
@@ -11,7 +12,7 @@ export const AppContextProviderContext = React.createContext<AppContextProps>({
 });
 
 const AppContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [developerMode, setDeveloperMode] = useState(process.env.NODE_ENV === "development");
+  const [developerMode, setDeveloperMode] = useState(isDevelopmentEnv);
 
   const defaultContext: AppContextProps = {
     developerMode: developerMode,
