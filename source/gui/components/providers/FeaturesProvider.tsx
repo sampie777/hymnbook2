@@ -8,8 +8,7 @@ type FeaturesContextProps = Features.Props & { loadFeatures: () => void };
 export const FeaturesContext = React.createContext<FeaturesContextProps>({
   loaded: false,
   goldenEgg: false,
-  enableGooglePay: false, // Todo: enable by default when Google pay is working 100%
-  enableApplePay: false,  // Todo: enable by default when Apple pay is working 100%
+  enableSystemPay: false, // Todo: enable by default when Google/Apple pay is working 100%
   allowLogging: true,
   loadFeatures: () => rollbar.warning("loadFeatures not implemented yet")
 });
@@ -17,8 +16,7 @@ export const FeaturesContext = React.createContext<FeaturesContextProps>({
 const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [loaded, setLoaded] = useState(false);
   const [goldenEgg, setGoldenEgg] = useState(false);
-  const [enableGooglePay, setEnableGooglePay] = useState(false);
-  const [enableApplePay, setEnableApplePay] = useState(false);
+  const [enableSystemPay, setEnableSystemPay] = useState(false);
   const [allowLogging, setAllowLogging] = useState(true);
 
   const loadFeatures = () => {
@@ -27,8 +25,7 @@ const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
         .then(features => {
           setLoaded(true);
           setGoldenEgg(features.goldenEgg);
-          setEnableGooglePay(features.enableGooglePay);
-          setEnableApplePay(features.enableApplePay);
+          setEnableSystemPay(features.enableSystemPay);
           setAllowLogging(features.allowLogging);
         })
         .catch(() => null);
@@ -50,8 +47,7 @@ const FeaturesProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const defaultContext: FeaturesContextProps = {
     loaded: loaded,
     goldenEgg: goldenEgg,
-    enableGooglePay: enableGooglePay,
-    enableApplePay: enableApplePay,
+    enableSystemPay: enableSystemPay,
     allowLogging: allowLogging,
     loadFeatures: loadFeatures
   };

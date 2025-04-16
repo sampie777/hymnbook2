@@ -20,9 +20,7 @@ const AboutScreen: React.FC<{
   navigation: NativeStackNavigationProp<ParamList, typeof AboutRoute>
 }> = ({ navigation }) => {
   const styles = createStyles(useTheme());
-  const { goldenEgg, enableGooglePay, enableApplePay } = useFeatures();
-
-  const enableDonationForm = (enableGooglePay && isAndroid) || (enableApplePay && isIOS);
+  const { goldenEgg, enableSystemPay } = useFeatures();
 
   return (<ScrollView style={styles.container}>
     <View style={styles.headerContainer}>
@@ -67,13 +65,13 @@ const AboutScreen: React.FC<{
           If you want to contribute or show your thanks, please consider donating:
         </Text>
 
-        {enableDonationForm
+        {enableSystemPay
           ? <DonationForm />
           : <Text style={[styles.contentText]}>{isAndroid ? "Google Pay" : (isIOS ? "Apple Pay" : "This")} feature is not available yet.</Text>}
 
         {!goldenEgg ? undefined :
           <View style={styles.donationLinksContainer}>
-            {enableDonationForm
+            {enableSystemPay
               ? <Text style={[styles.contentText, styles.contributionText]}>You can also use these options:</Text>
               : null}
             <BuyMeACoffeePaymentButton />
