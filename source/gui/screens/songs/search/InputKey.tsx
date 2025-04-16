@@ -5,7 +5,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { objectToArrayIfNotAlready } from "../../../../logic/utils";
 
 interface KeyProps extends PropsWithChildren {
-  onPress: () => void;
+  onPress?: () => void;
   onLongPress?: () => void,
   extraStyle?: Object;
   accessibilityLabel?: string;
@@ -42,7 +42,7 @@ export const NumberKey: React.FC<{ number: number, onPress: (number: number) => 
     </Key>;
   };
 
-export const ClearKey: React.FC<{ onPress: () => void, text?: string, useSmallerFontSize?: boolean }> =
+export const ClearKey: React.FC<{ onPress?: () => void, text?: string, useSmallerFontSize?: boolean }> =
   ({ onPress, text = "Clear", useSmallerFontSize = false }) => {
     const styles = createStyles(useTheme());
     return <Key onPress={onPress}
@@ -51,7 +51,7 @@ export const ClearKey: React.FC<{ onPress: () => void, text?: string, useSmaller
   };
 
 export const BackspaceKey: React.FC<{
-  onPress: () => void,
+  onPress?: () => void,
   onLongPress?: () => void,
   useSmallerFontSize?: boolean
 }> =
