@@ -14,9 +14,10 @@ import config from "../../../config";
 interface Props {
   amount?: number
   currency?: string
+  capturePayment?: boolean
 }
 
-const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR" }) => {
+const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", capturePayment = true }) => {
   const isMounted = useIsMounted();
   const appContext = useAppContext();
   const styles = createStyles(useTheme());
@@ -43,7 +44,7 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR" }
     setLoading(true);
 
     try {
-      await Donations.initializePaymentSheet(initPaymentSheet, finalAmount, finalCurrency, appContext.developerMode);
+      await Donations.initializePaymentSheet(initPaymentSheet, finalAmount, finalCurrency, appContext.developerMode, capturePayment);
       if (!isMounted()) return;
 
       const { error } = await presentPaymentSheet();

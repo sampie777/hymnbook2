@@ -5,6 +5,8 @@ import PickerComponent from "../popups/PickerComponent";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Donations } from '../../../logic/donations';
+import Checkbox from "../Checkbox";
+import { useAppContext } from "../providers/AppContextProvider";
 
 interface Props {
 }
@@ -12,10 +14,12 @@ interface Props {
 const DonationForm: React.FC<Props> = ({}) => {
   const initialCurrency = Donations.currencies.find(it => it.code == "ZAR") || Donations.currencies[0];
 
+  const { developerMode } = useAppContext();
   const styles = createStyles(useTheme());
   const [amount, setAmount] = useState((initialCurrency.increment ?? 1) * 5);
   const [currency, setCurrency] = useState<Donations.Currency>(initialCurrency);
   const [showPicker, setShowPicker] = useState(false);
+  const [shouldCapturePayment, setShouldCapturePayment] = useState(true);
 
   const openPicker = () => setShowPicker(true);
   const closePicker = () => setShowPicker(false);
@@ -94,7 +98,17 @@ const DonationForm: React.FC<Props> = ({}) => {
       </TouchableOpacity>
     </View>
 
-    <StripePaymentButton amount={amount} currency={currency.code} />
+    {!developerMode ? null :
+      <View style={styles.row}>
+        <Text style={styles.text}>Automatically process payment</Text>
+
+        <Checkbox checked={shouldCapturePayment} onChange={setShouldCapturePayment} />
+      </View>
+    }
+
+    <StripePaymentButton amount={amount}
+                         currency={currency.code}
+                         capturePayment={shouldCapturePayment} />
   </View>;
 };
 
@@ -110,6 +124,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
     gap: 20
   },

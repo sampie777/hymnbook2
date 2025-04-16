@@ -41,8 +41,9 @@ export namespace Donations {
     initPaymentSheet: (params: PaymentSheet.SetupParams) => Promise<InitPaymentSheetResult>,
     amount: number,
     currency: string,
-    isTest: boolean = false) => {
-    const { paymentIntent, ephemeralKey, customer, } = await fetchPaymentSheetParams(amount, currency);
+    isTest: boolean = false,
+    capturePayment: boolean = true) => {
+    const { paymentIntent, ephemeralKey, customer, } = await fetchPaymentSheetParams(amount, currency, capturePayment);
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: "Hymnbook",
@@ -81,8 +82,8 @@ export namespace Donations {
     throw Error("Something went wrong setting up the donation.");
   };
 
-  export const fetchPaymentSheetParams = async (amount: number, currency: string) => {
-    const response = await api.donations.stripe.paymentSheet(amount, currency);
+  export const fetchPaymentSheetParams = async (amount: number, currency: string, capturePayment: boolean = true) => {
+    const response = await api.donations.stripe.paymentSheet(amount, currency, Security.getDeviceId(), capturePayment);
     const data = await response.json();
 
     if (response.ok) {

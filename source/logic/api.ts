@@ -73,11 +73,17 @@ export const api = {
 
   donations: {
     stripe: {
-      paymentSheet: (amount: number, currency: string) => fetch(`${process.env.NODE_ENV !== "development" ? hymnbookApiEndpoint : developmentApiEndpoint}/stripe/payment-sheet`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', },
-        body: JSON.stringify({ amount: amount, currency: currency })
-      })
+      paymentSheet: (amount: number, currency: string, clientId: string, capturePayment: boolean = true) =>
+        fetch(`${process.env.NODE_ENV !== "development" ? hymnbookApiEndpoint : developmentApiEndpoint}/stripe/payment-sheet`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
+          body: JSON.stringify({
+            amount: amount,
+            currency: currency,
+            client: clientId,
+            capture: capturePayment
+          })
+        })
     },
     paypal: "https://www.paypal.com/donate/?hosted_button_id=6KTU5JNVS699E",
     buyMeACoffee: "https://www.buymeacoffee.com/sajansen"
