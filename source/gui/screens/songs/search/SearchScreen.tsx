@@ -17,6 +17,7 @@ import StringSearchButton from "./StringSearchButton";
 import DownloadInstructions from "./DownloadInstructions";
 import KeyPad from "./KeyPad";
 import SearchHeading from "./SearchHeading";
+import EasterEggList from "./easterEggs/EasterEggList";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -132,12 +133,17 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                        selectedBundleUuids={selectedBundleUuids}
                        setSelectedBundleUuids={setSelectedBundleUuids} />
 
-        <FlatList
-          data={results}
-          renderItem={renderSearchResultItem}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.searchList}
-          importantForAccessibility={results.length > 0 ? undefined : "no"} />
+        {inputValue == "0000"
+          ? <EasterEggList contentContainerStyle={styles.searchList}
+                           navigation={navigation}
+                           selectedBundleUuids={selectedBundleUuids} />
+          : <FlatList
+            data={results}
+            renderItem={renderSearchResultItem}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={styles.searchList}
+            importantForAccessibility={results.length > 0 ? undefined : "no"} />
+        }
 
         {isStringSearchButtonsPositionTop()
         || inputValue.length > 0 || results.length > 0 ? undefined :

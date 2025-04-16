@@ -28,7 +28,7 @@ export namespace SongSearch {
     SongBundle = "SongBundle",
   }
 
-  const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
+  export const createSongBundleFilterQuery = (selectedBundleUuids: string[]) => `ANY _songBundles.uuid in {${selectedBundleUuids.map(it => `'${it}'`).join(", ")}}`;
 
   export const loadAll = (selectedBundleUuids: string[] = []): SongSearch.SearchResult[] => {
     // Load all selected bundles and sort them by name, so we can group our song results by bundles.
