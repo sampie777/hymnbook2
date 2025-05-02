@@ -6,6 +6,7 @@ import { DocumentAutoUpdater } from "./documents/updater/documentAutoUpdater";
 import { UpdaterContextProps } from "../gui/components/providers/UpdaterContextProvider";
 import { addEventListener } from "@react-native-community/netinfo";
 import * as Types from "@react-native-community/netinfo/src/internal/types";
+import { isConnectionError } from "./apiUtils";
 
 export namespace AutoUpdater {
 
@@ -20,10 +21,10 @@ export namespace AutoUpdater {
 
     return Promise.all([
       SongAutoUpdater.run(context.addSongBundleUpdating, context.removeSongBundleUpdating, mayUseNetwork)
-        .catch(error => rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
+        .catch(error => !isConnectionError(error) && rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
 
       DocumentAutoUpdater.run(context.addDocumentGroupUpdating, context.removeDocumentGroupUpdating, mayUseNetwork)
-        .catch(error => rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
+        .catch(error => !isConnectionError(error) && rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
     ])
       .finally(removeEventListener)
   }

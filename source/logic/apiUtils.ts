@@ -37,8 +37,11 @@ export class BackendError extends HttpError {
   }
 }
 
+export const isConnectionError = (error: any) =>
+  error instanceof Error && error.name == "TypeError" && error.message == "Network request failed"
+
 export const throwIfConnectionError = (error: any) => {
-  if (error instanceof Error && error.name == "TypeError" && error.message == "Network request failed") {
+  if (isConnectionError(error)) {
     throw error;
   }
 }
