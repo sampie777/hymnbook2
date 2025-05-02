@@ -53,8 +53,6 @@ const useHistory = (
   useEffect(() => () => checkViewTime(), []);
 
   const checkViewTime = () => {
-    const currentPreviousSong = previousSong.current;
-
     if (startTime.current == undefined) {
       startTime.current = new Date();
       return;
@@ -64,22 +62,27 @@ const useHistory = (
     const difference = endTime.getTime() - startTime.current.getTime();
     if (song == undefined) startTime.current = undefined;
 
+    // Get the current state of these variables, so they cannot change while we are using them
+    const currentPreviousIndex = previousIndex.current;
+    const currentPreviousAction = previousAction.current;
+    const currentPreviousSong = previousSong.current ? Song.clone(previousSong.current, { includeVerses: true }) : undefined;
+
     // We just opened a song
-    if (previousIndex.current == undefined && song != undefined) startTime.current = new Date();
+    if (currentPreviousIndex == undefined && song != undefined) startTime.current = new Date();
 
     // Check for valid objects
     if (currentPreviousSong == undefined) return;
-    if (previousIndex.current < 0) return;
+    if (currentPreviousIndex < 0) return;
 
     // Check for changes
-    if (song?.uuid == currentPreviousSong.uuid && viewIndex == previousIndex.current) return;
+    if (song?.uuid == currentPreviousSong.uuid && viewIndex == currentPreviousIndex) return;
 
     startTime.current = new Date();
 
     if (difference < config.songs.history.minViewTimeMs) return;
 
-    const verse = currentPreviousSong.verses[previousIndex.current];
-    SongHistoryController.pushVerse(verse, currentPreviousSong, difference, previousAction.current, previousSongListItem.current);
+    const verse = currentPreviousSong.verses[currentPreviousIndex];
+    SongHistoryController.pushVerse(verse, currentPreviousSong, difference, currentPreviousAction, previousSongListItem.current);
   }
 };
 
