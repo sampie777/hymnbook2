@@ -14,7 +14,7 @@ import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
 import DeleteAllButton from "./DeleteAllButton";
 import { rollbar } from "../../../logic/rollbar";
-import { sanitizeErrorForRollbar } from "../../../logic/utils";
+import { isDbItemValid, sanitizeErrorForRollbar } from "../../../logic/utils";
 import SongListInstructions from "./SongListInstructions";
 import { SongHistoryController } from "../../../logic/songs/history/songHistoryController";
 import { useCollectionListener } from "../../components/utils";
@@ -36,10 +36,10 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
         return setLastSeenSongListSongIndex(undefined);
       }
 
-      const item = list.find(it => it.id == lastSongListItem.songListItemId);
+      const item = list.find(it => isDbItemValid(it) && it.id == lastSongListItem.songListItemId);
 
       // Check if item still exists or is in the active list
-      if (item == undefined || !(item.song.uuid == lastSongListItem.songUuid || item.song.id == lastSongListItem.id)) {
+      if (item == undefined || !isDbItemValid(item.song) || !(item.song.uuid == lastSongListItem.songUuid || item.song.id == lastSongListItem.id)) {
         return setLastSeenSongListSongIndex(undefined);
       }
 

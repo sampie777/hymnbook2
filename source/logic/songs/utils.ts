@@ -3,7 +3,7 @@ import config from "../../config";
 import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/songs/Songs";
 import { SongSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
-import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
+import { isDbItemValid, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
 import { AbcMelody } from "../db/models/songs/AbcMelodies";
 import { distance } from "fastest-levenshtein";
 
@@ -380,12 +380,7 @@ export const calculateVerseHeight = (index: number, verseHeights: Record<number,
   };
 };
 
-export const isSongValid = (song: unknown) =>
-  song != null
-  && (
-    typeof (song as Realm.Object<Song>).isValid !== 'function'
-    || (song as Realm.Object<Song>).isValid()
-  );
+export const isSongValid = (song: unknown) => isDbItemValid(song)
 
 export const generateVerseContentWithCorrectWidth = (
   content: string,
