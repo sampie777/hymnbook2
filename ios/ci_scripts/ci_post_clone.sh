@@ -45,6 +45,8 @@ function podInstall {
   pod update
   echo "  === Running pod install 3 ===  "
   pod install && return
+
+  cat ../Podfile.lock
   exit 1
 }
 podInstall

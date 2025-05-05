@@ -389,7 +389,7 @@ PODS:
     - React-Core
   - react-native-track-player (4.0.1):
     - React-Core
-    - SwiftAudioEx (= 1.0.0)
+    - SwiftAudioEx (= 1.1.0)
   - React-NativeModulesApple (0.72.17):
     - hermes-engine
     - React-callinvoker
