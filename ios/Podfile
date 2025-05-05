@@ -26,7 +26,9 @@ if linkage != nil
 
   pre_install do |installer|
       installer.pod_targets.each do |pod|
-        if pod.name.eql?('react-native-quick-md5') # add more pod names here
+        Pod::UI.puts "Processing pod: #{pod.name}".green
+
+        if pod.name.eql?('react-native-quick-md5') || pod.name.eql?('QuickMd5')
           def pod.build_type;
             Pod::BuildType.static_library
           end
