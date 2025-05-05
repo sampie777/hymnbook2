@@ -23,28 +23,6 @@ linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
-
-  pre_install do |installer|
-    installer.pod_targets.each do |pod|
-      Pod::UI.puts "Processing pod: #{pod.name}".green
-
-      if pod.name.eql?('react-native-quick-md5')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-      if pod.name.eql?('QuickMd5')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-      if pod.name.eql?('RNScreens')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-    end
-  end
 end
 
 target 'hymnbook2' do
@@ -87,6 +65,11 @@ target 'hymnbook2' do
         end
       end
       if target.name == 'RNReanimated'
+        target.build_configurations.each do |config|
+          config.build_settings['MACH_O_TYPE'] = 'staticlib'
+        end
+      end
+      if target.name == 'RealmJS'
         target.build_configurations.each do |config|
           config.build_settings['MACH_O_TYPE'] = 'staticlib'
         end
