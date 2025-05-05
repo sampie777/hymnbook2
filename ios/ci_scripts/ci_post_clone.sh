@@ -32,11 +32,12 @@ function podInstall {
   pod update
   echo "  === Running pod install 1 ===  "
   pod install && return
-
+  pod update SwiftAudioEx
   echo "  === Running repo pod update 2 ===  "
   pod repo update
   echo "  === Running pod update 2 ===  "
   pod update
+  pod update SwiftAudioEx
   echo "  === Running pod install 2 ===  "
   pod install --repo-update && return
 
