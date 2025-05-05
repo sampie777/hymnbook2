@@ -26,7 +26,6 @@ if linkage != nil
 end
 
 target 'hymnbook2' do
-  pod 'RollbarReactNative', path: '../node_modules/rollbar-react-native'
   config = use_native_modules!
 
   # Flags change depending on the env values.

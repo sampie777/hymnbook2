@@ -613,6 +613,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - RollbarReactNative (from `../node_modules/rollbar-react-native`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -738,6 +739,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  RollbarReactNative:
+    :path: "../node_modules/rollbar-react-native"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
