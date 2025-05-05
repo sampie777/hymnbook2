@@ -23,33 +23,6 @@ linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
-
-  pre_install do |installer|
-    installer.pod_targets.each do |pod|
-      Pod::UI.puts "Processing pod: #{pod.name}".green
-
-      if pod.name.eql?('react-native-quick-md5')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-      if pod.name.eql?('RNScreens')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-      if pod.name.eql?('RNReanimated')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-      if pod.name.eql?('RealmJS')
-        def pod.build_type;
-          Pod::BuildType.static_library
-        end
-      end
-    end
-  end
 end
 
 target 'hymnbook2' do
@@ -79,24 +52,13 @@ target 'hymnbook2' do
   end
 
   post_install do |installer|
+
+    # The [CP] scripts have a race condition that will delete some of the compiled files before all of the targets had them copied.
+    system("find Pods ~+ -name '*.sh' -type f -print0 | xargs -0 sed -i '' -e 's/rsync --delete/rsync/g'")
+
     installer.pods_project.targets.each do |target|
       # Force react-native-quick-md5 to build as a static library
-      if target.name == 'react-native-quick-md5'
-        target.build_configurations.each do |config|
-          config.build_settings['MACH_O_TYPE'] = 'staticlib'
-        end
-      end
-      if target.name == 'RNScreens'
-        target.build_configurations.each do |config|
-          config.build_settings['MACH_O_TYPE'] = 'staticlib'
-        end
-      end
-      if target.name == 'RNReanimated'
-        target.build_configurations.each do |config|
-          config.build_settings['MACH_O_TYPE'] = 'staticlib'
-        end
-      end
-      if target.name == 'RealmJS'
+      if ['react-native-quick-md5', 'RNScreens', 'RNReanimated', 'RealmJS'].include?(target.name)
         target.build_configurations.each do |config|
           config.build_settings['MACH_O_TYPE'] = 'staticlib'
         end
