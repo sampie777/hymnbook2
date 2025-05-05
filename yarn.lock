@@ -7835,10 +7835,10 @@ react-native-popup-menu@0.16.1:
   resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.16.1.tgz#b1bb56be5c0838bbc2f532af7b1f554b7ceef566"
   integrity sha512-xRS7mRh0exwu7Iw8PPVHdM11d13A/KzYjy0/fZx3zVtxISxPkNaDGayau6oa7HqO3Nj0oS9ulFCYjcQfG6vahA==
 
-react-native-quick-md5@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-quick-md5/-/react-native-quick-md5-3.0.5.tgz#d909fb3f308f49efa8470be40825f6ce5fe58c59"
-  integrity sha512-/YLFYjdaue8bORiLKr49cSZU3CQVNhZ50xAXV242Cy9+Bow/tiLTByuvaF0lJOkWt5LOtCO1CbdRDmgtY6Sj2Q==
+react-native-quick-md5@3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-quick-md5/-/react-native-quick-md5-3.0.6.tgz#f059b7d6907d898d31164709ffd6557fcd981d21"
+  integrity sha512-CEQ8hbdj1Kjv3CL5Acuuwra4HvFJvTRRCzscCxWLZk5j8e8PkbgxwoKnS0+nOJJ2kKmjZEPBfDmO+NsxoWSDIg==
   dependencies:
     spark-md5 "^3.0.2"
 

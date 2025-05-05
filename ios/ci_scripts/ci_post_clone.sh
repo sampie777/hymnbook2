@@ -50,3 +50,7 @@ function podInstall {
   exit 1
 }
 podInstall
+
+echo "******"
+cat ../Podfile.lock
+echo "******"
