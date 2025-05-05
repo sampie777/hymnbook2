@@ -1,31 +1,28 @@
 import { Platform } from "react-native";
-import { Callback, Client, Configuration, Extra, LogArgument, LogResult } from "rollbar-react-native";
+import { Callback, Client, Extra, LogArgument, LogResult } from "rollbar-react-native";
 import { getVersion } from "react-native-device-info";
 import Config from "react-native-config";
 import { Security } from "./security";
 import config from "../config";
 
 
-const configuration = new Configuration(
-  Config.ROLLBAR_API_KEY || "",
-  {
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-    enabled: process.env.NODE_ENV !== "development",
-    verbose: true,
-    payload: {
-      environment: process.env.NODE_ENV,
-      client: {
-        javascript: {
-          source_map_enabled: true,
-          code_version: getVersion() + "." + Platform.OS
-        }
+export const rollbar = new Client({
+  accessToken: Config.ROLLBAR_API_KEY || "",
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+  enabled: process.env.NODE_ENV !== "development",
+  verbose: true,
+  payload: {
+    environment: process.env.NODE_ENV,
+    client: {
+      javascript: {
+        source_map_enabled: true,
+        code_version: getVersion() + "." + Platform.OS
       }
-    },
-    captureDeviceInfo: true
-  });
-
-export const rollbar = new Client(configuration);
+    }
+  },
+  captureDeviceInfo: true
+});
 
 export const rollbarInit = () =>
   Security.init()
