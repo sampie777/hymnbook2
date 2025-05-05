@@ -530,10 +530,6 @@ PODS:
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Rollbar (1.12.14)
-  - RollbarReactNative (0.9.3):
-    - React-Core
-    - Rollbar (~> 1.12.8)
   - SocketRocket (0.6.1)
   - SwiftAudioEx (1.0.0)
   - Yoga (1.14.0)
@@ -617,7 +613,6 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - RollbarReactNative (from `../node_modules/rollbar-react-native`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -634,7 +629,6 @@ SPEC REPOS:
     - fmt
     - libevent
     - OpenSSL-Universal
-    - Rollbar
     - SocketRocket
     - SwiftAudioEx
     - YogaKit
@@ -744,8 +738,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  RollbarReactNative:
-    :path: "../node_modules/rollbar-react-native"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -814,8 +806,6 @@ SPEC CHECKSUMS:
   RNScreens: bea7b9767050d69e4b9da14639cdd5c8f5a37881
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Rollbar: 58f315609433558a82af5a54d7888bb020bec561
-  RollbarReactNative: 11595d077e6e53c3dff7846f6bd53f23f68be338
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SwiftAudioEx: 6f511018b7a0fdfd14ed1bb4081f953588245cc0
   Yoga: ef534101bb891fb09bae657417f34d399c1efe38

@@ -26,6 +26,7 @@ if linkage != nil
 end
 
 target 'hymnbook2' do
+  pod 'RollbarReactNative', path: '../node_modules/rollbar-react-native'
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -49,8 +50,6 @@ target 'hymnbook2' do
     inherit! :complete
     # Pods for testing
   end
-
-  pod 'RollbarReactNative', path: '../node_modules/rollbar-react-native'
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|
