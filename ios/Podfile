@@ -81,12 +81,12 @@ target 'hymnbook2' do
           config.build_settings['MACH_O_TYPE'] = 'staticlib'
         end
       end
-      if target.name == 'QuickMd5'
+      if target.name == 'RNScreens'
         target.build_configurations.each do |config|
           config.build_settings['MACH_O_TYPE'] = 'staticlib'
         end
       end
-      if target.name == 'RNScreens'
+      if target.name == 'RNReanimated'
         target.build_configurations.each do |config|
           config.build_settings['MACH_O_TYPE'] = 'staticlib'
         end
