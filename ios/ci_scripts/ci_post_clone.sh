@@ -27,9 +27,19 @@ yarn install
 echo "===== Running pod install ====="
 function podInstall {
   pod install && return
-  echo "  === Running pod update ===  "
+  echo "  === Running pod update 1 ===  "
   pod update
-  echo "  === Running pod install ===  "
+  echo "  === Running pod install 1 ===  "
+  pod install && return
+
+  echo "  === Running repo pod update 2 ===  "
+  pod repo update
+  echo "  === Running pod install 2 ===  "
+  pod install && return
+
+  echo "  === Running pod update 3 ===  "
+  pod update
+  echo "  === Running pod install 3 ===  "
   pod install && return
   exit 1
 }
