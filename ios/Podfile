@@ -22,13 +22,18 @@ flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : Flip
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => :static
+  use_frameworks! :linkage => linkage.to_sym
 
   pre_install do |installer|
     installer.pod_targets.each do |pod|
       Pod::UI.puts "Processing pod: #{pod.name}".green
 
-      if pod.name.eql?('react-native-quick-md5') || pod.name.eql?('QuickMd5')
+      if pod.name.eql?('react-native-quick-md5')
+        def pod.build_type;
+          Pod::BuildType.static_library
+        end
+      end
+      if pod.name.eql?('QuickMd5')
         def pod.build_type;
           Pod::BuildType.static_library
         end
@@ -65,11 +70,24 @@ target 'hymnbook2' do
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|
+      # Force react-native-quick-md5 to build as a static library
+      if target.name == 'react-native-quick-md5'
+        target.build_configurations.each do |config|
+          config.build_settings['MACH_O_TYPE'] = 'staticlib'
+        end
+      end
+      if target.name == 'QuickMd5'
+        target.build_configurations.each do |config|
+          config.build_settings['MACH_O_TYPE'] = 'staticlib'
+        end
+      end
+
+      # Exclude arm64 for simulator
       target.build_configurations.each do |config|
         config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = "arm64"
       end
     end
-    
+
     react_native_post_install(
       installer,
       config[:reactNativePath],
