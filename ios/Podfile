@@ -26,6 +26,7 @@ if linkage != nil
 end
 
 target 'hymnbook2' do
+  use_frameworks!
   config = use_native_modules!
 
   # Flags change depending on the env values.
