@@ -38,6 +38,11 @@ if linkage != nil
           Pod::BuildType.static_library
         end
       end
+      if pod.name.eql?('RNScreens')
+        def pod.build_type;
+          Pod::BuildType.static_library
+        end
+      end
     end
   end
 end
@@ -77,6 +82,11 @@ target 'hymnbook2' do
         end
       end
       if target.name == 'QuickMd5'
+        target.build_configurations.each do |config|
+          config.build_settings['MACH_O_TYPE'] = 'staticlib'
+        end
+      end
+      if target.name == 'RNScreens'
         target.build_configurations.each do |config|
           config.build_settings['MACH_O_TYPE'] = 'staticlib'
         end
