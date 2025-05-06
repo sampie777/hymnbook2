@@ -32,6 +32,18 @@ target 'hymnbook2' do
   # Flags change depending on the env values.
   flags = get_default_flags()
 
+  pre_install do |installer|
+    installer.pod_targets.each do |pod|
+      Pod::UI.puts "Processing pod: #{pod.name}".green
+
+      if ['react-native-quick-md5', 'RNScreens', 'RNReanimated', 'RealmJS'].include?(pod.name)
+        def pod.build_type;
+          Pod::BuildType.static_library
+        end
+      end
+    end
+  end
+
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.
@@ -66,6 +78,5 @@ target 'hymnbook2' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
