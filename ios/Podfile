@@ -46,11 +46,6 @@ target 'hymnbook2' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'hymnbook2Tests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
   post_install do |installer|
     installer.pods_project.targets.each do |target|
       # Force react-native-quick-md5 to build as a static library
