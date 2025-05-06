@@ -52,10 +52,6 @@ target 'hymnbook2' do
   end
 
   post_install do |installer|
-
-    # The [CP] scripts have a race condition that will delete some of the compiled files before all of the targets had them copied.
-    system("find Pods ~+ -name '*.sh' -type f -print0 | xargs -0 sed -i '' -e 's/rsync --delete/rsync/g'")
-
     installer.pods_project.targets.each do |target|
       # Force react-native-quick-md5 to build as a static library
       if ['react-native-quick-md5', 'RNScreens', 'RNReanimated', 'RealmJS'].include?(target.name)
