@@ -8,6 +8,7 @@ echo "WHATSAPP_USER_GROUP_LINK=${WHATSAPP_USER_GROUP_LINK}" >> ../../.env
 echo "===== Installing CocoaPods ====="
 export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
 brew install cocoapods
+echo $(pod --version)
 
 echo "===== Installing Node.js ====="
 # installs nvm (Node Version Manager)
@@ -23,6 +24,8 @@ brew install yarn
 # Install dependencies
 echo "===== Running yarn install ====="
 yarn install
+
+rm -rf Pods Podfile.lock
 
 function podInstall {
   echo "===== Running pod install ====="
