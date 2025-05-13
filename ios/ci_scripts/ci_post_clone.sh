@@ -25,7 +25,11 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 
+echo "===== Running pod deintegrate (1) ====="
+pod deintegrate --verbose || echo "Failed to deintegrate"
 rm -rf Pods Podfile.lock
+echo "===== Running pod deintegrate (2) ====="
+pod deintegrate --verbose || echo "Failed to deintegrate"
 
 function podInstall {
   echo "===== Running pod install ====="
@@ -49,6 +53,7 @@ function podInstall {
   echo "  === Running pod install 3 ===  "
   pod install && return
 
+  echo "Every step failed..."
   cat ../Podfile.lock
   exit 1
 }
