@@ -97,7 +97,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
   const fetchSearchResults: FetchSearchResultsFunction = (text: string) => {
     if (!isMounted()) return;
 
-    if (isSearchEmpty(immediateSearchText.current)) {
+    if (isSearchEmpty(immediateSearchText.current) || isSearchEmpty(text)) {
       clearSearch();
       return;
     }
