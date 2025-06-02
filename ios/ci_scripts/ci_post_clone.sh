@@ -25,12 +25,12 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 
-echo "===== Running pd repo update ====="
-pod repo update
+#echo "===== Running pd repo update ====="
+#pod repo update
 echo "===== Running pod install ====="
-pod install
+USE_FRAMEWORKS=static pod install
 echo "===== Running pod update ====="
-pod update
+USE_FRAMEWORKS=static pod update
 
 
 #echo "===== Running pod install ====="
