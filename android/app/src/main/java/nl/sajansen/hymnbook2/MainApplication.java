@@ -61,10 +61,6 @@ public class MainApplication extends Application implements ReactApplication {
       DefaultNewArchitectureEntryPoint.load();
     }
 
-    if (BuildConfig.DEBUG) {
-        ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    }
-
     RollbarReactNative.init(this, BuildConfig.ROLLBAR_API_KEY, BuildConfig.DEBUG ? "development" : "production");
     // Set unhashed device ID (as I struggle to reach the hash function).
     // This code is copied from react-native-device-info package.
