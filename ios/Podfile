@@ -9,8 +9,8 @@ platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
 pod 'RollbarCrash', :modular_headers => true
-#pod 'RollbarReport', :modular_headers => true
-#pod 'RollbarCommon', :modular_headers => true
+pod 'RollbarReport', :modular_headers => true
+pod 'RollbarCommon', :modular_headers => true
 #pod 'RollbarNotifier', :modular_headers => true
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
@@ -22,7 +22,7 @@ pod 'RollbarCrash', :modular_headers => true
 #   dependencies: {
 #     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
 # ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+flipper_config = ENV['NO_FLIPPER'] == "0" ? FlipperConfiguration.enabled : FlipperConfiguration.disabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
