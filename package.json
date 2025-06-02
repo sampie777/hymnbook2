@@ -55,12 +55,13 @@
     "@babel/plugin-transform-private-methods": "7.23.3",
     "@babel/plugin-transform-unicode-property-regex": "7.23.3",
     "@babel/preset-env": "7.23.5",
-    "@babel/runtime": "7.23.5",
-    "@react-native/eslint-config": "0.72.2",
-    "@react-native/metro-config": "0.72.12",
-    "@tsconfig/react-native": "3.0.2",
+    "@babel/runtime": "7.27.4",
+    "@react-native/babel-preset": "0.73.21",
+    "@react-native/eslint-config": "0.73.2",
+    "@react-native/metro-config": "0.73.5",
+    "@react-native/typescript-config": "0.73.1",
     "@types/jest": "29.5.10",
-    "@types/react": "18.2.42",
+    "@types/react": "18.2.6",
     "@types/react-native-htmlview": "0.16.4",
     "@types/react-native-keep-awake": "2.0.6",
     "@types/react-native-vector-icons": "6.4.18",
@@ -76,6 +77,6 @@
     "typescript": "4.9.5"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   }
 }
