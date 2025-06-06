@@ -91,3 +91,5 @@ hymnbook_songs.broken
 
 .idea
 !.idea/codeStyles/
+
+.yarn/
