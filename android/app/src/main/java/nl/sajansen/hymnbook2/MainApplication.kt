@@ -10,7 +10,6 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
 import com.rollbar.RollbarReactNative
 
@@ -42,7 +41,6 @@ class MainApplication : Application(), ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
     }
-    ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
 
     RollbarReactNative.init(this, BuildConfig.ROLLBAR_API_KEY, if (BuildConfig.DEBUG) "development" else "production")
     // Set unhashed device ID (as I struggle to reach the hash function).
