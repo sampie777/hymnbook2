@@ -40,10 +40,12 @@ function setVersion() {
     echo "$(awk '/<key>CFBundleShortVersionString<\/key>/{print; getline; next} 1' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     echo "$(awk '/<key>CFBundleVersion<\/key>/{print; getline; next} 1' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     # Add new version tag
-    echo "$(sed -n "/<key>CFBundleShortVersionString<\/key>/a\\
-    <string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a\\
+  <string>${version}<\/string>
+    " ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
     echo "$(sed "/<key>CFBundleVersion<\/key>/a\\
-    <string>${buildVersion}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+  <string>${buildVersion}<\/string>
+    " ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
 function releasePatch {
