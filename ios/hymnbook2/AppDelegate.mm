@@ -17,16 +17,19 @@
   self.initialProps = @{};
 
   // Setup Rollbar config
-  NSString *rollbarKey = [RNCConfig envFor:@"ROLLBAR_API_KEY"];
-  RollbarConfiguration *rollbarConfig = [Rollbar currentConfiguration];
-  rollbarConfig.personId = [DeviceUID uid];
 #if DEBUG
-  rollbarConfig.environment = @"development";
+  NSString *rollbarEnvironment = @"development";
 #else
-  rollbarConfig.environment = @"production";
+  NSString *rollbarEnvironment = @"production";
 #endif
-  
-  [RollbarReactNative initWithAccessToken:rollbarKey configuration:rollbarConfig];
+
+  NSString *rollbarKey = [RNCConfig envFor:@"ROLLBAR_API_KEY"];
+  NSDictionary *options = @{
+    @"accessToken": rollbarKey,
+    @"personId": [DeviceUID uid],
+    @"environment": rollbarEnvironment
+  };
+  [RollbarReactNative initWithConfiguration:options];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }

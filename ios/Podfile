@@ -8,10 +8,10 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# pod 'RollbarCrash', :modular_headers => true
-# pod 'RollbarReport', :modular_headers => true
-# pod 'RollbarCommon', :modular_headers => true
-# pod 'RollbarNotifier', :modular_headers => true
+pod 'RollbarCrash', :modular_headers => true
+pod 'RollbarReport', :modular_headers => true
+pod 'RollbarCommon', :modular_headers => true
+pod 'RollbarNotifier', :modular_headers => true
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -21,7 +21,9 @@ end
 
 target 'hymnbook2' do
   config = use_native_modules!
- use_modular_headers!
+  use_frameworks! :linkage => :static
+
+  pod 'RollbarReactNative', path: '../node_modules/rollbar-react-native'
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -35,12 +37,6 @@ target 'hymnbook2' do
   end
 
   post_install do |installer|
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = "arm64"
-      end
-    end
-    
     react_native_post_install(
       installer,
       config[:reactNativePath],

@@ -9,18 +9,18 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* hymnbook2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* hymnbook2Tests.m */; };
 		00F37675C84C45C8B5749A03 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F116143659E34A5A914E2D25 /* Roboto-Black.ttf */; };
+		11BF4BA914FE2C42FD053DB2 /* Pods_hymnbook2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D78DB031B3F8FA5D3E7D5D5 /* Pods_hymnbook2.framework */; };
 		12E47ADD05BF4A46A4C1DFE1 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F8064DF551844B6A8146FE23 /* Roboto-Light.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		26F9C53F8424CA190158AC78 /* Pods_hymnbook2_hymnbook2Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E850B688D31A030C4EF51375 /* Pods_hymnbook2_hymnbook2Tests.framework */; };
 		3669D40F2AF8FACA0085C0A2 /* dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3669D40E2AF8FACA0085C0A2 /* dummy.swift */; };
 		36712A982C341E860036B747 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 36712A972C341E860036B747 /* PrivacyInfo.xcprivacy */; };
 		3BCC7AC8EA8D4D36B251D61A /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC6E3C149CF043C3AE4294C1 /* Roboto-BoldItalic.ttf */; };
 		60C9AD8BD81849FA91D874E9 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10EFBBBE56A24CDD90F5D0E5 /* Roboto-Medium.ttf */; };
-		7379F5BFFBB59583B6A475F3 /* Pods_hymnbook2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEDE53FE7482DF2AEB4FB5FC /* Pods_hymnbook2.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		87B7243690AC459F878E8373 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 818002327A5F45C5B1D6251C /* Roboto-LightItalic.ttf */; };
+		884E69D834CFB30D0482FBA2 /* Pods_hymnbook2_hymnbook2Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7604D517C141628C2248D2D8 /* Pods_hymnbook2_hymnbook2Tests.framework */; };
 		9189BC394BF2433E81F84280 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 65E5E4DE95E54F939253256F /* Roboto-Italic.ttf */; };
 		97CA806AE1EB4BAE89B59762 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C8CDF9A5BEF64B259D0A4E60 /* Roboto-MediumItalic.ttf */; };
 		995F42A6F45743269211588C /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5A7D493DB0CE4ABEB32315F4 /* Roboto-ThinItalic.ttf */; };
@@ -45,7 +45,6 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* hymnbook2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = hymnbook2Tests.m; sourceTree = "<group>"; };
 		019123F66D6D4E6685828B01 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		0284C641A27EAC37C2F44AC4 /* Pods-hymnbook2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2/Pods-hymnbook2.release.xcconfig"; sourceTree = "<group>"; };
 		0CBC1D3C16CA45038AC2872A /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		10EFBBBE56A24CDD90F5D0E5 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* hymnbook2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hymnbook2.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,8 +54,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = hymnbook2/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.m; path = hymnbook2/main.m; sourceTree = "<group>"; };
 		266B560EB2CA4605A3EBE41B /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		26DEAA938F70EAE28D2EB3B1 /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.debug.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		26E31FD478C7446E8176C0AB /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		2CB6582F6E9C9F6A5BD04836 /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; sourceTree = "<group>"; };
 		2E8FA03AE3564085A441803C /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		338F9816F01A41E5A06F26EB /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		362922ED2AAF2C070043A988 /* hymnbook2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = hymnbook2.entitlements; path = hymnbook2/hymnbook2.entitlements; sourceTree = "<group>"; };
@@ -64,31 +63,35 @@
 		3669D40E2AF8FACA0085C0A2 /* dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dummy.swift; sourceTree = "<group>"; };
 		36712A972C341E860036B747 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		570FF69E743A432C9B839431 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		57BFFD6999120BB5EE810C2A /* Pods-hymnbook2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2/Pods-hymnbook2.release.xcconfig"; sourceTree = "<group>"; };
 		5A7D493DB0CE4ABEB32315F4 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-ThinItalic.ttf"; path = "../assets/fonts/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
 		65E5E4DE95E54F939253256F /* Roboto-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Italic.ttf"; path = "../assets/fonts/Roboto-Italic.ttf"; sourceTree = "<group>"; };
-		671F6B8237C87EFAB24C8406 /* Pods-hymnbook2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2.debug.xcconfig"; path = "Target Support Files/Pods-hymnbook2/Pods-hymnbook2.debug.xcconfig"; sourceTree = "<group>"; };
 		729AF40542734B34A1D2784F /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
+		7604D517C141628C2248D2D8 /* Pods_hymnbook2_hymnbook2Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_hymnbook2_hymnbook2Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		76C40D3AEF93407399314ABF /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
-		7D48C1AFE3AC306BD6912B3F /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.debug.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		7E217FBB2DF40AFB00A38AF1 /* RCTI18nStrings.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = RCTI18nStrings.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E217FBE2DF40B0600A38AF1 /* RCTI18nStrings.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = RCTI18nStrings.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E217FC02DF40B1700A38AF1 /* libReact-Core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libReact-Core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		818002327A5F45C5B1D6251C /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-LightItalic.ttf"; path = "../assets/fonts/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = hymnbook2/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9074016838EB4E14B2147834 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		9B4FEF892F884E03BD2E3554 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		9D78DB031B3F8FA5D3E7D5D5 /* Pods_hymnbook2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_hymnbook2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA4129642872CD4A00F51041 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		AC568C9F38094B91B79C4465 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BlackItalic.ttf"; path = "../assets/fonts/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
-		AEDE53FE7482DF2AEB4FB5FC /* Pods_hymnbook2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_hymnbook2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0BFF384C0714E6E99EF0484 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		BA5B9DD4A4324DAA9D324B0F /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		C8CDF9A5BEF64B259D0A4E60 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-MediumItalic.ttf"; path = "../assets/fonts/Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
 		CB87CB038D8A41CD8BA81302 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		CDA7C207C7064D5F8A14BD93 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		CDC0360D673910E7729C49C2 /* Pods-hymnbook2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2.debug.xcconfig"; path = "Target Support Files/Pods-hymnbook2/Pods-hymnbook2.debug.xcconfig"; sourceTree = "<group>"; };
 		E0E43E998095477FAE3B5A2B /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		E0FA568246F241A3A31552F4 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		E47FC35D99A94FF780EC869B /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		E850B688D31A030C4EF51375 /* Pods_hymnbook2_hymnbook2Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_hymnbook2_hymnbook2Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC6E3C149CF043C3AE4294C1 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BoldItalic.ttf"; path = "../assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		EE47B2DFF967603D4F3AE7CD /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; sourceTree = "<group>"; };
 		F116143659E34A5A914E2D25 /* Roboto-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Black.ttf"; path = "../assets/fonts/Roboto-Black.ttf"; sourceTree = "<group>"; };
 		F8064DF551844B6A8146FE23 /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -98,7 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26F9C53F8424CA190158AC78 /* Pods_hymnbook2_hymnbook2Tests.framework in Frameworks */,
+				884E69D834CFB30D0482FBA2 /* Pods_hymnbook2_hymnbook2Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7379F5BFFBB59583B6A475F3 /* Pods_hymnbook2.framework in Frameworks */,
+				11BF4BA914FE2C42FD053DB2 /* Pods_hymnbook2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,10 +152,13 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7E217FC02DF40B1700A38AF1 /* libReact-Core.a */,
+				7E217FBE2DF40B0600A38AF1 /* RCTI18nStrings.bundle */,
+				7E217FBB2DF40AFB00A38AF1 /* RCTI18nStrings.bundle */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				AEDE53FE7482DF2AEB4FB5FC /* Pods_hymnbook2.framework */,
-				E850B688D31A030C4EF51375 /* Pods_hymnbook2_hymnbook2Tests.framework */,
+				9D78DB031B3F8FA5D3E7D5D5 /* Pods_hymnbook2.framework */,
+				7604D517C141628C2248D2D8 /* Pods_hymnbook2_hymnbook2Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -228,10 +234,10 @@
 		A488B92B534F6B27BA7D598A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				671F6B8237C87EFAB24C8406 /* Pods-hymnbook2.debug.xcconfig */,
-				0284C641A27EAC37C2F44AC4 /* Pods-hymnbook2.release.xcconfig */,
-				7D48C1AFE3AC306BD6912B3F /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */,
-				2CB6582F6E9C9F6A5BD04836 /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */,
+				CDC0360D673910E7729C49C2 /* Pods-hymnbook2.debug.xcconfig */,
+				57BFFD6999120BB5EE810C2A /* Pods-hymnbook2.release.xcconfig */,
+				26DEAA938F70EAE28D2EB3B1 /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */,
+				EE47B2DFF967603D4F3AE7CD /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -243,12 +249,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "hymnbook2Tests" */;
 			buildPhases = (
-				D71DFA6C90CEBA76BFCC6524 /* [CP] Check Pods Manifest.lock */,
+				4DC9BE9ACEE8ADD094511193 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				EEBA1C46F11DBC30AD1930D0 /* [CP] Embed Pods Frameworks */,
-				DDC5C1A1B2B1769AF8CCE983 /* [CP] Copy Pods Resources */,
+				26025CA5FF611A81AD620B26 /* [CP] Embed Pods Frameworks */,
+				3663006C4701843EB60DB2C1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -264,14 +270,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "hymnbook2" */;
 			buildPhases = (
-				B441DB47DD1745B101D19FBE /* [CP] Check Pods Manifest.lock */,
+				CD6F13CA6B7CF9250EFDD8E2 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				30D1AF90EDAE3AAA194FC1A8 /* [CP] Embed Pods Frameworks */,
-				2DB3F4DD7557EB9A3B32DE4E /* [CP] Copy Pods Resources */,
+				EFB55D16ED5226575F7B8DAE /* [CP] Embed Pods Frameworks */,
+				14B03572A98025CD7A00C6AD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -368,7 +374,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		2DB3F4DD7557EB9A3B32DE4E /* [CP] Copy Pods Resources */ = {
+		14B03572A98025CD7A00C6AD /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -385,46 +391,41 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		30D1AF90EDAE3AAA194FC1A8 /* [CP] Embed Pods Frameworks */ = {
+		26025CA5FF611A81AD620B26 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B441DB47DD1745B101D19FBE /* [CP] Check Pods Manifest.lock */ = {
+		3663006C4701843EB60DB2C1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-hymnbook2-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D71DFA6C90CEBA76BFCC6524 /* [CP] Check Pods Manifest.lock */ = {
+		4DC9BE9ACEE8ADD094511193 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -446,43 +447,48 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DDC5C1A1B2B1769AF8CCE983 /* [CP] Copy Pods Resources */ = {
+		CD6F13CA6B7CF9250EFDD8E2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-hymnbook2-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EEBA1C46F11DBC30AD1930D0 /* [CP] Embed Pods Frameworks */ = {
+		EFB55D16ED5226575F7B8DAE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -533,10 +539,12 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D48C1AFE3AC306BD6912B3F /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */;
+			baseConfigurationReference = 26DEAA938F70EAE28D2EB3B1 /* Pods-hymnbook2-hymnbook2Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -553,18 +561,22 @@
 					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = nl.sajansen.hymnbook2Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/hymnbook2.app/hymnbook2";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2CB6582F6E9C9F6A5BD04836 /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */;
+			baseConfigurationReference = EE47B2DFF967603D4F3AE7CD /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = hymnbook2Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -577,14 +589,16 @@
 					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = nl.sajansen.hymnbook2Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/hymnbook2.app/hymnbook2";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 671F6B8237C87EFAB24C8406 /* Pods-hymnbook2.debug.xcconfig */;
+			baseConfigurationReference = CDC0360D673910E7729C49C2 /* Pods-hymnbook2.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -594,6 +608,7 @@
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				INFOPLIST_FILE = hymnbook2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -616,7 +631,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0284C641A27EAC37C2F44AC4 /* Pods-hymnbook2.release.xcconfig */;
+			baseConfigurationReference = 57BFFD6999120BB5EE810C2A /* Pods-hymnbook2.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -625,6 +640,7 @@
 				DEVELOPMENT_TEAM = H74WKN7BSC;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				INFOPLIST_FILE = hymnbook2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
