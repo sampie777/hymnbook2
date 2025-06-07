@@ -33,14 +33,17 @@ function setVersion() {
     version="$1"
     buildVersion=$(git rev-list HEAD --first-parent --count)
 
-    npm --no-git-tag-version --allow-same-version version "${version}" || exit 1
+    # Update version in package.json using sed
+    sed -i '' -E 's/("version": ")([^"]+)(")/\1'"$version"'\3/' package.json || exit 1
 
     # Remove previous version tag
-    echo "$(sed -e '/<key>CFBundleShortVersionString<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
-    echo "$(sed -e '/<key>CFBundleVersion<\/key>/{n;d}' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
+    echo "$(awk '/<key>CFBundleShortVersionString<\/key>/{print; getline; next} 1' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
+    echo "$(awk '/<key>CFBundleVersion<\/key>/{print; getline; next} 1' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     # Add new version tag
-    echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a \\\t\t<string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
-    echo "$(sed "/<key>CFBundleVersion<\/key>/a \\\t\t<string>${buildVersion}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed -n "/<key>CFBundleShortVersionString<\/key>/a\\
+    <string>${version}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
+    echo "$(sed "/<key>CFBundleVersion<\/key>/a\\
+    <string>${buildVersion}<\/string>" ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
 function releasePatch {
@@ -50,7 +53,7 @@ function releasePatch {
   retry git pull
 
   # Create patch version
-  CURRENT_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | awk -F'.' '{print $1"."$2"."$3+1}')
 
   git merge develop || exit 1
@@ -68,8 +71,8 @@ function releaseMinor {
   git merge develop || exit 1
 
   # Create version
-  npm --no-git-tag-version version minor || exit 1
-  RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
+  RELEASE_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1"."$2+1".0"}')
 
   setVersion "${RELEASE_VERSION}" || exit 1
 
@@ -84,8 +87,8 @@ function releaseMajor {
   git merge develop || exit 1
 
   # Create version
-  npm --no-git-tag-version version major || exit 1
-  RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
+  RELEASE_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1+1".0.0"}')
 
   setVersion "${RELEASE_VERSION}" || exit 1
 
@@ -95,7 +98,7 @@ function releaseMajor {
 function pushAndRelease {
   yarn test || exit 1
 
-  RELEASE_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
+  RELEASE_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
   echo "Release version: ${RELEASE_VERSION}"
 
   git add package.json || exit 1
@@ -116,8 +119,8 @@ function pushAndRelease {
 
   retry git push -u origin master --tags
 
-  xdg-open android/app/build/outputs/apk/release
-  xdg-open android/app/build/outputs/bundle/release
+  xdg-open android/app/build/outputs/apk/release || open android/app/build/outputs/apk/release || echo ""
+  xdg-open android/app/build/outputs/bundle/release || open android/app/build/outputs/bundle/release || echo ""
 
   retry ./upload_source_map.sh
 }
@@ -184,3 +187,4 @@ rm hymnbook_settings.note 2> /dev/null
 rm -R hymnbook_settings.management 2> /dev/null
 
 echo "Done"
+
