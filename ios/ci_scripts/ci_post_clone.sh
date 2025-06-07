@@ -24,8 +24,10 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 
-echo "===== Running pod install ====="
 function podInstall {
+  echo "===== Running pod repo update ====="
+  pod repo update
+  echo "===== Running pod install ====="
   pod install && return
   echo "  === Running pod update ===  "
   pod update
