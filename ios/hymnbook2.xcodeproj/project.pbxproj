@@ -166,7 +166,6 @@
 		39BE92229356430F95A97918 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AA4129642872CD4A00F51041 /* Roboto-Regular.ttf */,
 				E0E43E998095477FAE3B5A2B /* AntDesign.ttf */,
 				9074016838EB4E14B2147834 /* Entypo.ttf */,
 				9B4FEF892F884E03BD2E3554 /* EvilIcons.ttf */,
@@ -183,6 +182,7 @@
 				570FF69E743A432C9B839431 /* Octicons.ttf */,
 				CB87CB038D8A41CD8BA81302 /* SimpleLineIcons.ttf */,
 				266B560EB2CA4605A3EBE41B /* Zocial.ttf */,
+				AA4129642872CD4A00F51041 /* Roboto-Regular.ttf */,
 				F116143659E34A5A914E2D25 /* Roboto-Black.ttf */,
 				AC568C9F38094B91B79C4465 /* Roboto-BlackItalic.ttf */,
 				0CBC1D3C16CA45038AC2872A /* Roboto-Bold.ttf */,
@@ -382,9 +382,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -399,9 +403,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -416,9 +424,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -477,9 +489,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hymnbook2/Pods-hymnbook2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

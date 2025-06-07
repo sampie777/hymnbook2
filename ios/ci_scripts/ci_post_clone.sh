@@ -18,7 +18,8 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 18
 
 echo "===== Installing yarn ====="
-brew install yarn
+corepack enable yarn
+corepack install yarn
 
 # Install dependencies
 echo "===== Running yarn install ====="
