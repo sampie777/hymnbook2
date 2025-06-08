@@ -5,8 +5,7 @@
 SERVERKEY=""
 
 source upload_source_map_secrets.txt
-VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)
-
+VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
 
 function removeDuplicateFiles {
   echo "Remove duplicate files (Android)"
@@ -24,7 +23,7 @@ function uploadSourceMapAndroid {
   -F access_token=${SERVERKEY} \
   -F version=${VERSION}.android \
   -F minified_url=http://reactnativehost/index.android.bundle \
-  -F source_map=./android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map \
+  -F source_map=@"./android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map" \
   -F index.js=@index.js
 }
 
@@ -63,7 +62,7 @@ function cleanUp {
 }
 
 createAndUploadSourceMapAndroid
-createAndUploadSourceMapIOS
+#createAndUploadSourceMapIOS
 cleanUp
 
 echo "Done creating and uploading source maps"
