@@ -1,34 +1,63 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Dispatch, SetStateAction } from 'react';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import Settings from "../../../../settings";
 import { isIOS } from "../../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
+import config from '../../../../config';
 
 type Props = {
   value: string
   previousValue: string
   useSmallerFontSize: boolean
-  onPress?: () => void;
+  onPress?: () => void
+  setInputValue: Dispatch<SetStateAction<string>>
 };
 
-const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize }) => {
+const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize, setInputValue }) => {
   const styles = createStyles(useTheme());
 
-  return <View style={styles.container}>
-    <View style={styles.innerContainer}>
-      <Text onPress={onPress}
-            style={[styles.text, (!useSmallerFontSize ? {} : styles.textSmaller)]}
-            importantForAccessibility={value ? "auto" : "no"}
-            accessibilityElementsHidden={!value}>
-        {value ? value
-          : (!Settings.songSearchRememberPreviousEntry ? " " :
-              <>{isIOS ? "" : " "}<Text
-                style={styles.placeholder}>{previousValue}</Text> </>
-          )
-        }
-      </Text>
+  // Use `previousValue`, so we don't have to use the `inputValue` state directly,
+  // which causes unnecessary component updates.
+  const onNumberKeyPress = (number: number) =>
+    setInputValue((prev) =>
+       prev.length >= config.maxSearchInputLength ? prev : prev + number
+    );
+
+  const onDeleteKeyPress = () =>
+    setInputValue(prev => prev.length <= 1 ? "" : prev.substring(0, prev.length - 1))
+
+  const onKeyPress = (key: string) => {
+    if (key === "Backspace") {
+      onDeleteKeyPress()
+    } else if (!isNaN(+key)) {
+      onNumberKeyPress(+key)
+    }
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.innerContainer}>
+        <TextInput
+          caretHidden={true}
+          onPressIn={Settings.songSearchRememberPreviousEntry || value ? undefined : onPress}
+          onKeyPress={e => onKeyPress(e.nativeEvent.key)}
+          value={value}
+          placeholder={Settings.songSearchRememberPreviousEntry ? previousValue : undefined}
+          placeholderTextColor={styles.placeholder.color}
+          style={[
+            styles.text,
+            !useSmallerFontSize ? {} : styles.textSmaller,
+            Settings.songSearchRememberPreviousEntry && !value ? styles.placeholder : {}
+          ]}
+          importantForAccessibility={value ? 'auto' : 'no'}
+          accessibilityElementsHidden={!value}></TextInput>
+      </View>
     </View>
-  </View>;
+  );
 };
 
 export default SongNumberInput;
