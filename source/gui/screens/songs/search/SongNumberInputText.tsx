@@ -55,6 +55,7 @@ export const SongNumberInputTextMacBook: React.FC<Props & { setInputValue: Dispa
   return <TextInput
     caretHidden={true}
     keyboardType={'decimal-pad'}
+    autoFocus={true}
     inputMode={'decimal'}
     onPressIn={!Settings.songSearchRememberPreviousEntry || value ? () => console.debug("Nothing", Settings.songSearchRememberPreviousEntry, value) : onPress}
     onKeyPress={e => onKeyPress(e.nativeEvent.key)}
