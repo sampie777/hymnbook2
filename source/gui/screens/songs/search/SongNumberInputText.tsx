@@ -31,7 +31,7 @@ export const SongNumberInputTextAndroid: React.FC<Props> = ({value, previousValu
   </Text>
 };
 
-export const SongNumberInputTextIOS: React.FC<Props & { setInputValue: Dispatch<SetStateAction<string>> }> = ({value, previousValue, onPress, useSmallerFontSize, setInputValue}) => {
+export const SongNumberInputTextMacBook: React.FC<Props & { setInputValue: Dispatch<SetStateAction<string>> }> = ({value, previousValue, onPress, useSmallerFontSize, setInputValue}) => {
   const styles = createStyles(useTheme());
 
   // Use `previousValue`, so we don't have to use the `inputValue` state directly,
