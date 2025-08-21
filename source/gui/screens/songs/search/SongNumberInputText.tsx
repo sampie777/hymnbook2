@@ -2,10 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, Text, TextInput } from 'react-native';
 import Settings from '../../../../settings.ts';
 import { isIOS } from '../../../../logic/utils.ts';
-import {
-  ThemeContextProps,
-  useTheme,
-} from '../../../components/providers/ThemeProvider.tsx';
+import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider.tsx';
 import config from '../../../../config.ts';
 
 interface Props {
@@ -61,7 +58,7 @@ export const SongNumberInputTextMacBook: React.FC<Props & {
     inputMode={'decimal'}
     onPressIn={!Settings.songSearchRememberPreviousEntry || value ? () => console.debug("Nothing", Settings.songSearchRememberPreviousEntry, value) : onPress}
     onKeyPress={e => onKeyPress(e.nativeEvent.key)}
-    value={value ? value : "      "}
+    value={value}
     placeholder={Settings.songSearchRememberPreviousEntry ? previousValue : undefined}
     placeholderTextColor={styles.placeholder.color}
     style={[
