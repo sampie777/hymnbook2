@@ -58,7 +58,7 @@ export const SongNumberInputTextMacBook: React.FC<Props & { setInputValue: Dispa
     inputMode={'decimal'}
     onPressIn={!Settings.songSearchRememberPreviousEntry || value ? () => console.debug("Nothing", Settings.songSearchRememberPreviousEntry, value) : onPress}
     onKeyPress={e => onKeyPress(e.nativeEvent.key)}
-    value={value}
+    value={value ? value : "      "}
     placeholder={Settings.songSearchRememberPreviousEntry ? previousValue : undefined}
     placeholderTextColor={styles.placeholder.color}
     style={[
