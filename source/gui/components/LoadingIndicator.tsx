@@ -7,7 +7,7 @@ interface Props {
   size?: number
 }
 
-const LoadingIndicator: React.FC<Props> = ({size}) => {
+const LoadingIndicator: React.FC<Props> = ({ size }) => {
   const styles = createStyles(useTheme());
 
   return <ActivityIndicator style={styles.icon}
@@ -17,7 +17,7 @@ const LoadingIndicator: React.FC<Props> = ({size}) => {
 
 export default LoadingIndicator;
 
-const createStyles = ({  colors }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   icon: {
     fontSize: 80,
     color: colors.text.lighter,

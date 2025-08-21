@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import {NativeModules, StyleSheet, View} from 'react-native';
+import { NativeModules, StyleSheet, View } from 'react-native';
 import { isIOS } from "../../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import {
@@ -31,7 +31,7 @@ const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSm
           useSmallerFontSize={useSmallerFontSize}
           onPress={onPress}
           setInputValue={setInputValue}
-          />
+        />
       </View>
     </View>
   );

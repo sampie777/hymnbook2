@@ -167,7 +167,11 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const renderElementOl = (element: Element, index: number, args?: any) => {
     const listIndex = { value: 0 };
     return <Animated.View key={index} style={mergedStyles.ol}>
-      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, { ...args, listStyleType: "ol", listIndex: listIndex }))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, {
+        ...args,
+        listStyleType: "ol",
+        listIndex: listIndex
+      }))}
     </Animated.View>;
   };
 

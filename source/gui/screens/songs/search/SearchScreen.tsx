@@ -132,7 +132,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                        useSmallerFontSize={useSmallerFontSize}
                        selectedBundleUuids={selectedBundleUuids}
                        setSelectedBundleUuids={setSelectedBundleUuids}
-                       setInputValue={setInputValue}/>
+                       setInputValue={setInputValue} />
 
         {inputValue == "0000"
           ? <EasterEggList contentContainerStyle={styles.searchList}
