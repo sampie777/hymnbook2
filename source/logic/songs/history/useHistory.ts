@@ -19,11 +19,12 @@ const useHistory = (
   const startTime = useRef<Date | undefined>();
 
   useEffect(() => {
-    checkViewTime();
+    const previousSongCurrent = previousSong.current;
+    checkViewTime(previousSongCurrent);
 
-    if (previousSong.current == undefined && song != undefined && viewIndex == 0) {
+    if (previousSongCurrent == undefined && song != undefined && viewIndex == 0) {
       setNextAction(SongHistoryAction.OpenedSong);
-    } else if (previousSong.current != undefined && song != undefined && song.uuid == previousSong.current.uuid) {
+    } else if (previousSongCurrent != undefined && song != undefined && song.uuid == previousSongCurrent.uuid) {
       if (viewIndex > previousIndex.current)
         setNextAction(SongHistoryAction.ScrolledDown);
       else if (viewIndex < previousIndex.current)
@@ -52,7 +53,7 @@ const useHistory = (
 
   useEffect(() => () => checkViewTime(), []);
 
-  const checkViewTime = () => {
+  const checkViewTime = (previousSongCurrent?: Song) => {
     if (startTime.current == undefined) {
       startTime.current = new Date();
       return;
@@ -65,7 +66,7 @@ const useHistory = (
     // Get the current state of these variables, so they cannot change while we are using them
     const currentPreviousIndex = previousIndex.current;
     const currentPreviousAction = previousAction.current;
-    const currentPreviousSong = previousSong.current ? Song.clone(previousSong.current, { includeVerses: true }) : undefined;
+    const currentPreviousSong = previousSongCurrent ? Song.clone(previousSongCurrent, { includeVerses: true }) : undefined;
 
     // We just opened a song
     if (currentPreviousIndex == undefined && song != undefined) startTime.current = new Date();
