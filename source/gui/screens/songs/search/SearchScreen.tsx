@@ -131,7 +131,8 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                        stringSearchButtonPlacement={stringSearchButtonPlacement}
                        useSmallerFontSize={useSmallerFontSize}
                        selectedBundleUuids={selectedBundleUuids}
-                       setSelectedBundleUuids={setSelectedBundleUuids} />
+                       setSelectedBundleUuids={setSelectedBundleUuids}
+                       setInputValue={setInputValue}/>
 
         {inputValue == "0000"
           ? <EasterEggList contentContainerStyle={styles.searchList}

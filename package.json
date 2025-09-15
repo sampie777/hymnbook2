@@ -1,6 +1,6 @@
 {
   "name": "hymnbook2",
-  "version": "1.24.0",
+  "version": "1.24.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -64,6 +64,7 @@
     "@types/react": "18.2.6",
     "@types/react-native-htmlview": "0.16.4",
     "@types/react-native-keep-awake": "2.0.6",
+    "@types/react-native-onboarding-swiper": "1.1.9",
     "@types/react-native-vector-icons": "6.4.18",
     "@types/react-test-renderer": "18.0.7",
     "babel-jest": "29.7.0",
@@ -74,7 +75,7 @@
     "prettier": "2.8.8",
     "react-native-codegen": "0.71.5",
     "react-test-renderer": "18.2.0",
-    "typescript": "4.9.5"
+    "typescript": "5.0.4"
   },
   "engines": {
     "node": ">=18"
