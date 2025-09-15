@@ -42,7 +42,7 @@ const useHistory = (
     if (currentPreviousDocument == undefined) return;
 
     // Check for changes
-    if (document?.uuid == currentPreviousDocument.uuid) return;
+    if (document?.uuid == currentPreviousDocument?.uuid) return;
 
     startTime.current = new Date();
 

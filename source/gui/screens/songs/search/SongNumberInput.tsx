@@ -1,39 +1,43 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Settings from "../../../../settings";
+import React, { Dispatch, SetStateAction } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { isIOS } from "../../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
+import { SongNumberInputTextAndroid, SongNumberInputTextMacBook, } from './SongNumberInputText.tsx';
+import DeviceInfo from "react-native-device-info";
 
 type Props = {
   value: string
   previousValue: string
   useSmallerFontSize: boolean
-  onPress?: () => void;
+  onPress?: () => void
+  setInputValue: Dispatch<SetStateAction<string>>
 };
 
-const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize }) => {
+const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize, setInputValue }) => {
   const styles = createStyles(useTheme());
 
-  return <View style={styles.container}>
-    <View style={styles.innerContainer}>
-      <Text onPress={onPress}
-            style={[styles.text, (!useSmallerFontSize ? {} : styles.textSmaller)]}
-            importantForAccessibility={value ? "auto" : "no"}
-            accessibilityElementsHidden={!value}>
-        {value ? value
-          : (!Settings.songSearchRememberPreviousEntry ? " " :
-              <>{isIOS ? "" : " "}<Text
-                style={styles.placeholder}>{previousValue}</Text> </>
-          )
-        }
-      </Text>
+  const TextLabelElement = isIOS && DeviceInfo.getDeviceType() == "Desktop"
+    ? SongNumberInputTextMacBook
+    : SongNumberInputTextAndroid;
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.innerContainer}>
+        <TextLabelElement
+          value={value}
+          previousValue={previousValue}
+          useSmallerFontSize={useSmallerFontSize}
+          onPress={onPress}
+          setInputValue={setInputValue}
+        />
+      </View>
     </View>
-  </View>;
+  );
 };
 
 export default SongNumberInput;
 
-const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ isDark }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center"
@@ -44,19 +48,5 @@ const createStyles = ({ isDark, colors, fontFamily }: ThemeContextProps) => Styl
     borderBottomWidth: 2,
     borderBottomColor: isDark ? "#404040" : "#ddd",
     minWidth: 140
-  },
-  text: {
-    fontSize: 70,
-    textAlign: "center",
-    fontFamily: fontFamily.sansSerifLight,
-    color: colors.text.light,
-  },
-  placeholder: {
-    color: isDark ? (isIOS ? "#303030" : "#2a2a2a00") : "#e5e5e5",
-    textShadowColor: isDark ? (isIOS ? "#404040" : "#404040aa") : "#ddd",
-    textShadowRadius: 12
-  },
-  textSmaller: {
-    fontSize: 40
   },
 });

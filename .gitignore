@@ -89,5 +89,7 @@ rsa_key.pub
 *.log
 hymnbook_songs.broken
 
-.idea
+.idea/
 !.idea/codeStyles/
+
+.yarn/

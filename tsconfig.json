@@ -1,6 +1,9 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
+    "paths": {
+      "react": ["./node_modules/@types/react"]
+    },
     "esModuleInterop": true,
 //    "lib": [
 //      "es6",

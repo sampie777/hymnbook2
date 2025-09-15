@@ -20,6 +20,7 @@ import { DocumentGroupSchema } from "../../../logic/db/models/documents/Document
 import { CollectionChangeSet, OrderedCollection } from "realm";
 import { isConnectionError } from "../../../logic/apiUtils";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
+import { isConnectionError } from "../../../logic/apiUtils";
 
 type ServerDataType = ServerDocumentGroup;
 type LocalDataType = LocalDocumentGroup;

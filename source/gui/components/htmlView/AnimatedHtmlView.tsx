@@ -7,7 +7,13 @@ import { parseDocument } from "htmlparser2";
 import { mergeStyleSheets } from "../utils";
 import { ElementType } from "domelementtype";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
-import { DataNode, Document, Element, Node } from "domhandler/lib/node";
+import {
+  ChildNode,
+  DataNode,
+  Document,
+  Element,
+  Node,
+} from 'domhandler';
 
 interface HtmlStyles {
   defaultText?: StyleProp<TextStyle>,
@@ -142,7 +148,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
   const renderElementDiv = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} style={mergedStyles.div}>
-      {element.children.map((it, i) => renderNode(it, i, args))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
     </Animated.View>;
 
   const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<TextStyle>) =>
@@ -150,24 +156,28 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
                    style={style}
                    dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>
-      {element.children.map((it, i) => renderNode(it, i, args))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
     </Animated.Text>;
 
   const renderElementSup = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} collapsable={false}>
-      {element.children.map((it, i) => renderNode(it, i, { ...args, style: mergedStyles.sup }))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, { ...args, style: mergedStyles.sup }))}
     </Animated.View>;
 
   const renderElementOl = (element: Element, index: number, args?: any) => {
     const listIndex = { value: 0 };
     return <Animated.View key={index} style={mergedStyles.ol}>
-      {element.children.map((it, i) => renderNode(it, i, { ...args, listStyleType: "ol", listIndex: listIndex }))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, {
+        ...args,
+        listStyleType: "ol",
+        listIndex: listIndex
+      }))}
     </Animated.View>;
   };
 
   const renderElementUl = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} style={mergedStyles.ul}>
-      {element.children.map((it, i) => renderNode(it, i, { ...args, listStyleType: "ul" }))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, { ...args, listStyleType: "ul" }))}
     </Animated.View>;
 
   const renderElementLi = (element: Element, index: number, args?: any) => {
@@ -182,7 +192,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
       <Animated.Text style={mergedStyles.liText}
                      dataDetectorType={"link"}
                      selectable={Settings.enableTextSelection}>
-        {element.children.map((it, i) => renderNode(it, i, args))}
+        {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
       </Animated.Text>
     </Animated.View>;
   };
@@ -201,7 +211,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
                           onPress={onPress}
                           style={mergedStyles.a}
                           selectable={Settings.enableTextSelection}>
-      {element.children.map((it, i) => renderNode(it, i, args))}
+      {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
     </Animated.Text>;
   };
 
@@ -225,7 +235,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
       case "h5":
       case "h6":
       case "sub":
-        return renderElementText(element, index, args, mergedStyles[element.name]);
+        return renderElementText(element, index, args, mergedStyles[element.name as keyof HtmlStyles]);
       case "span":
         return renderElementText(element, index, args);
       case "sup":
@@ -265,7 +275,7 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   // React a rerender is necessary. The 'index'-keys on the child elements don't
   // do a very good job with this.
   return <View key={html.length} onLayout={onLayout}>
-    {document.children.map((it, index) => renderNode(it, index))}
+    {(document.children as ChildNode[]).map((it, index) => renderNode(it, index))}
   </View>;
 };
 

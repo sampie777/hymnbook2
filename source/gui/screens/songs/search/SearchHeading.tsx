@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import StringSearchButton from "./StringSearchButton";
@@ -18,7 +18,8 @@ type Props = {
   navigation: BottomTabNavigationProp<ParamList>
   stringSearchButtonPlacement: SongSearch.StringSearchButtonPlacement
   selectedBundleUuids: string[]
-  setSelectedBundleUuids: (value: string[]) => void;
+  setSelectedBundleUuids: (value: string[]) => void
+  setInputValue: Dispatch<SetStateAction<string>>
 };
 
 const SearchHeading: React.FC<Props> = ({
@@ -31,6 +32,7 @@ const SearchHeading: React.FC<Props> = ({
                                           onPress,
                                           selectedBundleUuids,
                                           setSelectedBundleUuids,
+                                          setInputValue,
                                         }) => {
   const styles = createStyles(useTheme());
 
@@ -59,7 +61,8 @@ const SearchHeading: React.FC<Props> = ({
       <SongNumberInput onPress={onPress}
                        value={value}
                        useSmallerFontSize={useSmallerFontSize}
-                       previousValue={previousValue} />
+                       previousValue={previousValue}
+                       setInputValue={setInputValue} />
     </View>
 
     <View style={styles.containerSides}>

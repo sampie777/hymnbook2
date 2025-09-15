@@ -350,3 +350,10 @@ if (!String.prototype.repeat) {
     return result;
   };
 }
+
+export const isDbItemValid = (item: unknown) =>
+  item != null
+  && (
+    typeof (item as Realm.Object).isValid !== 'function'
+    || (item as Realm.Object).isValid()
+  );

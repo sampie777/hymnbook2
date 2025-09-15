@@ -3,7 +3,7 @@ import { Security } from "../security";
 import { authApi } from "./authApi";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
-import { HttpCode, HttpError, parseJscheduleResponse } from "../apiUtils";
+import { HttpCode, HttpError, parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
 import { emptyPromise, emptyPromiseWithValue, sanitizeErrorForRollbar } from "../utils";
 import config from "../../config";
 
@@ -127,6 +127,8 @@ export namespace ServerAuth {
         return "";
       })
       .catch(error => {
+        throwIfConnectionError(error);
+
         rollbar.error(`Error requesting access token.`, sanitizeErrorForRollbar(error));
         if (error.toString().includes("Too many request")) {
           throw new HttpError(`You're trying to authenticate way too often. Take a break and try again later.`);

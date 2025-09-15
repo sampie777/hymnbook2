@@ -73,8 +73,14 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
     switch (event.code) {
       case "android-io-bad-http-status":
         message = "Failed to load from the server";
+        break;
+      case "android-io-network-connection-failed":
+        message = "No internet connection";
+        break;
     }
     Alert.alert("Failed to load audio", message);
+
+    if (event.code == "android-io-network-connection-failed") return;
     rollbar.error("Failed to load audio", {
       event: event,
       customMessage: message,

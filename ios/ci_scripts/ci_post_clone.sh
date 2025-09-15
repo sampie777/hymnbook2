@@ -18,14 +18,17 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 18
 
 echo "===== Installing yarn ====="
-brew install yarn
+corepack enable yarn
+corepack install yarn
 
 # Install dependencies
 echo "===== Running yarn install ====="
 yarn install
 
-echo "===== Running pod install ====="
 function podInstall {
+  echo "===== Running pod repo update ====="
+  pod repo update
+  echo "===== Running pod install ====="
   pod install && return
   echo "  === Running pod update ===  "
   pod update
