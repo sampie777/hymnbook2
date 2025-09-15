@@ -239,3 +239,6 @@ If you add a setting, you'll be fine. If you remove a setting, you'll probably b
 3. Add the patch function to the `patches` object in the in `source/logic/settings/patching.ts` with the same integer key as you used for the file name. This order will be checked automatically and applied in numeric order.
 4. Once a patch is applied, it's ID is stored in the database to prevent the patch from being applied again.
 
+### Prettier
+
+We use the prettier configuration in `node_modules/prettier`. Setup Webstorm to use this by checking the 'Manual Prettier configuration' option under Prettier in Settings.

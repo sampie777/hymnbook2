@@ -32,7 +32,7 @@ const NoteElement: React.FC<Props> = ({
   // Only render melody components after the parent container has rendered,
   // otherwise it will slow the render dramatically and freeze the UI
   const melodyComponents = <>
-     {/* The following takes 1000 ms to generate */}
+    {/* The following takes 1000 ms to generate */}
     <LinesSvg animatedScale={animatedScale} />
 
     <AnimatedSvg width={animatedStyle.note.width}

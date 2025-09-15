@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import StringSearchButton from "./StringSearchButton";

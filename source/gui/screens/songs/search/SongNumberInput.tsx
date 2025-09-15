@@ -1,11 +1,9 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import {NativeModules, StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { isIOS } from "../../../../logic/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import {
-  SongNumberInputTextAndroid,
-  SongNumberInputTextMacBook,
-} from './SongNumberInputText.tsx';
+import { SongNumberInputTextAndroid, SongNumberInputTextMacBook, } from './SongNumberInputText.tsx';
+import DeviceInfo from "react-native-device-info";
 
 type Props = {
   value: string
@@ -18,7 +16,7 @@ type Props = {
 const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize, setInputValue }) => {
   const styles = createStyles(useTheme());
 
-  const TextLabelElement = isIOS && NativeModules.PlatformConstants.interfaceIdiom != "phone"
+  const TextLabelElement = isIOS && DeviceInfo.getDeviceType() == "Desktop"
     ? SongNumberInputTextMacBook
     : SongNumberInputTextAndroid;
 
@@ -31,7 +29,7 @@ const SongNumberInput: React.FC<Props> = ({ value, previousValue, onPress, useSm
           useSmallerFontSize={useSmallerFontSize}
           onPress={onPress}
           setInputValue={setInputValue}
-          />
+        />
       </View>
     </View>
   );

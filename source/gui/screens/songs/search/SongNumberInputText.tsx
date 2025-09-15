@@ -1,11 +1,8 @@
-import React, {Dispatch, SetStateAction} from 'react';
-import {StyleSheet, Text, TextInput} from 'react-native';
+import React, { Dispatch, SetStateAction } from 'react';
+import { StyleSheet, Text, TextInput } from 'react-native';
 import Settings from '../../../../settings.ts';
-import {isIOS} from '../../../../logic/utils.ts';
-import {
-  ThemeContextProps,
-  useTheme,
-} from '../../../components/providers/ThemeProvider.tsx';
+import { isIOS } from '../../../../logic/utils.ts';
+import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider.tsx';
 import config from '../../../../config.ts';
 
 interface Props {
@@ -15,7 +12,7 @@ interface Props {
   onPress?: () => void
 }
 
-export const SongNumberInputTextAndroid: React.FC<Props> = ({value, previousValue, onPress, useSmallerFontSize}) => {
+export const SongNumberInputTextAndroid: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize }) => {
   const styles = createStyles(useTheme());
 
   return <Text onPress={onPress}
@@ -31,7 +28,9 @@ export const SongNumberInputTextAndroid: React.FC<Props> = ({value, previousValu
   </Text>
 };
 
-export const SongNumberInputTextMacBook: React.FC<Props & { setInputValue: Dispatch<SetStateAction<string>> }> = ({value, previousValue, onPress, useSmallerFontSize, setInputValue}) => {
+export const SongNumberInputTextMacBook: React.FC<Props & {
+  setInputValue: Dispatch<SetStateAction<string>>
+}> = ({ value, previousValue, onPress, useSmallerFontSize, setInputValue }) => {
   const styles = createStyles(useTheme());
 
   // Use `previousValue`, so we don't have to use the `inputValue` state directly,
@@ -55,6 +54,7 @@ export const SongNumberInputTextMacBook: React.FC<Props & { setInputValue: Dispa
   return <TextInput
     caretHidden={true}
     keyboardType={'decimal-pad'}
+    autoFocus={true}
     inputMode={'decimal'}
     onPressIn={!Settings.songSearchRememberPreviousEntry || value ? () => console.debug("Nothing", Settings.songSearchRememberPreviousEntry, value) : onPress}
     onKeyPress={e => onKeyPress(e.nativeEvent.key)}
