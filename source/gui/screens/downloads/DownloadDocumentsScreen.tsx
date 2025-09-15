@@ -18,7 +18,6 @@ import { useUpdaterContext } from "../../components/providers/UpdaterContextProv
 import Db from "../../../logic/db/db";
 import { DocumentGroupSchema } from "../../../logic/db/models/documents/DocumentsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
-import { isConnectionError } from "../../../logic/apiUtils";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 import { isConnectionError } from "../../../logic/apiUtils";
 
