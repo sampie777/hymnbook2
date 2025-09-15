@@ -133,8 +133,8 @@ function setNextDevelopmentVersion {
   git rebase master || exit 1
 
   # Generate next (minor) development version
-  npm --no-git-tag-version version minor || exit 1
-  DEV_VERSION=$(sed 's/.*"version": "\(.*\)".*/\1/;t;d' ./package.json)-SNAPSHOT
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
+  DEV_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1"."$2+1".0"}')-SNAPSHOT
 
   echo "Next development version: ${DEV_VERSION}"
   setVersion "${DEV_VERSION}" || exit 1
