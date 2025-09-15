@@ -67,6 +67,7 @@ import TutorialScreen from "./gui/screens/tutorial/TutorialScreen";
 import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider";
 import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
 import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
+import { throwIfConnectionError } from "./logic/apiUtils.ts";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -222,6 +223,8 @@ const AppRoot: React.FC = () => {
         // Don't return, as that will hold up the app loading. Authentication should be done async.
         ServerAuth.authenticate()
           .catch(error => {
+            throwIfConnectionError(error);
+
             rollbar.error("Failed to authenticate with song server", sanitizeErrorForRollbar(error))
             Alert.alert(
               "Authenticating error",
