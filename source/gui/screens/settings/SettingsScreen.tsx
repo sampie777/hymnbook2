@@ -129,6 +129,9 @@ const SettingsScreen: React.FC = () => {
     <SettingComponent title={"Backend user ID"}
                       description={"This ID is used for authentication with our online database."}
                       keyName={"authClientName"} />
+    <SettingSwitchComponent title={"Developer mode"}
+                            value={appContext.developerMode}
+                            onPress={() => appContext.setDeveloperMode(false)} />
   </>;
 
   return (

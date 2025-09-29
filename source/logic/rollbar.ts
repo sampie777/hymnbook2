@@ -4,6 +4,7 @@ import { getVersion } from "react-native-device-info";
 import Config from "react-native-config";
 import { Security } from "./security";
 import config from "../config";
+import { isDevelopmentEnv } from "./utils";
 
 
 export const rollbar = new Client({
@@ -37,7 +38,7 @@ export const checkShouldRollbarBeEnabled = (uniqueId: string | null = Security.g
   const shouldRollbarBeEnabled = uniqueId != null
     && uniqueId.length > 0
     && !config.debugEmulators.includes(uniqueId)
-    && process.env.NODE_ENV !== "development";
+    && !isDevelopmentEnv;
 
   if (shouldRollbarBeEnabled) return;
   disableRollbar(uniqueId);

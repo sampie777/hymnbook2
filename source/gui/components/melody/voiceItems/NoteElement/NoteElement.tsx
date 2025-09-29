@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
 import { AbcConfig } from "../../config";

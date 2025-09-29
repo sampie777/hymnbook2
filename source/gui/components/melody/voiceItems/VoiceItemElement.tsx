@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { Animated } from "react-native";
 import { VoiceItem } from "../../../../logic/songs/abc/abcjsTypes";
 import VoiceItemNoteElement from "./NoteElement/VoiceItemNoteElement";

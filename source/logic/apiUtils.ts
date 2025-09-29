@@ -46,7 +46,7 @@ export const throwIfConnectionError = (error: any) => {
   }
 }
 
-const responseStatusToText = (response: Response): string => {
+export const responseStatusToText = (response: Response): string => {
   if (response.statusText && response.statusText.length > 0) return response.statusText;
   const httpCodePair = Object.entries(HttpCode).find(([key, value]) => value === response.status);
   if (httpCodePair) return httpCodePair[0];

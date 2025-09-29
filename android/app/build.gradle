@@ -150,6 +150,9 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    implementation "com.android.billingclient:billing:8.0.0"
+    implementation 'com.stripe:stripe-android:20.44.0'
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

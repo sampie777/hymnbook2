@@ -36,3 +36,9 @@ jest.mock("react-native-device-info", () => {
 });
 
 jest.mock("@react-native-clipboard/clipboard", () => mockClipboard);
+
+jest.mock("@stripe/stripe-react-native", () =>{
+  return {
+    PaymentSheet: {}
+  }
+})

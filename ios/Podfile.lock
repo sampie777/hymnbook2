@@ -1115,6 +1115,42 @@ PODS:
   - RollbarReport (3.3.3):
     - RollbarCrash (~> 3.3.3)
   - SocketRocket (0.6.1)
+  - Stripe (24.4.1):
+    - StripeApplePay (= 24.4.1)
+    - StripeCore (= 24.4.1)
+    - StripePayments (= 24.4.1)
+    - StripePaymentsUI (= 24.4.1)
+    - StripeUICore (= 24.4.1)
+  - stripe-react-native (0.42.0):
+    - React-Core
+    - Stripe (~> 24.4.0)
+    - StripeApplePay (~> 24.4.0)
+    - StripeFinancialConnections (~> 24.4.0)
+    - StripePayments (~> 24.4.0)
+    - StripePaymentSheet (~> 24.4.0)
+    - StripePaymentsUI (~> 24.4.0)
+  - StripeApplePay (24.4.1):
+    - StripeCore (= 24.4.1)
+  - StripeCore (24.4.1)
+  - StripeFinancialConnections (24.4.1):
+    - StripeCore (= 24.4.1)
+    - StripeUICore (= 24.4.1)
+  - StripePayments (24.4.1):
+    - StripeCore (= 24.4.1)
+    - StripePayments/Stripe3DS2 (= 24.4.1)
+  - StripePayments/Stripe3DS2 (24.4.1):
+    - StripeCore (= 24.4.1)
+  - StripePaymentSheet (24.4.1):
+    - StripeApplePay (= 24.4.1)
+    - StripeCore (= 24.4.1)
+    - StripePayments (= 24.4.1)
+    - StripePaymentsUI (= 24.4.1)
+  - StripePaymentsUI (24.4.1):
+    - StripeCore (= 24.4.1)
+    - StripePayments (= 24.4.1)
+    - StripeUICore (= 24.4.1)
+  - StripeUICore (24.4.1):
+    - StripeCore (= 24.4.1)
   - SwiftAudioEx (1.1.0)
   - Yoga (1.14.0)
 
@@ -1188,6 +1224,7 @@ DEPENDENCIES:
   - RollbarNotifier
   - RollbarReactNative (from `../node_modules/rollbar-react-native`)
   - RollbarReport
+  - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1199,6 +1236,14 @@ SPEC REPOS:
     - RollbarNotifier
     - RollbarReport
     - SocketRocket
+    - Stripe
+    - StripeApplePay
+    - StripeCore
+    - StripeFinancialConnections
+    - StripePayments
+    - StripePaymentSheet
+    - StripePaymentsUI
+    - StripeUICore
     - SwiftAudioEx
 
 EXTERNAL SOURCES:
@@ -1327,16 +1372,18 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   RollbarReactNative:
     :path: "../node_modules/rollbar-react-native"
+  stripe-react-native:
+    :path: "../node_modules/@stripe/stripe-react-native"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: b46891061bfe0a9b07f601813114c8653a72a45c
   FBReactNativeSpec: 9a01850c21d81027fa7b20b9dcc25d9bfae083da
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: d992945b77c506e5164e6a9a77510c9d57472c59
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   RCT-Folly: cd21f1661364f975ae76b3308167ad66b09f53f5
@@ -1400,6 +1447,15 @@ SPEC CHECKSUMS:
   RollbarReactNative: 149d28aa58badc96c221ed27375a81fdacbb9ca4
   RollbarReport: 0e57a3ac73c66dd6d5add5e999a967210753c4c3
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  Stripe: 47046d05bfd12885bb46332bbec6257b616a3672
+  stripe-react-native: 58c3216b9ea445532aef33890f4aa541040f6ed9
+  StripeApplePay: e2adcc71d7a0a07e9de85e871eacf55ecce546a9
+  StripeCore: a2c2f331cf2e105aaadda60416cf405da2d5232b
+  StripeFinancialConnections: 466325a1bf3c1a95a1898453098207d5d605ff58
+  StripePayments: 438ec8dc7320a7d601cb6152b88b37d4c34df161
+  StripePaymentSheet: da0ee282723f3c0c87c52b5e5cc3eb7e1344eeb9
+  StripePaymentsUI: 70414581d3d14089831e370008b705ef03c7cce0
+  StripeUICore: f11561a53f81e210398b4f1bd75f1e87b101197d
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: d8b0f242670c8d28249d3aab276ca1a3b8db34f5
 

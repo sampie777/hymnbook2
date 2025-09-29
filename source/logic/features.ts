@@ -13,11 +13,13 @@ export namespace Features {
   export interface Props {
     loaded: boolean;
     goldenEgg: boolean;
+    enableSystemPay: boolean;
     allowLogging: boolean;
   }
 
   interface JsonProps {
     golden_egg: boolean;
+    enableSystemPay: boolean;
     allowLogging: boolean;
   }
 
@@ -51,7 +53,8 @@ export namespace Features {
         return {
           loaded: true,
           goldenEgg: features.golden_egg,
-          allowLogging: features.allowLogging
+          enableSystemPay: features.enableSystemPay,
+          allowLogging: features.allowLogging,
         };
       });
   };
