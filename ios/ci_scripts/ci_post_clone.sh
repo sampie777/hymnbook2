@@ -4,6 +4,8 @@ echo "===== Setting environment variables ====="
 echo "ROLLBAR_API_KEY=${ROLLBAR_API_KEY}" > ../../.env
 echo "DEVELOPER_EMAIL=${DEVELOPER_EMAIL}" >> ../../.env
 echo "WHATSAPP_USER_GROUP_LINK=${WHATSAPP_USER_GROUP_LINK}" >> ../../.env
+echo "HYMNBOOK_STRIPE_PUBLISHABLE_KEY=${HYMNBOOK_STRIPE_PUBLISHABLE_KEY}" >> ../../.env
+echo "HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY=${HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY
 
 echo "===== Installing CocoaPods ====="
 export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
