@@ -70,11 +70,12 @@ function releaseMinor {
 
   git checkout master || exit 1
   retry git pull
-  git merge develop || exit 1
 
   # Create version
   CURRENT_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1"."$2+1".0"}')
+
+  git merge develop || exit 1
 
   setVersion "${RELEASE_VERSION}" || exit 1
 
@@ -86,11 +87,12 @@ function releaseMajor {
 
   git checkout master || exit 1
   retry git pull
-  git merge develop || exit 1
 
   # Create version
   CURRENT_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1+1".0.0"}')
+
+  git merge develop || exit 1
 
   setVersion "${RELEASE_VERSION}" || exit 1
 
