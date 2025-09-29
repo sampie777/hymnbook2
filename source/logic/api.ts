@@ -4,13 +4,12 @@ import { Song, SongAudio } from "./db/models/songs/Songs";
 import Settings from "../settings";
 import fetchBuilder from "fetch-retry";
 import config from "../config";
-import { isDevelopmentEnv } from "./utils";
 
 export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
 export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
-export const developmentApiEndpoint = `http://192.168.0.148:3000/api/v1`;
+export const developmentApiEndpoint = `http://192.168.1.100:3000/api/v1`;
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>
@@ -74,15 +73,20 @@ export const api = {
 
   donations: {
     stripe: {
-      paymentSheet: (amount: number, currency: string, clientId: string, capturePayment: boolean = true) =>
-        fetch(`${!isDevelopmentEnv ? hymnbookApiEndpoint : developmentApiEndpoint}/stripe/payment-sheet`, {
+      paymentSheet: (amount: number,
+                     currency: string,
+                     clientId: string,
+                     capturePayment: boolean = true,
+                     testMode: boolean = false) =>
+        fetch(`${hymnbookApiEndpoint}/stripe/payment-sheet`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({
             amount: amount,
             currency: currency,
             client: clientId,
-            capture: capturePayment
+            capture: capturePayment,
+            testMode: testMode,
           })
         })
     },

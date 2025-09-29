@@ -6,9 +6,10 @@ import LoadingIndicator from "../LoadingIndicator";
 import { rollbar } from "../../../logic/rollbar";
 import { isConnectionError } from '../../../logic/apiUtils';
 import { Donations } from "../../../logic/donations";
-import { isDevelopmentEnv, ValidationError } from "../../../logic/utils";
+import { ValidationError } from "../../../logic/utils";
 import { useIsMounted } from "../utils";
 import config from "../../../config";
+import { useAppContext } from "../providers/AppContextProvider.tsx";
 
 interface Props {
   amount?: number
@@ -19,6 +20,7 @@ interface Props {
 const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", capturePayment = true }) => {
   const isMounted = useIsMounted();
   const styles = createStyles(useTheme());
+  const { developerMode } = useAppContext();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +48,7 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
         initPaymentSheet,
         finalAmount,
         finalCurrency,
-        isDevelopmentEnv,
+        developerMode,
         capturePayment);
       if (!isMounted()) return;
 
@@ -62,6 +64,11 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
         amount: finalAmount,
         currency: finalCurrency,
       });
+
+      if (developerMode) {
+        Alert.alert("Stripe error", error.message)
+      }
+
       throw Error("Something went wrong during finalizing the donation.")
     } catch (error) {
       if (isConnectionError(error)) {
@@ -82,7 +89,7 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
   };
 
   return <StripeProvider
-    publishableKey={isDevelopmentEnv ? config.stripe.publicKey.test : config.stripe.publicKey.live}
+    publishableKey={developerMode ? config.stripe.publicKey.test : config.stripe.publicKey.live}
     merchantIdentifier="merchant.nl.sajansen.hymnbook2" // required for Apple Pay
     // urlScheme="hymnbook" // required for 3D Secure and bank redirects
   >
@@ -95,6 +102,7 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
                             opacity={1}
                             color={styles.buttonText.color} /> :
         <Text style={styles.buttonText}>
+          {!developerMode ? "" : <Text style={styles.buttonTextTest}>TEST </Text>}
           <Text style={{ fontWeight: "bold" }}>Support</Text> with {currency} {amount},-
         </Text>
       }
@@ -121,7 +129,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: colors.onPrimary,
-    textAlign: "center"
+    textAlign: "center",
+  },
+  buttonTextTest: {
+    color: colors.text.warning,
+    fontSize: 12,
+    fontWeight: "bold",
   }
 });
 

@@ -41,9 +41,13 @@ export namespace Donations {
     initPaymentSheet: (params: PaymentSheet.SetupParams) => Promise<InitPaymentSheetResult>,
     amount: number,
     currency: string,
-    isTest: boolean = false,
+    testMode: boolean = false,
     capturePayment: boolean = true) => {
-    const { paymentIntent, ephemeralKey, customer, } = await fetchPaymentSheetParams(amount, currency, capturePayment);
+    const {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    } = await fetchPaymentSheetParams(amount, currency, capturePayment, testMode);
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: "Hymnbook",
@@ -60,7 +64,7 @@ export namespace Donations {
       },
       googlePay: {
         merchantCountryCode: 'NL',
-        testEnv: isTest,
+        testEnv: testMode,
         buttonType: ButtonType.Pay,
         label: "Support with"
       },
@@ -77,13 +81,22 @@ export namespace Donations {
       error: error,
       amount: amount,
       currency: currency,
-      isTest: isTest,
+      testMode: testMode,
     })
     throw Error("Something went wrong setting up the donation.");
   };
 
-  export const fetchPaymentSheetParams = async (amount: number, currency: string, capturePayment: boolean = true) => {
-    const response = await api.donations.stripe.paymentSheet(amount, currency, Security.getDeviceId(), capturePayment);
+  export const fetchPaymentSheetParams = async (
+    amount: number,
+    currency: string,
+    capturePayment: boolean = true,
+    testMode: boolean = false) => {
+    const response = await api.donations.stripe.paymentSheet(
+      amount,
+      currency,
+      Security.getDeviceId(),
+      capturePayment,
+      testMode);
     const data = await response.json();
 
     if (response.ok) {
