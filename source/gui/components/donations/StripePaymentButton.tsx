@@ -89,9 +89,11 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
     <TouchableOpacity
       style={[styles.button, (loading || amount <= 0) ? styles.buttonLoading : {}]}
       disabled={loading}
-      onPress={initiateTransaction}
-    >
-      {loading ? <LoadingIndicator size={18} opacity={1} /> :
+      onPress={initiateTransaction}>
+      {loading
+        ? <LoadingIndicator size={22}
+                            opacity={1}
+                            color={styles.buttonText.color} /> :
         <Text style={styles.buttonText}>
           <Text style={{ fontWeight: "bold" }}>Support</Text> with {currency} {amount},-
         </Text>
