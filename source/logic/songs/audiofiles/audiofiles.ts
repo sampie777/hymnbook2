@@ -37,7 +37,7 @@ export namespace AudioFiles {
       await TrackPlayer.setupPlayer({
         backBuffer: 120,
         androidAudioContentType: AndroidAudioContentType.Music,
-        iosCategory: IOSCategory.SoloAmbient,
+        iosCategory: IOSCategory.Playback,
         iosCategoryMode: IOSCategoryMode.Default
       });
     } catch (error) {
