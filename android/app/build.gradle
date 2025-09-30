@@ -88,12 +88,6 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
-configurations.all {
-    resolutionStrategy {
-        force 'com.google.errorprone:error_prone_annotations:2.20.0'
-    }
-}
-
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
