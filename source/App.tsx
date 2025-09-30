@@ -68,7 +68,7 @@ import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider"
 import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
 import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 import { throwIfConnectionError } from "./logic/apiUtils.ts";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -166,43 +166,46 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
-  return <HomeNav.Navigator initialRouteName={SongSearchRoute}
-                            screenOptions={{
-                              tabBarStyle: styles.tabBar,
-                              tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
-                              tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
-                              headerStyle: styles.tabBarHeader,
-                              headerTitleStyle: styles.tabBarHeaderTitle,
-                              tabBarItemStyle: styles.tabBarItem
-                            }}>
-    <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
-                    options={{
-                      title: "Songs",
-                      headerShown: false,
-                      tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="music" size={size} color={color} style={styles.tabIcon} />
-                    }} />
-    <HomeNav.Screen name={SongListRoute} component={SongListScreen}
-                    options={{
-                      title: "Song list",
-                      tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
-                      tabBarBadgeStyle: styles.tabBarBadgeStyle,
-                      tabBarIcon: ({ focused, color, size }) =>
-                        <SongListMenuIcon size={size} color={color} style={styles.tabIcon} />
-                    }} />
-    <HomeNav.Screen name={DocumentSearchRoute} component={DocumentSearchScreen}
-                    options={{
-                      title: "Documents",
-                      tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
-                    }} />
-    <HomeNav.Screen name={OtherMenuRoute} component={OtherMenuScreen}
-                    options={{
-                      title: "More",
-                      tabBarIcon: ({ focused, color, size }) =>
-                        <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
-                    }} />
-  </HomeNav.Navigator>;
+  return <SafeAreaView style={styles.safeAreaView}
+                       edges={['right', 'bottom', 'left']}>
+    <HomeNav.Navigator initialRouteName={SongSearchRoute}
+                       screenOptions={{
+                         tabBarStyle: styles.tabBar,
+                         tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
+                         tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
+                         headerStyle: styles.tabBarHeader,
+                         headerTitleStyle: styles.tabBarHeaderTitle,
+                         tabBarItemStyle: styles.tabBarItem
+                       }}>
+      <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
+                      options={{
+                        title: "Songs",
+                        headerShown: false,
+                        tabBarIcon: ({ focused, color, size }) =>
+                          <Icon name="music" size={size} color={color} style={styles.tabIcon} />
+                      }} />
+      <HomeNav.Screen name={SongListRoute} component={SongListScreen}
+                      options={{
+                        title: "Song list",
+                        tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
+                        tabBarBadgeStyle: styles.tabBarBadgeStyle,
+                        tabBarIcon: ({ focused, color, size }) =>
+                          <SongListMenuIcon size={size} color={color} style={styles.tabIcon} />
+                      }} />
+      <HomeNav.Screen name={DocumentSearchRoute} component={DocumentSearchScreen}
+                      options={{
+                        title: "Documents",
+                        tabBarIcon: ({ focused, color, size }) =>
+                          <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
+                      }} />
+      <HomeNav.Screen name={OtherMenuRoute} component={OtherMenuScreen}
+                      options={{
+                        title: "More",
+                        tabBarIcon: ({ focused, color, size }) =>
+                          <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
+                      }} />
+    </HomeNav.Navigator>
+  </SafeAreaView>;
 };
 
 const AppRoot: React.FC = () => {
@@ -211,7 +214,6 @@ const AppRoot: React.FC = () => {
   const [isDocumentDbLoading, setIsDocumentDbLoading] = useState(true);
   const theme = useTheme();
   const features = useFeatures();
-  const styles = createStyles(theme);
 
   useEffect(() => {
     onLaunch();
@@ -246,7 +248,7 @@ const AppRoot: React.FC = () => {
 
   const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
 
-  return <SafeAreaProvider style={styles.container}>
+  return <>
     <LoadingOverlay isVisible={isLoading} />
 
     {isLoading ? undefined :
@@ -264,36 +266,40 @@ const AppRoot: React.FC = () => {
     <StatusBar barStyle={!theme.isDark ? "dark-content" : "light-content"}
                backgroundColor={theme.colors.background}
                hidden={false} />
-  </SafeAreaProvider>;
+  </>;
 };
 
 const App: React.FC = () =>
-  <ErrorBoundary>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AppContextProvider>
-        <FeaturesProvider>
-          <ThemeProvider>
-            <MenuProvider>
-              <AppRoot />
-            </MenuProvider>
-          </ThemeProvider>
-        </FeaturesProvider>
-      </AppContextProvider>
-    </GestureHandlerRootView>
-  </ErrorBoundary>;
+  <SafeAreaProvider>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AppContextProvider>
+          <FeaturesProvider>
+            <ThemeProvider>
+              <MenuProvider>
+                <AppRoot />
+              </MenuProvider>
+            </ThemeProvider>
+          </FeaturesProvider>
+        </AppContextProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
+  </SafeAreaProvider>;
 
 export default App;
 
 const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
-  container: {
+  safeAreaView: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.surface1,
   },
 
   tabBar: {
-    height: 60,
+    height: 65,
     backgroundColor: colors.surface1,
-    borderTopColor: colors.background
+    borderTopColor: colors.background,
+    shadowOpacity: 0,
+    elevation: 0
   },
 
   tabBarHeader: {

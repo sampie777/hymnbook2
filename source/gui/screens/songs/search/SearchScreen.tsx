@@ -18,6 +18,7 @@ import DownloadInstructions from "./DownloadInstructions";
 import KeyPad from "./KeyPad";
 import SearchHeading from "./SearchHeading";
 import EasterEggList from "./easterEggs/EasterEggList";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRoute>> =
@@ -119,52 +120,58 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
                         showSongBundle={isTitleSimilarToOtherSongs(item, results)} />
     );
 
-    return <View style={[styles.container, isPortraitMode(windowDimension) ? {} : stylesLandscape.container]}>
-      <PopupsComponent navigation={navigation} />
+    return <SafeAreaView style={styles.safeAreaView} edges={['top']}>
+      <View style={[styles.container, isPortraitMode(windowDimension) ? {} : stylesLandscape.container]}>
+        <PopupsComponent navigation={navigation} />
 
-      <View style={[styles.inputAndResults, isPortraitMode(windowDimension) ? {} : stylesLandscape.inputAndResults]}>
-        <SearchHeading value={inputValue}
-                       previousValue={previousInputValue}
-                       navigation={navigation}
-                       onPress={onInputTextPress}
-                       results={results}
-                       stringSearchButtonPlacement={stringSearchButtonPlacement}
-                       useSmallerFontSize={useSmallerFontSize}
-                       selectedBundleUuids={selectedBundleUuids}
-                       setSelectedBundleUuids={setSelectedBundleUuids}
-                       setInputValue={setInputValue} />
+        <View style={[styles.inputAndResults, isPortraitMode(windowDimension) ? {} : stylesLandscape.inputAndResults]}>
+          <SearchHeading value={inputValue}
+                         previousValue={previousInputValue}
+                         navigation={navigation}
+                         onPress={onInputTextPress}
+                         results={results}
+                         stringSearchButtonPlacement={stringSearchButtonPlacement}
+                         useSmallerFontSize={useSmallerFontSize}
+                         selectedBundleUuids={selectedBundleUuids}
+                         setSelectedBundleUuids={setSelectedBundleUuids}
+                         setInputValue={setInputValue} />
 
-        {inputValue == "0000"
-          ? <EasterEggList contentContainerStyle={styles.searchList}
-                           navigation={navigation}
-                           selectedBundleUuids={selectedBundleUuids} />
-          : <FlatList
-            data={results}
-            renderItem={renderSearchResultItem}
-            keyExtractor={item => item.id.toString()}
-            contentContainerStyle={styles.searchList}
-            importantForAccessibility={results.length > 0 ? undefined : "no"} />
-        }
+          {inputValue == "0000"
+            ? <EasterEggList contentContainerStyle={styles.searchList}
+                             navigation={navigation}
+                             selectedBundleUuids={selectedBundleUuids} />
+            : <FlatList
+              data={results}
+              renderItem={renderSearchResultItem}
+              keyExtractor={item => item.id.toString()}
+              contentContainerStyle={styles.searchList}
+              importantForAccessibility={results.length > 0 ? undefined : "no"} />
+          }
 
-        {isStringSearchButtonsPositionTop()
-        || inputValue.length > 0 || results.length > 0 ? undefined :
-          <StringSearchButton navigation={navigation}
-                              position={stringSearchButtonPlacement} />
-        }
+          {isStringSearchButtonsPositionTop()
+          || inputValue.length > 0 || results.length > 0 ? undefined :
+            <StringSearchButton navigation={navigation}
+                                position={stringSearchButtonPlacement} />
+          }
 
-        <DownloadInstructions navigation={navigation} />
+          <DownloadInstructions navigation={navigation} />
+        </View>
+
+        <KeyPad
+          useSmallerFontSize={useSmallerFontSize}
+          extraStylesContainer={keyPadExtraStyles}
+          setInputValue={setInputValue} />
       </View>
-
-      <KeyPad
-        useSmallerFontSize={useSmallerFontSize}
-        extraStylesContainer={keyPadExtraStyles}
-        setInputValue={setInputValue} />
-    </View>
+    </SafeAreaView>
   };
 
 export default SearchScreen;
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: colors.background
+  },
   container: {
     flex: 1,
     justifyContent: "space-between",
