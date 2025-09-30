@@ -48,6 +48,28 @@ function setVersion() {
     " ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
+function updateDependencies {
+  yarn install || exit 1
+  cd ios || exit 1
+  pod install || exit 1
+  cd .. || exit 1
+
+  git add .yarnrc.yml
+  git add yarn.lock
+  git add package.json
+  git add ios/Podfile
+  git add ios/Podfile.lock
+
+  if [[ $(git diff --name-only --cached) ]]; then
+    echo "There are uncommitted changes in the repository."
+    git status --short
+    echo ""
+    echo "Please commit the dependency/pod updates before proceeding."
+    return 1
+  fi
+  return 0
+}
+
 function releasePatch {
   yarn test || exit 1
 
@@ -150,14 +172,17 @@ function setNextDevelopmentVersion {
 command="$1"
 case $command in
   patch)
+    updateDependencies || exit 1
     releasePatch
     setNextDevelopmentVersion
     ;;
   minor)
+    updateDependencies || exit 1
     releaseMinor
     setNextDevelopmentVersion
     ;;
   major)
+    updateDependencies || exit 1
     releaseMajor
     setNextDevelopmentVersion
     ;;
@@ -166,6 +191,9 @@ case $command in
     ;;
   setversion)
     setVersion "$2"
+    ;;
+  updateDependencies)
+    updateDependencies
     ;;
   -h|--help)
     usage
