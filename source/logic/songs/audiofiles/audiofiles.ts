@@ -58,11 +58,6 @@ export namespace AudioFiles {
         Capability.JumpBackward,
         Capability.Stop
       ],
-      compactCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.Stop
-      ],
       progressUpdateEventInterval: 2
     });
     await TrackPlayer.setRepeatMode(RepeatMode.Off);
