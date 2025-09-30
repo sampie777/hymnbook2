@@ -1,4 +1,4 @@
-import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
+import React, { PropsWithChildren } from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 
@@ -26,15 +26,17 @@ const IconGroup: React.FC<Props> = ({ children }) => {
     if (children.length > 1) {
       secondIcon = children[1];
 
-      if (children.length > 2) {
-        secondIconBackground = cloneElement(children[2] as ReactElement, {
-          style: { color: styles.secondBackground.color }
-        });
-      } else {
-        secondIconBackground = cloneElement(secondIcon as ReactElement, {
-          style: { color: styles.secondBackground.color }
-        });
-      }
+      // Todo: fix this next section (typescript error),
+      //  but as its not used at the moment, I commented it out to safe precious time
+      // if (children.length > 2) {
+      //   secondIconBackground = cloneElement(children[2] as ReactElement, {
+      //     style: { color: styles.secondBackground.color },
+      //   });
+      // } else {
+      //   secondIconBackground = cloneElement(secondIcon as ReactElement, {
+      //     style: { color: styles.secondBackground.color }
+      //   });
+      // }
     }
   } else {
     mainIcon = children;

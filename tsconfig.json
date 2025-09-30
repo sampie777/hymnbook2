@@ -13,6 +13,9 @@
 //    ],
     "noFallthroughCasesInSwitch": true,
 //    "module": "esnext",
-    "noImplicitThis": false                /* Raise error on 'this' expressions with an implied 'any' type. */
+    "noImplicitThis": false,                /* Raise error on 'this' expressions with an implied 'any' type. */
+    "types": [
+      "node",
+    ]
   }
 }

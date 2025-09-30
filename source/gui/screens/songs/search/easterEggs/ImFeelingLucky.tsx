@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { useFocusEffect } from "@react-navigation/native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ParamList, SongRoute } from '../../../../../navigation';
 import { EasterEggs } from "../../../../../logic/songs/easterEggs";
 import { isSongValid } from "../../../../../logic/songs/utils";
@@ -20,7 +20,7 @@ const ImFeelingLucky: React.FC<Props> = ({
                                            selectedBundleUuids
                                          }) => {
   const [songAddedToSongList, setSongAddedToSongList] = useState(false);
-  const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
+  const clearCheckmarkTimeout = useRef<NodeJS.Timeout>(undefined);
 
   useFocusEffect(React.useCallback(() =>
     () => { // on blur

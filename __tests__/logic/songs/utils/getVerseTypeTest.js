@@ -1,6 +1,7 @@
-import { getVerseType, VerseType } from "../../../../source/logic/songs/utils";
-import { Verse } from "../../../../source/logic/db/models/songs/Songs";
-import { mockDb } from "../../../testUtils";
+import {describe, expect, it, jest} from '@jest/globals';
+import {getVerseType, VerseType} from "../../../../source/logic/songs/utils";
+import {Verse} from "../../../../source/logic/db/models/songs/Songs";
+import {mockDb} from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");
 mockDb();

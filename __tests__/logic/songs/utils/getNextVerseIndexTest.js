@@ -1,6 +1,7 @@
-import { Verse } from "../../../../source/logic/db/models/songs/Songs";
-import { getNextVerseIndex } from "../../../../source/logic/songs/utils";
-import { mockDb } from "../../../testUtils";
+import {describe, expect, it, jest} from '@jest/globals';
+import {Verse} from "../../../../source/logic/db/models/songs/Songs";
+import {getNextVerseIndex} from "../../../../source/logic/songs/utils";
+import {mockDb} from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");
 mockDb();

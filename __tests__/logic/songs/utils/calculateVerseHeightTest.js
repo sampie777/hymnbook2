@@ -1,4 +1,5 @@
-import { calculateVerseHeight } from "../../../../source/logic/songs/utils";
+import {describe, expect, it} from '@jest/globals';
+import {calculateVerseHeight} from "../../../../source/logic/songs/utils";
 
 
 describe("test calculation of verse component height in list", () => {

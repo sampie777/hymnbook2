@@ -1,3 +1,4 @@
+import {describe, it} from '@jest/globals';
 import Db from "../source/logic/db/db";
 
 // Mock test to let the test run

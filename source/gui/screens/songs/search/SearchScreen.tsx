@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { ParamList, SongSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { getFontScale } from "react-native-device-info";

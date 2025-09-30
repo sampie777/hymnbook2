@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Db from "../../../logic/db/db";
 import { ParamList, TutorialRoute } from "../../../navigation";
 import { SongSchema } from "../../../logic/db/models/songs/SongsSchema";

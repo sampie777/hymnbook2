@@ -1,5 +1,6 @@
-import { rollbar } from "../../source/logic/rollbar";
-import { Analytics } from "../../source/logic/analytics";
+import {beforeEach, describe, expect, it} from '@jest/globals';
+import {rollbar} from "../../source/logic/rollbar";
+import {Analytics} from "../../source/logic/analytics";
 import settings from "../../source/settings";
 
 describe("test analytics", () => {

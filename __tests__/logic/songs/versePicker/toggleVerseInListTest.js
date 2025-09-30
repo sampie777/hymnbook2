@@ -1,6 +1,7 @@
-import { toggleVerseInList } from "../../../../source/logic/songs/versePicker";
-import { Verse } from "../../../../source/logic/db/models/songs/Songs";
-import { mockDb } from "../../../testUtils";
+import {describe, expect, it, jest} from '@jest/globals';
+import {toggleVerseInList} from "../../../../source/logic/songs/versePicker";
+import {Verse} from "../../../../source/logic/db/models/songs/Songs";
+import {mockDb} from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");
 mockDb();

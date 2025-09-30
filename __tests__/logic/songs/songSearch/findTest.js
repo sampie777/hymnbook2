@@ -1,7 +1,8 @@
-import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/songs/Songs";
+import {describe, expect, it} from '@jest/globals';
+import {Song, SongBundle, SongMetadata, SongMetadataType} from "../../../../source/logic/db/models/songs/Songs";
 import Db from "../../../../source/logic/db/db";
-import { SongBundleSchema, SongMetadataSchema, SongSchema } from "../../../../source/logic/db/models/songs/SongsSchema";
-import { SongSearch } from "../../../../source/logic/songs/songSearch";
+import {SongBundleSchema, SongMetadataSchema, SongSchema} from "../../../../source/logic/db/models/songs/SongsSchema";
+import {SongSearch} from "../../../../source/logic/songs/songSearch";
 
 describe("Song search find songs by text", () => {
   const songBundle = new SongBundle(

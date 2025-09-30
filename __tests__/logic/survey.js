@@ -1,5 +1,6 @@
+import {describe, expect, it} from '@jest/globals';
 import Settings from "../../source/settings";
-import { Survey } from "../../source/logic/survey";
+import {Survey} from "../../source/logic/survey";
 import config from "../../source/config";
 
 describe("test survey", () => {

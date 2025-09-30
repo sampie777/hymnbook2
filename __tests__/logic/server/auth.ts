@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import Settings from "../../../source/settings";
 import { AccessRequestResponse, ServerAuth } from "../../../source/logic/server/auth";
 import { authApi } from "../../../source/logic/server/authApi";
@@ -371,7 +372,7 @@ describe("test authentication", () => {
     Settings.authStatus = AccessRequestStatus.APPROVED;
     Settings.authJwt = "jwt";
 
-    const mockFetch = jest.fn()
+    const mockFetch = jest.fn<() => (jwt:string) => Promise<Response>>()
       .mockReturnValueOnce((jwt: string) => emptyPromiseWithValue({
         ok: true,
         status: 200,
@@ -400,7 +401,7 @@ describe("test authentication", () => {
     Settings.authStatus = AccessRequestStatus.APPROVED;
     Settings.authJwt = "jwt";
 
-    const mockFetch = jest.fn()
+    const mockFetch = jest.fn<() => (jwt:string) => Promise<Response>>()
       .mockReturnValueOnce(() => emptyPromiseWithValue({
         ok: true,
         status: 401,
@@ -467,7 +468,7 @@ describe("test authentication", () => {
     Settings.authStatus = AccessRequestStatus.APPROVED;
     Settings.authJwt = "jwt";
 
-    const mockFetch = jest.fn()
+    const mockFetch = jest.fn<() => (jwt:string) => Promise<Response>>()
       .mockReturnValueOnce(() => emptyPromiseWithValue({
         ok: true,
         status: 401,

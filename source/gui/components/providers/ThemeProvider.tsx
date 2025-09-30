@@ -18,7 +18,7 @@ export const ThemeContext = React.createContext<ThemeContextProps>({
 });
 
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const appearanceEventSubscription = useRef<NativeEventSubscription>();
+  const appearanceEventSubscription = useRef<NativeEventSubscription>(undefined);
 
   const getDefaultTheme = () => {
     if (Settings.theme !== "") {

@@ -5,7 +5,7 @@ import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../..
 import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/songs/Songs";
 import { useFocusEffect } from "@react-navigation/native";
 import SongList from "../../../../logic/songs/songList";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { SearchResultItemBaseComponent } from "./SearchResultItemBaseComponent";
 import { Alert } from "react-native";
 import { isSongValid } from "../../../../logic/songs/utils";
@@ -25,8 +25,8 @@ export const SearchResultItem: React.FC<{
      showSongBundle
    }) => {
     const [songAddedToSongList, setSongAddedToSongList] = useState(false);
-    const clearCheckmarkTimeout = useRef<NodeJS.Timeout>();
-    const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>();
+    const clearCheckmarkTimeout = useRef<NodeJS.Timeout>(undefined);
+    const runOnAddedCallbackTimeout = useRef<NodeJS.Timeout>(undefined);
 
     useFocusEffect(React.useCallback(() =>
       () => { // on blur

@@ -1,5 +1,6 @@
-import { Song, SongBundle } from "../../../../source/logic/db/models/songs/Songs";
-import { isTitleSimilarToOtherSongs } from "../../../../source/logic/songs/utils";
+import {describe, expect, it} from '@jest/globals';
+import {Song, SongBundle} from "../../../../source/logic/db/models/songs/Songs";
+import {isTitleSimilarToOtherSongs} from "../../../../source/logic/songs/utils";
 
 describe("test if title is similar to other songs", () => {
   const mockSong = (name,

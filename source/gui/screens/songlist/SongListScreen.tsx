@@ -78,8 +78,6 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
         reloadSongList();
 
         setListHasBeenChanged(false);
-
-        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       }, [isDeleteMode])
     );
 

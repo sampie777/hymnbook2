@@ -1,4 +1,5 @@
-import { SongProcessor } from "../../../../source/logic/songs/songProcessor";
+import {describe, expect, it} from '@jest/globals';
+import {SongProcessor} from "../../../../source/logic/songs/songProcessor";
 
 describe("sorting melodies by name", () => {
   it("keeps Afrikaans language in mind", () => {
