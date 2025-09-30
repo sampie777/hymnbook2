@@ -8,7 +8,7 @@
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
-import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import { Alert, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -68,6 +68,7 @@ import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider"
 import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
 import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 import { throwIfConnectionError } from "./logic/apiUtils.ts";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -245,7 +246,7 @@ const AppRoot: React.FC = () => {
 
   const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
 
-  return <SafeAreaView style={styles.container}>
+  return <SafeAreaProvider style={styles.container}>
     <LoadingOverlay isVisible={isLoading} />
 
     {isLoading ? undefined :
@@ -263,7 +264,7 @@ const AppRoot: React.FC = () => {
     <StatusBar barStyle={!theme.isDark ? "dark-content" : "light-content"}
                backgroundColor={theme.colors.background}
                hidden={false} />
-  </SafeAreaView>;
+  </SafeAreaProvider>;
 };
 
 const App: React.FC = () =>
