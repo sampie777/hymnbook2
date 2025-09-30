@@ -1,10 +1,11 @@
 package nl.sajansen.hymnbook2
 
+import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-import android.os.Bundle
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
 
 class MainActivity : ReactActivity() {
 
@@ -15,7 +16,8 @@ class MainActivity : ReactActivity() {
   override fun getMainComponentName(): String = "hymnbook2"
 
   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(null)
+    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+    super.onCreate(savedInstanceState);
   }
 
   /**
