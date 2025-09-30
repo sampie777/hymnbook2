@@ -23,8 +23,7 @@ function uploadSourceMapAndroid {
   -F access_token=${SERVERKEY} \
   -F version=${VERSION}.android \
   -F minified_url=http://reactnativehost/index.android.bundle \
-  -F source_map=@"./android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map" \
-  -F index.js=@index.js
+  -F source_map=@"./android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map"
 }
 
 function createAndUploadSourceMapAndroid {
@@ -45,7 +44,7 @@ function uploadSourceMapIOS {
   -F version=${VERSION}.ios \
   -F minified_url=http://reactnativehost/main.jsbundle \
   -F source_map=@sourcemap.ios.js \
-  -F index.js=@index.js
+#  -F index.js=@index.js
 }
 
 function createAndUploadSourceMapIOS {
@@ -62,7 +61,7 @@ function cleanUp {
 }
 
 createAndUploadSourceMapAndroid
-#createAndUploadSourceMapIOS
+createAndUploadSourceMapIOS
 cleanUp
 
 echo "Done creating and uploading source maps"
