@@ -282,6 +282,8 @@ const App: React.FC = () =>
     </GestureHandlerRootView>
   </ErrorBoundary>;
 
+export default App;
+
 const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
@@ -324,5 +326,3 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     lineHeight: 17
   }
 });
-
-export default App;
