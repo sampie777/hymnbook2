@@ -6098,7 +6098,7 @@ __metadata:
     react-native-track-player: "npm:5.0.0-alpha0"
     react-native-vector-icons: "npm:9.2.0"
     react-test-renderer: "npm:19.1.0"
-    realm: "npm:12.14.0"
+    realm: "npm:20.2.0"
     rollbar: "npm:2.26.4"
     rollbar-react-native: "npm:1.0.0-beta.5"
     typescript: "npm:5.8.3"
@@ -9190,9 +9190,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"realm@npm:12.14.0":
-  version: 12.14.0
-  resolution: "realm@npm:12.14.0"
+"realm@npm:20.2.0":
+  version: 20.2.0
+  resolution: "realm@npm:20.2.0"
   dependencies:
     "@realm/fetch": "npm:^0.1.1"
     bson: "npm:^4.7.2"
@@ -9206,7 +9206,7 @@ __metadata:
   peerDependenciesMeta:
     react-native:
       optional: true
-  checksum: 10c0/716efba5da28009fef78c2dcfb120b470541fed06f3722de5e12f36a5f72cb0d049f64041a0b8583e5c3cea8e874473762e57dc6b2f94c0d193e91ad4bcadc19
+  checksum: 10c0/f88dee3d8c57323d5f8c5e5cd72aa7a8d266b8e6be7cb647d139caf0eeb108c6f92073246c644f7275a5dcee2f140a2766aac19d07c330cc8d47a2eccc08c2ce
   languageName: node
   linkType: hard
 

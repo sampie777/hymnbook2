@@ -2379,7 +2379,7 @@ PODS:
     - React-perflogger (= 0.81.4)
     - React-utils (= 0.81.4)
     - SocketRocket
-  - RealmJS (12.14.0):
+  - RealmJS (20.2.0):
     - React
   - RNCClipboard (1.16.3):
     - boost
@@ -3185,7 +3185,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 433ddfb4536948630aadd5bd925aff8a632d2fe3
   ReactCodegen: 2cfa890e84ecf7f3a708f1ed9c0f2c0b22a23c9a
   ReactCommon: e9ab32f1d1482d207867b4fdd139361302b9dcc6
-  RealmJS: 52de9501855cc87c23b91a5ef27e91f3824857da
+  RealmJS: 1c37c6bdfe060f4caa0f9175aa0eedb962622ee1
   RNCClipboard: e560338bf6cc4656a09ff90610b62ddc0dbdad65
   RNDeviceInfo: addb9b427c2822a2d8e94c87a136a224e0af738c
   RNGestureHandler: b8d2e75c2e88fc2a1f6be3b3beeeed80b88fa37d
@@ -3213,4 +3213,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4c37848e07816ba6ea7d9378a2447e0878c57190
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
