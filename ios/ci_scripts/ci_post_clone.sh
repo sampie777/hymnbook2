@@ -10,6 +10,8 @@ echo "HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY=${HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KE
 
 echo "===== Installing CocoaPods ====="
 export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
+gem install bundler
+cd ..
 bundle install
 
 echo "===== Installing Node.js ====="
