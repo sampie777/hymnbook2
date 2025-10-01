@@ -2,7 +2,7 @@
 
 # Disable Realm telemetry as it is against my personal privacy policy for this project
 # https://www.mongodb.com/docs/atlas/device-sdks/sdk/react-native/telemetry/
-export REALM_DISABLE_ANALYTICS=true
+export REALM_DISABLE_ANALYTICS=1
 
 # Add all your environment variables here
 echo "===== Setting environment variables ====="
