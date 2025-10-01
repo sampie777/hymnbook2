@@ -2144,13 +2144,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ptomasroos/react-native-multi-slider@git+https://github.com/sampie777/react-native-multi-slider.git#2.3.0":
+"@ptomasroos/react-native-multi-slider@git+https://github.com/sampie777/react-native-multi-slider.git#v2.3.1":
   version: 2.3.0
-  resolution: "@ptomasroos/react-native-multi-slider@https://github.com/sampie777/react-native-multi-slider.git#commit=7e5f5504ac489615a9b199fac32780a69f6e759c"
+  resolution: "@ptomasroos/react-native-multi-slider@https://github.com/sampie777/react-native-multi-slider.git#commit=40cb1afaa6554bcdd2553f0c42ab89d2f451fad6"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/e22b66f302a2a2bb50a700abc18bef0e9eb83f15f946524f7d3a68c999e1fa25482e819bf146d7f109af45446f83a2bf2996d2b8ba7be0d5e3047096e7f3bd48
+  checksum: 10c0/d55a3917dbf286088dfee8652307a819b9fc18e909ebbbedb66658c353dad1d667580348ab82ca0a82152a98884275f045fd22a690ee3be330fd71e09e926e0e
   languageName: node
   linkType: hard
 
@@ -5903,7 +5903,7 @@ __metadata:
     "@babel/preset-env": "npm:7.25.3"
     "@babel/runtime": "npm:7.27.4"
     "@jest/globals": "npm:30.2.0"
-    "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#2.3.0"
+    "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#v2.3.1"
     "@react-native-clipboard/clipboard": "npm:1.16.3"
     "@react-native-community/cli": "npm:20.0.0"
     "@react-native-community/cli-platform-android": "npm:20.0.0"
