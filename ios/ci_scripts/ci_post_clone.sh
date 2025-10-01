@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# https://github.com/realm/realm-js/issues/7048#issuecomment-3309456737
+export REALM_DISABLE_ANALYTICS=1
+
 # Add all your environment variables here
 echo "===== Setting environment variables ====="
 echo "ROLLBAR_API_KEY=${ROLLBAR_API_KEY}" > ../../.env
