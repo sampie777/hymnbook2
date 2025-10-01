@@ -77,6 +77,7 @@ const RootNavigation = () => {
   const styles = createStyles(useTheme());
   return <RootNav.Navigator initialRouteName={HomeRoute}
                             screenOptions={{
+                              contentStyle:  { backgroundColor: 'transparent' },
                               headerStyle: styles.tabBarHeader,
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
