@@ -41,7 +41,7 @@
     "react-native-screens": "4.16.0",
     "react-native-svg": "15.13.0",
     "react-native-track-player": "5.0.0-alpha0",
-    "react-native-vector-icons": "9.2.0",
+    "react-native-vector-icons": "10.3.0",
     "realm": "20.2.0",
     "rollbar": "2.26.4",
     "rollbar-react-native": "1.0.0-beta.5"
