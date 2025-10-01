@@ -167,7 +167,7 @@ const HomeNavigation: React.FC = () => {
   };
 
   return <SafeAreaView style={styles.safeAreaView}
-                       edges={['right', 'bottom', 'left']}>
+                       edges={['right', 'left']}>
     <HomeNav.Navigator initialRouteName={SongSearchRoute}
                        screenOptions={{
                          tabBarStyle: styles.tabBar,
@@ -295,7 +295,6 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   },
 
   tabBar: {
-    height: 65,
     backgroundColor: colors.surface1,
     borderTopColor: colors.background,
     shadowOpacity: 0,
@@ -312,8 +311,6 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   },
 
   tabBarItem: {
-    paddingBottom: 10,
-    paddingTop: 7
   },
   tabBarInactiveLabel: {
     color: colors.text.lighter
@@ -323,12 +320,7 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   },
   tabIcon: {},
   tabBarBadgeStyle: {
-    left: 2,
-    top: -1,
     fontSize: 12,
-    height: 18,
-    minWidth: 18,
     backgroundColor: colors.primary.default,
-    lineHeight: 17
   }
 });
