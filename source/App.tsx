@@ -8,10 +8,10 @@
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
-import { Alert, StatusBar, StyleSheet } from "react-native";
+import { Alert, StatusBar, StyleSheet, useWindowDimensions } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
@@ -38,7 +38,7 @@ import { ServerAuth } from "./logic/server/auth";
 import { closeDatabases, initDocumentDatabase, initSettingsDatabase, initSongDatabase } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
-import { runAsync, sanitizeErrorForRollbar } from "./logic/utils";
+import { isPortraitMode, runAsync, sanitizeErrorForRollbar } from "./logic/utils";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";
@@ -141,6 +141,7 @@ const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
   const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
+  const windowDimension = useWindowDimensions();
 
   useEffect(() => {
     onLaunch();
@@ -166,46 +167,50 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
-  return <SafeAreaView style={styles.safeAreaView}
-                       edges={['right', 'left']}>
-    <HomeNav.Navigator initialRouteName={SongSearchRoute}
-                       screenOptions={{
-                         tabBarStyle: styles.tabBar,
-                         tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
-                         tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
-                         headerStyle: styles.tabBarHeader,
-                         headerTitleStyle: styles.tabBarHeaderTitle,
-                         tabBarItemStyle: styles.tabBarItem
-                       }}>
-      <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
-                      options={{
-                        title: "Songs",
-                        headerShown: false,
-                        tabBarIcon: ({ focused, color, size }) =>
-                          <Icon name="music" size={size} color={color} style={styles.tabIcon} />
-                      }} />
-      <HomeNav.Screen name={SongListRoute} component={SongListScreen}
-                      options={{
-                        title: "Song list",
-                        tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
-                        tabBarBadgeStyle: styles.tabBarBadgeStyle,
-                        tabBarIcon: ({ focused, color, size }) =>
-                          <SongListMenuIcon size={size} color={color} style={styles.tabIcon} />
-                      }} />
-      <HomeNav.Screen name={DocumentSearchRoute} component={DocumentSearchScreen}
-                      options={{
-                        title: "Documents",
-                        tabBarIcon: ({ focused, color, size }) =>
-                          <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
-                      }} />
-      <HomeNav.Screen name={OtherMenuRoute} component={OtherMenuScreen}
-                      options={{
-                        title: "More",
-                        tabBarIcon: ({ focused, color, size }) =>
-                          <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
-                      }} />
-    </HomeNav.Navigator>
-  </SafeAreaView>;
+  const landscapeOptions: BottomTabNavigationOptions = isPortraitMode(windowDimension) ? {} : {
+    tabBarPosition: 'right',
+    tabBarLabelPosition: 'below-icon',
+    tabBarVariant: 'material',
+  }
+
+  return <HomeNav.Navigator initialRouteName={SongSearchRoute}
+                            screenOptions={{
+                              tabBarStyle: styles.tabBar,
+                              tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
+                              tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
+                              headerStyle: styles.tabBarHeader,
+                              headerTitleStyle: styles.tabBarHeaderTitle,
+                              tabBarItemStyle: styles.tabBarItem,
+                              ...landscapeOptions
+                            }}>
+    <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
+                    options={{
+                      title: "Songs",
+                      headerShown: false,
+                      tabBarIcon: ({ focused, color, size }) =>
+                        <Icon name="music" size={size} color={color} style={styles.tabIcon} />
+                    }} />
+    <HomeNav.Screen name={SongListRoute} component={SongListScreen}
+                    options={{
+                      title: "Song list",
+                      tabBarBadge: Settings.showSongListCountBadge && songListSize > 0 ? songListSize : undefined,
+                      tabBarBadgeStyle: styles.tabBarBadgeStyle,
+                      tabBarIcon: ({ focused, color, size }) =>
+                        <SongListMenuIcon size={size} color={color} style={styles.tabIcon} />
+                    }} />
+    <HomeNav.Screen name={DocumentSearchRoute} component={DocumentSearchScreen}
+                    options={{
+                      title: "Documents",
+                      tabBarIcon: ({ focused, color, size }) =>
+                        <Icon name="file-alt" size={size} color={color} style={styles.tabIcon} />
+                    }} />
+    <HomeNav.Screen name={OtherMenuRoute} component={OtherMenuScreen}
+                    options={{
+                      title: "More",
+                      tabBarIcon: ({ focused, color, size }) =>
+                        <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
+                    }} />
+  </HomeNav.Navigator>
 };
 
 const AppRoot: React.FC = () => {
@@ -213,6 +218,7 @@ const AppRoot: React.FC = () => {
   const [isSongDbLoading, setIsSongDbLoading] = useState(true);
   const [isDocumentDbLoading, setIsDocumentDbLoading] = useState(true);
   const theme = useTheme();
+  const styles = createStyles(theme);
   const features = useFeatures();
 
   useEffect(() => {
@@ -248,7 +254,8 @@ const AppRoot: React.FC = () => {
 
   const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
 
-  return <>
+  return <SafeAreaView style={styles.safeAreaView}
+                       edges={['left', 'right']}>
     <LoadingOverlay isVisible={isLoading} />
 
     {isLoading ? undefined :
@@ -266,7 +273,7 @@ const AppRoot: React.FC = () => {
     <StatusBar barStyle={!theme.isDark ? "dark-content" : "light-content"}
                backgroundColor={theme.colors.background}
                hidden={false} />
-  </>;
+  </SafeAreaView>;
 };
 
 const App: React.FC = () =>
@@ -291,7 +298,7 @@ export default App;
 const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
   safeAreaView: {
     flex: 1,
-    backgroundColor: colors.surface1,
+    backgroundColor: colors.background,
   },
 
   tabBar: {
@@ -310,8 +317,7 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     color: colors.text.header as string
   },
 
-  tabBarItem: {
-  },
+  tabBarItem: {},
   tabBarInactiveLabel: {
     color: colors.text.lighter
   },
