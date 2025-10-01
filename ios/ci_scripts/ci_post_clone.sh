@@ -1,8 +1,5 @@
 #!/bin/zsh
 
-# https://github.com/realm/realm-js/issues/7048#issuecomment-3309456737
-export REALM_DISABLE_ANALYTICS=1
-
 # Add all your environment variables here
 echo "===== Setting environment variables ====="
 echo "ROLLBAR_API_KEY=${ROLLBAR_API_KEY}" > ../../.env
@@ -13,15 +10,7 @@ echo "HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY=${HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KE
 
 echo "===== Installing CocoaPods ====="
 export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
-
-echo ">>> SETUP ENVIRONMENT"
-echo 'export GEM_HOME=$HOME/gems' >>~/.bash_profile
-echo 'export PATH=$HOME/gems/bin:$PATH' >>~/.bash_profile
-export GEM_HOME=$HOME/gems
-export PATH="$GEM_HOME/bin:$PATH"
-
-echo ">>> INSTALL BUNDLER"
-gem install bundler --install-dir $GEM_HOME
+brew install cocoapods
 
 echo "===== Installing Node.js ====="
 # installs nvm (Node Version Manager)
@@ -41,13 +30,13 @@ yarn install
 
 function podInstall {
   echo "===== Running pod repo update ====="
-  bundle exec pod repo update
+  pod repo update
   echo "===== Running pod install ====="
-  bundle exec pod install && return
+  pod install && return
   echo "  === Running pod update ===  "
-  bundle exec pod update
+  pod update
   echo "  === Running pod install ===  "
-  bundle exec pod install && return
+  pod install && return
   exit 1
 }
 podInstall
