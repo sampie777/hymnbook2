@@ -1,5 +1,9 @@
 #!/bin/zsh
 
+# Disable Realm telemetry as it is against my personal privacy policy for this project
+# https://www.mongodb.com/docs/atlas/device-sdks/sdk/react-native/telemetry/
+export REALM_DISABLE_ANALYTICS=true
+
 # Add all your environment variables here
 echo "===== Setting environment variables ====="
 echo "ROLLBAR_API_KEY=${ROLLBAR_API_KEY}" > ../../.env
