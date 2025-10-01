@@ -165,7 +165,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [showMelody]);
 
   useFocusEffect(React.useCallback(() => {
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    const backHandlerSubscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => backHandlerSubscription.remove();
   }, [highlightText]));
 
   const onBackPress = (): boolean => {

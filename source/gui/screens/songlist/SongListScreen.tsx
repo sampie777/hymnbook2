@@ -73,11 +73,12 @@ const SongListScreen: React.FC<NativeStackScreenProps<ParamList, typeof SongList
 
     useFocusEffect(
       React.useCallback(() => {
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        const backHandlerSubscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
         reloadSongList();
 
         setListHasBeenChanged(false);
+        return () => backHandlerSubscription.remove();
       }, [isDeleteMode])
     );
 
