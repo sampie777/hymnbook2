@@ -8,10 +8,6 @@ echo "WHATSAPP_USER_GROUP_LINK=${WHATSAPP_USER_GROUP_LINK}" >> ../../.env
 echo "HYMNBOOK_STRIPE_PUBLISHABLE_KEY=${HYMNBOOK_STRIPE_PUBLISHABLE_KEY}" >> ../../.env
 echo "HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY=${HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY}" >> ../../.env
 
-echo "===== Installing CocoaPods ====="
-export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
-brew install cocoapods
-
 echo "===== Installing Node.js ====="
 # installs nvm (Node Version Manager)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -27,6 +23,10 @@ corepack install yarn
 # Install dependencies
 echo "===== Running yarn install ====="
 yarn install
+
+echo "===== Installing CocoaPods ====="
+export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
+brew install cocoapods
 
 function podInstall {
   echo "===== Running pod repo update ====="
