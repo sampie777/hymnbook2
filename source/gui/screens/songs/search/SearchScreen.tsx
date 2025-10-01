@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { ParamList, SongSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
@@ -32,6 +32,7 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     // Use a state for this, so the GUI will be updated when the setting changes in the settings screen
     const [stringSearchButtonPlacement, setStringSearchButtonPlacement] = useState(Settings.stringSearchButtonPlacement);
     const windowDimension = useWindowDimensions();
+    const [keyPadExtraStyles, setKeyPadExtraStyles] = useState({});
 
     const styles = createStyles(useTheme());
 
@@ -110,7 +111,9 @@ const SearchScreen: React.FC<BottomTabScreenProps<ParamList, typeof SongSearchRo
     const isStringSearchButtonsPositionTop = () =>
       stringSearchButtonPlacement == SongSearch.StringSearchButtonPlacement.TopLeft;
 
-    const keyPadExtraStyles = useMemo(() => isPortraitMode(windowDimension) ? {} : stylesLandscape.keyPad, [windowDimension]);
+    useEffect(() => {
+      setKeyPadExtraStyles(isPortraitMode(windowDimension) ? {} : stylesLandscape.keyPad)
+    }, [windowDimension]);
 
     const renderSearchResultItem = ({ item }: { item: Song }) => (
       <SearchResultItem navigation={navigation}
