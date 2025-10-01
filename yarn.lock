@@ -5940,7 +5940,7 @@ __metadata:
     react-native-gesture-handler: "patch:react-native-gesture-handler@npm%3A2.28.0#~/.yarn/patches/react-native-gesture-handler-npm-2.28.0-46647da20a.patch"
     react-native-keep-awake: "npm:4.0.0"
     react-native-onboarding-swiper: "npm:1.3.0"
-    react-native-popup-menu: "npm:0.16.1"
+    react-native-popup-menu: "npm:0.18.0"
     react-native-quick-md5: "npm:3.0.9"
     react-native-reanimated: "npm:3.19.1"
     react-native-safe-area-context: "npm:5.6.1"
@@ -8768,10 +8768,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-popup-menu@npm:0.16.1":
-  version: 0.16.1
-  resolution: "react-native-popup-menu@npm:0.16.1"
-  checksum: 10c0/bf9b314481dadc6af99d4dab6831999ad24e75750ba8a819b857fc404c0c0515f91c17ca383a5ab3f524ef687abb22c0495ac0e70efe649477b3103e5e901893
+"react-native-popup-menu@npm:0.18.0":
+  version: 0.18.0
+  resolution: "react-native-popup-menu@npm:0.18.0"
+  checksum: 10c0/0ffe65b4e85a99af75ea713d55c5f7a74472a4977a917d114c6dd194467808a57648f63d3568cbb551750449bb96d01e0e97d1bb17586bb5f98d235c87740226
   languageName: node
   linkType: hard
 
