@@ -1,9 +1,5 @@
 #!/bin/zsh
 
-# Disable Realm telemetry as it is against my personal privacy policy for this project
-# https://www.mongodb.com/docs/atlas/device-sdks/sdk/react-native/telemetry/
-export REALM_DISABLE_ANALYTICS=1
-
 # Add all your environment variables here
 echo "===== Setting environment variables ====="
 echo "ROLLBAR_API_KEY=${ROLLBAR_API_KEY}" > ../../.env
@@ -25,7 +21,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 22
 
 echo "===== Installing yarn ====="
-corepack enable yarn
+corepack enable
 corepack install yarn
 
 # Install dependencies
