@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { isIOS } from "../../../logic/utils";
+import DeviceInfo from "react-native-device-info";
 
 interface Props {
   onPress: () => void,
@@ -48,7 +49,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   },
   icon: {
     paddingVertical: 10,
-    top: isIOS ? -10 : 0,
+    top: (isIOS && DeviceInfo.getDeviceType() == "Handset") ? -10 : 0,
     fontSize: 21,
     color: "#ff8989",
   }
