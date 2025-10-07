@@ -174,7 +174,7 @@ const HomeNavigation: React.FC = () => {
     tabBarVariant: 'material',
   }
 
-  return <HomeNav.Navigator initialRouteName={SongListRoute}
+  return <HomeNav.Navigator initialRouteName={SongSearchRoute}
                             screenOptions={{
                               tabBarStyle: styles.tabBar,
                               tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
