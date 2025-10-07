@@ -1,7 +1,8 @@
-import { Song, Verse } from "../../../../source/logic/db/models/songs/Songs";
-import { hasMelodyToShow } from "../../../../source/logic/songs/utils";
-import { AbcMelody, AbcSubMelody } from "../../../../source/logic/db/models/songs/AbcMelodies";
-import { mockDb } from "../../../testUtils";
+import {describe, expect, it, jest} from '@jest/globals';
+import {Song, Verse} from "../../../../source/logic/db/models/songs/Songs";
+import {hasMelodyToShow} from "../../../../source/logic/songs/utils";
+import {AbcMelody, AbcSubMelody} from "../../../../source/logic/db/models/songs/AbcMelodies";
+import {mockDb} from "../../../testUtils";
 
 jest.mock("hymnbook2/source/logic/db/db");
 mockDb();

@@ -1,5 +1,6 @@
-import { createCopyright } from "../../../../source/logic/songs/utils";
-import { Song, SongBundle, SongMetadata, SongMetadataType } from "../../../../source/logic/db/models/songs/Songs";
+import {beforeEach, describe, expect, it} from '@jest/globals';
+import {createCopyright} from "../../../../source/logic/songs/utils";
+import {Song, SongBundle, SongMetadata, SongMetadataType} from "../../../../source/logic/db/models/songs/Songs";
 
 describe("creating copyright for song", () => {
   const song = new Song("", "", new Date(), new Date(), "", [], [], [], 0, 1);

@@ -11,12 +11,12 @@ const useHistory = (
   action: SongHistoryAction,
   songListItem: SongListSongModel | undefined = undefined,
 ) => {
-  const previousSong = useRef<Song | undefined>();
+  const previousSong = useRef<Song | undefined>(undefined);
   const previousIndex = useRef<number>(0);
   const previousAction = useRef<SongHistoryAction>(SongHistoryAction.Unknown);
-  const previousSongListItem = useRef<SongListSongModel>();
+  const previousSongListItem = useRef<SongListSongModel>(undefined);
   const nextAction = useRef<SongHistoryAction>(SongHistoryAction.Unknown);
-  const startTime = useRef<Date | undefined>();
+  const startTime = useRef<Date | undefined>(undefined);
 
   useEffect(() => {
     const previousSongCurrent = previousSong.current;

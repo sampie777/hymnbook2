@@ -1,4 +1,5 @@
-import { getMarginForVerses } from "../../../../source/logic/songs/versePicker";
+import {describe, expect, it} from '@jest/globals';
+import {getMarginForVerses} from "../../../../source/logic/songs/versePicker";
 
 describe("test getting margin for verses", () => {
   it("doesnt give a negative margin", () => {

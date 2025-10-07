@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { rollbar } from "../../../../../logic/rollbar";
 import { generateSongTitle, loadSongWithUuidOrId } from "../../../../../logic/songs/utils";
-import { ParamList, SongRoute, SongSearchRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
+import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../../navigation";
 import { Verse, VerseProps } from "../../../../../logic/db/models/songs/Songs";
 import SongList from "../../../../../logic/songs/songList";
 import {
@@ -72,14 +72,13 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
       SongList.saveSelectedVersesForSong(songListIndex, verses);
     }
 
-    navigation.navigate({
-      name: SongRoute,
-      params: {
+    navigation.popTo(SongRoute, {
         selectedVerses: verses,
         highlightText: route.params.highlightText
       },
-      merge: true // Navigate 'back'
-    });
+      {
+        merge: true // Retrain song screen original parameters (like uuid)
+      });
   };
 
   const showSong = (verses: Verse[]) => {
@@ -112,7 +111,7 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     SongList.saveSelectedVersesForSong(addedSongListSongModel.index, verses);
 
-    navigation.navigate(SongSearchRoute);
+    navigation.pop();
   };
 
   const songTitleWithVerses = route.params.songName == null ? undefined :

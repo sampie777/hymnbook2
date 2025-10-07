@@ -62,10 +62,10 @@ interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRo
 
 const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useIsMounted({ trackFocus: true });
-  const fadeInTimeout = useRef<NodeJS.Timeout | undefined>();
-  const scrollTimeout = useRef<NodeJS.Timeout | undefined>();
+  const fadeInTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const scrollTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const flatListComponentRef = useRef<FlatList<Verse>>(null);
-  const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
+  const pinchGestureHandlerRef = useRef<PinchGestureHandler>(undefined);
   const verseHeights = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
@@ -165,8 +165,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [showMelody]);
 
   useFocusEffect(React.useCallback(() => {
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
-    return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    const backHandlerSubscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => backHandlerSubscription.remove();
   }, [highlightText]));
 
   const onBackPress = (): boolean => {

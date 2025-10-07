@@ -5,11 +5,11 @@ import { ThemeContextProps, useTheme } from "../../../../../components/providers
 import TrackPlayer, {
   Event,
   PlaybackErrorEvent,
+  State,
   usePlaybackState,
   useProgress,
   useTrackPlayerEvents
 } from "react-native-track-player";
-import { State } from "react-native-track-player/src/constants/State";
 import { Song } from "../../../../../../logic/db/models/songs/Songs";
 import { rollbar } from "../../../../../../logic/rollbar";
 import Animated, {
@@ -27,7 +27,7 @@ interface Props {
 const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
   const progressBarUpdateIntervalMs = 250;
 
-  const songUuid = useRef<string | undefined>();
+  const songUuid = useRef<string | undefined>(undefined);
   const [shouldBeVisible, setShouldBeVisible] = useState(false);
   const playerState = usePlaybackState();
   const { position, buffered, duration } = useProgress(progressBarUpdateIntervalMs);

@@ -8,10 +8,10 @@
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
-import { Alert, SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import { Alert, StatusBar, StyleSheet, useWindowDimensions } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Db from "./logic/db/db";
 import Settings from "./settings";
 import {
@@ -38,7 +38,7 @@ import { ServerAuth } from "./logic/server/auth";
 import { closeDatabases, initDocumentDatabase, initSettingsDatabase, initSongDatabase } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
-import { runAsync, sanitizeErrorForRollbar } from "./logic/utils";
+import { isPortraitMode, runAsync, sanitizeErrorForRollbar } from "./logic/utils";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";
@@ -68,6 +68,7 @@ import SongHistoryProvider from "./gui/components/providers/SongHistoryProvider"
 import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
 import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 import { throwIfConnectionError } from "./logic/apiUtils.ts";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -76,6 +77,7 @@ const RootNavigation = () => {
   const styles = createStyles(useTheme());
   return <RootNav.Navigator initialRouteName={HomeRoute}
                             screenOptions={{
+                              contentStyle: { backgroundColor: 'transparent' },
                               headerStyle: styles.tabBarHeader,
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
@@ -140,6 +142,7 @@ const HomeNavigation: React.FC = () => {
   const [songListSize, setSongListSize] = useState(0);
   const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
+  const windowDimension = useWindowDimensions();
 
   useEffect(() => {
     onLaunch();
@@ -165,6 +168,12 @@ const HomeNavigation: React.FC = () => {
     setSongListSize(SongList.list().length);
   };
 
+  const landscapeOptions: BottomTabNavigationOptions = isPortraitMode(windowDimension) ? {} : {
+    tabBarPosition: 'right',
+    tabBarLabelPosition: 'below-icon',
+    tabBarVariant: 'material',
+  }
+
   return <HomeNav.Navigator initialRouteName={SongSearchRoute}
                             screenOptions={{
                               tabBarStyle: styles.tabBar,
@@ -172,7 +181,8 @@ const HomeNavigation: React.FC = () => {
                               tabBarActiveTintColor: styles.tabBarActiveLabel.color as string,
                               headerStyle: styles.tabBarHeader,
                               headerTitleStyle: styles.tabBarHeaderTitle,
-                              tabBarItemStyle: styles.tabBarItem
+                              tabBarItemStyle: styles.tabBarItem,
+                              ...landscapeOptions
                             }}>
     <HomeNav.Screen name={SongSearchRoute} component={SearchScreen}
                     options={{
@@ -201,7 +211,7 @@ const HomeNavigation: React.FC = () => {
                       tabBarIcon: ({ focused, color, size }) =>
                         <Icon name="bars" size={size} color={color} style={styles.tabIcon} />
                     }} />
-  </HomeNav.Navigator>;
+  </HomeNav.Navigator>
 };
 
 const AppRoot: React.FC = () => {
@@ -209,8 +219,8 @@ const AppRoot: React.FC = () => {
   const [isSongDbLoading, setIsSongDbLoading] = useState(true);
   const [isDocumentDbLoading, setIsDocumentDbLoading] = useState(true);
   const theme = useTheme();
-  const features = useFeatures();
   const styles = createStyles(theme);
+  const features = useFeatures();
 
   useEffect(() => {
     onLaunch();
@@ -245,7 +255,8 @@ const AppRoot: React.FC = () => {
 
   const isLoading = isSettingsDbLoading || isSongDbLoading || isDocumentDbLoading;
 
-  return <SafeAreaView style={styles.container}>
+  return <SafeAreaView style={styles.safeAreaView}
+                       edges={['left', 'right']}>
     <LoadingOverlay isVisible={isLoading} />
 
     {isLoading ? undefined :
@@ -267,45 +278,47 @@ const AppRoot: React.FC = () => {
 };
 
 const App: React.FC = () =>
-  <ErrorBoundary>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AppContextProvider>
-        <FeaturesProvider>
-          <ThemeProvider>
-            <MenuProvider>
-              <AppRoot />
-            </MenuProvider>
-          </ThemeProvider>
-        </FeaturesProvider>
-      </AppContextProvider>
-    </GestureHandlerRootView>
-  </ErrorBoundary>;
+  <SafeAreaProvider>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AppContextProvider>
+          <FeaturesProvider>
+            <ThemeProvider>
+              <MenuProvider>
+                <AppRoot />
+              </MenuProvider>
+            </ThemeProvider>
+          </FeaturesProvider>
+        </AppContextProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
+  </SafeAreaProvider>;
+
+export default App;
 
 const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
-  container: {
+  safeAreaView: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
 
   tabBar: {
-    height: 60,
     backgroundColor: colors.surface1,
-    borderTopColor: colors.background
+    borderTopColor: colors.background,
+    shadowOpacity: 0,
+    elevation: 0
   },
 
   tabBarHeader: {
     backgroundColor: colors.surface1 as string,
-    shadowOpacity: isDark ? 0 : 1,
-    elevation: isDark ? 2 : 4
+    shadowOpacity: isDark ? 0 : undefined,
+    elevation: isDark ? 2 : undefined,
   },
   tabBarHeaderTitle: {
     color: colors.text.header as string
   },
 
-  tabBarItem: {
-    paddingBottom: 10,
-    paddingTop: 7
-  },
+  tabBarItem: {},
   tabBarInactiveLabel: {
     color: colors.text.lighter
   },
@@ -314,14 +327,7 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   },
   tabIcon: {},
   tabBarBadgeStyle: {
-    left: 2,
-    top: -1,
     fontSize: 12,
-    height: 18,
-    minWidth: 18,
     backgroundColor: colors.primary.default,
-    lineHeight: 17
   }
 });
-
-export default App;

@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { Donations } from "../../../source/logic/donations";
 
 describe("The donation validation function", () => {

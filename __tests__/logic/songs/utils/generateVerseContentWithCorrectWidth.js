@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals';
 import {generateVerseContentWithCorrectWidth} from "../../../../source/logic/songs/utils";
 
 describe("generateVerseContentWithCorrectWidth", () => {

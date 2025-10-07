@@ -21,7 +21,7 @@ export const AnimatedG = Animated.createAnimatedComponent(G);
  * @return use the return function to be called on for debounce to work
  */
 export const debounce = (callback: (...args: any) => void, period: number): (...args: any) => void => {
-  const timeout = useRef<NodeJS.Timeout | undefined>();
+  const timeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   return (...args: any) => {
     if (timeout.current != undefined) {

@@ -4,7 +4,7 @@ import { DatabasesRoute, ParamList } from "../../../../navigation";
 import { Types } from "../../downloads/TypeSelectBar";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useSongBundleCount } from "../../../components/utils";
 
 interface ScreenProps {

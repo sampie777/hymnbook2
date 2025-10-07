@@ -41,17 +41,17 @@ function setVersion() {
     echo "$(awk '/<key>CFBundleVersion<\/key>/{print; getline; next} 1' ./ios/hymnbook2/Info.plist)" > ./ios/hymnbook2/Info.plist || exit 1
     # Add new version tag
     echo "$(sed "/<key>CFBundleShortVersionString<\/key>/a\\
-  <string>${version}<\/string>
+	<string>${version}<\/string>
     " ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
     echo "$(sed "/<key>CFBundleVersion<\/key>/a\\
-  <string>${buildVersion}<\/string>
+	<string>${buildVersion}<\/string>
     " ios/hymnbook2/Info.plist)" > ios/hymnbook2/Info.plist || exit 1
 }
 
 function updateDependencies {
   yarn install || exit 1
   cd ios || exit 1
-  pod install || exit 1
+  bundle exec pod install || exit 1
   cd .. || exit 1
 
   git add .yarnrc.yml

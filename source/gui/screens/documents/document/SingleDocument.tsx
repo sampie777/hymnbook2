@@ -36,7 +36,6 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import DocumentControls from "./DocumentControls";
 import DocumentBreadcrumb from "./DocumentsBreadcrumb";
 import AnimatedHtmlView from "../../../components/htmlView/AnimatedHtmlView";
-import OriginalHtmlViewer from "../../../components/htmlView/OriginalHtmlViewer";
 import useHistory from "../../../../logic/documents/history/useHistory";
 import { loadDocumentWithUuidOrId } from "../../../../logic/documents/utils";
 
@@ -51,10 +50,10 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
   };
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
-  const pinchGestureHandlerRef = useRef<PinchGestureHandler>();
+  const pinchGestureHandlerRef = useRef<PinchGestureHandler>(undefined);
   const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>(null);
-  const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>();
-  const htmlViewLastLoadedForDocumentId = useRef<number | undefined>();
+  const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const htmlViewLastLoadedForDocumentId = useRef<number | undefined>(undefined);
 
   const [document, setDocument] = useState<Document | undefined>(undefined);
   const [scrollOffset, setScrollOffset] = useState(0);
@@ -221,12 +220,9 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     }
   };
 
-  const HtmlView = useMemo(() => Settings.documentsUseExperimentalViewer
-      ? <AnimatedHtmlView html={document?.html ?? ""}
-                          scale={animatedScale.current}
-                          onLayout={onHtmlViewLoaded} />
-      : <OriginalHtmlViewer html={document?.html ?? ""}
-                            onLayout={onHtmlViewLoaded} />,
+  const HtmlView = useMemo(() => <AnimatedHtmlView html={document?.html ?? ""}
+                                                   scale={animatedScale.current}
+                                                   onLayout={onHtmlViewLoaded} />,
     [document?.id]);
 
   const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;

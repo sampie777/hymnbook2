@@ -1,4 +1,5 @@
-import { ABC } from "../../../../source/logic/songs/abc/abc";
+import {describe, expect, it} from '@jest/globals';
+import {ABC} from "../../../../source/logic/songs/abc/abc";
 
 
 describe("test abc parse", () => {

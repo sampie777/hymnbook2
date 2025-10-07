@@ -1,4 +1,5 @@
-import { DeepLinking } from "../../../source/logic/deeplinking";
+import {describe, expect, it, jest} from '@jest/globals';
+import {DeepLinking} from "../../../source/logic/deeplinking";
 
 describe("deeplinking", () => {
   it("parses url to route object", () => {

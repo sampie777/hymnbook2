@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Types } from "../downloads/TypeSelectBar";
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { shareApp } from "../../../logic/utils";
 import { Survey } from "../../../logic/survey";

@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { StyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import { ViewStyle } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import ImFeelingLucky from "./ImFeelingLucky";
 import { ParamList } from "../../../../../navigation";
 

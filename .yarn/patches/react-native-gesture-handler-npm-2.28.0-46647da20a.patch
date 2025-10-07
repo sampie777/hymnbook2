@@ -1,0 +1,45 @@
+diff --git a/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt b/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
+index ebce5f9fa39e451ccd4f7f2515913ad5e91a2fc5..1503251b7fb13a2fc36a28e660261a2b34406730 100644
+--- a/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
++++ b/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
+@@ -32,17 +32,24 @@ class RNGestureHandlerRootView(context: Context?) : ReactViewGroup(context) {
+     rootHelper?.tearDown()
+   }
+ 
+-  override fun dispatchTouchEvent(ev: MotionEvent) = if (rootViewEnabled && rootHelper!!.dispatchTouchEvent(ev)) {
+-    true
+-  } else {
+-    super.dispatchTouchEvent(ev)
+-  }
++  override fun dispatchTouchEvent(ev: MotionEvent) =
++    try {
++      if (rootViewEnabled && rootHelper!!.dispatchTouchEvent(ev)) {
++        true
++      } else super.dispatchTouchEvent(ev)
++    } catch (e: IllegalArgumentException) {
++      e.printStackTrace()
++      false
++    }
+ 
+-  override fun dispatchGenericMotionEvent(event: MotionEvent) =
+-    if (rootViewEnabled && rootHelper!!.dispatchTouchEvent(event)) {
+-      true
+-    } else {
+-      super.dispatchGenericMotionEvent(event)
++  override fun dispatchGenericMotionEvent(ev: MotionEvent) =
++    try {
++      if (rootViewEnabled && rootHelper!!.dispatchTouchEvent(ev)) {
++        true
++      } else super.dispatchGenericMotionEvent(ev)
++    } catch (e: IllegalArgumentException) {
++      e.printStackTrace()
++      false
+     }
+ 
+   override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+@@ -79,3 +86,5 @@ class RNGestureHandlerRootView(context: Context?) : ReactViewGroup(context) {
+     }
+   }
+ }
++
++

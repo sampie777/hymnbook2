@@ -6,8 +6,8 @@ import { DocumentHistoryController } from "./documentHistoryController";
 const useHistory = (
   document: Document | undefined = undefined,
 ) => {
-  const previousDocument = useRef<Document | undefined>();
-  const startTime = useRef<Date | undefined>();
+  const previousDocument = useRef<Document | undefined>(undefined);
+  const startTime = useRef<Date | undefined>(undefined);
 
   useEffect(() => {
     checkViewTime();

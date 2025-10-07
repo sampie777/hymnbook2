@@ -1,4 +1,5 @@
-import { mergeStyleSheets } from "../../../source/gui/components/utils";
+import {describe, expect, it} from '@jest/globals';
+import {mergeStyleSheets} from "../../../source/gui/components/utils";
 
 describe("Test utils", () => {
   it("combines styles", () => {

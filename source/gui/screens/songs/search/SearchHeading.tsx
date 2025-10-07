@@ -6,7 +6,7 @@ import SongNumberInput from "./SongNumberInput";
 import SongBundleSelect from "./filters/SongBundleSelect";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Song } from "../../../../logic/db/models/songs/Songs";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/src/types";
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ParamList } from "../../../../navigation";
 
 type Props = {

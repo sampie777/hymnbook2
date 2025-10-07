@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { isIOS } from "../../../logic/utils";
+import DeviceInfo from "react-native-device-info";
 
 interface Props {
   onPress: () => void,
@@ -26,8 +27,8 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
       : <Icon name={"trash-alt"}
               solid={isActivated}
               accessibilityLabel={"Enable delete mode"}
-              size={styles.deleteModeButton.fontSize}
-              color={!isActivated ? styles.deleteModeButton.color : styles.deleteModeButtonActive.color} />
+              style={styles.icon}
+              color={!isActivated ? styles.icon.color : styles.deleteModeButtonActive.color} />
     }
   </TouchableOpacity>;
 };
@@ -36,16 +37,21 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   deleteModeButton: {
     paddingHorizontal: 15,
     right: 5,
-    fontSize: 21,
-    color: "#ff8989",
-    paddingVertical: 10
+    paddingTop: 7,
   },
   deleteModeButtonActive: {
     color: colors.text.error,
   },
   text: {
     color: colors.text.default,
-    fontSize: 16
+    fontSize: 16,
+    top: -3,
+  },
+  icon: {
+    paddingVertical: 10,
+    top: (isIOS && DeviceInfo.getDeviceType() == "Handset") ? -10 : 0,
+    fontSize: 21,
+    color: "#ff8989",
   }
 });
 

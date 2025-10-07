@@ -88,8 +88,8 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
 
           <FlatList
             data={this.state.errorInfo.componentStack
-              .trim()
-              .split("\n")}
+              ?.trim()
+              ?.split("\n")}
             renderItem={this.renderCodeLine}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={styles.code} />

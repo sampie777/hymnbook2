@@ -1,5 +1,7 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
+  "extends": "@react-native/typescript-config",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
     "paths": {
       "react": ["./node_modules/@types/react"]
@@ -11,6 +13,9 @@
 //    ],
     "noFallthroughCasesInSwitch": true,
 //    "module": "esnext",
-    "noImplicitThis": false                /* Raise error on 'this' expressions with an implied 'any' type. */
+    "noImplicitThis": false,                /* Raise error on 'this' expressions with an implied 'any' type. */
+    "types": [
+      "node",
+    ]
   }
 }

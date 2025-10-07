@@ -1,4 +1,5 @@
-import { SongSearch } from "../../../../source/logic/songs/songSearch";
+import {describe, expect, it} from '@jest/globals';
+import {SongSearch} from "../../../../source/logic/songs/songSearch";
 
 describe("test converting text to valid regex", () => {
   it("replaces all valid and invalid chars", () => {
