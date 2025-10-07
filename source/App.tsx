@@ -77,7 +77,7 @@ const RootNavigation = () => {
   const styles = createStyles(useTheme());
   return <RootNav.Navigator initialRouteName={HomeRoute}
                             screenOptions={{
-                              contentStyle:  { backgroundColor: 'transparent' },
+                              contentStyle: { backgroundColor: 'transparent' },
                               headerStyle: styles.tabBarHeader,
                               headerTitleStyle: styles.tabBarHeaderTitle,
                               headerTintColor: styles.tabBarHeaderTitle.color
@@ -174,7 +174,7 @@ const HomeNavigation: React.FC = () => {
     tabBarVariant: 'material',
   }
 
-  return <HomeNav.Navigator initialRouteName={SongSearchRoute}
+  return <HomeNav.Navigator initialRouteName={SongListRoute}
                             screenOptions={{
                               tabBarStyle: styles.tabBar,
                               tabBarInactiveTintColor: styles.tabBarInactiveLabel.color as string,
@@ -311,8 +311,8 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
 
   tabBarHeader: {
     backgroundColor: colors.surface1 as string,
-    shadowOpacity: isDark ? 0 : 1,
-    elevation: isDark ? 2 : 4
+    shadowOpacity: isDark ? 0 : undefined,
+    elevation: isDark ? 2 : undefined,
   },
   tabBarHeaderTitle: {
     color: colors.text.header as string
