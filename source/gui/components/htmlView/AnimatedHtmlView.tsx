@@ -7,13 +7,7 @@ import { parseDocument } from "htmlparser2";
 import { mergeStyleSheets } from "../utils";
 import { ElementType } from "domelementtype";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
-import {
-  ChildNode,
-  DataNode,
-  Document,
-  Element,
-  Node,
-} from 'domhandler';
+import { ChildNode, DataNode, Document, Element, Node, } from 'domhandler';
 
 interface HtmlStyles {
   defaultText?: StyleProp<TextStyle>,
@@ -418,9 +412,7 @@ export const createDefaultHtmlStyles = ({ colors }: ThemeContextProps) => StyleS
     textDecorationColor: colors.text.default
   },
   div: {},
-  br: {
-    borderWidth: 1
-  },
+  br: {},
   a: {
     color: colors.url
   }
