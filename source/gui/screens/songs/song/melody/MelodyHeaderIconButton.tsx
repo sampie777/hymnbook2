@@ -55,7 +55,7 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
         </View>
       </MenuTrigger>
 
-      <MenuOptions optionsContainerStyle={styles.popupContainer}>
+      <MenuOptions customStyles={{optionsContainer: styles.popupContainer}}>
         <MenuOption style={styles.popupItem}
                     disabled={!songHasMelodyToShow}
                     onSelect={toggleShowMelody}>
