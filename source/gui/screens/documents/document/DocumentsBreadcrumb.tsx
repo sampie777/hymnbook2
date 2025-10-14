@@ -3,11 +3,12 @@ import Settings from "../../../../settings";
 import { Document } from "../../../../logic/db/models/documents/Documents";
 import { getPathForDocument } from "../../../../logic/documents/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { Animated, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface Props {
   document?: Document;
-  scale: Animated.Value;
+  scale: SharedValue<number>;
 }
 
 const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
@@ -15,13 +16,13 @@ const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
 
   const styles = createStyles(useTheme());
   const animatedStyles = {
-    container: {
-      marginBottom: Animated.multiply(scale, 20)
-    },
-    text: {
-      fontSize: Animated.multiply(scale, 13),
-      lineHeight: Animated.multiply(scale, 18)
-    }
+    container: useAnimatedStyle(() => ({
+      marginBottom: scale.value * 20
+    })),
+    text: useAnimatedStyle(() => ({
+      fontSize: scale.value * 13,
+      lineHeight: scale.value * 18
+    }))
   };
   const path = getPathForDocument(document);
 

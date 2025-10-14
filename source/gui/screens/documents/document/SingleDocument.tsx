@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
-  Animated as RNAnimated,
   GestureResponderEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -15,15 +14,9 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Document } from "../../../../logic/db/models/documents/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { isIOS, keepScreenAwake } from "../../../../logic/utils";
+import { keepScreenAwake } from "../../../../logic/utils";
 import { DocumentRoute, ParamList } from "../../../../navigation";
-import {
-  GestureEvent,
-  PinchGestureHandler,
-  PinchGestureHandlerEventPayload,
-  ScrollView as GestureScrollView,
-  State
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector, ScrollView as GestureScrollView, } from "react-native-gesture-handler";
 import Animated, {
   Easing,
   runOnJS,
@@ -50,7 +43,6 @@ const Footer: React.FC<{ opacity: SharedValue<number> }> =
   };
 
 const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof DocumentRoute>> = ({ route, navigation }) => {
-  const pinchGestureHandlerRef = useRef<PinchGestureHandler>(undefined);
   const scrollViewComponent = useRef<NativeScrollView | GestureScrollView>(null);
   const fadeInFallbackTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const htmlViewLastLoadedForDocumentId = useRef<number | undefined>(undefined);
@@ -63,8 +55,9 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
   useHistory(document);
 
   const animatedOpacity = useSharedValue(0);
-  // Wrapping this value in a ref helps to fire the animation properties to the underlying elements, even if they're memoized
-  const animatedScale = useRef(new RNAnimated.Value(0.95 * Settings.documentScale));
+  // Use a `SharedValue` so this value is accesible on the UI thread
+  const baseScale = useSharedValue(Settings.documentScale);
+  const animatedScale = useSharedValue(0.95 * baseScale.value);
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -207,29 +200,28 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
     setOnPressed(true);
   };
 
-  const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    if (!Settings.documentsUseExperimentalViewer) return;
-    animatedScale.current.setValue(Settings.documentScale * event.nativeEvent.scale);
-  };
+  const storeNewScaleValue = (scale: number) =>
+    Settings.documentScale *= scale;
 
-  const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    if (!Settings.documentsUseExperimentalViewer) return;
-    if (event.nativeEvent.state === State.END) {
-      animatedScale.current.setValue(Settings.documentScale * event.nativeEvent.scale);
-      Settings.documentScale *= event.nativeEvent.scale;
-    }
-  };
+  const pinchGesture = useMemo(() =>
+      Gesture.Pinch()
+        .onUpdate((event) => {
+          animatedScale.value = baseScale.value * event.scale;
+        })
+        .onEnd((event) => {
+          animatedScale.value = baseScale.value * event.scale;
+          runOnJS(storeNewScaleValue)(event.scale);
+        })
+    , [])
 
   const HtmlView = useMemo(() => <AnimatedHtmlView html={document?.html ?? ""}
-                                                   scale={animatedScale.current}
+                                                   scale={animatedScale}
                                                    onLayout={onHtmlViewLoaded} />,
     [document?.id]);
 
   const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
 
-  return <PinchGestureHandler ref={pinchGestureHandlerRef}
-                              onGestureEvent={_onPanGestureEvent}
-                              onHandlerStateChange={_onPinchHandlerStateChange}>
+  return <GestureDetector gesture={pinchGesture}>
     <View style={styles.container}>
       <DocumentControls navigation={navigation}
                         document={document}
@@ -240,7 +232,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
       {document === undefined ? undefined :
         <ScrollView
           ref={scrollViewComponent}
-          waitFor={isIOS ? undefined : pinchGestureHandlerRef}
           onScroll={onScrollViewScroll}
           scrollEventThrottle={200}
           onTouchStart={onScrollViewTouchStart}
@@ -251,7 +242,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
           contentContainerStyle={styles.contentSectionList}
           removeClippedSubviews={false}>
 
-          <DocumentBreadcrumb document={document} scale={animatedScale.current} />
+          <DocumentBreadcrumb document={document} scale={animatedScale} />
 
           <Animated.View style={animatedStyle.htmlViewContainer}>
             {HtmlView}
@@ -267,7 +258,7 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
                         && (document === undefined || document.id !== route.params.id)}
                       animate={Settings.songFadeIn} />
     </View>
-  </PinchGestureHandler>;
+  </GestureDetector>;
 };
 
 export default SingleDocument;

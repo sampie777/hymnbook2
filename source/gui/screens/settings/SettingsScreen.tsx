@@ -28,7 +28,6 @@ const SettingsScreen: React.FC = () => {
   const [isReloading, setReloading] = useState(false);
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const [showDocumentsZoomSettings, setShowDocumentsZoomSettings] = useState(Settings.documentsUseExperimentalViewer);
 
   const appContext = useAppContext();
   const theme = useTheme();
@@ -263,21 +262,11 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}
-                  isVisible={showDocumentsZoomSettings || showAdvancedSettings} />
-          <SettingSwitchComponent title={"Enable zoom (experimental)"}
-                                  description={"Use the experimental document viewer, which can be zoomed in/out. Let us know if you see something wrong."}
-                                  onLongPress={(setValue) => setValue(true)}
-                                  keyName={"documentsUseExperimentalViewer"}
-                                  onPress={((setValue, key, newValue) => {
-                                    setValue(newValue);
-                                    setShowDocumentsZoomSettings(newValue);
-                                  })}
-                                  isVisible={showAdvancedSettings} />
+                  isVisible={showAdvancedSettings} />
           <SettingsSliderComponent title={"Document text size"}
                                    keyName={"documentScale"}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
-                                   defaultValue={1.0}
-                                   isVisible={showDocumentsZoomSettings} />
+                                   defaultValue={1.0} />
           <SettingSwitchComponent title={"Multi keyword search for documents"}
                                   description={"When enabled, each keyword will be matched individually instead of " +
                                     "the whole search phrase. This will yield more results."}

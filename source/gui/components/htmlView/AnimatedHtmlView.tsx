@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Animated, Platform, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
+import { Alert, Platform, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import Settings from "../../../settings";
 import { openLink } from "../../../logic/utils";
 import { rollbar } from "../../../logic/rollbar";
@@ -8,6 +8,7 @@ import { mergeStyleSheets } from "../utils";
 import { ElementType } from "domelementtype";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { ChildNode, DataNode, Document, Element, Node, } from 'domhandler';
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface HtmlStyles {
   defaultText?: StyleProp<TextStyle>,
@@ -43,7 +44,7 @@ interface HtmlStyles {
 interface Props {
   html: string;
   styles?: HtmlStyles | HtmlStyles[];
-  scale: Animated.Value;
+  scale: SharedValue<number>;
   onLayout?: () => void;
 }
 
@@ -57,75 +58,75 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
   const defaultHtmlStyles = createDefaultHtmlStyles(useTheme());
   const animatedHtmlStyles = {
-    p: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.p.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.p.lineHeight)
-    },
-    h1: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.h1.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h1.lineHeight),
-      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h1.paddingTop),
-      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h1.marginBottom)
-    },
-    h2: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.h2.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h2.lineHeight),
-      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h2.paddingTop),
-      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h2.marginBottom)
-    },
-    h3: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.h3.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h3.lineHeight),
-      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h3.paddingTop),
-      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h3.marginBottom)
-    },
-    h4: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.h4.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h4.lineHeight),
-      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h4.paddingTop),
-      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h4.marginBottom)
-    },
-    h5: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.h5.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h5.lineHeight),
-      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h5.paddingTop),
-      marginBottom: Animated.multiply(scale, defaultHtmlStyles.h5.marginBottom)
-    },
-    h6: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.h6.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.h6.lineHeight),
-      paddingTop: Animated.multiply(scale, defaultHtmlStyles.h6.paddingTop)
-    },
-    ul: {
-      marginVertical: Animated.multiply(scale, defaultHtmlStyles.ul.marginVertical)
-    },
-    ol: {
-      marginVertical: Animated.multiply(scale, defaultHtmlStyles.ol.marginVertical)
-    },
-    liText: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.liText.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.liText.lineHeight)
-    },
-    pre: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.pre.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.pre.lineHeight)
-    },
-    blockquote: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.blockquote.fontSize),
-      lineHeight: Animated.multiply(scale, defaultHtmlStyles.blockquote.lineHeight),
-      paddingVertical: Animated.multiply(scale, defaultHtmlStyles.blockquote.paddingVertical),
-      marginVertical: Animated.multiply(scale, defaultHtmlStyles.blockquote.marginVertical)
-    },
-    code: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.code.fontSize)
-    },
-    sup: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.sup.fontSize),
-      top: Animated.multiply(scale, defaultHtmlStyles.sup.top)
-    },
-    sub: {
-      fontSize: Animated.multiply(scale, defaultHtmlStyles.sub.fontSize)
-    }
+    p: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.p.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.p.lineHeight
+    })),
+    h1: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.h1.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.h1.lineHeight,
+      paddingTop: scale.value * defaultHtmlStyles.h1.paddingTop,
+      marginBottom: scale.value * defaultHtmlStyles.h1.marginBottom
+    })),
+    h2: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.h2.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.h2.lineHeight,
+      paddingTop: scale.value * defaultHtmlStyles.h2.paddingTop,
+      marginBottom: scale.value * defaultHtmlStyles.h2.marginBottom
+    })),
+    h3: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.h3.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.h3.lineHeight,
+      paddingTop: scale.value * defaultHtmlStyles.h3.paddingTop,
+      marginBottom: scale.value * defaultHtmlStyles.h3.marginBottom
+    })),
+    h4: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.h4.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.h4.lineHeight,
+      paddingTop: scale.value * defaultHtmlStyles.h4.paddingTop,
+      marginBottom: scale.value * defaultHtmlStyles.h4.marginBottom
+    })),
+    h5: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.h5.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.h5.lineHeight,
+      paddingTop: scale.value * defaultHtmlStyles.h5.paddingTop,
+      marginBottom: scale.value * defaultHtmlStyles.h5.marginBottom
+    })),
+    h6: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.h6.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.h6.lineHeight,
+      paddingTop: scale.value * defaultHtmlStyles.h6.paddingTop
+    })),
+    ul: useAnimatedStyle(() =>({
+      marginVertical: scale.value * defaultHtmlStyles.ul.marginVertical
+    })),
+    ol: useAnimatedStyle(() =>({
+      marginVertical: scale.value * defaultHtmlStyles.ol.marginVertical
+    })),
+    liText: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.liText.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.liText.lineHeight
+    })),
+    pre: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.pre.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.pre.lineHeight
+    })),
+    blockquote: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.blockquote.fontSize,
+      lineHeight: scale.value * defaultHtmlStyles.blockquote.lineHeight,
+      paddingVertical: scale.value * defaultHtmlStyles.blockquote.paddingVertical,
+      marginVertical: scale.value * defaultHtmlStyles.blockquote.marginVertical
+    })),
+    code: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.code.fontSize
+    })),
+    sup: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.sup.fontSize,
+      top: scale.value * defaultHtmlStyles.sup.top
+    })),
+    sub: useAnimatedStyle(() =>({
+      fontSize: scale.value * defaultHtmlStyles.sub.fontSize
+    }))
   };
   const mergedStyles: HtmlStyles = mergeStyleSheets([defaultHtmlStyles, animatedHtmlStyles, styles]);
   const document = parseDocument(sanitizedHtml) as Document;

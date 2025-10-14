@@ -280,7 +280,7 @@ const AppRoot: React.FC = () => {
 const App: React.FC = () =>
   <SafeAreaProvider>
     <ErrorBoundary>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView>
         <AppContextProvider>
           <FeaturesProvider>
             <ThemeProvider>
