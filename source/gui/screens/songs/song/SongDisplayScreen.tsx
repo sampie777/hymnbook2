@@ -5,10 +5,8 @@ import {
   FlatList,
   Gesture,
   GestureDetector,
-  GestureEvent,
   PinchGestureHandler,
-  PinchGestureHandlerEventPayload,
-  State
+  PinchGestureHandlerEventPayload
 } from "react-native-gesture-handler";
 import ReAnimated, {
   Easing as ReAnimatedEasing,
@@ -88,6 +86,22 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
+
+  const storeNewScaleValue = (scale: number) =>
+    Settings.songScale *= scale;
+
+  const t = (event: PinchGestureHandlerEventPayload) => animatedScale.current.setValue(Settings.documentScale * event.scale);
+
+  const pinchGesture =
+      Gesture.Pinch()
+        .onUpdate((event) => {
+          runOnJS(t)(event);
+        })
+        .onEnd((event) => {
+          verseHeights.current = {};
+          runOnJS(t)(event);
+          runOnJS(storeNewScaleValue)(event.scale);
+        })
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>
@@ -285,18 +299,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const afterSongFadeIn = () => {
     setShowMelody(shouldMelodyShowWhenSongIsLoaded.current);
     shouldMelodyShowWhenSongIsLoaded.current = false;
-  };
-
-  const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    animatedScale.current.setValue(Settings.songScale * event.nativeEvent.scale);
-  };
-
-  const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    if (event.nativeEvent.state === State.END) {
-      verseHeights.current = {};
-      animatedScale.current.setValue(Settings.songScale * event.nativeEvent.scale);
-      Settings.songScale *= event.nativeEvent.scale;
-    }
   };
 
   const onListViewableItemsChangedForSongControls = React.useRef(
@@ -510,11 +512,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelodyForAllVerses={showMelodyForAllVerses}
         setShowMelodyForAllVerses={setShowMelodyForAllVerses}
         melodyScale={melodyScale.current} />}
-
-    <PinchGestureHandler
-      ref={pinchGestureHandlerRef}
-      onGestureEvent={_onPanGestureEvent}
-      onHandlerStateChange={_onPinchHandlerStateChange}>
+    <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
         <SongControls navigation={navigation}
                       songListIndex={route.params.songListIndex}
@@ -563,7 +561,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                           && (song === undefined || (song.id !== route.params.id && song.uuid !== route.params.uuid))}
                         animate={Settings.songFadeIn} />
       </View>
-    </PinchGestureHandler>
+    </GestureDetector>
 
     {song === undefined ? undefined :
       <AudioPlayerControls song={song}
