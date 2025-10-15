@@ -5945,7 +5945,7 @@ __metadata:
     react-native-reanimated: "npm:3.19.1"
     react-native-safe-area-context: "npm:5.6.1"
     react-native-screens: "npm:4.16.0"
-    react-native-svg: "npm:15.13.0"
+    react-native-svg: "npm:15.14.0"
     react-native-track-player: "npm:5.0.0-alpha0"
     react-native-vector-icons: "npm:10.3.0"
     react-test-renderer: "npm:19.1.0"
@@ -8835,9 +8835,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:15.13.0":
-  version: 15.13.0
-  resolution: "react-native-svg@npm:15.13.0"
+"react-native-svg@npm:15.14.0":
+  version: 15.14.0
+  resolution: "react-native-svg@npm:15.14.0"
   dependencies:
     css-select: "npm:^5.1.0"
     css-tree: "npm:^1.1.3"
@@ -8845,7 +8845,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/89ba2ed640f78e69d44980473530fdb83e24336a1a43936e19f532e772c41e8532ee1d4f3ae003339e817a3e3b055aa2a8ee3c0da31754cd2c83fa1a81130d6a
+  checksum: 10c0/5855bee2a76313f580ac3f8c476d07bb63d1a8e5e0883154275be5a1f4224e35f2416b0ba3b03f5d4c637c3b2f9320df34ede918da27188adb6881b3b8ac96c8
   languageName: node
   linkType: hard
 
