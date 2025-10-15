@@ -83,11 +83,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const setMelodyScaleValue = (scale: number) => {
     // melodyScale.current.setValue(Settings.songMelodyScale * scale);
 
-    RNAnimated.timing(melodyScale.current, {
-      toValue: Settings.songMelodyScale * scale,
-      duration: 0,
-      useNativeDriver: true, // Enable native driver
-    }).start();
+    melodyScale.current.stopAnimation(() => {
+      RNAnimated.timing(melodyScale.current, {
+        toValue: Settings.songMelodyScale * scale,
+        duration: 0,
+        useNativeDriver: true, // Enable native driver
+      })
+        .start();
+    })
   }
   const storeNewScaleValue = (scale: number) => {
     Settings.songScale *= scale;
