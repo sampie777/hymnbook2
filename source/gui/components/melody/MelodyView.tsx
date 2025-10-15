@@ -1,24 +1,24 @@
 import React, { memo, useMemo } from "react";
 import { getFontScaleSync } from "react-native-device-info";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated as RNAnimated, StyleSheet, View } from "react-native";
 import { AbcConfig } from "./config";
 import { ABC } from "../../../logic/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
+import { SharedValue } from "react-native-reanimated";
 
 interface Props {
   abc: string;
-  animatedScale: Animated.Value;
-  melodyScale: Animated.Value;
+  animatedScale: SharedValue<number>;
+  melodyScale: RNAnimated.Value;
   onLoaded: () => void;
 }
 
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
   const animatedScaleMelody = useMemo(() =>
-    Animated.multiply(animatedScale,
-      Animated.multiply(getFontScaleSync(),
-        Animated.multiply(AbcConfig.baseScale, melodyScale))) as unknown as Animated.Value, [])
+      RNAnimated.multiply(getFontScaleSync(),
+        RNAnimated.multiply(AbcConfig.baseScale, melodyScale)) as unknown as RNAnimated.Value, [])
 
   const abcSong = ABC.parse(abc);
 

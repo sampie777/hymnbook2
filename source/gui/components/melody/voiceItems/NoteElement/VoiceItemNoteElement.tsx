@@ -1,16 +1,17 @@
 import React from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated as RNAnimated, StyleSheet } from "react-native";
 import Settings from "../../../../../settings";
 import { AbcConfig } from "../../config";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 import NoteElement from "./NoteElement";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface Props {
   note: VoiceItemNote;
-  animatedScaleText: Animated.Value;
-  animatedScaleMelody: Animated.Value;
+  animatedScaleText: SharedValue<number>;
+  animatedScaleMelody: RNAnimated.Value;
 }
 
 const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animatedScaleMelody }) => {
@@ -23,24 +24,24 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animat
   const noteWidth = AbcGui.calculateNoteWidth(note);
   const animatedStyle = {
     container: {
-      minWidth: Animated.multiply(noteWidth, animatedScaleMelody)
+      minWidth: RNAnimated.multiply(noteWidth, animatedScaleMelody)
     },
-    text: {
-      fontSize: Animated.multiply(animatedScaleText, AbcConfig.textSize),
-      lineHeight: Animated.multiply(animatedScaleText, AbcConfig.textLineHeight),
-      paddingHorizontal: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? 1 : 5),
-      right: Animated.multiply(animatedScaleText, lyrics.endsWith("-") ? -3 : 0)
-    }
+    text: useAnimatedStyle(() => ({
+      fontSize: animatedScaleText.value * AbcConfig.textSize,
+      lineHeight: animatedScaleText.value * AbcConfig.textLineHeight,
+      paddingHorizontal: animatedScaleText.value * (lyrics.endsWith("-") ? 1 : 5),
+      right: animatedScaleText.value * (lyrics.endsWith("-") ? -3 : 0)
+    }))
   };
 
-  return <Animated.View style={[styles.container, animatedStyle.container]}>
+  return <RNAnimated.View style={[styles.container, animatedStyle.container]}>
     <NoteElement note={note}
                  animatedScale={animatedScaleMelody} />
     <Animated.Text style={[styles.text, animatedStyle.text]}
                    selectable={Settings.enableTextSelection}>
       {lyrics}
     </Animated.Text>
-  </Animated.View>;
+  </RNAnimated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({

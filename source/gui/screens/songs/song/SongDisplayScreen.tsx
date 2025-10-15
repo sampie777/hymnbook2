@@ -1,15 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  FlatList,
-  Gesture,
-  GestureDetector,
-  GestureEvent,
-  PinchGestureHandler,
-  PinchGestureHandlerEventPayload,
-  State
-} from "react-native-gesture-handler";
+import { FlatList, Gesture, GestureDetector, PinchGestureHandler } from "react-native-gesture-handler";
 import ReAnimated, {
   Easing as ReAnimatedEasing,
   runOnJS,
@@ -32,7 +24,7 @@ import {
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import {
   Alert,
-  Animated,
+  Animated as RNAnimated,
   BackHandler,
   FlatList as NativeFlatList,
   LayoutChangeEvent,
@@ -46,10 +38,8 @@ import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
-import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
-import Header from "./Header";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
@@ -83,11 +73,30 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
-  const animatedScale = useRef(new Animated.Value(Settings.songScale));
-  const melodyScale = useRef(new Animated.Value(Settings.songMelodyScale));
+  const baseScale = useSharedValue(Settings.songScale);
+  const animatedScale = useSharedValue(0.95 * Settings.songScale);
+  const melodyScale = useRef(new RNAnimated.Value(Settings.songMelodyScale * Settings.songScale));
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
+
+  const storeNewScaleValue = (scale: number) => {
+    Settings.songScale *= scale;
+    melodyScale.current.setValue(Settings.songMelodyScale * scale);
+  }
+
+  const pinchGesture = useMemo(() =>
+      Gesture.Pinch()
+        .onUpdate((event) => {
+          animatedScale.value = baseScale.value * event.scale;
+        })
+        .onEnd((event) => {
+          verseHeights.current = {};
+          animatedScale.value = baseScale.value * event.scale;
+          baseScale.value = animatedScale.value;
+          runOnJS(storeNewScaleValue)(event.scale);
+        })
+    , [])
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>
@@ -287,18 +296,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     shouldMelodyShowWhenSongIsLoaded.current = false;
   };
 
-  const _onPanGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    animatedScale.current.setValue(Settings.songScale * event.nativeEvent.scale);
-  };
-
-  const _onPinchHandlerStateChange = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    if (event.nativeEvent.state === State.END) {
-      verseHeights.current = {};
-      animatedScale.current.setValue(Settings.songScale * event.nativeEvent.scale);
-      Settings.songScale *= event.nativeEvent.scale;
-    }
-  };
-
   const onListViewableItemsChangedForSongControls = React.useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
       if (viewableItems.length === 0) {
@@ -469,7 +466,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         || verseIsVisibleAndHasUniqueMelody);
 
     return <ContentVerse verse={item}
-                         scale={animatedScale.current}
+                         scale={animatedScale}
                          melodyScale={melodyScale.current}
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
@@ -510,11 +507,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         showMelodyForAllVerses={showMelodyForAllVerses}
         setShowMelodyForAllVerses={setShowMelodyForAllVerses}
         melodyScale={melodyScale.current} />}
-
-    <PinchGestureHandler
-      ref={pinchGestureHandlerRef}
-      onGestureEvent={_onPanGestureEvent}
-      onHandlerStateChange={_onPinchHandlerStateChange}>
+    <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
         <SongControls navigation={navigation}
                       songListIndex={route.params.songListIndex}
@@ -550,8 +543,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                 selectedVerses: route.params.selectedVerses?.map(it => it.name),
                 songList: getSongListInformationForErrorReporting()
               })}
-              ListHeaderComponent={<Header song={song} scale={animatedScale.current} />}
-              ListFooterComponent={<Footer song={song} scale={animatedScale.current} />}
+              // ListHeaderComponent={<Header song={song} scale={animatedScale.current} />}
+              // ListFooterComponent={<Footer song={song} scale={animatedScale.current} />}
               removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
             />
           </ReAnimated.View>
@@ -563,7 +556,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                           && (song === undefined || (song.id !== route.params.id && song.uuid !== route.params.uuid))}
                         animate={Settings.songFadeIn} />
       </View>
-    </PinchGestureHandler>
+    </GestureDetector>
 
     {song === undefined ? undefined :
       <AudioPlayerControls song={song}
