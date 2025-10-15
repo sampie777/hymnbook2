@@ -216,8 +216,7 @@ module.exports = {
 - Download the font
 - Add it to ./assets/fonts/
 - (Maybe install them on your development system)
-- Run `npx react-native link`
-- (Maybe run `pod install` in .ios/ directory also, not sure)
+- Run `npx react-native-asset`
 - Fonts are installed
 
 #### Use new font

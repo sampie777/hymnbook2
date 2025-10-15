@@ -24,7 +24,6 @@ import {
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import {
   Alert,
-  Animated as RNAnimated,
   BackHandler,
   FlatList as NativeFlatList,
   LayoutChangeEvent,
@@ -39,12 +38,13 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
 import ScreenHeader from "./ScreenHeader";
-import MelodySettingsModal from "./melody/MelodySettingsModal";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
 import { useSongHistory } from "../../../components/providers/SongHistoryProvider";
+import { getFontScaleSync } from "react-native-device-info";
+import { AbcConfig } from "../../../components/melody/config.ts";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -75,41 +75,31 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const baseScale = useSharedValue(Settings.songScale);
   const animatedScale = useSharedValue(0.95 * Settings.songScale);
-  const melodyScale = useRef(new RNAnimated.Value(Settings.songMelodyScale * Settings.songScale));
+  const melodyBaseScale = useSharedValue(Settings.songMelodyScale * Settings.songScale);
+  const melodyScale = useSharedValue(Settings.songMelodyScale * Settings.songScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
-  const setMelodyScaleValue = (scale: number) => {
-    // melodyScale.current.setValue(Settings.songMelodyScale * scale);
-
-    melodyScale.current.stopAnimation(() => {
-      RNAnimated.timing(melodyScale.current, {
-        toValue: Settings.songMelodyScale * scale,
-        duration: 0,
-        useNativeDriver: true, // Enable native driver
-      })
-        .start();
-    })
-  }
   const storeNewScaleValue = (scale: number) => {
     Settings.songScale *= scale;
-
-    setMelodyScaleValue(scale);
   }
 
-  const pinchGesture = useMemo(() =>
-      Gesture.Pinch()
+  const fontScaleSync = getFontScaleSync();
+  const pinchGesture = useMemo(() => {
+      return Gesture.Pinch()
         .onUpdate((event) => {
           animatedScale.value = baseScale.value * event.scale;
-          runOnJS(setMelodyScaleValue)(event.scale);
+          melodyScale.value = animatedScale.value * fontScaleSync * AbcConfig.baseScale * melodyBaseScale.value;
         })
         .onEnd((event) => {
           verseHeights.current = {};
           animatedScale.value = baseScale.value * event.scale;
           baseScale.value = animatedScale.value;
+          melodyScale.value = animatedScale.value * fontScaleSync * AbcConfig.baseScale * melodyBaseScale.value;
           runOnJS(storeNewScaleValue)(event.scale);
-        })
+        });
+    }
     , [])
 
   // For debugging issue #199 only: open settings screen after 3x tap.
@@ -481,7 +471,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     return <ContentVerse verse={item}
                          scale={animatedScale}
-                         melodyScale={melodyScale.current}
+                         melodyScale={melodyScale}
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
                          setIsMelodyLoading={setIsMelodyLoading}
@@ -512,15 +502,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         setShowSongAudioModal(false)
                       }} />}
 
-    {!showMelodySettings ? undefined :
-      <MelodySettingsModal
-        onClose={() => setShowMelodySettings(false)}
-        selectedMelody={selectedMelody}
-        onMelodySelect={setSelectedMelody}
-        melodies={song?.abcMelodies}
-        showMelodyForAllVerses={showMelodyForAllVerses}
-        setShowMelodyForAllVerses={setShowMelodyForAllVerses}
-        melodyScale={melodyScale.current} />}
+    {/*{!showMelodySettings ? undefined :*/}
+    {/*  <MelodySettingsModal*/}
+    {/*    onClose={() => setShowMelodySettings(false)}*/}
+    {/*    selectedMelody={selectedMelody}*/}
+    {/*    onMelodySelect={setSelectedMelody}*/}
+    {/*    melodies={song?.abcMelodies}*/}
+    {/*    showMelodyForAllVerses={showMelodyForAllVerses}*/}
+    {/*    setShowMelodyForAllVerses={setShowMelodyForAllVerses}*/}
+    {/*    melodyScale={melodyScale} />}*/}
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
         <SongControls navigation={navigation}

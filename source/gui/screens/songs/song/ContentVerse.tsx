@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated as RNAnimated, LayoutChangeEvent, StyleSheet, View } from "react-native";
+import { LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
@@ -17,7 +17,7 @@ import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated
 interface ContentVerseProps {
   verse: Verse;
   scale: SharedValue<number>;
-  melodyScale: RNAnimated.Value;
+  melodyScale: SharedValue<number>;
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;
@@ -160,6 +160,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         <MelodyView
           onLoaded={onMelodyLoaded}
           abc={memoizedAbc}
+          // abc={"a b c d e f g A B C D E F G | A A2 A3 A4 A5 A6 A7 A8 A9 A10 | z z2 z3 z4 z5 z6 z7 z8 |]\nw: abc def ghi"}
           animatedScale={scale}
           melodyScale={melodyScale}
         />

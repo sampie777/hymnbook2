@@ -27,6 +27,8 @@
 		CF13091B18EE4597A8AA1DD9 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 338F9816F01A41E5A06F26EB /* Roboto-Thin.ttf */; };
 		D39D7D99C2264AC3852EBC4B /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0CBC1D3C16CA45038AC2872A /* Roboto-Bold.ttf */; };
 		EA9C64AA1AEF4D49937E46E9 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AC568C9F38094B91B79C4465 /* Roboto-BlackItalic.ttf */; };
+		6E095A8335C846F99D473478 /* Musiqwik-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 785619863CF84EDDAAFAAA11 /* Musiqwik-regular.ttf */; };
+		2BA99F55BD604B04889C69F7 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 621228C3085B4A159621F0AB /* LICENSE.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +93,8 @@
 		EE47B2DFF967603D4F3AE7CD /* Pods-hymnbook2-hymnbook2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; path = "Target Support Files/Pods-hymnbook2-hymnbook2Tests/Pods-hymnbook2-hymnbook2Tests.release.xcconfig"; sourceTree = "<group>"; };
 		F116143659E34A5A914E2D25 /* Roboto-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Black.ttf"; path = "../assets/fonts/Roboto-Black.ttf"; sourceTree = "<group>"; };
 		F8064DF551844B6A8146FE23 /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
+		785619863CF84EDDAAFAAA11 /* Musiqwik-regular.ttf */ = {isa = PBXFileReference; name = "Musiqwik-regular.ttf"; path = "../assets/fonts/Musiqwik-regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		621228C3085B4A159621F0AB /* LICENSE.txt */ = {isa = PBXFileReference; name = "LICENSE.txt"; path = "../assets/fonts/LICENSE.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +178,8 @@
 				C8CDF9A5BEF64B259D0A4E60 /* Roboto-MediumItalic.ttf */,
 				338F9816F01A41E5A06F26EB /* Roboto-Thin.ttf */,
 				5A7D493DB0CE4ABEB32315F4 /* Roboto-ThinItalic.ttf */,
+				785619863CF84EDDAAFAAA11 /* Musiqwik-regular.ttf */,
+				621228C3085B4A159621F0AB /* LICENSE.txt */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -331,6 +337,8 @@
 				97CA806AE1EB4BAE89B59762 /* Roboto-MediumItalic.ttf in Resources */,
 				CF13091B18EE4597A8AA1DD9 /* Roboto-Thin.ttf in Resources */,
 				995F42A6F45743269211588C /* Roboto-ThinItalic.ttf in Resources */,
+				6E095A8335C846F99D473478 /* Musiqwik-regular.ttf in Resources */,
+				2BA99F55BD604B04889C69F7 /* LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

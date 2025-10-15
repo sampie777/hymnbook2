@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 export const AbcConfig = {
   baseScale: 0.79,
@@ -11,6 +12,7 @@ export const AbcConfig = {
   lineBarThinWidth: 1.5,
   lineBarThickWidth: 8,
 
+  noteSize: 40,
   notePadding: 13,
   noteWidth: 4.8,
   noteHeight: 2.8,
@@ -33,3 +35,9 @@ export const AbcConfig = {
 };
 
 AbcConfig.totalLineHeight = AbcConfig.topSpacing + 4 * AbcConfig.lineSpacing + AbcConfig.textSpacing;
+
+export const useAbcMusicStyle = (scale: SharedValue<number>) =>
+  useAnimatedStyle(() => ({
+    fontFamily: "Musiqwik-regular",
+    fontSize: scale.value * AbcConfig.noteSize,
+  }))
