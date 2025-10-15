@@ -75,8 +75,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
   const baseScale = useSharedValue(Settings.songScale);
   const animatedScale = useSharedValue(0.95 * Settings.songScale);
-  const melodyBaseScale = useSharedValue(Settings.songMelodyScale * Settings.songScale);
-  const melodyScale = useSharedValue(Settings.songMelodyScale * Settings.songScale);
+  const melodyBaseScale = useSharedValue(Settings.songMelodyScale);
+  const melodyScale = useSharedValue(AbcConfig.baseScale * Settings.songMelodyScale * Settings.songScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());

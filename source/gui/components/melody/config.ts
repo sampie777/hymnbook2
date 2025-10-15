@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { isIOS } from "../../../logic/utils.ts";
 
 export const AbcConfig = {
   baseScale: 0.79,
@@ -13,7 +14,7 @@ export const AbcConfig = {
   lineBarThickWidth: 8,
 
   noteSize: 40,
-  notePadding: 13,
+  notePadding: 0,
   noteWidth: 4.8,
   noteHeight: 2.8,
   stemHeight: 28,
@@ -38,6 +39,6 @@ AbcConfig.totalLineHeight = AbcConfig.topSpacing + 4 * AbcConfig.lineSpacing + A
 
 export const useAbcMusicStyle = (scale: SharedValue<number>) =>
   useAnimatedStyle(() => ({
-    fontFamily: "Musiqwik-regular",
+    fontFamily: isIOS ? "Musiqwik" : "Musiqwik-regular-extended",
     fontSize: scale.value * AbcConfig.noteSize,
   }))

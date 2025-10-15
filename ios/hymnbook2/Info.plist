@@ -84,7 +84,7 @@
 		<string>Roboto-MediumItalic.ttf</string>
 		<string>Roboto-Thin.ttf</string>
 		<string>Roboto-ThinItalic.ttf</string>
-		<string>Musiqwik-regular.ttf</string>
+		<string>Musiqwik-regular-extended.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

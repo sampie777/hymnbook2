@@ -160,7 +160,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         <MelodyView
           onLoaded={onMelodyLoaded}
           abc={memoizedAbc}
-          // abc={"a b c d e f g A B C D E F G | A A2 A3 A4 A5 A6 A7 A8 A9 A10 | z z2 z3 z4 z5 z6 z7 z8 |]\nw: abc def ghi"}
+          // abc={"A ^A =A _A C, D, E, F, G, A, B, C D E F G A B c d e f g a b | A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12 | z z2 z3 z4 z5 z6 z7 z8 |]\nw: A ^A =A A  C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12"}
           animatedScale={scale}
           melodyScale={melodyScale}
         />

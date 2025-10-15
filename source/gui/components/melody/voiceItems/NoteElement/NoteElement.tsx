@@ -26,7 +26,7 @@ const NoteElement: React.FC<Props> = ({
   };
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
-    <Animated.Text style={animatedStyle.note}>
+    <Animated.Text style={[styles.note, animatedStyle.note]}>
       {/* The following takes 1000 ms to generate */}
       <Lines />
 
@@ -49,11 +49,10 @@ const NoteElement: React.FC<Props> = ({
 const createStyles = () => StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   note: {
     position: "absolute",
-    height: "125%"
   }
 });
 

@@ -27,6 +27,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melody
       minWidth: melodyScale.value * noteWidth
     })),
     text: useAnimatedStyle(() => ({
+      marginTop: animatedScaleText.value * 7,
       fontSize: animatedScaleText.value * AbcConfig.textSize,
       lineHeight: animatedScaleText.value * AbcConfig.textLineHeight,
       paddingHorizontal: animatedScaleText.value * (lyrics.endsWith("-") ? 1 : 5),
@@ -49,11 +50,12 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "column",
     flexGrow: 1,
-    flexShrink: 1
+    flexShrink: 1,
+    marginHorizontal: -1,
   },
   text: {
     color: colors.text.default,
-    textAlign: "center"
+    textAlign: "center",
   }
 });
 

@@ -4,7 +4,7 @@ interface Props {
 }
 
 const Lines: React.FC<Props> = () => {
-  return <>{"="}</>
+  return <>{"====================="}</>
 };
 
 export default Lines;
