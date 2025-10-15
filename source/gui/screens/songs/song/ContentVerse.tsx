@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, LayoutChangeEvent, StyleSheet, View } from "react-native";
+import { Animated as RNAnimated, LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
@@ -12,11 +12,12 @@ import MelodyView from "../../../components/melody/MelodyView";
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { runAsync } from "../../../../logic/utils";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface ContentVerseProps {
   verse: Verse;
-  scale: Animated.Value;
-  melodyScale: Animated.Value;
+  scale: SharedValue<number>;
+  melodyScale: RNAnimated.Value;
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   setIsMelodyLoading: (value: boolean) => void;
@@ -43,22 +44,22 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const styles = createStyles(useTheme());
   const animatedStyle = {
-    container: {
-      paddingTop: Animated.multiply(scale, 10),
-      paddingBottom: Animated.multiply(scale, 35)
-    },
-    title: {
-      fontSize: Animated.multiply(scale, 19),
-      paddingBottom: Animated.multiply(scale, 5)
-    },
-    titleLarge: {
-      fontSize: Animated.multiply(scale, 30),
-      paddingBottom: Animated.multiply(scale, 5)
-    },
-    text: {
-      fontSize: Animated.multiply(scale, 20),
-      lineHeight: Animated.multiply(scale, 30)
-    }
+    container: useAnimatedStyle(() => ({
+      paddingTop: scale.value * 10,
+      paddingBottom: scale.value * 35
+    })),
+    title: useAnimatedStyle(() => ({
+      fontSize: scale.value * 19,
+      paddingBottom: scale.value * 5
+    })),
+    titleLarge: useAnimatedStyle(() => ({
+      fontSize: scale.value * 30,
+      paddingBottom: scale.value * 5
+    })),
+    text: useAnimatedStyle(() => ({
+      fontSize: scale.value * 20,
+      lineHeight: scale.value * 30,
+    }))
   };
 
   const styleForVerseType = (type: VerseType) => {

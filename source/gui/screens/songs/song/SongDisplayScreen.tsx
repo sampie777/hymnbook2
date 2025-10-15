@@ -1,13 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  FlatList,
-  Gesture,
-  GestureDetector,
-  PinchGestureHandler,
-  PinchGestureHandlerEventPayload
-} from "react-native-gesture-handler";
+import { FlatList, Gesture, GestureDetector, PinchGestureHandler } from "react-native-gesture-handler";
 import ReAnimated, {
   Easing as ReAnimatedEasing,
   runOnJS,
@@ -30,7 +24,7 @@ import {
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
 import {
   Alert,
-  Animated,
+  Animated as RNAnimated,
   BackHandler,
   FlatList as NativeFlatList,
   LayoutChangeEvent,
@@ -44,10 +38,8 @@ import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
 import SongControls from "./SongControls";
-import Footer from "./Footer";
 import ScreenHeader from "./ScreenHeader";
 import MelodySettingsModal from "./melody/MelodySettingsModal";
-import Header from "./Header";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
 import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
@@ -81,27 +73,44 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
 
   // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
-  const animatedScale = useRef(new Animated.Value(Settings.songScale));
-  const melodyScale = useRef(new Animated.Value(Settings.songMelodyScale));
+  const baseScale = useSharedValue(Settings.songScale);
+  const animatedScale = useSharedValue(0.95 * Settings.songScale);
+  const melodyScale = useRef(new RNAnimated.Value(Settings.songMelodyScale * Settings.songScale));
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
-  const storeNewScaleValue = (scale: number) =>
+  const setMelodyScaleValue = (scale: number) => {
+    // melodyScale.current.setValue(Settings.songMelodyScale * scale);
+
+    melodyScale.current.stopAnimation(() => {
+      RNAnimated.timing(melodyScale.current, {
+        toValue: Settings.songMelodyScale * scale,
+        duration: 0,
+        useNativeDriver: true, // Enable native driver
+      })
+        .start();
+    })
+  }
+  const storeNewScaleValue = (scale: number) => {
     Settings.songScale *= scale;
 
-  const t = (event: PinchGestureHandlerEventPayload) => animatedScale.current.setValue(Settings.documentScale * event.scale);
+    setMelodyScaleValue(scale);
+  }
 
-  const pinchGesture =
+  const pinchGesture = useMemo(() =>
       Gesture.Pinch()
         .onUpdate((event) => {
-          runOnJS(t)(event);
+          animatedScale.value = baseScale.value * event.scale;
+          runOnJS(setMelodyScaleValue)(event.scale);
         })
         .onEnd((event) => {
           verseHeights.current = {};
-          runOnJS(t)(event);
+          animatedScale.value = baseScale.value * event.scale;
+          baseScale.value = animatedScale.value;
           runOnJS(storeNewScaleValue)(event.scale);
         })
+    , [])
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>
@@ -471,7 +480,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         || verseIsVisibleAndHasUniqueMelody);
 
     return <ContentVerse verse={item}
-                         scale={animatedScale.current}
+                         scale={animatedScale}
                          melodyScale={melodyScale.current}
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
@@ -548,8 +557,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                 selectedVerses: route.params.selectedVerses?.map(it => it.name),
                 songList: getSongListInformationForErrorReporting()
               })}
-              ListHeaderComponent={<Header song={song} scale={animatedScale.current} />}
-              ListFooterComponent={<Footer song={song} scale={animatedScale.current} />}
+              // ListHeaderComponent={<Header song={song} scale={animatedScale.current} />}
+              // ListFooterComponent={<Footer song={song} scale={animatedScale.current} />}
               removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
             />
           </ReAnimated.View>
