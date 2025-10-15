@@ -80,15 +80,26 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
+  const setMelodyScaleValue = (scale: number) => {
+    // melodyScale.current.setValue(Settings.songMelodyScale * scale);
+
+    RNAnimated.timing(melodyScale.current, {
+      toValue: Settings.songMelodyScale * scale,
+      duration: 0,
+      useNativeDriver: true, // Enable native driver
+    }).start();
+  }
   const storeNewScaleValue = (scale: number) => {
     Settings.songScale *= scale;
-    melodyScale.current.setValue(Settings.songMelodyScale * scale);
+
+    setMelodyScaleValue(scale);
   }
 
   const pinchGesture = useMemo(() =>
       Gesture.Pinch()
         .onUpdate((event) => {
           animatedScale.value = baseScale.value * event.scale;
+          runOnJS(setMelodyScaleValue)(event.scale);
         })
         .onEnd((event) => {
           verseHeights.current = {};
