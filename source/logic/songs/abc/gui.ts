@@ -46,6 +46,9 @@ export namespace AbcGui {
     if (note.duration > 0.5) {
       result += note.duration * 4 * AbcConfig.noteWidth;
     }
+    if (note.rest) {
+      result += note.duration * 8 * AbcConfig.noteWidth
+    }
     return result;
   };
 }
