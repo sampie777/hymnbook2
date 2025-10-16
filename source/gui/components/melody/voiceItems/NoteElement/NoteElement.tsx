@@ -45,6 +45,7 @@ const createStyles = () => StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "center",
+    overflow: "hidden"
   },
   note: {
     position: "absolute",
