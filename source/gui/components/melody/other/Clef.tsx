@@ -1,7 +1,7 @@
 import React from "react";
 import { useAbcMusicStyle } from "../config";
 import { AbcClef } from "../../../../logic/songs/abc/abcjsTypes";
-import { ThemeContextProps } from "../../providers/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
 import Animated, { SharedValue } from "react-native-reanimated";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Clef: React.FC<Props> = ({ melodyScale, clef }) => {
-  const animatedStyle = useAbcMusicStyle(melodyScale);
+  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme());
 
   return <Animated.Text style={animatedStyle}>
     {clef.type !== "bass" ? "&" : "0"}

@@ -2,6 +2,7 @@ import React from "react";
 import { useAbcMusicStyle } from "../config";
 import { KeySignature } from "../../../../logic/songs/abc/abcjsTypes";
 import Animated, { SharedValue } from "react-native-reanimated";
+import { useTheme } from "../../providers/ThemeProvider.tsx";
 
 interface Props {
   melodyScale: SharedValue<number>;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const Key: React.FC<Props> = ({ melodyScale, keySignature }) => {
-  const animatedStyle = useAbcMusicStyle(melodyScale);
+  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme());
 
   if (keySignature.accidentals === undefined || keySignature.accidentals.length === 0) {
     return null;

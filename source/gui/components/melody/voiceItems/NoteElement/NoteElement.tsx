@@ -6,6 +6,7 @@ import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import Rest from "./Rest";
 import Lines from "../../other/Lines.tsx";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { useTheme } from "../../../providers/ThemeProvider.tsx";
 
 interface Props {
   note: VoiceItemNote;
@@ -22,7 +23,7 @@ const NoteElement: React.FC<Props> = ({
     container: useAnimatedStyle(() => ({
       height: melodyScale.value * AbcConfig.totalLineHeight
     })),
-    note: useAbcMusicStyle(melodyScale)
+    note: useAbcMusicStyle(melodyScale, useTheme())
   };
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
