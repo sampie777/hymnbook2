@@ -29,7 +29,8 @@ const NoteElement: React.FC<Props> = ({
   return <Animated.View style={[styles.container, animatedStyle.container]}>
     <Lines melodyScale={melodyScale}/>
 
-    <Animated.Text style={[styles.note, animatedStyle.note]}>
+    <Animated.Text style={[styles.note, animatedStyle.note]} ellipsizeMode={"tail"}>
+      {"="}
       {/* The following takes 1000 ms to generate */}
 
       {/* While the following takes only 400 ms to generate for the same data */}
@@ -43,6 +44,7 @@ const NoteElement: React.FC<Props> = ({
       {note.rest === undefined ? undefined :
         <Rest note={note} />
       }
+      {"="}
     </Animated.Text>
   </Animated.View>;
 };
@@ -54,7 +56,7 @@ const createStyles = () => StyleSheet.create({
   },
   note: {
     position: "absolute",
-    transform: [{scaleX: 1.3}], // Make not a bit fatter so it's easier to see
+    transform: [{scaleX: 1.35}], // Make not a bit fatter so it's easier to see
   }
 });
 
