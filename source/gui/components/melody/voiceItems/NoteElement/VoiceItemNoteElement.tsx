@@ -18,7 +18,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melody
   const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
-    ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + " " + it.divider)
+    ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + "" + it.divider)
     .join(" ") || "";
 
   const noteWidth = AbcGui.calculateNoteWidth(note);
@@ -31,7 +31,7 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melody
       fontSize: animatedScaleText.value * AbcConfig.textSize,
       lineHeight: animatedScaleText.value * AbcConfig.textLineHeight,
       paddingHorizontal: animatedScaleText.value * (lyrics.endsWith("-") ? 1 : 5),
-      right: animatedScaleText.value * (lyrics.endsWith("-") ? -3 : 0)
+      right: animatedScaleText.value * (lyrics.endsWith("-") ? -4 : 0)
     })),
   };
 

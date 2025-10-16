@@ -16,7 +16,7 @@ export const AbcConfig = {
 
   noteSize: 40,
   notePadding: 0,
-  noteWidth: 4.8,
+  noteWidth: 14.8,
   noteHeight: 2.8,
   stemHeight: 28,
   stemWidth: 2,

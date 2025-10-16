@@ -20,25 +20,19 @@ const Rest: React.FC<Props> = ({ note }) => {
   }
 
   if (note.duration >= 1 / 2) {
-    return <>
-      {note.duration == 1 ? "<" : ""}
-      {note.duration >= 1 / 2 && note.duration < 1 ? ";" : ""}
-      {note.duration === 5 / 8 || note.duration === 3 / 4 || note.duration === 7 / 8 ? "¸" : ""}
-    </>
+    return (note.duration == 1 ? "<" : "")
+      + (note.duration >= 1 / 2 && note.duration < 1 ? ";" : "")
+      + (note.duration === 5 / 8 || note.duration === 3 / 4 || note.duration === 7 / 8 ? "¸" : "")
   }
 
   if (note.duration < 1 / 4) {
-    return <>
-      {"9"}
-      {note.duration === (3 / 16) ? "¸" : ""}
-    </>
+    return ("9")
+      + (note.duration === (3 / 16) ? "¸" : "")
   }
 
 
-  return <>
-    {":"}
-    {note.duration === 3 / 8 ? "¸" : ""}
-  </>
+  return (":")
+    + (note.duration === 3 / 8 ? "¸" : "")
 };
 
 export default Rest;
