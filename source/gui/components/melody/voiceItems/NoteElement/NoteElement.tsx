@@ -54,6 +54,7 @@ const createStyles = () => StyleSheet.create({
   },
   note: {
     position: "absolute",
+    transform: [{scaleX: 1.3}], // Make not a bit fatter so it's easier to see
   }
 });
 
