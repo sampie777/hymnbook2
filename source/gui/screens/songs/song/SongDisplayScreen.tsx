@@ -45,6 +45,7 @@ import { useAppContext } from "../../../components/providers/AppContextProvider"
 import { useSongHistory } from "../../../components/providers/SongHistoryProvider";
 import { getFontScaleSync } from "react-native-device-info";
 import { AbcConfig } from "../../../components/melody/config.ts";
+import MelodySettingsModal from "./melody/MelodySettingsModal.tsx";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -502,15 +503,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                         setShowSongAudioModal(false)
                       }} />}
 
-    {/*{!showMelodySettings ? undefined :*/}
-    {/*  <MelodySettingsModal*/}
-    {/*    onClose={() => setShowMelodySettings(false)}*/}
-    {/*    selectedMelody={selectedMelody}*/}
-    {/*    onMelodySelect={setSelectedMelody}*/}
-    {/*    melodies={song?.abcMelodies}*/}
-    {/*    showMelodyForAllVerses={showMelodyForAllVerses}*/}
-    {/*    setShowMelodyForAllVerses={setShowMelodyForAllVerses}*/}
-    {/*    melodyScale={melodyScale} />}*/}
+    {!showMelodySettings ? undefined :
+      <MelodySettingsModal
+        onClose={() => setShowMelodySettings(false)}
+        selectedMelody={selectedMelody}
+        onMelodySelect={setSelectedMelody}
+        melodies={song?.abcMelodies}
+        showMelodyForAllVerses={showMelodyForAllVerses}
+        setShowMelodyForAllVerses={setShowMelodyForAllVerses}
+        melodyScale={melodyScale} />}
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
         <SongControls navigation={navigation}
