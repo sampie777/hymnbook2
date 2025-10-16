@@ -12,15 +12,15 @@ const Lines: React.FC<Props> = ({ melodyScale }) => {
   const windowDimension = useWindowDimensions();
   const charWidth = 7.238098
 
-  const animatedStyle = {
+  const styles = {
     container: {
       transform: [{ scaleX: windowDimension.width / charWidth }],
     },
     note: useAbcMusicStyle(melodyScale, useTheme())
   }
 
-  return <View style={animatedStyle.container}>
-    <Animated.Text style={animatedStyle.note}>{"="}</Animated.Text>
+  return <View style={styles.container}>
+    <Animated.Text style={styles.note}>{"=="}</Animated.Text>
   </View>
 };
 

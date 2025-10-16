@@ -1,11 +1,11 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { AbcConfig, useAbcMusicStyle } from "../../config";
+import { useAbcMusicStyle } from "../../config";
 import Note from "./Note";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import Rest from "./Rest";
 import Lines from "../../other/Lines.tsx";
-import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { SharedValue } from "react-native-reanimated";
 import { useTheme } from "../../../providers/ThemeProvider.tsx";
 
 interface Props {
@@ -19,18 +19,13 @@ const NoteElement: React.FC<Props> = ({
                                       }) => {
   const styles = createStyles();
 
-  const animatedStyle = {
-    container: useAnimatedStyle(() => ({
-      height: melodyScale.value * AbcConfig.totalLineHeight
-    })),
-    note: useAbcMusicStyle(melodyScale, useTheme())
-  };
+  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme())
 
-  return <Animated.View style={[styles.container, animatedStyle.container]}>
+  return <Animated.View style={styles.container}>
     <Lines melodyScale={melodyScale}/>
 
-    <Animated.Text style={[styles.note, animatedStyle.note]} ellipsizeMode={"tail"}>
-      {"="}
+    <Animated.Text style={[styles.note, animatedStyle]} ellipsizeMode={"tail"}>
+      {"=="}
       {/* The following takes 1000 ms to generate */}
 
       {/* While the following takes only 400 ms to generate for the same data */}
@@ -44,7 +39,7 @@ const NoteElement: React.FC<Props> = ({
       {note.rest === undefined ? undefined :
         <Rest note={note} />
       }
-      {"="}
+      {"=="}
     </Animated.Text>
   </Animated.View>;
 };
