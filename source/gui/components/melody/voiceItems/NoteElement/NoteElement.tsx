@@ -27,9 +27,10 @@ const NoteElement: React.FC<Props> = ({
   };
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
+    <Lines melodyScale={melodyScale}/>
+
     <Animated.Text style={[styles.note, animatedStyle.note]}>
       {/* The following takes 1000 ms to generate */}
-      <Lines />
 
       {/* While the following takes only 400 ms to generate for the same data */}
       {note.pitches === undefined ? undefined :
@@ -42,7 +43,6 @@ const NoteElement: React.FC<Props> = ({
       {note.rest === undefined ? undefined :
         <Rest note={note} />
       }
-      <Lines />
     </Animated.Text>
   </Animated.View>;
 };
