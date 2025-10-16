@@ -4,7 +4,7 @@ import { isIOS } from "../../../logic/utils.ts";
 import { ThemeContextProps } from "../providers/ThemeProvider.tsx";
 
 export const AbcConfig = {
-  baseScale: 0.79,
+  baseScale: 0.9,
 
   topSpacing: 20,
   lineSpacing: 8,
