@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { useAbcMusicStyle } from "../config.ts";
 import { useTheme } from "../../providers/ThemeProvider.tsx";
 import Animated, { SharedValue } from "react-native-reanimated";
@@ -24,4 +24,4 @@ const Lines: React.FC<Props> = ({ melodyScale }) => {
   </View>
 };
 
-export default Lines;
+export default memo(Lines);

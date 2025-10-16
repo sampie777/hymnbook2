@@ -26,9 +26,6 @@ const NoteElement: React.FC<Props> = ({
 
     <Animated.Text style={[styles.note, animatedStyle]} ellipsizeMode={"tail"}>
       {"=="}
-      {/* The following takes 1000 ms to generate */}
-
-      {/* While the following takes only 400 ms to generate for the same data */}
       {note.pitches === undefined ? undefined :
         note.pitches?.map((it, index) =>
           <Note key={index + "_" + it.pitch}

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { AbcPitch } from "../../../../../logic/songs/abc/abcjsTypes";
 
 interface Props {
@@ -55,9 +55,4 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
   </>
 };
 
-const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
-  prevProps.pitch.pitch === nextProps.pitch.pitch &&
-  prevProps.pitch.accidental === nextProps.pitch.accidental &&
-  prevProps.duration === nextProps.duration;
-
-export default memo(Note, propsAreEqual);
+export default Note
