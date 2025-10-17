@@ -9,18 +9,19 @@ interface Props {
 }
 
 const Lines: React.FC<Props> = ({ melodyScale }) => {
-  const windowDimension = useWindowDimensions();
   const charWidth = 7.238098
+  const windowDimension = useWindowDimensions();
+  const theme = useTheme();
 
   const styles = {
     container: {
       transform: [{ scaleX: windowDimension.width / charWidth }],
     },
-    note: useAbcMusicStyle(melodyScale, useTheme())
+    note: useAbcMusicStyle(melodyScale, theme)
   }
 
   return <View style={styles.container}>
-    <Animated.Text style={styles.note}>{"=="}</Animated.Text>
+    <Animated.Text style={[styles.note, { color: theme.colors.notes.lines }]}>{"=="}</Animated.Text>
   </View>
 };
 

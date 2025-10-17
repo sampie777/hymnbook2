@@ -40,7 +40,7 @@ AbcConfig.totalLineHeight = AbcConfig.topSpacing + 4 * AbcConfig.lineSpacing + A
 
 export const useAbcMusicStyle = (scale: SharedValue<number>, theme?: ThemeContextProps) =>
   useAnimatedStyle(() => ({
-    fontFamily: isIOS ? "Musiqwik" : "Musiqwik-regular-extended",
+    fontFamily: "MusiQwikCustom",
     fontSize: scale.value * AbcConfig.noteSize,
     color: theme?.colors.notes.color
   }))

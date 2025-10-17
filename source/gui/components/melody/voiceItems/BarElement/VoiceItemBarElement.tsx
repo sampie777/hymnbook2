@@ -14,7 +14,7 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, melodyScale }) => {
 
   return <Animated.Text style={animatedStyle}>
     {item.type == "bar_thin_thick" ? "." : ""}
-    {item.type == "bar_thin" ? "!'" : ""}
+    {item.type == "bar_thin" ? "Ā" : ""}
   </Animated.Text>
 };
 

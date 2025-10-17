@@ -29,6 +29,19 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
   }
 
   const getNoteChar = (pitch: number) => {
+    if (pitch == -3) {
+      if (duration < 1 / 4) return "ƒ";
+      if (duration < 1 / 2) return "ˆ";
+      if (duration < 1 / 1) return "’";
+      return "—";
+    }
+    if (pitch == -4) {
+      if (duration < 1 / 4) return "‚";
+      if (duration < 1 / 2) return "‡";
+      if (duration < 1 / 1) return "‘";
+      return "–";
+    }
+
     if (pitch > 12) pitch -= 7;
     if (pitch < -2) pitch += 7;
 
@@ -41,7 +54,10 @@ const Note: React.FC<Props> = ({ pitch, duration }) => {
   }
 
   const getNoteDot = (pitch: number, duration: number) => {
-    return duration === 3 / 32 || duration === 3 / 16 || duration === 3 / 8 || duration === 5 / 8 || duration === 7 / 8 || duration === 3 / 4 || duration > 1 ? String.fromCharCode(C1_3 + pitch) : ""
+    if (!(duration === 3 / 32 || duration === 3 / 16 || duration === 3 / 8 || duration === 5 / 8 || duration === 7 / 8 || duration === 3 / 4 || duration > 1))
+      return ""
+    if (pitch == -3 || pitch == -4) return "œ"
+    return String.fromCharCode(C1_3 + pitch)
   }
 
   const noteAccidental = getAccidental(pitch.pitch, pitch.accidental);
