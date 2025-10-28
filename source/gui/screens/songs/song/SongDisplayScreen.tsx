@@ -141,11 +141,12 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       animateSongFadeIn();
     }
 
+    setIsMelodyLoading(showMelody)
+
     // Use a timeout so we can first scroll to the selected verse
     setTimeout(() => {
       // Determine which melody tune to show
       setSelectedMelody(getDefaultMelody(song))
-      setIsMelodyLoading(showMelody)
     }, 500);
   }, [song?.id]);
 
