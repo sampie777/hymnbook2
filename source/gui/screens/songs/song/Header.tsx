@@ -3,24 +3,25 @@ import Settings from "../../../../settings";
 import { Song } from "../../../../logic/db/models/songs/Songs";
 import { createHeader } from "../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { Animated, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface Props {
   song?: Song;
-  scale: Animated.Value;
+  scale: SharedValue<number>;
 }
 
 const Header: React.FC<Props> = ({ song, scale }) => {
   const styles = createStyles(useTheme());
   const animatedStyle = {
-    container: {
-      paddingTop: Animated.multiply(scale, styles.container.paddingTop),
-      paddingBottom: Animated.multiply(scale, styles.container.paddingBottom)
-    },
-    text: {
-      lineHeight: Animated.multiply(scale, styles.text.lineHeight),
-      fontSize: Animated.multiply(scale, styles.text.fontSize)
-    }
+    container: useAnimatedStyle(() => ({
+      paddingTop: scale.value * styles.container.paddingTop,
+      paddingBottom: scale.value * styles.container.paddingBottom
+    })),
+    text: useAnimatedStyle(() => ({
+      lineHeight: scale.value * styles.text.lineHeight,
+      fontSize: scale.value * styles.text.fontSize
+    }))
   };
 
   const headerText = createHeader(song);

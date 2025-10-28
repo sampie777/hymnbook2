@@ -2,31 +2,32 @@ import React from "react";
 import Settings from "../../../../settings";
 import { Song } from "../../../../logic/db/models/songs/Songs";
 import { createCopyright } from "../../../../logic/songs/utils";
-import { Animated, StyleSheet, useWindowDimensions } from "react-native";
+import { StyleSheet, useWindowDimensions } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useHeaderHeight } from "@react-navigation/elements";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface Props {
   song?: Song;
-  scale: Animated.Value;
+  scale: SharedValue<number>;
 }
 
 const Footer: React.FC<Props> = ({ song, scale }) => {
   const styles = createStyles(useTheme());
   const windowDimension = useWindowDimensions();
   const animatedStyle = {
-    container: {
-      paddingTop: Animated.multiply(scale, styles.container.paddingTop),
-      paddingBottom: Animated.multiply(scale, styles.container.paddingBottom)
-    },
-    divider: {
-      marginBottom: Animated.multiply(scale, styles.divider.marginBottom)
-    },
-    text: {
-      lineHeight: Animated.multiply(scale, styles.text.lineHeight),
-      fontSize: Animated.multiply(scale, styles.text.fontSize),
-      paddingBottom: Animated.multiply(scale, styles.text.paddingBottom)
-    }
+    container: useAnimatedStyle(() => ({
+      paddingTop: scale.value * styles.container.paddingTop,
+      paddingBottom: scale.value * styles.container.paddingBottom
+    })),
+    divider: useAnimatedStyle(() => ({
+      marginBottom: scale.value * styles.divider.marginBottom
+    })),
+    text: useAnimatedStyle(() => ({
+      lineHeight: scale.value * styles.text.lineHeight,
+      fontSize: scale.value * styles.text.fontSize,
+      paddingBottom: scale.value * styles.text.paddingBottom
+    })),
   };
 
   return <Animated.View

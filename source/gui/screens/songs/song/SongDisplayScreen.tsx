@@ -46,6 +46,8 @@ import { useSongHistory } from "../../../components/providers/SongHistoryProvide
 import { getFontScaleSync } from "react-native-device-info";
 import { AbcConfig } from "../../../components/melody/config.ts";
 import MelodySettingsModal from "./melody/MelodySettingsModal.tsx";
+import Header from "./Header.tsx";
+import Footer from "./Footer.tsx";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -549,8 +551,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                 selectedVerses: route.params.selectedVerses?.map(it => it.name),
                 songList: getSongListInformationForErrorReporting()
               })}
-              // ListHeaderComponent={<Header song={song} scale={animatedScale.current} />}
-              // ListFooterComponent={<Footer song={song} scale={animatedScale.current} />}
+              ListHeaderComponent={<Header song={song} scale={animatedScale} />}
+              ListFooterComponent={<Footer song={song} scale={animatedScale} />}
               removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
             />
           </ReAnimated.View>
