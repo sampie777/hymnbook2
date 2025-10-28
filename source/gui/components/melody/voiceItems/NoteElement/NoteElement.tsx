@@ -1,47 +1,34 @@
 import React from "react";
-import { Animated, StyleSheet } from "react-native";
-import { AbcGui } from "../../../../../logic/songs/abc/gui";
-import { AbcConfig } from "../../config";
+import { StyleSheet } from "react-native";
+import { useAbcMusicStyle } from "../../config";
 import Note from "./Note";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import Rest from "./Rest";
-import LinesSvg from "../../other/LinesSvg";
-import { AnimatedG, AnimatedSvg } from "../../../utils";
+import Lines from "../../other/Lines.tsx";
+import Animated, { SharedValue } from "react-native-reanimated";
+import { useTheme } from "../../../providers/ThemeProvider.tsx";
 
 interface Props {
-  note: VoiceItemNote;
-  animatedScale: Animated.Value;
+  note?: VoiceItemNote;
+  melodyScale: SharedValue<number>;
+  customNote?: string;
 }
 
 const NoteElement: React.FC<Props> = ({
                                         note,
-                                        animatedScale
+                                        melodyScale,
+                                        customNote,
                                       }) => {
   const styles = createStyles();
-  const noteWidth = AbcGui.calculateNoteWidth(note);
 
-  const animatedStyle = {
-    container: {
-      height: Animated.multiply(animatedScale, AbcConfig.totalLineHeight)
-    },
-    note: {
-      width: Animated.multiply(animatedScale, noteWidth)
-    }
-  };
+  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme())
 
-  // Only render melody components after the parent container has rendered,
-  // otherwise it will slow the render dramatically and freeze the UI
-  const melodyComponents = <>
-    {/* The following takes 1000 ms to generate */}
-    <LinesSvg animatedScale={animatedScale} />
+  return <Animated.View style={styles.container}>
+    <Lines melodyScale={melodyScale} />
 
-    <AnimatedSvg width={animatedStyle.note.width}
-                 height={styles.note.height}
-                 style={styles.note}>
-      <AnimatedG scale={animatedScale}
-                 x={Animated.divide(animatedStyle.note.width, 2)}
-                 y={Animated.multiply(animatedScale, AbcConfig.topSpacing)}>
-        {/* While the following takes only 400 ms to generate for the same data */}
+    <Animated.Text style={[styles.note, animatedStyle, (customNote ? {transform: undefined} : {})]} ellipsizeMode={"tail"}>
+      {!note ? customNote : <>
+        {" "}
         {note.pitches === undefined ? undefined :
           note.pitches?.map((it, index) =>
             <Note key={index + "_" + it.pitch}
@@ -49,26 +36,21 @@ const NoteElement: React.FC<Props> = ({
                   duration={note.duration} />
           )
         }
-        {note.rest === undefined ? undefined :
-          <Rest note={note} />
-        }
-      </AnimatedG>
-    </AnimatedSvg>
-  </>;
-
-  return <Animated.View style={[styles.container, animatedStyle.container]}>
-    {melodyComponents}
+        <Rest note={note} />
+        {" "}
+      </>}
+    </Animated.Text>
   </Animated.View>;
 };
 
 const createStyles = () => StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+    overflow: "hidden",
   },
   note: {
-    position: "absolute",
-    height: "125%"
+    transform: [{ scaleX: 1.35 }], // Make not a bit fatter so it's easier to see
   }
 });
 

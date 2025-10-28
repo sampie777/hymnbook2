@@ -4,13 +4,14 @@ import { isIOS } from "../../../../../logic/utils";
 import { AbcMelody } from "../../../../../logic/db/models/songs/AbcMelodies";
 import TrackPlayer from "react-native-track-player";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
 import PickerComponent from "../../../../components/popups/PickerComponent";
 import SliderComponent from "../../../../components/SliderComponent";
 import MelodySettingsModelHeader from "./MelodySettingsModelHeader";
+import { SharedValue } from "react-native-reanimated";
 
 interface Props {
   onClose?: () => void;
@@ -19,7 +20,7 @@ interface Props {
   melodies?: AbcMelody[];
   showMelodyForAllVerses: boolean;
   setShowMelodyForAllVerses?: (value: boolean) => void;
-  melodyScale: Animated.Value;
+  melodyScale: SharedValue<number>;
 }
 
 const MelodySettingsModal: React.FC<Props> = ({
@@ -60,7 +61,7 @@ const MelodySettingsModal: React.FC<Props> = ({
 
   const onScaleSliderValueChange = (value: number) => {
     setSongMelodyScale(value / 100);
-    melodyScale.setValue(value / 100);
+    melodyScale.value = value / 100;
   };
 
   return <>
@@ -127,7 +128,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                            onValueChanged={onScaleSliderValueChange}
                            onReset={() => {
                              setSongMelodyScale(1.0);
-                             melodyScale.setValue(1.0);
+                             melodyScale.value = 1.0;
                            }} />
         </View>
 

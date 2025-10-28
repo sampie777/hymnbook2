@@ -1,28 +1,32 @@
 import React, { memo } from "react";
-import { AbcConfig } from "../config";
-import { Line } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../providers/ThemeProvider";
+import { useAbcMusicStyle } from "../config.ts";
+import { useTheme } from "../../providers/ThemeProvider.tsx";
+import Animated, { SharedValue } from "react-native-reanimated";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 
 interface Props {
-  width?: number;
-  scale?: number;
+  melodyScale: SharedValue<number>
 }
 
-const Lines: React.FC<Props> = ({ width = 1000, scale = 1 }) => {
-  const styles = createStyles(useTheme());
-  return <>
-    {[0, 1, 2, 3, 4].map(it =>
-      <Line key={it}
-            x1={0} y1={it * AbcConfig.lineSpacing * scale}
-            x2={width} y2={it * AbcConfig.lineSpacing * scale}
-            stroke={styles.color}
-            strokeWidth={AbcConfig.lineWidth * scale} />
-    )}
-  </>;
+const Lines: React.FC<Props> = ({ melodyScale }) => {
+  const charWidth = 7.238098
+  const windowDimension = useWindowDimensions();
+  const theme = useTheme();
+
+  const animatedStyles = {
+    note: useAbcMusicStyle(melodyScale, theme)
+  }
+
+  return <View style={[styles.container, { transform: [{ scaleX: 2 * windowDimension.width / charWidth }] }]}>
+    <Animated.Text style={[animatedStyles.note, { color: theme.colors.notes.lines }]}>{"="}</Animated.Text>
+  </View>
 };
 
-const createStyles = ({ colors }: ThemeContextProps) => ({
-  color: colors.notes.lines
-});
-
 export default memo(Lines);
+
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+  },
+});

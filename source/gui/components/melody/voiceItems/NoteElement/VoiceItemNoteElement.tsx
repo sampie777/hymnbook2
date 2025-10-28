@@ -1,5 +1,5 @@
 import React from "react";
-import { Animated as RNAnimated, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Settings from "../../../../../settings";
 import { AbcConfig } from "../../config";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
@@ -11,48 +11,51 @@ import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated
 interface Props {
   note: VoiceItemNote;
   animatedScaleText: SharedValue<number>;
-  animatedScaleMelody: RNAnimated.Value;
+  melodyScale: SharedValue<number>;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, animatedScaleMelody }) => {
+const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melodyScale: melodyScale }) => {
   const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
-    ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + " " + it.divider)
+    ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + "" + it.divider)
     .join(" ") || "";
 
   const noteWidth = AbcGui.calculateNoteWidth(note);
   const animatedStyle = {
-    container: {
-      minWidth: RNAnimated.multiply(noteWidth, animatedScaleMelody)
-    },
+    container: useAnimatedStyle(() => ({
+      minWidth: melodyScale.value * noteWidth
+    })),
     text: useAnimatedStyle(() => ({
+      marginTop: animatedScaleText.value * 7,
       fontSize: animatedScaleText.value * AbcConfig.textSize,
       lineHeight: animatedScaleText.value * AbcConfig.textLineHeight,
       paddingHorizontal: animatedScaleText.value * (lyrics.endsWith("-") ? 1 : 5),
-      right: animatedScaleText.value * (lyrics.endsWith("-") ? -3 : 0)
-    }))
+      right: animatedScaleText.value * (lyrics.endsWith("-") ? -4 : 0)
+    })),
   };
 
-  return <RNAnimated.View style={[styles.container, animatedStyle.container]}>
+  return <Animated.View style={[styles.container, animatedStyle.container]}>
     <NoteElement note={note}
-                 animatedScale={animatedScaleMelody} />
+                 melodyScale={melodyScale} />
+
     <Animated.Text style={[styles.text, animatedStyle.text]}
                    selectable={Settings.enableTextSelection}>
       {lyrics}
     </Animated.Text>
-  </RNAnimated.View>;
+  </Animated.View>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flexDirection: "column",
     flexGrow: 1,
-    flexShrink: 1
+    flexShrink: 1,
+    marginHorizontal: -1,
   },
   text: {
     color: colors.text.default,
-    textAlign: "center"
+    textAlign: "center",
   }
 });
 

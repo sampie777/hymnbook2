@@ -1,8 +1,5 @@
-import React, { memo } from "react";
-import { AbcConfig } from "../../config";
-import { AbcPitch, StemDirection } from "../../../../../logic/songs/abc/abcjsTypes";
-import { Circle, Ellipse, G, Line, Path, Text } from "react-native-svg";
-import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
+import React from "react";
+import { AbcPitch } from "../../../../../logic/songs/abc/abcjsTypes";
 
 interface Props {
   pitch: AbcPitch,
@@ -10,120 +7,68 @@ interface Props {
 }
 
 const Note: React.FC<Props> = ({ pitch, duration }) => {
-  const styles = createStyles(useTheme());
-  const y = (10 - pitch.pitch) * (AbcConfig.lineSpacing / 2);
-  const width = AbcConfig.noteWidth;
+  // See: https://www.fontspace.com/musiqwik-font-f3722#action=charmap&id=rvL8
+  const C1_8 = "B".charCodeAt(0);
+  const C1_4 = "R".charCodeAt(0);
+  const C1_3 = "²".charCodeAt(0);
+  const C1_2 = "b".charCodeAt(0);
+  const C1_1 = "r".charCodeAt(0);
 
-  const fill = duration < 0.5;
-  let stem: StemDirection = "none";
-  if (duration < 1) {
-    if (pitch.pitch < 6) {
-      stem = "up";
-    } else {
-      stem = "down";
-    }
+  const Csharp = "Ò".charCodeAt(0);
+  const Cflat = "â".charCodeAt(0);
+  const Cnatural = "ò".charCodeAt(0);
+
+  const getAccidental = (pitch: number, accidental: string | undefined) => {
+    let baseC;
+    if (accidental === "sharp") baseC = Csharp;
+    else if (accidental === "flat") baseC = Cflat;
+    else if (accidental === "natural") baseC = Cnatural;
+    else return "";
+
+    return String.fromCharCode(baseC + pitch)
   }
 
-  const extraLines = [];
-  for (let i = 0; i >= pitch.pitch; i--) {
-    if ((pitch.pitch - i) % 2 === 0) {
-      extraLines.push(i / 2);
+  const getNoteChar = (pitch: number) => {
+    if (pitch == -3) {
+      if (duration < 1 / 4) return "ƒ";
+      if (duration < 1 / 2) return "ˆ";
+      if (duration < 1 / 1) return "’";
+      return "—";
     }
+    if (pitch == -4) {
+      if (duration < 1 / 4) return "‚";
+      if (duration < 1 / 2) return "‡";
+      if (duration < 1 / 1) return "‘";
+      return "–";
+    }
+
+    if (pitch > 12) pitch -= 7;
+    if (pitch < -2) pitch += 7;
+
+    let baseC = C1_1;
+    if (duration < 1 / 4) baseC = C1_8;
+    else if (duration < 1 / 2) baseC = C1_4;
+    else if (duration < 1 / 1) baseC = C1_2;
+
+    return String.fromCharCode(baseC + pitch);
   }
-  for (let i = 0; i <= pitch.pitch - 12; i++) {
-    if ((pitch.pitch - i) % 2 === 0) {
-      extraLines.push(i / 2);
-    }
+
+  const getNoteDot = (pitch: number, duration: number) => {
+    if (!(duration === 3 / 32 || duration === 3 / 16 || duration === 3 / 8 || duration === 5 / 8 || duration === 7 / 8 || duration === 3 / 4 || duration > 1))
+      return ""
+    if (pitch == -3 || pitch == -4) return "œ"
+    return String.fromCharCode(C1_3 + pitch)
   }
 
-  const stemX = stem === "up"
-    ? AbcConfig.stemWidth + width * 0.6
-    : AbcConfig.stemWidth - width * 1.4;
+  const noteAccidental = getAccidental(pitch.pitch, pitch.accidental);
+  const noteChar = getNoteChar(pitch.pitch);
+  const noteDot = getNoteDot(pitch.pitch, duration);
 
-  return <G y={y}>
-    {stem !== "up" ? undefined :
-      <Line x1={stemX} y1={-1.5}
-            x2={stemX} y2={-1 * AbcConfig.stemHeight}
-            stroke={styles.color}
-            strokeWidth={AbcConfig.stemWidth} />}
-    {stem !== "down" ? undefined :
-      <Line x1={stemX} y1={2.5}
-            x2={stemX} y2={AbcConfig.stemHeight}
-            stroke={styles.color}
-            strokeWidth={AbcConfig.stemWidth} />}
-
-    {duration !== 0.125 ? undefined :
-      <G x={stemX} y={(stem === "up" ? -1 : 1) * AbcConfig.stemHeight}
-         transform={stem === "up" ? undefined : "scale(1, -1)"}>
-        <Path
-          d={"M0 0 C 1 8 8 13 6 20 S 8 12 0 10 z"}
-          fill={styles.color}
-          fillRule={"evenodd"}
-          stroke={styles.color}
-          strokeWidth={0.7} />
-      </G>}
-
-    {extraLines.map(it =>
-      <Line key={it}
-            x1={-1 * width - 5} y1={it * AbcConfig.lineSpacing}
-            x2={width + 5} y2={it * AbcConfig.lineSpacing}
-            stroke={styles.color}
-            strokeWidth={AbcConfig.lineWidth} />)}
-
-    <Ellipse rotation={duration === 1 ? 0 : -30}
-             rx={width}
-             ry={duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
-             strokeWidth={2.5}
-             stroke={styles.color}
-             fill={fill ? styles.color : "none"} />
-
-    {duration !== 1 ? undefined :
-      <Ellipse rotation={duration === 1 ? 0 : -30}
-               rx={width + 2.3}
-               ry={duration === 1 ? 1.3 * AbcConfig.noteHeight : AbcConfig.noteHeight}
-               strokeWidth={2.0}
-               stroke={styles.color}
-               fill={"none"} />}
-
-
-    {!(duration === 0.375 || duration === 0.625) ? undefined :
-      <Circle cx={width + 6.5}
-              cy={pitch.pitch % 2 === 0 ? -1 * (AbcConfig.lineSpacing / 2) : 0}
-              r={2}
-              fill={styles.color} />
-    }
-
-    {pitch.accidental !== "sharp" ? undefined :
-      <Text fontSize={22}
-            x={-7} y={AbcConfig.sharpOffsetY}
-            fill={styles.color}
-            fontFamily={styles.fontFamily}
-            textAnchor={"end"}>♯</Text>}
-
-    {pitch.accidental !== "flat" ? undefined :
-      <Text fontSize={AbcConfig.flatFontSize}
-            x={-7} y={AbcConfig.flatOffsetY}
-            fill={styles.color}
-            fontFamily={styles.fontFamily}
-            textAnchor={"end"}>♭</Text>}
-
-    {pitch.accidental !== "natural" ? undefined :
-      <Text fontSize={28}
-            x={-7} y={AbcConfig.naturalOffsetY}
-            fill={styles.color}
-            fontFamily={styles.fontFamily}
-            textAnchor={"end"}>♮</Text>}
-  </G>;
+  return <>
+    {noteAccidental}
+    {noteChar}
+    {noteDot}
+  </>
 };
 
-const createStyles = ({ colors, fontFamily }: ThemeContextProps) => ({
-  color: colors.notes.color,
-  fontFamily: fontFamily.sansSerif,
-});
-
-const propsAreEqual = (prevProps: Props, nextProps: Props): boolean =>
-  prevProps.pitch.pitch === nextProps.pitch.pitch &&
-  prevProps.pitch.accidental === nextProps.pitch.accidental &&
-  prevProps.duration === nextProps.duration;
-
-export default memo(Note, propsAreEqual);
+export default Note

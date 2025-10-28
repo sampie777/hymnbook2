@@ -1,7 +1,5 @@
-import React, { memo, useMemo } from "react";
-import { getFontScaleSync } from "react-native-device-info";
-import { Animated as RNAnimated, StyleSheet, View } from "react-native";
-import { AbcConfig } from "./config";
+import React, { memo } from "react";
+import { StyleSheet, View } from "react-native";
 import { ABC } from "../../../logic/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
@@ -11,30 +9,26 @@ import { SharedValue } from "react-native-reanimated";
 interface Props {
   abc: string;
   animatedScale: SharedValue<number>;
-  melodyScale: RNAnimated.Value;
+  melodyScale: SharedValue<number>;
   onLoaded: () => void;
 }
 
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
-  const animatedScaleMelody = useMemo(() =>
-      RNAnimated.multiply(getFontScaleSync(),
-        RNAnimated.multiply(AbcConfig.baseScale, melodyScale)) as unknown as RNAnimated.Value, [])
-
   const abcSong = ABC.parse(abc);
 
   if (abcSong === undefined) return null;
 
   return <View style={styles.container} onLayout={onLoaded}>
-    <Clef animatedScale={animatedScaleMelody}
+    <Clef melodyScale={melodyScale}
           clef={abcSong.clef} />
-    <Key animatedScale={animatedScaleMelody}
+    <Key melodyScale={melodyScale}
          keySignature={abcSong.keySignature} />
 
     {abcSong.melody.map((it, index) =>
       <VoiceItemElement key={index}
                         item={it}
                         animatedScaleText={animatedScale}
-                        animatedScaleMelody={animatedScaleMelody}
+                        melodyScale={melodyScale}
       />)}
   </View>;
 };

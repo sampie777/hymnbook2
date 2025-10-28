@@ -51,7 +51,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to scan your card if you want to make a donation</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>
@@ -84,6 +84,8 @@
 		<string>Roboto-MediumItalic.ttf</string>
 		<string>Roboto-Thin.ttf</string>
 		<string>Roboto-ThinItalic.ttf</string>
+		<string>Musiqwik-regular-extended.ttf</string>
+		<string>MusiQwikCustom.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

@@ -76,6 +76,7 @@ export interface AbcPitchStartSlur {
 export interface AbcPitch {
   pitch: number;
   verticalPos: number;
+  name?: string;
   accidental?: AccidentalName;
   startTie?: {};
   endTie?: boolean;

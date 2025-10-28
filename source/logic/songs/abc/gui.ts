@@ -43,8 +43,11 @@ export namespace AbcGui {
     if (note.pitches?.some(it => it.accidental !== undefined)) {
       result += AbcConfig.accidentalWidth;
     }
-    if (note.duration > 0.25) {
-      result += note.duration * 8 * AbcConfig.noteWidth;
+    if (note.duration > 0.5) {
+      result += note.duration * 4 * AbcConfig.noteWidth;
+    }
+    if (note.rest) {
+      result += note.duration * 8 * AbcConfig.noteWidth
     }
     return result;
   };

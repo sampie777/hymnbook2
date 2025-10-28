@@ -1,23 +1,21 @@
 import React from "react";
-import { Animated } from "react-native";
 import { VoiceItemBar } from "../../../../../logic/songs/abc/abcjsTypes";
-import BarThinThick from "./BarThinThick";
-import BarThin from "./BarThin";
+import Animated, { SharedValue } from "react-native-reanimated";
+import { useAbcMusicStyle } from "../../config.ts";
+import { useTheme } from "../../../providers/ThemeProvider.tsx";
 
 interface Props {
   item: VoiceItemBar;
-  animatedScale: Animated.Value;
+  melodyScale: SharedValue<number>;
 }
 
-const VoiceItemBarElement: React.FC<Props> = ({ item, animatedScale }) => {
-  switch (item.type) {
-    case "bar_thin_thick":
-      return <BarThinThick animatedScale={animatedScale} />;
-    case "bar_thin":
-      return <BarThin animatedScale={animatedScale} />;
-    default:
-      return null;
-  }
+const VoiceItemBarElement: React.FC<Props> = ({ item, melodyScale }) => {
+  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme());
+
+  return <Animated.Text style={animatedStyle}>
+    {item.type == "bar_thin_thick" ? "." : ""}
+    {item.type == "bar_thin" ? "Ā" : ""}
+  </Animated.Text>
 };
 
 export default VoiceItemBarElement;
