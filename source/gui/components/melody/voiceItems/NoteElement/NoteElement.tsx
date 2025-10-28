@@ -9,13 +9,15 @@ import Animated, { SharedValue } from "react-native-reanimated";
 import { useTheme } from "../../../providers/ThemeProvider.tsx";
 
 interface Props {
-  note: VoiceItemNote;
+  note?: VoiceItemNote;
   melodyScale: SharedValue<number>;
+  customNote?: string;
 }
 
 const NoteElement: React.FC<Props> = ({
                                         note,
-                                        melodyScale
+                                        melodyScale,
+                                        customNote,
                                       }) => {
   const styles = createStyles();
 
@@ -24,19 +26,19 @@ const NoteElement: React.FC<Props> = ({
   return <Animated.View style={styles.container}>
     <Lines melodyScale={melodyScale} />
 
-    <Animated.Text style={[styles.note, animatedStyle]} ellipsizeMode={"tail"}>
-      {"  "}
-      {note.pitches === undefined ? undefined :
-        note.pitches?.map((it, index) =>
-          <Note key={index + "_" + it.pitch}
-                pitch={it}
-                duration={note.duration} />
-        )
-      }
-      {note.rest === undefined ? undefined :
+    <Animated.Text style={[styles.note, animatedStyle, (customNote ? {transform: undefined} : {})]} ellipsizeMode={"tail"}>
+      {!note ? customNote : <>
+        {" "}
+        {note.pitches === undefined ? undefined :
+          note.pitches?.map((it, index) =>
+            <Note key={index + "_" + it.pitch}
+                  pitch={it}
+                  duration={note.duration} />
+          )
+        }
         <Rest note={note} />
-      }
-      {"  "}
+        {" "}
+      </>}
     </Animated.Text>
   </Animated.View>;
 };
@@ -48,7 +50,6 @@ const createStyles = () => StyleSheet.create({
     overflow: "hidden",
   },
   note: {
-    position: "absolute",
     transform: [{ scaleX: 1.35 }], // Make not a bit fatter so it's easier to see
   }
 });

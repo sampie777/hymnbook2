@@ -1,8 +1,7 @@
 import React from "react";
-import { useAbcMusicStyle } from "../config";
 import { AbcClef } from "../../../../logic/songs/abc/abcjsTypes";
-import { useTheme } from "../../providers/ThemeProvider";
-import Animated, { SharedValue } from "react-native-reanimated";
+import { SharedValue } from "react-native-reanimated";
+import NoteElement from "../voiceItems/NoteElement/NoteElement.tsx";
 
 interface Props {
   melodyScale: SharedValue<number>;
@@ -10,11 +9,8 @@ interface Props {
 }
 
 const Clef: React.FC<Props> = ({ melodyScale, clef }) => {
-  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme());
-
-  return <Animated.Text style={animatedStyle}>
-    {clef.type !== "bass" ? "&" : "0"}
-  </Animated.Text>
+  return <NoteElement melodyScale={melodyScale}
+                      customNote={clef.type !== "bass" ? " &" : " 0"} />;
 };
 
 export default Clef;
