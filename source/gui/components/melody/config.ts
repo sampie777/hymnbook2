@@ -20,4 +20,5 @@ export const useAbcMusicStyle = (scale: SharedValue<number>, theme?: ThemeContex
     fontFamily: "MusiQwikCustom",
     fontSize: scale.value * AbcConfig.noteSize,
     color: theme?.colors.notes.color,
+    lineHeight: scale.value * 85,
   }))
