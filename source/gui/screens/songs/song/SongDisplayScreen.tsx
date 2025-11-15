@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import { FlatList, Gesture, GestureDetector, PinchGestureHandler } from "react-native-gesture-handler";
+import { FlatList, Gesture, GestureDetector } from "react-native-gesture-handler";
 import ReAnimated, {
   Easing as ReAnimatedEasing,
   runOnJS,
@@ -21,7 +21,7 @@ import {
   loadSongWithUuidOrId,
   storeLastUsedMelody
 } from "../../../../logic/songs/utils";
-import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
+import { hash, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import {
   Alert,
   BackHandler,
@@ -58,7 +58,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const flatListComponentRef = useRef<FlatList<Verse>>(null);
-  const pinchGestureHandlerRef = useRef<PinchGestureHandler>(undefined);
   const verseHeights = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
   const shownMelodyHashes: (string | null)[] = [];
@@ -96,7 +95,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           melodyScale.value = animatedScale.value * fontScaleSync * AbcConfig.baseScale * melodyBaseScale.value;
         })
         .onEnd((event) => {
-          verseHeights.current = {};
           animatedScale.value = baseScale.value * event.scale;
           baseScale.value = animatedScale.value;
           melodyScale.value = animatedScale.value * fontScaleSync * AbcConfig.baseScale * melodyBaseScale.value;
@@ -347,7 +345,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         viewIndex: viewIndex,
         songList: getSongListInformationForErrorReporting()
       });
-      scrollToFirstVerse(); // something does not work. Check scrolling on Pssalm 119
+      scrollToFirstVerse();
       return;
     }
 
@@ -531,7 +529,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           ]}>
             <VerseList
               ref={flatListComponentRef}
-              waitFor={isIOS ? undefined : pinchGestureHandlerRef}
               data={song?.verses}
               renderItem={renderContentItem}
               initialNumToRender={20}
