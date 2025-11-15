@@ -5,7 +5,7 @@ import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { runAsync } from "../../../logic/utils";
+import { runAsync } from "../../../logic/utils/utils.ts";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import SongExtraInfo from "../../components/SongExtraInfo";
 

@@ -1,5 +1,5 @@
 import { SongBundle as ServerSongBundle } from "../../server/models/ServerSongsModel";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";
 import { Server } from "../../server/server";

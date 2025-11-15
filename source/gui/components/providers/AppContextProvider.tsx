@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useState } from "react";
-import { isDevelopmentEnv } from "../../../logic/utils";
+import { isDevelopmentEnv } from "../../../logic/utils/utils.ts";
 
 export interface AppContextProps {
   developerMode: boolean;

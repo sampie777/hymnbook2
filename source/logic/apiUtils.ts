@@ -1,6 +1,6 @@
 import { rollbar } from "./rollbar";
 import { JsonResponse, JsonResponseType } from "./server/models";
-import { sanitizeErrorForRollbar } from "./utils";
+import { sanitizeErrorForRollbar } from "./utils/utils.ts";
 
 export const HttpCode = {
   Ok: 200,

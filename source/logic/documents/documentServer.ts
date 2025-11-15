@@ -2,7 +2,7 @@ import { api } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
 import { DocumentGroup as ServerDocumentGroup, ServerDocumentGroupUpdateStatus } from "../server/models/Documents";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 export namespace DocumentServer {
   export const fetchDocumentGroups = (includeOther: boolean = false): Promise<ServerDocumentGroup[]> => {

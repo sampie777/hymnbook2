@@ -3,7 +3,7 @@ import Db from "../../../logic/db/db";
 import { SongListModelSchema } from "../../../logic/db/models/songs/SongListModelSchema";
 import SongList from "../../../logic/songs/songList";
 import Settings from "../../../settings";
-import { objectToArrayIfNotAlready, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { objectToArrayIfNotAlready, sanitizeErrorForRollbar } from "../../../logic/utils/utils.ts";
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { rollbar } from "../../../logic/rollbar";

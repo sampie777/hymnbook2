@@ -3,7 +3,7 @@
  */
 
 import {AppRegistry} from "react-native";
-import {sanitizeErrorForRollbar} from "./source/logic/utils";
+import {sanitizeErrorForRollbar} from "./source/logic/utils/utils";
 import {rollbar, rollbarInit} from "./source/logic/rollbar";
 import {trackPlayerInit} from "./source/logic/songs/audiofiles/playerservice";
 import App from "./source/App";

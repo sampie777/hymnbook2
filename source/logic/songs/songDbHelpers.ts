@@ -3,7 +3,7 @@ import Db from "../db/db";
 import { SongListModel, SongListSongModel, SongListVerseModel } from "../db/models/songs/SongListModel";
 import { AbcMelody, AbcSubMelody } from "../db/models/songs/AbcMelodies";
 import { rollbar } from "../rollbar";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 export namespace SongDbHelpers {
   export const deleteAbcSubMelody = (obj: AbcSubMelody) => {

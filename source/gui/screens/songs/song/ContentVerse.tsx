@@ -11,7 +11,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import MelodyView from "../../../components/melody/MelodyView";
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
-import { runAsync } from "../../../../logic/utils";
+import { runAsync } from "../../../../logic/utils/utils.ts";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 interface ContentVerseProps {

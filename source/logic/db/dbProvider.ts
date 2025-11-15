@@ -1,6 +1,6 @@
 import Realm, { ObjectClass, ObjectSchema } from "realm";
 import { rollbar } from "../rollbar";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 interface DatabaseProps {
   path: string;

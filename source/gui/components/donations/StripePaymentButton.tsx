@@ -6,7 +6,7 @@ import LoadingIndicator from "../LoadingIndicator";
 import { rollbar } from "../../../logic/rollbar";
 import { isConnectionError } from '../../../logic/apiUtils';
 import { Donations } from "../../../logic/donations";
-import { ValidationError } from "../../../logic/utils";
+import { ValidationError } from "../../../logic/utils/utils.ts";
 import { useIsMounted } from "../utils";
 import config from "../../../config";
 import { useAppContext } from "../providers/AppContextProvider.tsx";

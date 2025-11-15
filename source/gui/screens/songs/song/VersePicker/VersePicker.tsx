@@ -18,7 +18,7 @@ import { ThemeContextProps, useTheme } from "../../../../components/providers/Th
 import { Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
-import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VersePickerRoute> {
 }

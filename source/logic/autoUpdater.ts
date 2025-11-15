@@ -1,7 +1,7 @@
 import Settings from "../settings";
 import { SongAutoUpdater } from "./songs/updater/songAutoUpdater";
 import { rollbar } from "./rollbar";
-import { delayed, sanitizeErrorForRollbar } from "./utils";
+import { delayed, sanitizeErrorForRollbar } from "./utils/utils.ts";
 import { DocumentAutoUpdater } from "./documents/updater/documentAutoUpdater";
 import { UpdaterContextProps } from "../gui/components/providers/UpdaterContextProvider";
 import { addEventListener } from "@react-native-community/netinfo";

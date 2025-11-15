@@ -9,7 +9,7 @@ import Db from "../../db/db";
 import { SongBundleSchema, SongMetadataSchema, SongSchema, VerseSchema } from "../../db/models/songs/SongsSchema";
 import { AbcMelodySchema, AbcSubMelodySchema } from "../../db/models/songs/AbcMelodiesSchema";
 import { AbcMelody, AbcSubMelody } from "../../db/models/songs/AbcMelodies";
-import { dateFrom, sanitizeErrorForRollbar } from "../../utils";
+import { dateFrom, sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { rollbar } from "../../rollbar";
 import config from "../../../config";
 import { SongProcessor } from "../songProcessor";

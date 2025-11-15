@@ -5,7 +5,7 @@ import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
 import { DocumentServer } from "../../../logic/documents/documentServer";
 import { DeepLinking } from "../../../logic/deeplinking";
 import { rollbar } from "../../../logic/rollbar";
-import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils/utils.ts";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";

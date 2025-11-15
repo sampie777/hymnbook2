@@ -38,7 +38,7 @@ import { ServerAuth } from "./logic/server/auth";
 import { closeDatabases, initDocumentDatabase, initSettingsDatabase, initSongDatabase } from "./logic/app";
 import ThemeProvider, { ThemeContextProps, useTheme } from "./gui/components/providers/ThemeProvider";
 import { Types } from "./gui/screens/downloads/TypeSelectBar";
-import { isPortraitMode, runAsync, sanitizeErrorForRollbar } from "./logic/utils";
+import { isPortraitMode, runAsync, sanitizeErrorForRollbar } from "./logic/utils/utils.ts";
 import SongList from "./logic/songs/songList";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import ErrorBoundary from "./gui/components/ErrorBoundary";

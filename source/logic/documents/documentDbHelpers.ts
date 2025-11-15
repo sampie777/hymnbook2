@@ -1,7 +1,7 @@
 import Db from "../db/db";
 import { Document, DocumentGroup } from "../db/models/documents/Documents";
 import { rollbar } from "../rollbar";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 export namespace DocumentDbHelpers {
   export const deleteDocument = (obj: Document) => {

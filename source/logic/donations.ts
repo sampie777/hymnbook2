@@ -4,7 +4,7 @@ import { ButtonType } from "@stripe/stripe-react-native/src/types/PlatformPay";
 import { api } from "./api";
 import { responseStatusToText } from "./apiUtils";
 import { rollbar } from "./rollbar";
-import { validate } from "./utils";
+import { validate } from "./utils/utils.ts";
 import type { InitPaymentSheetResult } from "@stripe/stripe-react-native/src/types";
 
 export namespace Donations {

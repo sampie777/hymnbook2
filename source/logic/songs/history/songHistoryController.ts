@@ -3,7 +3,7 @@ import { SongHistory, SongHistoryAction, } from '../../db/models/songs/SongHisto
 import Db from '../../db/db';
 import { SongHistorySchema } from '../../db/models/songs/SongHistorySchema';
 import { rollbar } from '../../rollbar';
-import { sanitizeErrorForRollbar } from '../../utils';
+import { sanitizeErrorForRollbar } from '../../utils/utils.ts';
 import { SongListSongModel } from "../../db/models/songs/SongListModel";
 
 export namespace SongHistoryController {

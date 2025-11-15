@@ -1,6 +1,6 @@
 import { DocumentProcessor } from "../documentProcessor";
 import { rollbar } from "../../rollbar";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { DocumentGroup } from "../../db/models/documents/Documents";
 import { DocumentServer } from "../documentServer";
 import { DocumentUpdater } from "./documentUpdater";

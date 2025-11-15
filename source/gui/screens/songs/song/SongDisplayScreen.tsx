@@ -21,7 +21,7 @@ import {
   loadSongWithUuidOrId,
   storeLastUsedMelody
 } from "../../../../logic/songs/utils";
-import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import {
   Alert,
   BackHandler,
@@ -347,7 +347,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         viewIndex: viewIndex,
         songList: getSongListInformationForErrorReporting()
       });
-      scrollToFirstVerse();
+      scrollToFirstVerse(); // something does not work. Check scrolling on Pssalm 119
       return;
     }
 

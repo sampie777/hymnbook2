@@ -3,7 +3,7 @@ import { SettingPatch } from "../../models/Settings";
 import { SettingPatchSchema } from "../../models/SettingsSchema";
 import { patch1_ConvertingStringSearchButtonPlacementEnumToStringIndexed } from "./patches/1";
 import { rollbar } from "../../../rollbar";
-import { sanitizeErrorForRollbar } from "../../../utils";
+import { sanitizeErrorForRollbar } from "../../../utils/utils.ts";
 import { patch2_PreFillSettingsSongSearchSelectedSongBundleUuids } from "./patches/2";
 
 export namespace SettingsDbPatch {

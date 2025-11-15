@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, Platform, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import Settings from "../../../settings";
-import { openLink } from "../../../logic/utils";
+import { openLink } from "../../../logic/utils/utils.ts";
 import { rollbar } from "../../../logic/rollbar";
 import { parseDocument } from "htmlparser2";
 import { mergeStyleSheets } from "../utils";

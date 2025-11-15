@@ -13,7 +13,7 @@ import UrlLink from "../../components/UrlLink";
 import PayPalPaymentButton from "../../components/donations/PayPalPaymentButton";
 import BuyMeACoffeePaymentButton from "../../components/donations/BuyMeACoffeePaymentButton";
 import DonationForm from "../../components/donations/DonationForm";
-import { isAndroid, isIOS } from "../../../logic/utils";
+import { isAndroid, isIOS } from "../../../logic/utils/utils.ts";
 
 
 const AboutScreen: React.FC<{

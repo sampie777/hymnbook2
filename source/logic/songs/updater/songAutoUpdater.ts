@@ -2,7 +2,7 @@ import { Server } from "../../server/server";
 import { SongProcessor } from "../songProcessor";
 import { SongUpdater } from "./songUpdater";
 import { rollbar } from "../../rollbar";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { SongBundle } from "../../db/models/songs/Songs";
 
 export namespace SongAutoUpdater {

@@ -9,7 +9,7 @@ import TrackPlayer, {
   RepeatMode
 } from "react-native-track-player";
 import { rollbar } from "../../rollbar";
-import { executeInForeGround, sanitizeErrorForRollbar } from "../../utils";
+import { executeInForeGround, sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import Settings from "../../../settings";
 
 export namespace AudioFiles {

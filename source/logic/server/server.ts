@@ -2,7 +2,7 @@ import { api } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
 import { ServerSongBundleUpdateStatus, SongBundle } from "./models/ServerSongsModel";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { Song, SongAudio } from "../db/models/songs/Songs";
 
 export namespace Server {

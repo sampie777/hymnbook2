@@ -2,7 +2,7 @@ import React, { DependencyList, useCallback, useEffect, useRef, useState } from 
 import { rollbar } from "../../logic/rollbar";
 import { Animated, Insets } from "react-native";
 import Svg, { G } from "react-native-svg";
-import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils";
+import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils/utils.ts";
 import { useFocusEffect } from "@react-navigation/native";
 import { SongBundle } from "../../logic/db/models/songs/Songs";
 import Db from "../../logic/db/db";

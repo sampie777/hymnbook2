@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, Text, TextInput } from 'react-native';
 import Settings from '../../../../settings.ts';
-import { isIOS } from '../../../../logic/utils.ts';
+import { isIOS } from '../../../../logic/utils/utils.ts';
 import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider.tsx';
 import config from '../../../../config.ts';
 

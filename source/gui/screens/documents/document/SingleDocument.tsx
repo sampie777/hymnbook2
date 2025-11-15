@@ -14,7 +14,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Document } from "../../../../logic/db/models/documents/Documents";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { keepScreenAwake } from "../../../../logic/utils";
+import { keepScreenAwake } from "../../../../logic/utils/utils.ts";
 import { DocumentRoute, ParamList } from "../../../../navigation";
 import { Gesture, GestureDetector, ScrollView as GestureScrollView, } from "react-native-gesture-handler";
 import Animated, {

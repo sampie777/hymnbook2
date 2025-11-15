@@ -3,7 +3,7 @@ import config from "../../config";
 import { Song, SongBundle, SongMetadataType, Verse } from "../db/models/songs/Songs";
 import { SongSchema } from "../db/models/songs/SongsSchema";
 import { rollbar } from "../rollbar";
-import { isDbItemValid, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils";
+import { isDbItemValid, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { AbcMelody } from "../db/models/songs/AbcMelodies";
 import { distance } from "fastest-levenshtein";
 

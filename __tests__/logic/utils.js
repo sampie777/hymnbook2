@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import {objectToArrayIfNotAlready, readableFileSizeIEC, readableFileSizeSI} from "../../source/logic/utils";
+import {objectToArrayIfNotAlready, readableFileSizeIEC, readableFileSizeSI} from "../../source/logic/utils/utils";
 
 describe("test utils", () => {
   it("converts any object to an array type", () => {

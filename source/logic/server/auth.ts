@@ -4,7 +4,7 @@ import { authApi } from "./authApi";
 import { AccessRequestStatus } from "./models";
 import { rollbar } from "../rollbar";
 import { HttpCode, HttpError, parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
-import { emptyPromise, emptyPromiseWithValue, sanitizeErrorForRollbar } from "../utils";
+import { emptyPromise, emptyPromiseWithValue, sanitizeErrorForRollbar } from "../utils/utils.ts";
 import config from "../../config";
 
 export class AccessRequestResponse {

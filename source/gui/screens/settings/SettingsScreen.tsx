@@ -6,7 +6,7 @@ import { AccessRequestStatus } from "../../../logic/server/models";
 import { rollbar } from "../../../logic/rollbar";
 import { Analytics } from "../../../logic/analytics";
 import { SongSearch } from "../../../logic/songs/songSearch";
-import { capitalize, format, isAndroid } from "../../../logic/utils";
+import { capitalize, isAndroid } from "../../../logic/utils/utils.ts";
 import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
@@ -114,7 +114,7 @@ const SettingsScreen: React.FC = () => {
     <SettingComponent title={"Last update timestamp"}
                       description={"Timestamp of list time the app checked for database updates"}
                       onLongPress={(setValue) => setValue(0)}
-                      valueRender={value => format(new Date(value), "%H:%MM:%SS %d-%m-%YYYY")}
+                      valueRender={value => new Date(value).format("%H:%MM:%SS %d-%m-%YYYY")}
                       keyName={"autoUpdateDatabasesLastCheckTimestamp"} />
     <SettingComponent title={"App opened times"}
                       keyName={"appOpenedTimes"}

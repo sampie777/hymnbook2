@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { isIOS } from "../../../logic/utils";
+import { isIOS } from "../../../logic/utils/utils.ts";
 import DeviceInfo from "react-native-device-info";
 
 interface Props {

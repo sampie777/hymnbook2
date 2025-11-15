@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { objectToArrayIfNotAlready } from "../../../../logic/utils";
+import { objectToArrayIfNotAlready } from "../../../../logic/utils/utils.ts";
 
 interface KeyProps extends PropsWithChildren {
   onPress?: () => void;

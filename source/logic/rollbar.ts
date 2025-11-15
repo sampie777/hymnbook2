@@ -4,7 +4,7 @@ import { getVersion } from "react-native-device-info";
 import Config from "react-native-config";
 import { Security } from "./security";
 import config from "../config";
-import { isDevelopmentEnv } from "./utils";
+import { isDevelopmentEnv } from "./utils/utils.ts";
 
 
 export const rollbar = new Client({

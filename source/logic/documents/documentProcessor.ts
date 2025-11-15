@@ -1,6 +1,6 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
-import { Result, sanitizeErrorForRollbar } from "../utils";
+import { Result, sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { DocumentGroup } from "../db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../server/models/Documents";
 import { DocumentGroupSchema } from "../db/models/documents/DocumentsSchema";

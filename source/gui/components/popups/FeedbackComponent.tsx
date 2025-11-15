@@ -1,7 +1,7 @@
 import React from "react";
 import config from "../../../config";
 import { Survey } from "../../../logic/survey";
-import { openLink } from "../../../logic/utils";
+import { openLink } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ConfirmationModal from "./ConfirmationModal";

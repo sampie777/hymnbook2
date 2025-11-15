@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { rollbar } from "../../../../logic/rollbar";
-import { sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { Song, SongMetadataType, Verse } from "../../../../logic/db/models/songs/Songs";
 import { useFocusEffect } from "@react-navigation/native";

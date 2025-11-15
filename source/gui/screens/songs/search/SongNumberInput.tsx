@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { isIOS } from "../../../../logic/utils";
+import { isIOS } from "../../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { SongNumberInputTextAndroid, SongNumberInputTextMacBook, } from './SongNumberInputText.tsx';
 import DeviceInfo from "react-native-device-info";

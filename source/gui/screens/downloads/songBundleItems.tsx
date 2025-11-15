@@ -1,7 +1,7 @@
 import React from "react";
 import { SongBundle as LocalSongBundle } from "../../../logic/db/models/songs/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
-import { languageAbbreviationToFullName } from "../../../logic/utils";
+import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";

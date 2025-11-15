@@ -1,5 +1,5 @@
 import {BackendError, HttpCode, HttpError, parseJscheduleResponse} from "../../../source/logic/apiUtils";
-import {emptyPromiseWithValue} from "../../../source/logic/utils";
+import {emptyPromiseWithValue} from "../../../source/logic/utils/utils";
 import {JsonResponseType} from "../../../source/logic/server/models";
 import {describe, expect, it} from '@jest/globals';
 

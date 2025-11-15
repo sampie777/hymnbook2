@@ -1,7 +1,7 @@
 import React from "react";
 import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
-import { languageAbbreviationToFullName } from "../../../logic/utils";
+import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";

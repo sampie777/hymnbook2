@@ -1,7 +1,7 @@
 import { DatabaseProvider } from "../dbProvider";
 import Db from "../db";
 import { rollbar } from "../../rollbar";
-import { isAndroid, sanitizeErrorForRollbar } from "../../utils";
+import { isAndroid, sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { hymnbookApiEndpoint } from "../../api";
 import { Security } from "../../security";
 import Settings from "../../../settings";

@@ -6,7 +6,7 @@ import { SongProcessor } from "../../../logic/songs/songProcessor";
 import { Server } from "../../../logic/server/server";
 import { rollbar } from "../../../logic/rollbar";
 import { DeepLinking } from "../../../logic/deeplinking";
-import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../../logic/utils/utils.ts";
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";

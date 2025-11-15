@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import MultiPickerComponent from "./MultiPickerComponent";
 import { SongBundle } from "../../../logic/db/models/songs/Songs";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
-import { languageAbbreviationToFullName } from "../../../logic/utils";
+import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
 
 interface Props {
   bundles: SongBundle[];

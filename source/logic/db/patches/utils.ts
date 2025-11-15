@@ -1,5 +1,5 @@
 import { rollbar } from "../../rollbar";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { DatabaseProvider } from "../dbProvider";
 
 

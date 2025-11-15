@@ -4,7 +4,7 @@ import { rollbar } from "./rollbar";
 import Db from "./db/db";
 import Settings from "../settings";
 import { ThemeContextProps } from "../gui/components/providers/ThemeProvider";
-import { sanitizeErrorForRollbar } from "./utils";
+import { sanitizeErrorForRollbar } from "./utils/utils.ts";
 import { AudioFiles } from "./songs/audiofiles/audiofiles";
 import { SongDbPatch } from "./db/patches/songs";
 import { DocumentDbPatch } from "./db/patches/documents";

@@ -5,7 +5,7 @@ import { rollbar } from "../../../../logic/rollbar";
 import { InterruptedError } from "../../../../logic/InterruptedError";
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import { debounce, useIsMounted } from "../../../components/utils";
-import { isIOS, runAsync, sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { isIOS, runAsync, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";

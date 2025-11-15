@@ -14,7 +14,7 @@ import SongItem from "./SongItem";
 import ScreenHeader from "./ScreenHeader";
 import DeleteAllButton from "./DeleteAllButton";
 import { rollbar } from "../../../logic/rollbar";
-import { isDbItemValid, sanitizeErrorForRollbar } from "../../../logic/utils";
+import { isDbItemValid, sanitizeErrorForRollbar } from "../../../logic/utils/utils.ts";
 import SongListInstructions from "./SongListInstructions";
 import { SongHistoryController } from "../../../logic/songs/history/songHistoryController";
 import { useCollectionListener } from "../../components/utils";

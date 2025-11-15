@@ -1,6 +1,6 @@
 import { Document as ServerDocument, DocumentGroup as ServerDocumentGroup } from "../../server/models/Documents";
 import { Document, DocumentGroup } from "../../db/models/documents/Documents";
-import { dateFrom } from "../../utils";
+import { dateFrom } from "../../utils/utils.ts";
 
 export namespace DocumentUpdaterUtils {
   export interface ConversionState {

@@ -2,7 +2,7 @@ import { Document, DocumentGroup } from "../db/models/documents/Documents";
 import Db from "../db/db";
 import { rollbar } from "../rollbar";
 import { DocumentGroupSchema, DocumentSchema } from "../db/models/documents/DocumentsSchema";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 export const getParentForDocumentGroup = (group: DocumentGroup): (DocumentGroup & Realm.Object<DocumentGroup>) | null => {
   if (group === undefined || group.isRoot) {

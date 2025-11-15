@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, ColorValue, StyleSheet } from 'react-native';
-import { isIOS } from "../../logic/utils";
+import { isIOS } from "../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 
 interface Props {

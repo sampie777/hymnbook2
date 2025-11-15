@@ -7,7 +7,7 @@ import { EasterEggs } from "../../../../../logic/songs/easterEggs";
 import { isSongValid } from "../../../../../logic/songs/utils";
 import SongList from "../../../../../logic/songs/songList";
 import { SearchResultItemBaseComponent } from "../SearchResultItemBaseComponent";
-import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
 import { rollbar } from "../../../../../logic/rollbar";
 
 type Props = {

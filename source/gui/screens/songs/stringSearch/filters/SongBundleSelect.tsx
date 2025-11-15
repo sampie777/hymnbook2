@@ -4,7 +4,7 @@ import { ThemeContextProps, useTheme } from "../../../../components/providers/Th
 import { SongBundle } from "../../../../../logic/db/models/songs/Songs";
 import Db from "../../../../../logic/db/db";
 import { rollbar } from "../../../../../logic/rollbar";
-import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
 import { SongBundleSchema } from "../../../../../logic/db/models/songs/SongsSchema";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";

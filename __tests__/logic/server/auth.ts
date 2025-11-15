@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import Settings from "../../../source/settings";
 import { AccessRequestResponse, ServerAuth } from "../../../source/logic/server/auth";
 import { authApi } from "../../../source/logic/server/authApi";
-import { emptyPromise, emptyPromiseWithValue } from "../../../source/logic/utils";
+import { emptyPromise, emptyPromiseWithValue } from "../../../source/logic/utils/utils.ts";
 import { AccessRequestStatus, JsonResponseType } from "../../../source/logic/server/models";
 import Mock = jest.Mock;
 

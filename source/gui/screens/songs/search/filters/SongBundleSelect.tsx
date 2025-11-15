@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import Db from "../../../../../logic/db/db";
 import { rollbar } from "../../../../../logic/rollbar";
-import { sanitizeErrorForRollbar } from "../../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";

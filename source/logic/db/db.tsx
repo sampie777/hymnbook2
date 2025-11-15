@@ -9,7 +9,7 @@ import { SettingPatchSchema, SettingSchema } from "./models/SettingsSchema";
 import { DocumentGroupSchema, DocumentSchema } from "./models/documents/DocumentsSchema";
 import { AbcMelodySchema, AbcSubMelodySchema } from "./models/songs/AbcMelodiesSchema";
 import { SongHistorySchema } from "./models/songs/SongHistorySchema";
-import { isTestEnv } from "../utils";
+import { isTestEnv } from "../utils/utils.ts";
 import { DocumentHistorySchema } from "./models/documents/DocumentHistorySchema";
 
 const generatePath = (name: string): string => {

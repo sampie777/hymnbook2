@@ -1,5 +1,5 @@
 import { DocumentGroup as ServerDocumentGroup } from "../../server/models/Documents";
-import { sanitizeErrorForRollbar } from "../../utils";
+import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { DocumentServer } from "../documentServer";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";

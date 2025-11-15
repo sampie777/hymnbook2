@@ -1,4 +1,4 @@
-import { delayed } from "../../../../utils";
+import { delayed } from "../../../../utils/utils.ts";
 import Db from "../../../db";
 import { SongBundle } from "../../../models/songs/Songs";
 import { SongBundleSchema } from "../../../models/songs/SongsSchema";

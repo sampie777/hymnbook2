@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
-import { sanitizeErrorForRollbar } from "../../../../logic/utils";
+import { sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import { Document, DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";

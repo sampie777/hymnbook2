@@ -7,7 +7,7 @@ import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
 import { Song } from "../../../../logic/db/models/songs/Songs";
 import { SongSearch } from "../../../../logic/songs/songSearch";
-import { isPortraitMode } from "../../../../logic/utils";
+import { isPortraitMode } from "../../../../logic/utils/utils.ts";
 import { isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";

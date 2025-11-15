@@ -2,7 +2,7 @@ import { Setting } from "../db/models/Settings";
 import Db from "../db/db";
 import { SettingSchema } from "../db/models/SettingsSchema";
 import { rollbar } from "../rollbar";
-import { sanitizeErrorForRollbar } from "../utils";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { UpdateMode } from "realm";
 
 class SettingsProvider {

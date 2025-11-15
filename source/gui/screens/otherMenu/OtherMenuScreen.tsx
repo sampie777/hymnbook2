@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Types } from "../downloads/TypeSelectBar";
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
-import { shareApp } from "../../../logic/utils";
+import { shareApp } from "../../../logic/utils/utils.ts";
 import { Survey } from "../../../logic/survey";
 import {
   AboutRoute,
