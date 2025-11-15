@@ -5,7 +5,7 @@ import Note from "./Note";
 import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import Rest from "./Rest";
 import Lines from "../../other/Lines.tsx";
-import Animated, { SharedValue } from "react-native-reanimated";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useTheme } from "../../../providers/ThemeProvider.tsx";
 
 interface Props {
@@ -21,12 +21,17 @@ const NoteElement: React.FC<Props> = ({
                                       }) => {
   const styles = createStyles();
 
-  const animatedStyle = useAbcMusicStyle(melodyScale, useTheme())
+  const animatedStyle = {
+    container: useAnimatedStyle(() => ({
+      marginBottom: melodyScale.value * -15,
+    })),
+    note: useAbcMusicStyle(melodyScale, useTheme()),
+  }
 
-  return <Animated.View style={styles.container}>
+  return <Animated.View style={[styles.container, animatedStyle.container]}>
     <Lines melodyScale={melodyScale} />
 
-    <Animated.Text style={[styles.note, animatedStyle, (customNote ? {transform: undefined} : {})]} ellipsizeMode={"tail"}>
+    <Animated.Text style={[styles.note, animatedStyle.note, (customNote ? {transform: undefined} : {})]} ellipsizeMode={"tail"}>
       {!note ? customNote : <>
         {" "}
         {note.pitches === undefined ? undefined :
