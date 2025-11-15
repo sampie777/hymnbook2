@@ -124,6 +124,7 @@ const MelodySettingsModal: React.FC<Props> = ({
           <Text style={styles.scaleLabel}>Melody size:</Text>
 
           <SliderComponent value={Math.round(songMelodyScale * 100)}
+                           maxValue={150}
                            onValueChange={isIOS && !showMelodyForAllVerses ? onScaleSliderValueChange : undefined} // iOS is more performant
                            onValueChanged={onScaleSliderValueChange}
                            onReset={() => {
