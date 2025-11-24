@@ -241,3 +241,18 @@ If you add a setting, you'll be fine. If you remove a setting, you'll probably b
 ### Prettier
 
 We use the prettier configuration in `node_modules/prettier`. Setup Webstorm to use this by checking the 'Manual Prettier configuration' option under Prettier in Settings.
+
+
+### Icon
+
+The main icon is stored in `./assets/logo/logo.xcf`. 
+
+#### Android
+
+Export a foreground and a background version of the main light icon. Then, open Android Studio. In the Android view (not project view), right click on `app/res` folder and select New -> Image Asset. Select the foreground icon for the foreground layer and the background icon for the background layer. This will generate all needed icon sizes for Android.
+
+#### iOS
+
+Export a light and a dark version of the icon. Then run `npx react-native-asset` to install the icons for iOS. 
+
+> NOTE: This method was used before the logo.png and logo_dark.png files were moved to the subfolder `logo`. You might want to move them back before running the command, or fix the command to use the correct path.
