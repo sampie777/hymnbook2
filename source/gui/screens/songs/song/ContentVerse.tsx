@@ -23,6 +23,7 @@ interface ContentVerseProps {
   setIsMelodyLoading: (value: boolean) => void;
   onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
+  showMelodyOnSeparateLines: boolean;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -33,7 +34,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      activeMelody,
                                                      setIsMelodyLoading,
                                                      onLayout,
-                                                     highlightText
+                                                     highlightText,
+                                                     showMelodyOnSeparateLines
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [showMelody, setShowMelody] = useState(false);
@@ -170,6 +172,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
           //   "w: A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12"}
           animatedScale={scale}
           melodyScale={melodyScale}
+          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
         />
       </View>
     }

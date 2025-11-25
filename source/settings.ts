@@ -22,7 +22,6 @@ class SettingsClass extends SettingsBaseClass {
 
   // Songs
   songScale = 1.0;
-  songMelodyScale = 1.0;
   animateScrolling = true;
   songFadeIn = true;
   showJumpToNextVerseButton = true;
@@ -31,7 +30,11 @@ class SettingsClass extends SettingsBaseClass {
   coloredVerseTitles = true;
   highlightSelectedVerses = true;
   animateAddedToSongList = true;
+
+  // Songs melody
+  songMelodyScale = 1.0;
   showMelodyForAllVerses = false;
+  showMelodyOnSeparateLines = true;
   melodyShowedTimes = 0;
 
   // Songs audio

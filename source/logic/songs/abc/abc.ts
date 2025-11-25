@@ -54,7 +54,12 @@ export namespace ABC {
     lyrics: string
   }
 
-  export const parse = (abc: string): Song | undefined => {
+  /**
+   *
+   * @param abc
+   * @param compactSpacing If true, the `y` spaces will be compacted to a single `y` so they can be used to split the melody into separate lines.
+   */
+  export const parse = (abc: string, compactSpacing: boolean = false): Song | undefined => {
     // Remove comments
     abc = abc.replace(/%.*/g, "");
 
@@ -62,7 +67,10 @@ export namespace ABC {
     abc = extractInfoFields(abc, song);
 
     const { notes, lyrics } = extractNotesAndLyrics(abc);
-    const abcMelodyOneLiner = notes + "\n" + "w: " + lyrics;
+    const processedNotes = !compactSpacing ? notes : notes
+      .replaceAll(/y+/g, "y")
+      .replaceAll(/y *\|/g, "|");
+    const abcMelodyOneLiner = processedNotes + "\n" + "w: " + lyrics;
 
     const convertedAbc = addInfoFieldsToMelody(song, abcMelodyOneLiner);
     const tuneObject = ABC.convertStringToAbcTune(convertedAbc);

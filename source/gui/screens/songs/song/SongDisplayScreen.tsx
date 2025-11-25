@@ -70,6 +70,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [showMelodySettings, setShowMelodySettings] = useState(false);
   const [showMelody, setShowMelody] = useState(false);
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
+  const [showMelodyOnSeparateLines, setShowMelodyOnSeparateLines] = useState(Settings.showMelodyOnSeparateLines);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
   const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
@@ -478,7 +479,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
                          setIsMelodyLoading={setIsMelodyLoading}
                          onLayout={storeVerseHeight}
-                         highlightText={highlightText} />;
+                         highlightText={highlightText}
+                         showMelodyOnSeparateLines={showMelodyOnSeparateLines} />;
   };
 
   const listViewabilityConfigPairs = React.useRef<ViewabilityConfigCallbackPairs>([
@@ -512,6 +514,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         melodies={song?.abcMelodies}
         showMelodyForAllVerses={showMelodyForAllVerses}
         setShowMelodyForAllVerses={setShowMelodyForAllVerses}
+        showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+        setShowMelodyOnSeparateLines={setShowMelodyOnSeparateLines}
         melodyScale={melodyScale} />}
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>

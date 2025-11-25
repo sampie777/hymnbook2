@@ -260,6 +260,11 @@ const SettingsScreen: React.FC = () => {
                                   onLongPress={(setValue) => setValue(false)}
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Display melody on separate lines (experimental)"}
+                                  description={"Display each text line on a new row instead of all text on the same line."}
+                                  onLongPress={(setValue) => setValue(true)}
+                                  keyName={"showMelodyOnSeparateLines"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}
                   isVisible={showAdvancedSettings} />
