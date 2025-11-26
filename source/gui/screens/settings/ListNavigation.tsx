@@ -14,9 +14,16 @@ const ListNavigation: React.FC<Props> = ({ headerVerticalPositions, onItemPress 
   const styles = createStyles(useTheme());
   const animationValue = useSharedValue(0);
   const [listHeight, setListHeight] = useState(0);
+  const [items, setItems] = useState<[string, number][]>([])
 
-  const sortedList = Object.entries(headerVerticalPositions)
-    .sort((a, b) => a[1] - b[1])
+  useEffect(() => {
+    const sortedList = Object.entries(headerVerticalPositions)
+      .sort((a, b) => a[1] - b[1])
+
+    if (sortedList.length == 0) return;
+
+    setItems(sortedList)
+  }, [headerVerticalPositions]);
 
   const toggleVisibility = () => setVisible(!visible);
 
@@ -46,7 +53,7 @@ const ListNavigation: React.FC<Props> = ({ headerVerticalPositions, onItemPress 
 
     <Animated.View style={[styles.list, animatedStyle]}
                    onLayout={event => setListHeight(event.nativeEvent.layout.height)}>
-      {sortedList.map(it =>
+      {items.map(it =>
         <TouchableOpacity key={it[0]}
                           onPress={() => onPress(it[0], it[1])}>
           <Text style={styles.text}>{it[0]}</Text>
