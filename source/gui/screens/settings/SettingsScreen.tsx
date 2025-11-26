@@ -255,15 +255,16 @@ const SettingsScreen: React.FC = () => {
                                    isVisible={showAdvancedSettings}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
                                    defaultValue={1.0} />
+          <SettingSwitchComponent title={"Compact melody view"}
+                                  description={"Disable to view each line on its own line."}
+                                  onLongPress={(setValue) => setValue(true)}
+                                  keyName={"showMelodyOnSeparateLines"}
+                                  invertValue={true}
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Show melody for all verses (experimental)"}
                                   description={"Show melody for all verses instead of the first (selected) verse. This may result in reduces performance."}
                                   onLongPress={(setValue) => setValue(false)}
                                   keyName={"showMelodyForAllVerses"}
-                                  isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Display melody on separate lines (experimental)"}
-                                  description={"Display each text line on a new row instead of all text on the same line."}
-                                  onLongPress={(setValue) => setValue(true)}
-                                  keyName={"showMelodyOnSeparateLines"}
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}

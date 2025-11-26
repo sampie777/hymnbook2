@@ -97,7 +97,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                                    hideBorder={true} />
 
         <View style={styles.melodyContainer}>
-          <Text style={styles.label}>Melody</Text>
+          <Text style={styles.label}>Variant</Text>
 
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
@@ -112,9 +112,9 @@ const MelodySettingsModal: React.FC<Props> = ({
           </TouchableOpacity>
         </View>
 
-        <SwitchComponent title={"Display melody on separate lines"}
+        <SwitchComponent title={"Compact view"}
                          isVisible={true}
-                         value={showMelodyOnSeparateLines}
+                         value={!showMelodyOnSeparateLines}
                          onPress={() => {
                            Settings.showMelodyOnSeparateLines = !showMelodyOnSeparateLines;
                            setShowMelodyOnSeparateLines?.(!showMelodyOnSeparateLines);

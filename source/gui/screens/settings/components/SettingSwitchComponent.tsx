@@ -7,6 +7,7 @@ import { BaseSettingProps, createStyles as settingComponentCreateStyles } from "
 interface BooleanSettingProps extends BaseSettingProps<boolean> {
   onPress?: (setValue: (newValue: boolean) => void, key: string | undefined, newValue: boolean) => void;
   onLongPress?: (setValue: (newValue: boolean) => void, key: string | undefined) => void;
+  invertValue?: boolean;
 }
 
 const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
@@ -17,7 +18,8 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
                                                                  onPress = undefined,
                                                                  onLongPress = undefined,
                                                                  isVisible = true,
-                                                                 lessObviousStyling = false
+                                                                 lessObviousStyling = false,
+                                                                 invertValue = false,
                                                                }) => {
   if (!isVisible) {
     return null;
@@ -70,11 +72,11 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
           </Text>}
       </View>
       {value === undefined ? undefined :
-        <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, newValue)}
+        <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, invertValue ? !newValue : newValue)}
                 trackColor={{ true: undefined, false: styles.switchComponent.backgroundColor }}
                 thumbColor={styles.switchComponent.color}
                 ios_backgroundColor={styles.switchComponent.backgroundColor}
-                value={_value} />}
+                value={invertValue ? !_value : _value} />}
     </View>
   </TouchableWithoutFeedback>;
 };
