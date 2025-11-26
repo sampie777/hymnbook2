@@ -81,7 +81,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const melodyBaseScale = useSharedValue(AbcConfig.baseScale * Settings.songMelodyScale * AbcConfig.baseScale);
   const melodyScale = useSharedValue(AbcConfig.baseScale * Settings.songMelodyScale * Settings.songScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
-  const reAnimatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
+  const animatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
 
   const storeNewScaleValue = (scale: number) => {
@@ -263,7 +263,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       setShowMelody(false);
     }
 
-    reAnimatedOpacity.value = 0;
+    animatedOpacity.value = 0;
 
     if (fadeInTimeout.current != null) {
       clearTimeout(fadeInTimeout.current);
@@ -292,7 +292,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       });
     }
 
-    reAnimatedOpacity.value = withTiming(1, {
+    animatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: ReAnimatedEasing.inOut(ReAnimatedEasing.ease)
     }, () => runOnJS(afterSongFadeIn)());
@@ -529,7 +529,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         <GestureDetector gesture={tapGesture}>
           <ReAnimated.View style={[
             styles.contentSectionListContainer,
-            useAnimatedStyle(() => ({ opacity: reAnimatedOpacity.value }))
+            useAnimatedStyle(() => ({ opacity: animatedOpacity.value }))
           ]}>
             <VerseList
               ref={flatListComponentRef}
