@@ -20,6 +20,8 @@ interface Props {
   melodies?: AbcMelody[];
   showMelodyForAllVerses: boolean;
   setShowMelodyForAllVerses?: (value: boolean) => void;
+  showMelodyOnSeparateLines: boolean;
+  setShowMelodyOnSeparateLines?: (value: boolean) => void;
   melodyScale: SharedValue<number>;
 }
 
@@ -30,6 +32,8 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 melodies = [],
                                                 showMelodyForAllVerses,
                                                 setShowMelodyForAllVerses,
+                                                showMelodyOnSeparateLines,
+                                                setShowMelodyOnSeparateLines,
                                                 melodyScale
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
@@ -92,20 +96,8 @@ const MelodySettingsModal: React.FC<Props> = ({
                                    iconName={"music"}
                                    hideBorder={true} />
 
-        <SwitchComponent title={"Show melody for all verses"}
-                         isVisible={true}
-                         value={showMelodyForAllVerses}
-                         onPress={() => {
-                           Settings.showMelodyForAllVerses = !showMelodyForAllVerses;
-                           setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
-                         }}
-                         onLongPress={() => {
-                           Settings.showMelodyForAllVerses = false;
-                           setShowMelodyForAllVerses?.(false);
-                         }} />
-
         <View style={styles.melodyContainer}>
-          <Text style={styles.label}>Melody</Text>
+          <Text style={styles.label}>Variant</Text>
 
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
@@ -119,6 +111,30 @@ const MelodySettingsModal: React.FC<Props> = ({
             {melodies?.length < 2 ? undefined : <Icon name={"caret-down"} style={styles.arrow} />}
           </TouchableOpacity>
         </View>
+
+        <SwitchComponent title={"Compact view"}
+                         isVisible={true}
+                         value={!showMelodyOnSeparateLines}
+                         onPress={() => {
+                           Settings.showMelodyOnSeparateLines = !showMelodyOnSeparateLines;
+                           setShowMelodyOnSeparateLines?.(!showMelodyOnSeparateLines);
+                         }}
+                         onLongPress={() => {
+                           Settings.showMelodyOnSeparateLines = true;
+                           setShowMelodyOnSeparateLines?.(true);
+                         }} />
+
+        <SwitchComponent title={"Show melody for all verses"}
+                         isVisible={true}
+                         value={showMelodyForAllVerses}
+                         onPress={() => {
+                           Settings.showMelodyForAllVerses = !showMelodyForAllVerses;
+                           setShowMelodyForAllVerses?.(!showMelodyForAllVerses);
+                         }}
+                         onLongPress={() => {
+                           Settings.showMelodyForAllVerses = false;
+                           setShowMelodyForAllVerses?.(false);
+                         }} />
 
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleLabel}>Melody size:</Text>

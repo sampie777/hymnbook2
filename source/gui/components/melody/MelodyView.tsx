@@ -11,25 +11,34 @@ interface Props {
   animatedScale: SharedValue<number>;
   melodyScale: SharedValue<number>;
   onLoaded: () => void;
+  showMelodyOnSeparateLines: boolean
 }
 
-const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded }) => {
+const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded, showMelodyOnSeparateLines }) => {
   const abcSong = ABC.parse(abc);
 
   if (abcSong === undefined) return null;
 
-  return <View style={styles.container} onLayout={onLoaded}>
-    <Clef melodyScale={melodyScale}
-          clef={abcSong.clef} />
-    <Key melodyScale={melodyScale}
-         keySignature={abcSong.keySignature} />
+  const multiLineMelody = showMelodyOnSeparateLines
+    ? abcSong.melody
+    : [abcSong.melody.flatMap(line => line)]
 
-    {abcSong.melody.map((it, index) =>
-      <VoiceItemElement key={index}
-                        item={it}
-                        animatedScaleText={animatedScale}
-                        melodyScale={melodyScale}
-      />)}
+  return <View onLayout={onLoaded}>
+    {multiLineMelody.map((line, lineIndex) =>
+      <View key={"line-" + lineIndex} style={styles.container}>
+        {lineIndex > 0 ? null : <>
+          <Clef melodyScale={melodyScale}
+                clef={abcSong.clef} />
+          <Key melodyScale={melodyScale}
+               keySignature={abcSong.keySignature} />
+        </>}
+        {line.map((it, index) =>
+          <VoiceItemElement key={index}
+                            item={it}
+                            animatedScaleText={animatedScale}
+                            melodyScale={melodyScale}
+          />)}
+      </View>)}
   </View>;
 };
 
@@ -38,7 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",
-    marginLeft: -10
+    marginLeft: -10,
   }
 });
 
