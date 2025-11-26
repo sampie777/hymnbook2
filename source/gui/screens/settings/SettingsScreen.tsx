@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useRef, useState } from "react";
+import React, { RefObject, useRef, useState } from "react";
 import Settings from "../../../settings";
 import { ServerAuth } from "../../../logic/server/auth";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
@@ -11,23 +11,48 @@ import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useAppContext } from "../../components/providers/AppContextProvider";
-import { Platform, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import {
+  LayoutChangeEvent,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View
+} from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
+import ListNavigation from "./ListNavigation.tsx";
 
-const Header: React.FC<{ title: string, isVisible?: boolean }> = ({ title, isVisible = true }) => {
+const Header: React.FC<{
+  title: string,
+  isVisible?: boolean,
+  register?: (name: string, y: number) => void,
+}> = ({
+        title,
+        isVisible = true,
+        register,
+      }) => {
   const styles = createStyles(useTheme());
-  return !isVisible ? null : <Text style={styles.settingHeader}>{title}</Text>;
+  const onLayout = (event: LayoutChangeEvent) => {
+    if (register == null) return;
+    register?.(title, event.nativeEvent.layout.y);
+  }
+
+  return !isVisible ? null : <Text style={styles.settingHeader} onLayout={onLayout}>{title}</Text>;
 };
 
 const SettingsScreen: React.FC = () => {
-  const confirmModalCallback: MutableRefObject<((isConfirmed: boolean) => void) | undefined> =
+  const scrollViewComponent = useRef<ScrollView>(null);
+  const confirmModalCallback: RefObject<((isConfirmed: boolean) => void) | undefined> =
     useRef(undefined);
   const [confirmModalMessage, setConfirmModalMessage] = useState<string | undefined>(undefined);
   const [isReloading, setReloading] = useState(false);
   const [easterEggEnableDevModeCount, setEasterEggEnableDevModeCount] = useState(0);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [headerVerticalPositions, setHeaderVerticalPositions] = useState<{ [key: string]: number }>({});
 
   const appContext = useAppContext();
   const theme = useTheme();
@@ -87,7 +112,24 @@ const SettingsScreen: React.FC = () => {
     }
   };
 
-  function getAuthenticationStateAsMessage() {
+  const registerHeaderVerticalPosition = (title: string, y: number) => {
+    // Don't cause render update
+    if (Object.keys(headerVerticalPositions).includes(title)) {
+      headerVerticalPositions[title] = y;
+      return;
+    }
+
+    setHeaderVerticalPositions(prev => ({
+      ...prev,
+      [title]: y
+    }))
+  }
+
+  const scrollToY = (y: number) => {
+    scrollViewComponent.current?.scrollTo(y);
+  }
+
+  const getAuthenticationStateAsMessage = () => {
     if (ServerAuth.isAuthenticated()) {
       return "Authenticated";
     } else if (Settings.authStatus === AccessRequestStatus.DENIED) {
@@ -96,12 +138,12 @@ const SettingsScreen: React.FC = () => {
       return "Requested...";
     }
     return "Not authenticated";
-  }
+  };
 
   const authenticationStatus = getAuthenticationStateAsMessage();
 
   const developerSettings = <>
-    <Header title={"Developer"} />
+    <Header title={"Developer"} register={registerHeaderVerticalPosition} />
     <SettingSwitchComponent title={"Tutorial completed"}
                             onLongPress={(setValue) => setValue(false)}
                             keyName={"tutorialCompleted"} />
@@ -133,9 +175,14 @@ const SettingsScreen: React.FC = () => {
                             onPress={() => appContext.setDeveloperMode(false)} />
   </>;
 
+
   return (
     <View style={styles.container}>
+      <ListNavigation headerVerticalPositions={headerVerticalPositions}
+                      onItemPress={(_, y) => scrollToY(y)} />
+
       <ScrollView
+        ref={scrollViewComponent}
         contentContainerStyle={styles.scrollContainer}
         refreshControl={<RefreshControl onRefresh={reloadSettings}
                                         refreshing={isReloading} />}>
@@ -149,13 +196,17 @@ const SettingsScreen: React.FC = () => {
                                 value={showAdvancedSettings}
                                 lessObviousStyling={true}
                                 onPress={(setValue, sKey, newValue) => {
+                                  setHeaderVerticalPositions({});
                                   setValue(newValue);
                                   setShowAdvancedSettings(newValue);
                                   increaseEasterEggDevMode();
                                 }} />
 
         {isReloading ? null : <>
-          <Header title={"Display"} />
+          {/*Do this to force re-render and thus re-register Display component to our header positions*/}
+          {showAdvancedSettings && <View style={{ height: 1 }} />}
+
+          <Header title={"Display"} register={registerHeaderVerticalPosition} />
           <SettingComponent title={"Theme"}
                             keyName={"theme"}
                             description={"Tap here to switch between dark en light mode."}
@@ -181,7 +232,7 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"keepScreenAwake"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Songs"} />
+          <Header title={"Songs"} register={registerHeaderVerticalPosition} />
           <SettingsSliderComponent title={"Song text size"}
                                    keyName={"songScale"}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
@@ -248,7 +299,9 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"useNativeFlatList"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Song melody"} isVisible={showAdvancedSettings} />
+          <Header title={"Song melody"}
+                  isVisible={showAdvancedSettings}
+                  register={registerHeaderVerticalPosition} />
           <SettingsSliderComponent title={"Song melody size"}
                                    keyName={"songMelodyScale"}
                                    description={"The size of the melody notes relative to the size of the text."}
@@ -262,7 +315,8 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}
-                  isVisible={showAdvancedSettings} />
+                  isVisible={showAdvancedSettings}
+                  register={registerHeaderVerticalPosition} />
           <SettingsSliderComponent title={"Document text size"}
                                    keyName={"documentScale"}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
@@ -279,7 +333,8 @@ const SettingsScreen: React.FC = () => {
                                   keyName={"documentsResetPathToRoot"}
                                   isVisible={showAdvancedSettings} />
 
-          <Header title={"Other"} />
+          <Header title={"Other"}
+                  register={registerHeaderVerticalPosition} />
           <SettingComponent
             title={"Auto update databases"}
             keyName={"autoUpdateDatabasesCheckIntervalInDays"}
@@ -314,7 +369,9 @@ const SettingsScreen: React.FC = () => {
                                   onLongPress={(setValue) => setValue(true)}
                                   keyName={"shareUsageData"} />
 
-          <Header title={"Backend"} isVisible={showAdvancedSettings} />
+          <Header title={"Backend"}
+                  isVisible={showAdvancedSettings}
+                  register={registerHeaderVerticalPosition} />
           <SettingComponent title={"Authentication status with backend"}
                             value={authenticationStatus}
                             isVisible={showAdvancedSettings}
