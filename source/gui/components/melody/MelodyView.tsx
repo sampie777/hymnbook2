@@ -5,7 +5,6 @@ import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
 import { SharedValue } from "react-native-reanimated";
-import { VoiceItem } from "../../../logic/songs/abc/abcjsTypes.ts";
 
 interface Props {
   abc: string;
@@ -16,21 +15,13 @@ interface Props {
 }
 
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded, showMelodyOnSeparateLines }) => {
-  const abcSong = ABC.parse(abc, showMelodyOnSeparateLines);
+  const abcSong = ABC.parse(abc);
 
   if (abcSong === undefined) return null;
 
-  const multiLineMelody = !showMelodyOnSeparateLines
-    ? [abcSong.melody]
-    : abcSong.melody
-      .reduce<VoiceItem[][]>((previousValue, currentValue) => {
-        if (previousValue.length == 0 || (currentValue.el_type == "note" && currentValue.rest?.type == "spacer")) {
-          previousValue.push([currentValue])
-        } else {
-          previousValue[previousValue.length - 1].push(currentValue)
-        }
-        return previousValue
-      }, [])
+  const multiLineMelody = showMelodyOnSeparateLines
+    ? abcSong.melody
+    : [abcSong.melody.flatMap(line => line)]
 
   return <View onLayout={onLoaded}>
     {multiLineMelody.map((line, lineIndex) =>

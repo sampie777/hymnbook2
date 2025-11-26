@@ -107,9 +107,9 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(14);
-    expect(song.melody[0].lyric[0].syllable).toBe("ik");
-    expect(song.melody[8].lyric[0].syllable).toBe("waar ik");
+    expect(song.melody[0].length).toBe(14);
+    expect(song.melody[0][0].lyric[0].syllable).toBe("ik");
+    expect(song.melody[0][8].lyric[0].syllable).toBe("waar ik");
   });
 
   it("parses abc with comments to song object", () => {
@@ -136,10 +136,11 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("Psalm 15");
-    expect(song.melody.length).toBe(67);
-    expect(song.melody[2].duration).toBe(0.5);
-    expect(song.melody[2].lyric[0].syllable).toBe("Wie");
-    expect(song.melody[8].lyric[0].syllable).toBe("en");
+    expect(song.melody.length).toBe(5);
+    expect(song.melody.reduce((prev, current) => prev + current.length, 0)).toBe(67);
+    expect(song.melody[0][2].duration).toBe(0.5);
+    expect(song.melody[4][4].lyric[0].syllable).toBe("Wie");
+    expect(song.melody[4][10].lyric[0].syllable).toBe("en");
     expect(song.keySignature.root).toBe("F");
     expect(song.keySignature.acc).toBe("");
     expect(song.clef.type).toBe("treble");
@@ -167,8 +168,9 @@ describe("test abc parse", () => {
       "w: Wie styg so hoog in heil en eer, dat hy met U, die gro-te Ko-ning, met U, die al-ler-hoog-ste HEER, kan op u heil'-ge berg ver-keer en in-trek in u heil'-ge wo-ning?\n";
 
     const song = ABC.parse(data);
-    expect(song.melody.length).toBe(67);
-    expect(song.melody[2].duration).toBe(0.5);
+    expect(song.melody.length).toBe(5);
+    expect(song.melody.reduce((prev, current) => prev + current.length, 0)).toBe(67);
+    expect(song.melody[0][2].duration).toBe(0.5);
   });
 
   it("parses abc with headers to the right beat length with 1/8", () => {
@@ -193,8 +195,9 @@ describe("test abc parse", () => {
       "w: Wie styg so hoog in heil en eer, dat hy met U, die gro-te Ko-ning, met U, die al-ler-hoog-ste HEER, kan op u heil'-ge berg ver-keer en in-trek in u heil'-ge wo-ning?\n";
 
     const song = ABC.parse(data);
-    expect(song.melody.length).toBe(67);
-    expect(song.melody[2].duration).toBe(0.25);
+    expect(song.melody.length).toBe(5);
+    expect(song.melody.reduce((prev, current) => prev + current.length, 0)).toBe(67);
+    expect(song.melody[0][2].duration).toBe(0.25);
   });
 
   it("parses abc with fake header codes in text", () => {
@@ -234,9 +237,11 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(26);
+    expect(song.melody[0].length).toBe(26);
 
-    const lyrics = song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable));
+    const lyrics = song.melody.flatMap(line =>
+      line.flatMap(it =>
+        it.lyric.flatMap(lyric => lyric.syllable)))
     expect(lyrics).toStrictEqual(["A", "BC", "", "D", "EF", "", "G", "a", "b", "c", "def", "", "", "g", "A", "B", "CD", "", "E", "FGa", "", "", "b", "cd", "", "e"]);
   });
 
@@ -249,8 +254,8 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(4);
-    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+    expect(song.melody[0].length).toBe(4);
+    expect(song.melody[0].flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
       .toStrictEqual(["A", "BC", "", "D"]);
   });
 
@@ -263,8 +268,8 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(4);
-    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+    expect(song.melody[0].length).toBe(4);
+    expect(song.melody[0].flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
       .toStrictEqual(["A", "BC", "", "D"]);
   });
 
@@ -277,8 +282,8 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(4);
-    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+    expect(song.melody[0].length).toBe(4);
+    expect(song.melody[0].flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
       .toStrictEqual(["A", "BC", "", "D"]);
   });
 
@@ -291,8 +296,8 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(4);
-    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+    expect(song.melody[0].length).toBe(4);
+    expect(song.melody[0].flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
       .toStrictEqual(["A", "B", "C", "D"]);
   });
 
@@ -305,8 +310,8 @@ describe("test abc parse", () => {
     const song = ABC.parse(data);
     expect(song.referenceNumber).toBe("1");
     expect(song.title).toBe("this is the title");
-    expect(song.melody.length).toBe(4);
-    expect(song.melody.flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
+    expect(song.melody[0].length).toBe(4);
+    expect(song.melody[0].flatMap(melody => melody.lyric.flatMap(lyric => lyric.syllable)))
       .toStrictEqual(["A", "B", "C", "D"]);
   });
 });

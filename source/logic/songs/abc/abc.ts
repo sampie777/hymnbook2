@@ -35,7 +35,7 @@ export namespace ABC {
     voice?: string;
     referenceNumber?: string;
     transcription?: string;
-    melody: VoiceItem[] = [];
+    melody: VoiceItem[][] = [];
     clef: AbcClef = {
       clefPos: 4,
       type: "treble",
@@ -54,26 +54,16 @@ export namespace ABC {
     lyrics: string
   }
 
-  /**
-   *
-   * @param abc
-   * @param compactSpacing If true, the `y` spaces will be compacted to a single `y` so they can be used to split the melody into separate lines.
-   */
-  export const parse = (abc: string, compactSpacing: boolean = false): Song | undefined => {
+  export const parse = (abc: string): Song | undefined => {
     // Remove comments
-    abc = abc.replace(/%.*/g, "");
+    abc = abc
+      .replace(/%.*/g, "")
+      .replaceAll(/\n+/g, "\n")
 
     const song = new Song();
-    abc = extractInfoFields(abc, song);
+    extractInfoFields(abc, song);
 
-    const { notes, lyrics } = extractNotesAndLyrics(abc);
-    const processedNotes = !compactSpacing ? notes : notes
-      .replaceAll(/y+/g, "y")
-      .replaceAll(/y *\|/g, "|");
-    const abcMelodyOneLiner = processedNotes + "\n" + "w: " + lyrics;
-
-    const convertedAbc = addInfoFieldsToMelody(song, abcMelodyOneLiner);
-    const tuneObject = ABC.convertStringToAbcTune(convertedAbc);
+    const tuneObject = ABC.convertStringToAbcTune(abc);
     if (tuneObject === undefined) {
       return undefined;
     }
@@ -81,7 +71,7 @@ export namespace ABC {
     // Get the first staff only (thus in case of multiple instrument play, only take the first instrument)
     song.clef = tuneObject.lines!![0].staff!![0].clef || song.clef;
     song.keySignature = tuneObject.lines!![0].staff!![0].key || song.keySignature;
-    song.melody = tuneObject.lines!![0].staff!![0].voices!![0];
+    song.melody = tuneObject.lines!!.map(line => line.staff!![0].voices!![0])
 
     processSlurs(song);
 
@@ -89,6 +79,10 @@ export namespace ABC {
   };
 
   const processSlurs = (song: ABC.Song) => {
+    song.melody.forEach(processSlursForLine)
+  };
+
+  const processSlursForLine = (line: VoiceItem[]) => {
     const emptyLyric = (): AbcLyric[] => [{ divider: " ", syllable: "" }];
 
     const shiftLyrics = (notes: VoiceItemNote[], fromIndex: number) => {
@@ -107,7 +101,7 @@ export namespace ABC {
       });
     };
 
-    const notes = song.melody
+    const notes = line
       .filter(it => it.el_type == "note")
       .map(it => it as VoiceItemNote)
       .filter(it => it.pitches);
@@ -295,11 +289,33 @@ export namespace ABC {
     );
   };
 
+  // Match each lyric line with each melody line
+  export const combineMelodyAndLyrics = (melody: string, lyrics: string): string => {
+    const song = new Song();
+    const rawMelody = extractInfoFields(melody, song);
+
+    const melodyLines = rawMelody
+      .replaceAll(/\n+/g, "\n")
+      .split("\n")
+    const lyricLines = lyrics
+      .replaceAll(/\n+/g, "\n")
+      .split("\n")
+
+    const mixedMelody: string[] = [];
+    for (let i = 0; i < Math.max(melodyLines.length, lyricLines.length); i++) {
+      // When the lines are not of equal length, we allow to show empty lines for missing lines.
+      mixedMelody.push(melodyLines[i] ?? "C ".repeat(10));
+      mixedMelody.push(lyricLines[i] ? "w: " + lyricLines[i] : "");
+    }
+
+    return addInfoFieldsToMelody(song, mixedMelody.join("\n")).trim();
+  }
+
   export const generateAbcForVerse = (verse: Verse, activeMelody?: AbcMelody): string => {
     if (activeMelody === undefined) {
       return "";
     }
     const melody = AbcSubMelody.getForVerse(activeMelody, verse)?.melody || activeMelody.melody;
-    return melody + "\n" + "w: " + verse.abcLyrics?.replace(/\n/g, " ");
+    return combineMelodyAndLyrics(melody, verse.abcLyrics || "")
   };
 }

@@ -18,7 +18,7 @@ describe("abc generates abc for verse", () => {
     const abcMelody = new AbcMelody("", "123\n456");
     const verse = new Verse(0, "", "", "", "", "abc\ndef");
 
-    expect(ABC.generateAbcForVerse(verse, abcMelody)).toBe("123\n456\nw: abc def")
+    expect(ABC.generateAbcForVerse(verse, abcMelody)).toBe("X:1\n123\nw: abc\n456\nw: def")
   });
 
   it("returns sub melody if available with lyrics", () => {
@@ -26,6 +26,20 @@ describe("abc generates abc for verse", () => {
     const abcMelody = new AbcMelody("", "123\n456", "", [subMelody]);
     const verse = new Verse(0, "", "", "", "verse", "abc\ndef");
 
-    expect(ABC.generateAbcForVerse(verse, abcMelody)).toBe("111\n222\nw: abc def")
+    expect(ABC.generateAbcForVerse(verse, abcMelody)).toBe("X:1\n111\nw: abc\n222\nw: def")
+  });
+
+  it("returns melody with lyrics and extra notes if there are more lyrics than notes", () => {
+    const abcMelody = new AbcMelody("", "123\n456");
+    const verse = new Verse(0, "", "", "", "", "abc\ndef\nghi");
+
+    expect(ABC.generateAbcForVerse(verse, abcMelody)).toBe("X:1\n123\nw: abc\n456\nw: def\nC C C C C C C C C C \nw: ghi")
+  });
+
+  it("returns melody with lyrics and extra notes without their lyrics", () => {
+    const abcMelody = new AbcMelody("", "123\n456\n789");
+    const verse = new Verse(0, "", "", "", "", "abc\ndef");
+
+    expect(ABC.generateAbcForVerse(verse, abcMelody)).toBe("X:1\n123\nw: abc\n456\nw: def\n789")
   });
 });
