@@ -196,7 +196,7 @@ const SettingsScreen: React.FC = () => {
                                 value={showAdvancedSettings}
                                 lessObviousStyling={true}
                                 onPress={(setValue, sKey, newValue) => {
-                                  setHeaderVerticalPositions({});
+                                  if (!newValue) setHeaderVerticalPositions({});
                                   setValue(newValue);
                                   setShowAdvancedSettings(newValue);
                                   increaseEasterEggDevMode();
