@@ -43,8 +43,6 @@ import AudioPlayerControls from "./melody/audiofiles/AudioPlayerControls";
 import SongList from "../../../../logic/songs/songList";
 import { useAppContext } from "../../../components/providers/AppContextProvider";
 import { useSongHistory } from "../../../components/providers/SongHistoryProvider";
-import { getFontScaleSync } from "react-native-device-info";
-import { AbcConfig } from "../../../components/melody/config.ts";
 import MelodySettingsModal from "./melody/MelodySettingsModal.tsx";
 import Header from "./Header.tsx";
 import Footer from "./Footer.tsx";
@@ -75,11 +73,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
   const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
 
-  // Use built in Animated, because Reanimated doesn't work with SVGs (react-native-svg)
-  const baseScale = useSharedValue(Settings.songScale);
-  const animatedScale = useSharedValue(0.95 * Settings.songScale);
-  const melodyBaseScale = useSharedValue(AbcConfig.baseScale * Settings.songMelodyScale * AbcConfig.baseScale);
-  const melodyScale = useSharedValue(AbcConfig.baseScale * Settings.songMelodyScale * Settings.songScale);
+  const baseScale = useSharedValue(Settings.songScale); // Just store the value so it is accesible by the UI thread
+  const animatedScale = useSharedValue(baseScale.value);
+  const melodyScale = useSharedValue(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const animatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
   const styles = createStyles(useTheme());
@@ -88,21 +84,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     Settings.songScale *= scale;
   }
 
-  const fontScaleSync = getFontScaleSync();
-  const pinchGesture = useMemo(() => {
-      return Gesture.Pinch()
-        .onUpdate((event) => {
-          animatedScale.value = baseScale.value * event.scale;
-          melodyScale.value = animatedScale.value * fontScaleSync * AbcConfig.baseScale * melodyBaseScale.value;
-        })
-        .onEnd((event) => {
-          animatedScale.value = baseScale.value * event.scale;
-          baseScale.value = animatedScale.value;
-          melodyScale.value = animatedScale.value * fontScaleSync * AbcConfig.baseScale * melodyBaseScale.value;
-          runOnJS(storeNewScaleValue)(event.scale);
-        });
-    }
-    , [])
+  const pinchGesture = useMemo(() => Gesture.Pinch()
+    .onUpdate((event) => {
+      animatedScale.value = baseScale.value * event.scale;
+    })
+    .onEnd((event) => {
+      animatedScale.value = baseScale.value * event.scale;
+      baseScale.value = animatedScale.value;
+      runOnJS(storeNewScaleValue)(event.scale);
+    }), [])
 
   // For debugging issue #199 only: open settings screen after 3x tap.
   const tapGesture = useMemo(() =>

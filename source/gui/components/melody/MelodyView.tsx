@@ -4,7 +4,9 @@ import { ABC } from "../../../logic/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
-import { SharedValue } from "react-native-reanimated";
+import { SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
+import { getFontScaleSync } from "react-native-device-info";
+import { AbcConfig } from "./config.ts";
 
 interface Props {
   abc: string;
@@ -15,6 +17,15 @@ interface Props {
 }
 
 const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded, showMelodyOnSeparateLines }) => {
+  const fontScaleSync = getFontScaleSync();
+  const abcBaseScale = useSharedValue(AbcConfig.baseScale); // Just store the value so it is accesible by the UI thread
+  const animatedMelodyScale = useDerivedValue(() =>
+      fontScaleSync
+      * animatedScale.value
+      * melodyScale.value
+      * abcBaseScale.value
+    , [animatedScale, melodyScale]);
+
   const abcSong = ABC.parse(abc);
 
   if (abcSong === undefined) return null;
@@ -27,16 +38,16 @@ const MelodyView: React.FC<Props> = ({ abc, animatedScale, melodyScale, onLoaded
     {multiLineMelody.map((line, lineIndex) =>
       <View key={"line-" + lineIndex} style={styles.container}>
         {lineIndex > 0 ? null : <>
-          <Clef melodyScale={melodyScale}
+          <Clef melodyScale={animatedMelodyScale}
                 clef={abcSong.clef} />
-          <Key melodyScale={melodyScale}
+          <Key melodyScale={animatedMelodyScale}
                keySignature={abcSong.keySignature} />
         </>}
         {line.map((it, index) =>
           <VoiceItemElement key={index}
                             item={it}
                             animatedScaleText={animatedScale}
-                            melodyScale={melodyScale}
+                            melodyScale={animatedMelodyScale}
           />)}
       </View>)}
   </View>;
