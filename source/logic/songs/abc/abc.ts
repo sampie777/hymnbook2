@@ -193,6 +193,7 @@ export namespace ABC {
     song.referenceNumber = getField(abc, "X", "1");
     song.transcription = getField(abc, "Z");
     return abc
+      .replace(/%.*\n/g, "")
       .replace(/(^|\n) *\t*[ABCDFGHIKLMmNOPQRrSsTUVXZ]:.*/g, "")
       .replace(/\n+/g, "\n")
       .replace(/^\n*/g, "")
