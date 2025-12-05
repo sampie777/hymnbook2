@@ -297,9 +297,11 @@ export namespace ABC {
 
     const melodyLines = rawMelody
       .replaceAll(/\n+/g, "\n")
+      .trim()
       .split("\n")
     const lyricLines = lyrics
       .replaceAll(/\n+/g, "\n")
+      .trim()
       .split("\n")
 
     const mixedMelody: string[] = [];
