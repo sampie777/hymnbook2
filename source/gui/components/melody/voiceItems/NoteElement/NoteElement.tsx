@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useAbcMusicStyle } from "../../config";
 import Note from "./Note";
-import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
+import { VoiceItemNote } from "@hymnbook/abc";
 import Rest from "./Rest";
 import Lines from "../../other/Lines.tsx";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";

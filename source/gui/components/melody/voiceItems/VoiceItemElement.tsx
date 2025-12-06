@@ -1,8 +1,8 @@
 import React from "react";
-import { VoiceItem } from "../../../../logic/songs/abc/abcjsTypes";
 import VoiceItemNoteElement from "./NoteElement/VoiceItemNoteElement";
 import VoiceItemBarElement from "./BarElement/VoiceItemBarElement";
 import { SharedValue } from "react-native-reanimated";
+import { VoiceItem } from "@hymnbook/abc";
 
 interface Props {
   item: VoiceItem;

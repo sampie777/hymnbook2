@@ -1,5 +1,5 @@
 import React from "react";
-import { KeySignature } from "../../../../logic/songs/abc/abcjsTypes";
+import { KeySignature } from "@hymnbook/abc";
 import { SharedValue } from "react-native-reanimated";
 import NoteElement from "../voiceItems/NoteElement/NoteElement.tsx";
 

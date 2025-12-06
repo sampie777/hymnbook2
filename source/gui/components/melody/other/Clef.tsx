@@ -1,5 +1,5 @@
 import React from "react";
-import { AbcClef } from "../../../../logic/songs/abc/abcjsTypes";
+import { AbcClef } from "@hymnbook/abc";
 import { SharedValue } from "react-native-reanimated";
 import NoteElement from "../voiceItems/NoteElement/NoteElement.tsx";
 

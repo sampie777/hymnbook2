@@ -1,5 +1,5 @@
 import React from "react";
-import { AbcPitch } from "../../../../../logic/songs/abc/abcjsTypes";
+import { AbcPitch } from "@hymnbook/abc";
 
 interface Props {
   pitch: AbcPitch,

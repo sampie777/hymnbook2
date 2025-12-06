@@ -1,5 +1,5 @@
 import { AbcConfig } from "../../../gui/components/melody/config";
-import { VoiceItemNote } from "./abcjsTypes";
+import { VoiceItemNote } from "@hymnbook/abc";
 
 export namespace AbcGui {
   // Maps for Roboto font, see https://chrishewett.com/blog/calculating-text-width-programmatically/?

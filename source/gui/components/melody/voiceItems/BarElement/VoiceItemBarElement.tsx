@@ -1,5 +1,5 @@
 import React from "react";
-import { VoiceItemBar } from "../../../../../logic/songs/abc/abcjsTypes";
+import { VoiceItemBar } from "@hymnbook/abc";
 import Animated, { SharedValue } from "react-native-reanimated";
 import { useAbcMusicStyle } from "../../config.ts";
 import { useTheme } from "../../../providers/ThemeProvider.tsx";

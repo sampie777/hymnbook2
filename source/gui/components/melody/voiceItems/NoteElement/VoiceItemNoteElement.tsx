@@ -3,10 +3,10 @@ import { StyleSheet } from "react-native";
 import Settings from "../../../../../settings";
 import { AbcConfig } from "../../config";
 import { AbcGui } from "../../../../../logic/songs/abc/gui";
-import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
 import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 import NoteElement from "./NoteElement";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { VoiceItemNote } from "@hymnbook/abc";
 
 interface Props {
   note: VoiceItemNote;

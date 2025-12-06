@@ -1,5 +1,5 @@
 import React from "react";
-import { VoiceItemNote } from "../../../../../logic/songs/abc/abcjsTypes";
+import { VoiceItemNote } from "@hymnbook/abc";
 
 interface Props {
   note: VoiceItemNote;
