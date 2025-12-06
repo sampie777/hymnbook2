@@ -14,6 +14,7 @@
     "device-install-windows": "adb -d install \"./android/app/build/outputs/apk/release/$(Get-ChildItem -Path ./android/app/build/outputs/apk/release/*.apk -Name | select -first 1)\""
   },
   "dependencies": {
+    "@hymnbook/abc": "^0.0.1",
     "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#v2.3.2",
     "@react-native-clipboard/clipboard": "1.16.3",
     "@react-native-community/netinfo": "11.3.3",
@@ -22,7 +23,7 @@
     "@react-navigation/native-stack": "7.3.26",
     "@realm/react": "0.11.0",
     "@stripe/stripe-react-native": "0.54.0",
-    "abcjs": "git+https://github.com/paulrosen/abcjs.git#v6.2.3",
+    "abcjs": "6.5.2",
     "fastest-levenshtein": "1.0.16",
     "fetch-retry": "6.0.0",
     "htmlparser2": "10.0.0",

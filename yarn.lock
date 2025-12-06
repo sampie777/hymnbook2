@@ -1589,6 +1589,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hymnbook/abc@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@hymnbook/abc@npm:0.0.1"
+  dependencies:
+    abcjs: "npm:^6.5.2"
+  checksum: 10c0/2ebba3861698b77fbdf21028f634e72306372ba4bd1c156d73f26deb325361f11eb362571082fdf3adce41f49383cbfcf4943406f8797fc591ed0c7498454a3e
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -3190,10 +3199,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abcjs@git+https://github.com/paulrosen/abcjs.git#v6.2.3":
-  version: 6.2.3
-  resolution: "abcjs@https://github.com/paulrosen/abcjs.git#commit=01ec19a8b8093053b707daaf82e686435031ec5e"
-  checksum: 10c0/bb97ae502bd71c846259ba065c92e74f5c4346a5fc1d9118fe8da18c6f144a7b61b3355dc40b1191efd2b2b770ed6a3b1f9e5b754365b7523fe1caa8db9a5fe2
+"abcjs@npm:6.5.2, abcjs@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "abcjs@npm:6.5.2"
+  checksum: 10c0/ca16224bf51fead6115fc1106d8131eb86b6165fe8ec1f4624543ec5a2c6dae9a5c5f464bafc5a494110fdcd7f50353e2f7411eee41b592109175d5282b89aaa
   languageName: node
   linkType: hard
 
@@ -5902,6 +5911,7 @@ __metadata:
     "@babel/plugin-transform-unicode-property-regex": "npm:7.27.1"
     "@babel/preset-env": "npm:7.25.3"
     "@babel/runtime": "npm:7.27.4"
+    "@hymnbook/abc": "npm:^0.0.1"
     "@jest/globals": "npm:30.2.0"
     "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#v2.3.2"
     "@react-native-clipboard/clipboard": "npm:1.16.3"
@@ -5924,7 +5934,7 @@ __metadata:
     "@types/react-native-onboarding-swiper": "npm:1.1.9"
     "@types/react-native-vector-icons": "npm:6.4.18"
     "@types/react-test-renderer": "npm:19.1.0"
-    abcjs: "git+https://github.com/paulrosen/abcjs.git#v6.2.3"
+    abcjs: "npm:6.5.2"
     babel-jest: "npm:30.2.0"
     eslint: "npm:8.57.0"
     fastest-levenshtein: "npm:1.0.16"

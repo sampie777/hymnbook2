@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
-import { ABC } from "../../../logic/songs/abc/abc";
 import Clef from "./other/Clef";
 import Key from "./other/Key";
 import VoiceItemElement from "./voiceItems/VoiceItemElement";
 import { SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { getFontScaleSync } from "react-native-device-info";
 import { AbcConfig } from "./config.ts";
+import * as ABC from "@hymnbook/abc";
 
 interface Props {
   abc: string;

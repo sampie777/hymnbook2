@@ -3,7 +3,7 @@ import { LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
-import { ABC } from "../../../../logic/songs/abc/abc";
+import * as ABC from "@hymnbook/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { generateVerseContentWithCorrectWidth, getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
