@@ -7,7 +7,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
 import { Licenses } from "../../../logic/organizations/licenses.ts";
-import { License } from "../../../logic/organizations/models.ts";
+import { License } from "../../../logic/db/models/organizations/Organizations.ts";
 
 interface SongBundleItemComponentProps {
   bundle: ServerSongBundle;

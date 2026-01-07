@@ -1,4 +1,4 @@
-export type Organization = {
+type Organization = {
   uuid: string
   name: string
   denomination?: string
@@ -20,16 +20,16 @@ export type Organization = {
   template?: Template
 }
 
-export type Template = {
+type Template = {
   uuid: string
   bundels: BundleTemplate[]
   documents: DocumentTemplate[]
 }
 
-export type BundleTemplate = {}
-export type DocumentTemplate = {}
+type BundleTemplate = {}
+type DocumentTemplate = {}
 
-export type License = {
+type License = {
   uuid: string
   name: string
   code: string

@@ -1,4 +1,4 @@
-import { License, Organization } from "./models.ts";
+import { License, Organization } from "../db/models/organizations/Organizations.ts";
 
 export const mockLicenses = [
   { uuid: 'lic-1', name: 'CCLI', code: '24364643' },

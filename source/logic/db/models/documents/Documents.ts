@@ -106,16 +106,16 @@ export class DocumentGroup {
     this._parent = parent === undefined ? [] : [parent];
   }
 
-  static getParent(group?: DocumentGroup): DocumentGroup | undefined {
-    if (group === undefined) {
+  static getParent(target?: DocumentGroup): DocumentGroup | undefined {
+    if (target === undefined) {
       return undefined;
     }
 
-    if (group._parent === undefined || group._parent.length === 0) {
+    if (target._parent === undefined || target._parent.length === 0) {
       return undefined;
     }
 
-    return group._parent[0];
+    return target._parent[0];
   }
 
   static clone(obj: DocumentGroup, options: {

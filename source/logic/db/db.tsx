@@ -11,6 +11,12 @@ import { AbcMelodySchema, AbcSubMelodySchema } from "./models/songs/AbcMelodiesS
 import { SongHistorySchema } from "./models/songs/SongHistorySchema";
 import { isTestEnv } from "../utils/utils.ts";
 import { DocumentHistorySchema } from "./models/documents/DocumentHistorySchema";
+import {
+  AddressSchema,
+  CoordinatesSchema,
+  LicenseSchema,
+  OrganizationSchema
+} from "./models/organizations/OrganizationsSchema.ts";
 
 const generatePath = (name: string): string => {
   if (!isTestEnv()) return name;
@@ -40,8 +46,11 @@ const Db = {
   }),
   settings: new DatabaseProvider({
     path: generatePath("hymnbook_settings"),
-    schemas: [SettingSchema, SettingPatchSchema],
-    schemaVersion: 2
+    schemas: [
+      SettingSchema, SettingPatchSchema,
+      LicenseSchema, AddressSchema, CoordinatesSchema, OrganizationSchema,
+    ],
+    schemaVersion: 3
   })
 };
 

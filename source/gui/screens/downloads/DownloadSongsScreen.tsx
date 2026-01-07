@@ -23,8 +23,8 @@ import { CollectionChangeSet, OrderedCollection } from "realm";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 import { isConnectionError } from "../../../logic/apiUtils";
 import { Licenses } from "../../../logic/organizations/licenses.ts";
-import { Organization } from "../../../logic/organizations/models.ts";
-import { mockOrganizations } from "../../../logic/organizations/organizations.ts";
+import { Organization } from "../../../logic/db/models/organizations/Organizations.ts";
+import { OrganizationSchema } from "../../../logic/db/models/organizations/OrganizationsSchema.ts";
 
 type ServerDataType = ServerSongBundle;
 type LocalDataType = LocalSongBundle;
@@ -94,8 +94,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
   const loadOrganizations = () => {
     if (!isMounted()) return;
     try {
-      const data = [mockOrganizations[0], mockOrganizations[1]];
-      setOrganizations(data);
+      const data = Db.settings.realm().objects<Organization>(OrganizationSchema.name);
+      setOrganizations(Array.from(data));
     } catch (error) {
       rollbar.error(
         'Failed to load local organizations',

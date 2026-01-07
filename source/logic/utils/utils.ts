@@ -341,3 +341,30 @@ export const isDbItemValid = (item: unknown) =>
     typeof (item as Realm.Object).isValid !== 'function'
     || (item as Realm.Object).isValid()
   );
+
+// AI generated
+/**
+ *
+ * @param seed
+ * @param lightness value between 0-256. The higher the value, the lighter the color will be
+ */
+export const generateRandomColor = (seed: number, lightness: number = 0) => {
+  // Simple deterministic PRNG (LCG) seeded by `seed`.
+  // Produces values in [0, 1). Stable for the same seed.
+  const seededRandom = (seed: number) => {
+    // ensure integer seed
+    let state = (seed >>> 0) || 1;
+    return () => {
+      // constants from Numerical Recipes
+      state = (state * 1664525 + 1013904223) >>> 0;
+      return state / 4294967296;
+    };
+  };
+
+  const rnd = seededRandom(seed + 1); // offset so seed=0 still works well
+  const r = Math.floor(rnd() * (256 - lightness) + lightness);
+  const g = Math.floor(rnd() * (256 - lightness) + lightness);
+  const b = Math.floor(rnd() * (256 - lightness) + lightness);
+  const toHex = (n: number) => n.toString(16).padStart(2, '0').toUpperCase();
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}

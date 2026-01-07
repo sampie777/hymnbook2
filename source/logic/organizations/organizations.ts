@@ -1,5 +1,9 @@
-import { Organization } from "./models.ts";
 import { mockLicenses } from "./licenses.ts";
+import { Organization } from "../db/models/organizations/Organizations.ts";
+import Db from "../db/db.tsx";
+import { OrganizationSchema } from "../db/models/organizations/OrganizationsSchema.ts";
+import { rollbar } from "../rollbar.ts";
+import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 export const mockOrganizations: Organization[] = [
   {
@@ -15,6 +19,7 @@ export const mockOrganizations: Organization[] = [
     },
     phone: '+1-310-555-0142',
     website: 'https://www.willowcreekbaptist.org',
+    logo: "https://rehobothkerkwoerden.nl/static/resources/images/logo-wit-compact-50.png",
     licenses: [{ ...mockLicenses[0] }],
   },
   {
@@ -29,6 +34,7 @@ export const mockOrganizations: Organization[] = [
       country: 'USA',
     },
     phone: '+1-214-555-0198',
+    logo: 'https://logo.com/image-cdn/images/kts928pd/production/ac1215da2e15775a6fd8888e1055c001ec13845f-1082x1084.webp?w=1080&q=70&fm=webp',
     website: 'https://www.gracemethodist.org',
     licenses: [{ ...mockLicenses[0] }, { ...mockLicenses[2] }],
   },
@@ -60,6 +66,7 @@ export const mockOrganizations: Organization[] = [
     },
     phone: '+1-305-555-0177',
     website: 'https://www.newhopepentecostal.org',
+    logo: 'https://www.vgk.org.za/sites/default/files/pictures/logo-af.png',
     licenses: [{ ...mockLicenses[1] }],
   },
   {
@@ -76,5 +83,20 @@ export namespace Organizations {
 
   export const join = async (organization: Organization) => {
     // Do request to backend to join organization
+    // todo...
+
+
+    // Join locally
+    try {
+      Db.settings.realm().write(() => {
+        Db.settings.realm().create(OrganizationSchema.name, organization);
+      })
+    }catch (error) {
+      rollbar.error(`Failed to store organization`, {
+        ...sanitizeErrorForRollbar(error),
+        organization: { ...organization, parentOrganization: undefined } as Organization,
+      });
+      throw Error(`Failed to store organization: ${error}`);
+    }
   }
 }
