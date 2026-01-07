@@ -1589,12 +1589,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hymnbook/abc@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@hymnbook/abc@npm:0.0.1"
+"@hymnbook/abc@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@hymnbook/abc@npm:0.1.1"
   dependencies:
     abcjs: "npm:^6.5.2"
-  checksum: 10c0/2ebba3861698b77fbdf21028f634e72306372ba4bd1c156d73f26deb325361f11eb362571082fdf3adce41f49383cbfcf4943406f8797fc591ed0c7498454a3e
+  checksum: 10c0/40c3caff876d5a8abeca39e465a13f9d70d5b4e50fa42cfacbb8495147155fa75999eb44d7f901b084eea24ef9cd46d9dc377f0394684b426e8e569730875f5e
   languageName: node
   linkType: hard
 
@@ -5911,7 +5911,7 @@ __metadata:
     "@babel/plugin-transform-unicode-property-regex": "npm:7.27.1"
     "@babel/preset-env": "npm:7.25.3"
     "@babel/runtime": "npm:7.27.4"
-    "@hymnbook/abc": "npm:^0.0.1"
+    "@hymnbook/abc": "npm:^0.1.1"
     "@jest/globals": "npm:30.2.0"
     "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#v2.3.2"
     "@react-native-clipboard/clipboard": "npm:1.16.3"
