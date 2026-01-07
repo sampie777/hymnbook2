@@ -6,12 +6,15 @@ import { ThemeContextProps, useTheme } from "../../components/providers/ThemePro
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
+import { Licenses } from "../../../logic/organizations/licenses.ts";
+import { License } from "../../../logic/organizations/models.ts";
 
 interface SongBundleItemComponentProps {
   bundle: ServerSongBundle;
   onPress: (bundle: ServerSongBundle) => void;
   onLongPress?: (bundle: ServerSongBundle) => void;
   disabled: boolean;
+  licenses?: License[];
 }
 
 export const SongBundleItem: React.FC<SongBundleItemComponentProps>
@@ -19,11 +22,13 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
        bundle,
        onPress,
        onLongPress,
-       disabled
+       disabled,
+       licenses = [],
      }) => {
   const styles = createStyles(useTheme());
   const { songBundlesUpdating } = useUpdaterContext();
   const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+  const hasLicense = Licenses.isSongBundleAllowed(bundle, licenses);
 
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
@@ -41,9 +46,13 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
             {languageAbbreviationToFullName(bundle.language)}
           </Text>
         }
-        {bundle.size === undefined ? undefined :
-          <Text style={styles.infoText}
-                importantForAccessibility={"no"}>
+        {hasLicense ? undefined :
+          <Text style={[styles.infoText, styles.licenseText]} importantForAccessibility={'no'}>
+            License required
+          </Text>
+        }
+        {!hasLicense || bundle.size === undefined ? undefined :
+          <Text style={styles.infoText} importantForAccessibility={'no'}>
             {bundle.size} songs
           </Text>
         }
@@ -61,6 +70,7 @@ interface LocalSongBundleItemComponentProps {
   onLongPress?: (bundle: LocalSongBundle) => void;
   hasUpdate?: boolean;
   disabled: boolean;
+  licenses?: License[];
 }
 
 export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
@@ -69,11 +79,13 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
        onPress,
        onLongPress,
        hasUpdate = false,
-       disabled
+       disabled,
+       licenses = [],
      }) => {
   const styles = createStyles(useTheme());
   const { songBundlesUpdating } = useUpdaterContext();
   const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+  const hasLicense = Licenses.isSongBundleAllowed(bundle, licenses);
 
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
@@ -91,10 +103,15 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
             {languageAbbreviationToFullName(bundle.language)}
           </Text>
         }
-        <Text style={styles.infoText}
-              importantForAccessibility={"no"}>
-          {bundle.songs.length} songs
-        </Text>
+
+        {!hasLicense
+          ? <Text style={[styles.infoText, styles.licenseText]} importantForAccessibility={'no'}>
+            License required
+          </Text>
+          : <Text style={styles.infoText} importantForAccessibility={'no'}>
+            {bundle.songs.length} songs
+          </Text>
+        }
       </View>
       <View>
         {isUpdating ? <IsDownloadingIcon /> :
@@ -129,5 +146,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.text.lighter
-  }
+  },
+  licenseText: {
+    color: colors.text.warning,
+  },
 });

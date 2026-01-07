@@ -21,10 +21,12 @@ export namespace AutoUpdater {
 
     return Promise.all([
       SongAutoUpdater.run(context.addSongBundleUpdating, context.removeSongBundleUpdating, mayUseNetwork)
-        .catch(error => !isConnectionError(error) && rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
+        .catch(error => !isConnectionError(error)
+          && rollbar.error("Failed to run auto updater for songs", sanitizeErrorForRollbar(error))),
 
       DocumentAutoUpdater.run(context.addDocumentGroupUpdating, context.removeDocumentGroupUpdating, mayUseNetwork)
-        .catch(error => !isConnectionError(error) && rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
+        .catch(error => !isConnectionError(error)
+          && rollbar.error("Failed to run auto updater for documents", sanitizeErrorForRollbar(error))),
     ])
       .finally(removeEventListener)
   }

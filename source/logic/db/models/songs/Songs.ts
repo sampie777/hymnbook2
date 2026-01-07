@@ -229,6 +229,9 @@ export class SongBundle {
   modifiedAt: Date;
   uuid: string;
   hash: string;
+  // an empty list means it's public domain or license-free, otherwise
+  // it contains the list of license UUIDs required to use this bundle
+  licenses: string[];
 
   constructor(
     abbreviation: string,
@@ -241,7 +244,8 @@ export class SongBundle {
     uuid: string,
     hash: string = "",
     songs: Song[] = [],
-    id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema)
+    licenses: string[] = [],
+    id = Db.songs.getIncrementedPrimaryKey(SongBundleSchema),
   ) {
     this.id = id;
     this.abbreviation = abbreviation;
@@ -254,6 +258,7 @@ export class SongBundle {
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
     this.hash = hash;
+    this.licenses = licenses;
   }
 
   static clone(obj: SongBundle,
@@ -276,7 +281,8 @@ export class SongBundle {
       createdAt: obj.createdAt,
       modifiedAt: obj.modifiedAt,
       uuid: obj.uuid,
-      hash: obj.hash
+      hash: obj.hash,
+      licenses: obj.licenses ? [...obj.licenses] : [],  // Use this operator to account for outdated bundles before licenses were added
     };
   }
 }

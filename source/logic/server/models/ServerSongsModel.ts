@@ -161,19 +161,22 @@ export class SongBundle {
   modifiedAt: string;
   uuid: string;
   hash: string;
+  licenses?: string[];
 
-  constructor(id: number,
-              abbreviation: string,
-              name: string,
-              language: string,
-              author: string,
-              copyright: string,
-              songs: Array<Song> | null,
-              createdAt: string,
-              modifiedAt: string,
-              uuid: string,
-              hash: string,
-              size: number = 0
+  constructor(
+    id: number,
+    abbreviation: string,
+    name: string,
+    language: string,
+    author: string,
+    copyright: string,
+    songs: Array<Song> | null,
+    createdAt: string,
+    modifiedAt: string,
+    uuid: string,
+    hash: string,
+    size: number = 0,
+    licenses: string[] = [],
   ) {
     this.id = id;
     this.abbreviation = abbreviation;
@@ -187,6 +190,7 @@ export class SongBundle {
     this.modifiedAt = modifiedAt;
     this.uuid = uuid;
     this.hash = hash;
+    this.licenses = licenses;
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Config from "react-native-config";
 import { SongBundle, SongBundle as LocalSongBundle } from "../../../logic/db/models/songs/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
@@ -22,6 +22,9 @@ import { SongBundleSchema } from "../../../logic/db/models/songs/SongsSchema";
 import { CollectionChangeSet, OrderedCollection } from "realm";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 import { isConnectionError } from "../../../logic/apiUtils";
+import { Licenses } from "../../../logic/organizations/licenses.ts";
+import { Organization } from "../../../logic/organizations/models.ts";
+import { mockOrganizations } from "../../../logic/organizations/organizations.ts";
 
 type ServerDataType = ServerSongBundle;
 type LocalDataType = LocalSongBundle;
@@ -50,6 +53,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
   const [requestUpdateForItem, setRequestUpdateForItem] = useState<ServerDataType | undefined>(undefined);
   const [requestDeleteForItem, setRequestDeleteForItem] = useState<LocalDataType | undefined>(undefined);
   const [filterLanguage, setFilterLanguage] = useState("");
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+
   const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
 
@@ -60,6 +65,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
 
   const onOpen = () => {
     fetchServerData();
+    loadOrganizations();
     try {
       Db.songs.realm().objects<ItemType>(SongBundleSchema.name).addListener(onCollectionChange);
     } catch (error) {
@@ -84,6 +90,21 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     if (isLocalDataLoading) return;
     loadAndPromptSpecificItem();
   }, [promptForUuid, isLocalDataLoading]);
+
+  const loadOrganizations = () => {
+    if (!isMounted()) return;
+    try {
+      const data = [mockOrganizations[0], mockOrganizations[1]];
+      setOrganizations(data);
+    } catch (error) {
+      rollbar.error(
+        'Failed to load local organizations',
+        sanitizeErrorForRollbar(error),
+      );
+    }
+  };
+
+  const licenses = useMemo(() => Licenses.collectAllLicenses(organizations), [organizations]);
 
   const processLocalDataChanges = (collection: OrderedCollection<Realm.Object<ItemType> & ItemType>) => {
     if (!isMounted()) return;
@@ -371,7 +392,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
                                  onPress={onLocalItemPress}
                                  onLongPress={shareItem}
                                  hasUpdate={SongProcessor.hasUpdate(serverData, item)}
-                                 disabled={isProcessingLocalData || isSpecificItemLoading} />
+                                 disabled={isProcessingLocalData || isSpecificItemLoading}
+                                 licenses={licenses} />
           </Animated.View>)}
 
       {serverData
@@ -384,7 +406,8 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
             <SongBundleItem bundle={item}
                             onPress={onServerItemPress}
                             onLongPress={shareItem}
-                            disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />
+                            disabled={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading}
+                            licenses={licenses} />
           </Animated.View>)}
 
       {serverData.length > 0 ? undefined :

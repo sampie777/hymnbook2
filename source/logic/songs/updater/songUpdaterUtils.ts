@@ -155,7 +155,8 @@ export namespace SongUpdaterUtils {
       dateFrom(bundle.modifiedAt),
       bundle.uuid,
       bundle.hash,
-      songs
+      songs,
+      bundle.licenses || [],
     );
   };
 
