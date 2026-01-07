@@ -8,6 +8,7 @@ export enum VersePickerMethod {
 }
 
 export const TutorialRoute = "TutorialRoute";
+export const OrganizationsOnboardingRoute = "OrganizationsOnboardingRoute";
 export const HomeRoute = "Home";
 export const SettingsRoute = "Settings";
 export const AboutRoute = "About";
@@ -26,6 +27,7 @@ export const DocumentHistoryRoute = "DocumentHistoryRoute";
 
 export type ParamList = {
   TutorialRoute: undefined,
+  OrganizationsOnboardingRoute: undefined,
   Home: undefined,
   Settings: undefined,
   About: undefined,

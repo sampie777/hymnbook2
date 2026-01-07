@@ -21,6 +21,7 @@ import {
   DocumentRoute,
   DocumentSearchRoute,
   HomeRoute,
+  OrganizationsOnboardingRoute,
   OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
@@ -69,6 +70,7 @@ import SongHistoryScreen from "./gui/screens/songs/history/SongHistoryScreen";
 import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHistoryScreen";
 import { throwIfConnectionError } from "./logic/apiUtils.ts";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import OrganizationsOnboarding from "./gui/screens/organizations/OrganizationsOnboarding.tsx";
 
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
@@ -83,6 +85,12 @@ const RootNavigation = () => {
                               headerTintColor: styles.tabBarHeaderTitle.color
                             }}>
     <RootNav.Screen name={TutorialRoute} component={TutorialScreen}
+                    options={{
+                      headerShown: false,
+                      orientation: "portrait",
+                      gestureEnabled: false,
+                    }} />
+    <RootNav.Screen name={OrganizationsOnboardingRoute} component={OrganizationsOnboarding}
                     options={{
                       headerShown: false,
                       orientation: "portrait",
