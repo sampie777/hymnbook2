@@ -13,6 +13,7 @@ import UrlLink from "../../components/UrlLink";
 import PayPalPaymentButton from "../../components/donations/PayPalPaymentButton";
 import BuyMeACoffeePaymentButton from "../../components/donations/BuyMeACoffeePaymentButton";
 import DonationForm from "../../components/donations/DonationForm";
+import InAppPurchases from "../../components/donations/InAppPurchases.tsx";
 import { isAndroid, isIOS } from "../../../logic/utils/utils.ts";
 
 
@@ -65,9 +66,13 @@ const AboutScreen: React.FC<{
           If you want to show your thanks, please consider supporting this good cause:
         </Text>
 
-        {enableSystemPay
-          ? <DonationForm />
-          : <Text style={[styles.contentText]}>{isAndroid ? "Google Pay" : (isIOS ? "Apple Pay" : "This")} feature is not available yet.</Text>}
+        {isIOS
+          ? <InAppPurchases />
+          : (enableSystemPay
+            ? <DonationForm />
+            : <Text style={[styles.contentText]}>{isAndroid ? "Google Pay" : (isIOS ? "Apple Pay" : "This")} feature is
+              not available yet.</Text>)
+        }
 
         {!goldenEgg ? undefined :
           <View style={styles.donationLinksContainer}>
