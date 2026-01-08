@@ -21,6 +21,7 @@
 		61396538115945CA844D362B /* Musiqwik-regular-extended.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85C01CCB64B4416098A5FE6B /* Musiqwik-regular-extended.ttf */; };
 		7E1439FA2F0FB01C004CA2E9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E1439F92F0FB01C004CA2E9 /* StoreKit.framework */; };
 		7EAD3CF92F100C27005645D1 /* LocalProducts.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 7EAD3CF82F100C27005645D1 /* LocalProducts.storekit */; };
+		7EAD3CFB2F101910005645D1 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 7EAD3CFA2F101910005645D1 /* StoreKitTestCertificate.cer */; };
 		7EF319212ED4BA68009257C4 /* logo_ios.icon in Resources */ = {isa = PBXBuildFile; fileRef = 7EF319202ED4BA68009257C4 /* logo_ios.icon */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		87B7243690AC459F878E8373 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 818002327A5F45C5B1D6251C /* Roboto-LightItalic.ttf */; };
@@ -79,6 +80,7 @@
 		7E217FBE2DF40B0600A38AF1 /* RCTI18nStrings.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = RCTI18nStrings.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E217FC02DF40B1700A38AF1 /* libReact-Core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libReact-Core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EAD3CF82F100C27005645D1 /* LocalProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = LocalProducts.storekit; sourceTree = "<group>"; };
+		7EAD3CFA2F101910005645D1 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		7EF319202ED4BA68009257C4 /* logo_ios.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; name = logo_ios.icon; path = ../resources/logo/logo_ios.icon; sourceTree = SOURCE_ROOT; };
 		818002327A5F45C5B1D6251C /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-LightItalic.ttf"; path = "../assets/fonts/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = hymnbook2/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				7EAD3CF82F100C27005645D1 /* LocalProducts.storekit */,
+				7EAD3CFA2F101910005645D1 /* StoreKitTestCertificate.cer */,
 				7EF319202ED4BA68009257C4 /* logo_ios.icon */,
 				36712A972C341E860036B747 /* PrivacyInfo.xcprivacy */,
 				13B07FAE1A68108700A75B9A /* hymnbook2 */,
@@ -343,6 +346,7 @@
 				EA9C64AA1AEF4D49937E46E9 /* Roboto-BlackItalic.ttf in Resources */,
 				D39D7D99C2264AC3852EBC4B /* Roboto-Bold.ttf in Resources */,
 				3BCC7AC8EA8D4D36B251D61A /* Roboto-BoldItalic.ttf in Resources */,
+				7EAD3CFB2F101910005645D1 /* StoreKitTestCertificate.cer in Resources */,
 				9189BC394BF2433E81F84280 /* Roboto-Italic.ttf in Resources */,
 				12E47ADD05BF4A46A4C1DFE1 /* Roboto-Light.ttf in Resources */,
 				87B7243690AC459F878E8373 /* Roboto-LightItalic.ttf in Resources */,
