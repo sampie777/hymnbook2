@@ -5948,7 +5948,9 @@ __metadata:
     react-native-device-info: "npm:10.12.0"
     react-native-draggable-flatlist: "npm:4.0.2"
     react-native-gesture-handler: "patch:react-native-gesture-handler@npm%3A2.28.0#~/.yarn/patches/react-native-gesture-handler-npm-2.28.0-46647da20a.patch"
+    react-native-iap: "npm:^14.7.1"
     react-native-keep-awake: "npm:4.0.0"
+    react-native-nitro-modules: "npm:^0.32.1"
     react-native-onboarding-swiper: "npm:1.3.0"
     react-native-popup-menu: "npm:0.18.0"
     react-native-quick-md5: "npm:3.0.9"
@@ -8738,6 +8740,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-iap@npm:^14.7.1":
+  version: 14.7.1
+  resolution: "react-native-iap@npm:14.7.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-nitro-modules: ^0.31.1
+  checksum: 10c0/9b29dd65c599a44bfe49063c9ffa61057e80784fb0c4576934be166769c00d880da699a1b1c8d7e1bfb8ad100779a6462bf24cbfae66e2f30b573c322e6bda7f
+  languageName: node
+  linkType: hard
+
 "react-native-is-edge-to-edge@npm:1.1.7":
   version: 1.1.7
   resolution: "react-native-is-edge-to-edge@npm:1.1.7"
@@ -8762,6 +8775,16 @@ __metadata:
   version: 4.0.0
   resolution: "react-native-keep-awake@npm:4.0.0"
   checksum: 10c0/73cabf9de1033e9157721280d23bdf1d7467d5e5db859dd706e43772388e4c9a12916f0c282ff44d4ef0d2a3eab246a2331bce2fff3a1834a2a73f646a5119c1
+  languageName: node
+  linkType: hard
+
+"react-native-nitro-modules@npm:^0.32.1":
+  version: 0.32.1
+  resolution: "react-native-nitro-modules@npm:0.32.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/5f11eda5965225f7ef3d758441ee4ca1355c950ff38de5ac950a848ccb6d1a2ebe765c34db17cd2aa5e1362661e86931620d20d856f04a4fa593df2b62e189e3
   languageName: node
   linkType: hard
 
