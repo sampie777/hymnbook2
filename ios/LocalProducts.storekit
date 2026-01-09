@@ -15,7 +15,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "0.99",
+      "displayPrice" : "99.99",
       "familyShareable" : false,
       "internalID" : "FD30AE6D",
       "localizations" : [
@@ -38,7 +38,7 @@
     "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
-    "_storefront" : "USA",
+    "_storefront" : "ZAF",
     "_storeKitErrors" : [
 
     ],
