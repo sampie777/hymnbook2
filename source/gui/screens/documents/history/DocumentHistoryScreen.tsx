@@ -137,6 +137,7 @@ const DocumentHistoryScreen: React.FC<
   return (
     <View style={styles.container}>
       <SectionList
+        contentContainerStyle={{paddingBottom: 100}}
         sections={groupedItems}
         renderItem={({ item }) => renderItem({ item })}
         renderSectionHeader={renderSectionHeader}

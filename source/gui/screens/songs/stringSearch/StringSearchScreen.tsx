@@ -15,6 +15,7 @@ import SearchOptions from "./SearchOptions";
 import SearchResultComponent from "./SearchResultComponent";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { isSongValid, isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
@@ -227,7 +228,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                    onSelectedBundleUuidsChange={setSelectedBundleUuids} />
 
     {noActiveSearchGoingOnOrDataToDisplay() ? null :
-      <View style={styles.showAllContainer}>
+      <SafeAreaView style={styles.showAllContainer}>
         <TouchableOpacity onPress={loadWholeDatabase} style={styles.showAllButton}>
           <Icon name={"ellipsis-h"} style={styles.showAllIcon} />
           <Text style={styles.showAllText}
@@ -235,7 +236,7 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
             Show all songs
           </Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     }
 
     {!noActiveSearchGoingOnOrDataToDisplay() ? null :

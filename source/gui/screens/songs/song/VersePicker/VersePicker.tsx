@@ -149,7 +149,8 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
   },
   scrollView: {
     paddingHorizontal: 15,
-    paddingVertical: 20
+    paddingVertical: 20,
+    paddingBottom: 100,
   },
   text: {
     color: colors.text.lighter,

@@ -357,6 +357,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
 
     <ScrollView nestedScrollEnabled={true}
                 style={styles.listContainer}
+                contentContainerStyle={{paddingBottom: 100}}
                 refreshControl={<RefreshControl onRefresh={fetchServerData}
                                                 tintColor={styles.refreshControl.color}
                                                 refreshing={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />}>
