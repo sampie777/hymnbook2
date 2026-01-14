@@ -21,12 +21,12 @@
       "localizations" : [
         {
           "description" : "Give me a donation plz",
-          "displayName" : "Donation",
+          "displayName" : "Medium tip",
           "locale" : "en_US"
         }
       ],
       "productID" : "nl.sajansen.hymnbook2.donation100",
-      "referenceName" : "R100 Donation",
+      "referenceName" : "R100 Tip",
       "type" : "Consumable"
     }
   ],
