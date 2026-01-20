@@ -9,7 +9,11 @@ import type { InitPaymentSheetResult } from "@stripe/stripe-react-native/src/typ
 
 export namespace Donations {
 
-  export const inAppProductIds = ['nl.sajansen.hymnbook2.tip100'];
+  export const inAppProductIds = [
+    'nl.sajansen.hymnbook2.tip50',
+    'nl.sajansen.hymnbook2.tip100',
+    'nl.sajansen.hymnbook2.tip200',
+  ];
 
   export type Currency = {
     code: string;
