@@ -55,6 +55,11 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
       const { error } = await presentPaymentSheet();
 
       if (!error) {
+        rollbar.info("Donation received", {
+          type: "stripe",
+          amount: amount,
+          currency: finalCurrency,
+        })
         return Alert.alert('Success', 'Thank you for supporting the app!');
       }
       if (error.code == "Canceled") return;

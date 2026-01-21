@@ -36,6 +36,10 @@ const InAppPurchases: React.FC<Props> = ({}) => {
         return;
       }
 
+      rollbar.info("Donation received", {
+        type: "in-app",
+        product: purchase.productId,
+      })
       Alert.alert("Thank you!", "Your donation is greatly appreciated\nand motivates me to keep on going with this work.");
     } catch (error) {
       rollbar.warning("Failed to validate in-app purchase", { ...sanitizeErrorForRollbar(error), purchase });
