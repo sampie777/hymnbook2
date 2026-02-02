@@ -11,6 +11,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ComponentProps {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -98,7 +99,7 @@ const SongControls: React.FC<ComponentProps> =
       });
     };
 
-    return <View style={styles.container} pointerEvents={"box-none"}>
+    return <SafeAreaView style={styles.container} pointerEvents={"box-none"}>
 
       {previousSong === undefined ? undefined :
         <TouchableOpacity style={[styles.buttonBase, styles.button]}
@@ -147,7 +148,7 @@ const SongControls: React.FC<ComponentProps> =
                 style={styles.buttonText} />
         </TouchableOpacity>
       }
-    </View>;
+    </SafeAreaView>;
   };
 
 export default SongControls;

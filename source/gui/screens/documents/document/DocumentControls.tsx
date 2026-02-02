@@ -9,6 +9,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -122,7 +123,7 @@ const DocumentControls: React.FC<Props> =
 
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-    return <View style={styles.container} pointerEvents={"box-none"}>
+    return <SafeAreaView style={styles.container} pointerEvents={"box-none"}>
       {previousDocument === undefined ? undefined :
         <AnimatedTouchableOpacity style={[styles.buttonBase, styles.button, animatedStyleButtonBase]}
                                   onPress={() => goToDocument(previousDocument)}
@@ -151,7 +152,7 @@ const DocumentControls: React.FC<Props> =
                 style={styles.buttonText} />
         </AnimatedTouchableOpacity>
       }
-    </View>;
+    </SafeAreaView>;
   };
 
 export default DocumentControls;
