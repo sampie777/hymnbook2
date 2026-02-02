@@ -5,11 +5,13 @@ import { patch1_ConvertingStringSearchButtonPlacementEnumToStringIndexed } from 
 import { rollbar } from "../../../rollbar";
 import { sanitizeErrorForRollbar } from "../../../utils/utils.ts";
 import { patch2_PreFillSettingsSongSearchSelectedSongBundleUuids } from "./patches/2";
+import { patch3_UseNativeListAsDefaultTrue } from "./patches/3.ts";
 
 export namespace SettingsDbPatch {
   const patches: { [key: number]: () => any } = {
     1: patch1_ConvertingStringSearchButtonPlacementEnumToStringIndexed,
-    2: patch2_PreFillSettingsSongSearchSelectedSongBundleUuids
+    2: patch2_PreFillSettingsSongSearchSelectedSongBundleUuids,
+    3: patch3_UseNativeListAsDefaultTrue,
   };
 
   const isPatchIdApplied = (appliedPatches: Realm.Results<SettingPatch & Realm.Object<SettingPatch>>, id: number) =>

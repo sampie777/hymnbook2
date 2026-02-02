@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import { AccessRequestStatus } from "./logic/server/models";
 import { SettingsBaseClass } from "./logic/settings/settingsBase";
 import { SongSearch } from "./logic/songs/songSearch";
@@ -26,7 +25,7 @@ class SettingsClass extends SettingsBaseClass {
   songFadeIn = true;
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
-  useNativeFlatList = Platform.OS === "ios";
+  useNativeFlatList = true;
   coloredVerseTitles = true;
   highlightSelectedVerses = true;
   animateAddedToSongList = true;

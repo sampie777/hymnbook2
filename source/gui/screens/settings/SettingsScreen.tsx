@@ -11,16 +11,7 @@ import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useAppContext } from "../../components/providers/AppContextProvider";
-import {
-  LayoutChangeEvent,
-  Platform,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  View
-} from "react-native";
+import { LayoutChangeEvent, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
@@ -295,7 +286,7 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use native list component for song verses and documents"}
                                   description={"Try to toggle this if pinch-to-zoom or scrolling glitches."}
-                                  onLongPress={(setValue) => setValue(Platform.OS === "ios")}
+                                  onLongPress={(setValue) => setValue(true)}
                                   keyName={"useNativeFlatList"}
                                   isVisible={showAdvancedSettings} />
 
