@@ -25,8 +25,38 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "nl.sajansen.hymnbook2.donation100",
-      "referenceName" : "R100 Tip",
+      "productID" : "nl.sajansen.hymnbook2.tip100",
+      "referenceName" : "Medium tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "49.99",
+      "familyShareable" : false,
+      "internalID" : "F45877D8",
+      "localizations" : [
+        {
+          "description" : "Give me a donation plz",
+          "displayName" : "Small tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nl.sajansen.hymnbook2.tip50",
+      "referenceName" : "Small tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "199.99",
+      "familyShareable" : false,
+      "internalID" : "407EE4E8",
+      "localizations" : [
+        {
+          "description" : "Give me a donation plz",
+          "displayName" : "Large tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nl.sajansen.hymnbook2.tip200",
+      "referenceName" : "Large tip",
       "type" : "Consumable"
     }
   ],
