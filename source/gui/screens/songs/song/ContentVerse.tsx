@@ -119,7 +119,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       {text}
     </Animated.Text>;
 
-  const memoizedAbc = useMemo(() => ABC.generateAbcForVerse(verse, activeMelody), [activeMelody?.id]);
+  const memoizedAbc = useMemo(() =>
+    ABC.generateAbcForVerse(
+      verse,
+      activeMelody,
+      { trimLines: Settings.showMelodyOnSeparateLines }
+    ), [activeMelody?.id, Settings.showMelodyOnSeparateLines]);
 
   const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) =>
     setTextLineWidth(e.nativeEvent.lines.map(it => ({

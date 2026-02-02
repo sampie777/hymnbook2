@@ -1,5 +1,6 @@
 import { AbcConfig } from "../../../gui/components/melody/config";
 import { VoiceItemNote } from "@hymnbook/abc";
+import Settings from "../../../settings.ts";
 
 export namespace AbcGui {
   // Maps for Roboto font, see https://chrishewett.com/blog/calculating-text-width-programmatically/?
@@ -47,7 +48,7 @@ export namespace AbcGui {
       result += note.duration * 4 * AbcConfig.noteWidth;
     }
     if (note.rest) {
-      result += note.duration * 8 * AbcConfig.noteWidth
+      result += note.duration * (Settings.showMelodyOnSeparateLines ? 2 : 8) * AbcConfig.noteWidth
     }
     return result;
   };

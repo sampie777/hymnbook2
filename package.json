@@ -14,7 +14,7 @@
     "device-install-windows": "adb -d install \"./android/app/build/outputs/apk/release/$(Get-ChildItem -Path ./android/app/build/outputs/apk/release/*.apk -Name | select -first 1)\""
   },
   "dependencies": {
-    "@hymnbook/abc": "^0.1.1",
+    "@hymnbook/abc": "0.2.0",
     "@ptomasroos/react-native-multi-slider": "git+https://github.com/sampie777/react-native-multi-slider.git#v2.3.2",
     "@react-native-clipboard/clipboard": "1.16.3",
     "@react-native-community/netinfo": "11.3.3",
