@@ -34,6 +34,7 @@ class SettingsClass extends SettingsBaseClass {
   songMelodyScale = 1.0;
   showMelodyForAllVerses = false;
   showMelodyOnSeparateLines = true;
+  showMelodyChords = false;
   melodyShowedTimes = 0;
 
   // Songs audio

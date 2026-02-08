@@ -10,6 +10,9 @@ export const AbcConfig = {
   accidentalWidth: 18,
   spacerWidth: 7,
 
+  chordSize: 20,
+  chordTopSpace: 10,
+
   textPadding: 3,
   textSize: 20,
   textLineHeight: 40,

@@ -6,9 +6,10 @@ import NoteElement from "../voiceItems/NoteElement/NoteElement.tsx";
 interface Props {
   melodyScale: SharedValue<number>;
   keySignature: KeySignature;
+  showChords: boolean;
 }
 
-const Key: React.FC<Props> = ({ melodyScale, keySignature }) => {
+const Key: React.FC<Props> = ({ melodyScale, keySignature, showChords }) => {
   if (keySignature.accidentals === undefined || keySignature.accidentals.length === 0) {
     return null;
   }
@@ -22,7 +23,9 @@ const Key: React.FC<Props> = ({ melodyScale, keySignature }) => {
   const text = (keySignature.root == "C") ? "="
     : String.fromCharCode(baseKeyChar + keyToCharMap.indexOf(keySignature.root));
 
-  return <NoteElement melodyScale={melodyScale} customNote={text} />;
+  return <NoteElement melodyScale={melodyScale}
+                      customNote={text}
+                      showChords={showChords} />;
 };
 
 export default Key;

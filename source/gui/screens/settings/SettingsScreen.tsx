@@ -310,6 +310,11 @@ const SettingsScreen: React.FC = () => {
                                   onLongPress={(setValue) => setValue(false)}
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Show chords (experimental)"}
+                                  description={"This will show the chords above the notes in the melody, if chords are available."}
+                                  onLongPress={(setValue) => setValue(false)}
+                                  keyName={"showMelodyChords"}
+                                  isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}
                   isVisible={showAdvancedSettings}

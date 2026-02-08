@@ -12,9 +12,10 @@ interface Props {
   note: VoiceItemNote;
   animatedScaleText: SharedValue<number>;
   melodyScale: SharedValue<number>;
+  showChords: boolean;
 }
 
-const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melodyScale: melodyScale }) => {
+const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melodyScale, showChords }) => {
   const styles = createStyles(useTheme());
 
   const lyrics = note.lyric
@@ -37,7 +38,8 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melody
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
     <NoteElement note={note}
-                 melodyScale={melodyScale} />
+                 melodyScale={melodyScale}
+                 showChords={showChords}/>
 
     <Animated.Text style={[styles.text, animatedStyle.text]}
                    selectable={Settings.enableTextSelection}>
