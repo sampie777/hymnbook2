@@ -1,15 +1,11 @@
 import React, { DependencyList, useCallback, useEffect, useRef, useState } from "react";
 import { rollbar } from "../../logic/rollbar";
-import { Animated, Insets } from "react-native";
-import Svg, { G } from "react-native-svg";
+import { Insets } from "react-native";
 import { runAsync, sanitizeErrorForRollbar } from "../../logic/utils/utils.ts";
 import { useFocusEffect } from "@react-navigation/native";
 import { SongBundle } from "../../logic/db/models/songs/Songs";
 import Db from "../../logic/db/db";
 import { SongBundleSchema } from "../../logic/db/models/songs/SongsSchema";
-
-export const AnimatedSvg = Animated.createAnimatedComponent(Svg);
-export const AnimatedG = Animated.createAnimatedComponent(G);
 
 /**
  * Function which calls a callback after a set amount of time (period).
