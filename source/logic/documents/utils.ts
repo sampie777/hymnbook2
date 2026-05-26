@@ -117,6 +117,7 @@ export const htmlToText = (html: string): string => {
   return html
     .replace(/<.*?\/?>/g, "\n")
     .replace(/<\/?.*?\/?>/g, "")
+    .replace(/&[a-z0-9]+/g, " ")
     .replace(/ +/g, " ")
     .replace(/\n+/g, "\n")
     .trim()
