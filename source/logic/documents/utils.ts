@@ -112,3 +112,12 @@ export const isTitleSimilarToOtherDocumentGroups= (item: DocumentGroup, others: 
     && distance(nameWithoutNumber, stripNameDownToEssentials(it.name)) <= 1
   );
 };
+
+export const htmlToText = (html: string): string => {
+  return html
+    .replace(/<.*?\/?>/g, "\n")
+    .replace(/<\/?.*?\/?>/g, "")
+    .replace(/ +/g, " ")
+    .replace(/\n+/g, "\n")
+    .trim()
+}
