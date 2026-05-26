@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { rollbar } from "../../../../logic/rollbar";
 import Settings from "../../../../settings";
 import Db from "../../../../logic/db/db";
-import { sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
+import { isDbItemValid, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import { Document, DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { DocumentRoute, DocumentSearchRoute, ParamList } from "../../../../navigation";
 import { DocumentSearch } from "../../../../logic/documents/documentSearch";
@@ -12,21 +12,26 @@ import { DocumentGroupSchema } from "../../../../logic/db/models/documents/Docum
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
 import { RectangularInset, useCollectionListener } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
-import DocumentItem from "./DocumentItem";
-import DocumentGroupItem from "./DocumentGroupItem";
 import DownloadInstructions from "./DownloadInstructions";
-import SearchInput from "./SearchInput";
-
+import SearchInput from "./search/SearchInput";
+import SearchOptions from "./search/SearchOptions.tsx";
+import SearchResultScreen from "./search/SearchResultScreen.tsx";
+import DocumentGroupItem from "./DocumentGroupItem.tsx";
+import DocumentItem from "./DocumentItem.tsx";
 
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
-  type DbDocumentGroup = DocumentGroup & Realm.Object<DocumentGroup>;
+  const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
 
   const [isLoading, setIsLoading] = useState(true);
-  const [group, setGroup] = useState<DbDocumentGroup | undefined>(undefined);
-  const [rootGroups, setRootGroups] = useState<Array<DbDocumentGroup>>([]);
+  const [group, setGroup] = useState<DocumentSearch.DbDocumentGroup | undefined>(undefined);
+  const [rootGroups, setRootGroups] = useState<Array<DocumentSearch.DbDocumentGroup>>([]);
   const [searchText, setSearchText] = useState("");
+  const [searchInTitles, setSearchInTitles] = useState(Settings.documentSearchInTitles);
+  const [searchInContent, setSearchInContent] = useState(Settings.documentSearchInContent);
+  const [sortOrder, setSortOrder] = useState<DocumentSearch.OrderBy>(Settings.documentSearchSortOrder);
+
   const styles = createStyles(useTheme());
 
   useEffect(() => {
@@ -78,6 +83,19 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     return false;
   };
 
+  useEffect(useCallback(() => {
+    if (Settings.documentSearchInTitles == searchInTitles
+      && Settings.documentSearchInContent == searchInContent
+      && Settings.documentSearchSortOrder == sortOrder) {
+      return;
+    }
+
+    Settings.documentSearchInTitles = searchInTitles;
+    Settings.documentSearchInContent = searchInContent;
+    Settings.documentSearchSortOrder = sortOrder;
+    Settings.store();
+  }, [searchInTitles, searchInContent, sortOrder]), [searchInTitles, searchInContent, sortOrder]);
+
   useCollectionListener<DocumentGroup>(Db.documents.realm().objects(DocumentGroupSchema.name), () => {
     try {
       const groups = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
@@ -90,6 +108,11 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   });
 
   const previousLevel = () => {
+    if (searchText.length > 0) {
+      setSearchText("")
+      return;
+    }
+
     if (group === undefined) {
       return;
     }
@@ -99,16 +122,28 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     setSearchText("");
   };
 
-  const onGroupPress = (group: DbDocumentGroup) => {
+  const checkIfItemIsStillValid = (item: Document | DocumentGroup) => {
+    if (!isDbItemValid(item)) {
+      Alert.alert("Just a moment", "This document has been updated. Please re-open the screen.");
+      return false;
+    }
+    return true;
+  }
+
+  const onGroupPress = (group: DocumentSearch.DbDocumentGroup) => {
+    if (!checkIfItemIsStillValid(group)) return;
+
     setGroup(group);
     setSearchText("");
   };
 
   const onDocumentPress = (document: Document) => {
+    if (!checkIfItemIsStillValid(document)) return;
+
     navigation.navigate(DocumentRoute, { id: document.id, uuid: document.uuid });
   };
 
-  const groups = (): Array<DbDocumentGroup> => {
+  const groups = (): Array<DocumentSearch.DbDocumentGroup> => {
     if (group === undefined) {
       return rootGroups;
     }
@@ -117,28 +152,10 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       return [];
     }
 
-    return Array.from(group.groups as DbDocumentGroup[]);
-  };
-
-  const groupsForSearch = () => {
-    if (group === undefined) {
-      return DocumentSearch.searchForGroups(groups(), searchText);
-    }
-    return DocumentSearch.searchForGroups([group], searchText);
-  };
-
-  const groupsWithSearchResult = (): Array<DbDocumentGroup> => {
-    if (searchText.length > 0) {
-      return groupsForSearch() as DbDocumentGroup[];
-    }
-    return groups();
+    return Array.from(group.groups as DocumentSearch.DbDocumentGroup[]);
   };
 
   const items = (): Array<Document> => {
-    if (searchText.length > 0) {
-      return itemsForSearch();
-    }
-
     if (group === undefined) {
       return [];
     }
@@ -148,13 +165,6 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     }
 
     return group.items;
-  };
-
-  const itemsForSearch = () => {
-    if (group === undefined) {
-      return DocumentSearch.searchForItems(groups(), searchText);
-    }
-    return DocumentSearch.searchForItems([group], searchText);
   };
 
   const hasInvalidObjects = (): boolean => {
@@ -168,7 +178,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       // rollbar.debug("The selected group is invalid")
       setGroup(undefined);
       return true;
-    } else if (group && (group.groups as DbDocumentGroup[]).some(it => !it.isValid())) {
+    } else if (group && (group.groups as DocumentSearch.DbDocumentGroup[]).some(it => !it.isValid())) {
       rollbar.debug("Some sub groups are invalid");
       setGroup(undefined);
       return true;
@@ -184,40 +194,59 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
 
   return (<View style={styles.container}>
     <View style={styles.pageHeader}>
-      {group === undefined ? undefined :
+      {group === undefined && searchText.length == 0 ? undefined :
         <HeaderIconButton onPress={previousLevel}
                           icon={"arrow-left"}
                           hitSlop={RectangularInset(10)}
                           accessibilityLabel={"Back"} />}
 
       <Text style={styles.pageTitle}>
-        {group?.name || "Browse"}
+        {searchText.length > 0 ? "Search" : group?.name || "Browse"}
       </Text>
     </View>
 
-    <SearchInput value={searchText} onChange={setSearchText} />
+    <View style={styles.searchForm}>
+      <SearchInput value={searchText} onChange={setSearchText} />
+      <SearchOptions isTitleActive={searchInTitles}
+                     onTitlePress={() => setSearchInTitles(!searchInTitles)}
+                     isContentActive={searchInContent}
+                     onContentPress={() => setSearchInContent(!searchInContent)}
+                     sortOrder={sortOrder}
+                     onSortOrderChange={setSortOrder} />
+    </View>
 
     {isLoading || rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
 
-    <ScrollView keyboardShouldPersistTaps={"handled"}>
-      {groupsWithSearchResult()
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(it => <DocumentGroupItem
-          key={it.id}
-          group={it}
-          searchText={searchText}
-          onPress={onGroupPress} />)
-      }
+    {searchText.length > 0
+      ? <SearchResultScreen searchText={searchText}
+                            immediateSearchText={immediateSearchText}
+                            selectedGroupUuids={group ? [group.uuid] : []}
+                            navigation={navigation}
+                            onGroupPress={onGroupPress}
+                            searchInTitles={searchInTitles}
+                            searchInContent={searchInContent}
+                            sortOrder={sortOrder} />
+      :
+      <ScrollView keyboardShouldPersistTaps={"handled"}>
+        {groups()
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(it => <DocumentGroupItem
+            key={it.id}
+            group={it}
+            searchRegex={searchText}
+            onPress={onGroupPress} />)
+        }
 
-      {items()
-        .map(it => it as Document)
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, b) => a.index - b.index)
-        .map(it => <DocumentItem key={it.id}
-                                 document={it}
-                                 searchText={searchText}
-                                 onPress={onDocumentPress} />)}
-    </ScrollView>
+        {items()
+          .map(it => it as Document)
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a, b) => a.index - b.index)
+          .map(it => <DocumentItem key={it.id}
+                                   document={it}
+                                   searchText={searchText}
+                                   onPress={onDocumentPress} />)}
+      </ScrollView>
+    }
   </View>);
 };
 
@@ -226,7 +255,6 @@ export default DocumentSearchScreen;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
     alignItems: "stretch",
     backgroundColor: colors.background
   },
@@ -234,7 +262,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   pageHeader: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 10
+    paddingLeft: 10,
   },
 
   pageTitle: {
@@ -243,6 +271,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     color: colors.text.default,
     paddingHorizontal: 15,
     paddingVertical: 15
-  }
+  },
+
+  searchForm: {
+    marginBottom: 15,
+  },
 });
 

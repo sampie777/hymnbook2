@@ -51,7 +51,7 @@ import AboutScreen from "./gui/screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./gui/screens/about/PrivacyPolicyScreen";
 import VersePicker from "./gui/screens/songs/song/VersePicker/VersePicker";
 import OtherMenuScreen from "./gui/screens/otherMenu/OtherMenuScreen";
-import DocumentSearchScreen from "./gui/screens/documents/search/DocumentSearchScreen";
+import DocumentSearchScreen from "./gui/screens/documents/main/DocumentSearchScreen";
 import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";

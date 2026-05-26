@@ -10,7 +10,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import SearchInput from "../../documents/search/SearchInput";
+import SearchInput from "../../documents/main/search/SearchInput";
 import SearchOptions from "./SearchOptions";
 import SearchResultComponent from "./SearchResultComponent";
 import Icon from "react-native-vector-icons/FontAwesome5";

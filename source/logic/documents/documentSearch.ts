@@ -1,7 +1,29 @@
 import Settings from "../../settings";
 import { Document, DocumentGroup } from "../db/models/documents/Documents";
+import { InterruptedError } from "../InterruptedError.ts";
+import Db from "../db/db.tsx";
+import { SongSearch, } from "../songs/songSearch.ts";
+import { DocumentGroupSchema, DocumentSchema } from "../db/models/documents/DocumentsSchema.ts";
 
 export namespace DocumentSearch {
+  export const titleMatchPoints = 2;
+  export const contentMatchPoints = 1;
+
+  export interface SearchResult {
+    document?: Document & Realm.Object<Document>;
+    group?: DocumentGroup & Realm.Object<DocumentGroup>;
+    points: number;
+    isTitleMatch: boolean;
+    isContentMatch: boolean;
+  }
+
+  export enum OrderBy {
+    Relevance = "Relevance",
+    Group = "Group",
+  }
+
+  export type DbDocumentGroup = DocumentGroup & Realm.Object<DocumentGroup>;
+
   export const searchForGroups = (groups: Array<DocumentGroup> | null,
                                   searchText: string): Array<DocumentGroup> => {
     if (groups == null)
@@ -47,4 +69,158 @@ export namespace DocumentSearch {
         ...(group.items || []).filter(searchNameFunc)
       ]);
   };
+
+  export const sort = (results: SearchResult[], order: OrderBy): SearchResult[] => {
+    switch (order) {
+      case OrderBy.Relevance:
+        return results
+          .sort((a, b) => b.points - a.points)
+          .sort((a, b) => {
+            if (a.group != undefined && b.document != undefined) return -1
+            if (a.document != undefined && b.group != undefined) return 1
+            return 0
+          })
+      case OrderBy.Group:
+        return results
+          .sort((a, b) => {
+            if (a.group != undefined && b.document != undefined) return 1
+            if (a.document != undefined && b.group != undefined) return 1
+            return (a.document ?? a.group)!.name.localeCompare((b.document ?? b.group)!.name)
+          })
+          .sort((a, b) => (a.document?.index ?? 0) - (b.document?.index ?? 0))
+          .sort((a, b) => (Document.getParent(a.document)?.name ?? "").localeCompare(Document.getParent(b.document)?.name ?? ""));
+    }
+    return results;
+  };
+
+  export const find = (text: string,
+                       searchInTitles: boolean,
+                       searchInContent: boolean,
+                       selectedGroupUuids: string[],
+                       shouldCancel?: () => boolean): SearchResult[] => {
+    const groupResults: SearchResult[] = [];
+    // Use the document id as index, to increase document lookup speed for the searchInContent step
+    const results: { [key: string]: SearchResult } = {};
+
+    if (searchInTitles) {
+      findDocumentGroupsByTitle(text, selectedGroupUuids).forEach(it => {
+        groupResults.push({
+          group: it,
+          points: calculateMatchPointsForTitleMatch(it.name),
+          isTitleMatch: true,
+          isContentMatch: false
+        });
+      });
+
+      findDocumentsByTitle(text, selectedGroupUuids).forEach(it => {
+        results[it.id] = {
+          document: it,
+          points: calculateMatchPointsForTitleMatch(it.name),
+          isTitleMatch: true,
+          isContentMatch: false
+        };
+      });
+    }
+
+    if (shouldCancel?.()) throw new InterruptedError();
+
+    // Add content results to results
+    if (searchInContent) {
+      findByContent(text, selectedGroupUuids).forEach((it) => {
+        if (shouldCancel?.()) throw new InterruptedError();
+
+        // Calculating how much the match is worth
+        const points = calculateMatchPointsForContentMatch(it, text);
+
+        const existingResult = results[it.id];
+        if (existingResult != null) {
+          existingResult.points += points;
+          existingResult.isContentMatch = true;
+        } else {
+          results[it.id] = {
+            document: it,
+            points: points,
+            isTitleMatch: false,
+            isContentMatch: true
+          };
+        }
+      });
+    }
+
+    return [...groupResults, ...Object.values(results)];
+  };
+
+  export const findDocumentsByTitle = (text: string, selectedGroupUuids: string[] = []): (Document & Realm.Object<Document>)[] => {
+    const documentGroupQuery = selectedGroupUuids.length == 0 ? ""
+      : `AND ${createDocumentGroupFilterQuery(selectedGroupUuids)}`;
+    const query = `name LIKE[c] "*${text}*" ${documentGroupQuery}`;
+
+    const results = Db.documents.realm().objects<Document>(DocumentSchema.name)
+      .sorted("name")
+      .sorted("index")
+      .filtered(query);
+
+    return Array.from(results);
+  };
+
+  export const findDocumentGroupsByTitle = (text: string, selectedGroupUuids: string[] = []): (DocumentGroup & Realm.Object<DocumentGroup>)[] => {
+    const documentGroupQuery = selectedGroupUuids.length == 0 ? ""
+      : `AND ${createDocumentGroupFilterQuery(selectedGroupUuids)}`;
+    const query = `name LIKE[c] "*${text}*" AND isRoot = false ${documentGroupQuery}`;
+
+    const results = Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
+      .sorted("name")
+      .filtered(query);
+
+    return Array.from(results);
+  };
+
+  export const findByContent = (text: string, selectedGroupUuids: string[] = []): (Document & Realm.Object<Document>)[] => {
+    let query = `html LIKE[c] $0`;
+    const args: any[] = [`*${text}*`];
+
+    // Add wildcards to ignore some punctuation (max 1 at the moment)
+    // ("ab, cd" will match "ab cd")
+    if (/ .+/.test(text)) {
+      for (let i = 0; i < text.length; i++) {
+        if (text[i] != " ") continue;
+        const regex = text.slice(0, i) + "?" + text.slice(i);
+        query += ` or html LIKE[c] $${args.length}`;
+        args.push(`*${regex}*`);
+      }
+    }
+
+    if (selectedGroupUuids.length > 0) {
+      query = `(${query}) AND ${createDocumentGroupFilterQuery(selectedGroupUuids)}`;
+    }
+
+    const results = Db.documents.realm().objects<Document>(DocumentSchema.name)
+      .sorted("name")
+      .sorted("index")
+      .filtered(query, ...args);
+
+    return Array.from(results);
+  };
+
+  export const calculateMatchPointsForTitleMatch = (title: string): number => {
+    return titleMatchPoints / title.length;
+  };
+
+  export const calculateMatchPointsForContentMatch = (document: Document, text: string): number => {
+    let result = 0;
+
+    const regexText = SongSearch.makeSearchTextRegexable(text);
+    const matches = document.html.match(new RegExp(regexText, "gi"));
+    if (matches != null) {
+      result += matches.length * contentMatchPoints;
+    }
+
+    const totalContentLines: number = document.html.split("\n").length;
+
+    if (totalContentLines == 0) return 0;
+    return result / totalContentLines;
+  };
+
+  export const createDocumentGroupFilterQuery = (selectedGroupsUuids: string[]) => `ANY _parent.uuid in {${selectedGroupsUuids.map(it => `'${it}'`).join(", ")}}`;
+
 }

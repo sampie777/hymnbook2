@@ -1,35 +1,50 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { isDbItemValid } from "../../../../logic/utils/utils.ts";
+import { renderTextWithCustomReplacements } from "../../../components/utils.ts";
 
 
 interface ScreenProps<T extends DocumentGroup> {
   group: T;
   onPress?: (group: T) => void;
-  searchText?: string;
+  searchRegex?: string;
+  disable?: boolean;
 }
 
 const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<DocumentGroup>>> = ({
                                                                                                  group,
                                                                                                  onPress,
-                                                                                                 searchText
+                                                                                                 searchRegex
                                                                                                }) => {
+  if (!isDbItemValid(group)) return null;
+
   const styles = createStyles(useTheme());
+
+  const parentName = searchRegex === undefined || searchRegex.length === 0 ? undefined : DocumentGroup.getParent(group)?.name;
+
+  const createHighlightedTextComponent = useCallback((text: string, index: number) =>
+    <Text key={index} style={styles.textHighlighted}>
+      {text}
+    </Text>, [searchRegex]);
 
   return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>
     <Icon name={"folder"} style={styles.searchListItemIcon} />
     <View style={styles.nameContainer}>
       <Text style={[
         styles.itemName,
-        (!(searchText === undefined || searchText.length === 0) ? {} : styles.itemExtraPadding)
+        (!parentName && styles.itemExtraPadding)
       ]}
             importantForAccessibility={"auto"}>
-        {group.name}
+        {searchRegex && searchRegex.length > 0
+          ? renderTextWithCustomReplacements(group.name, searchRegex, createHighlightedTextComponent)
+          : group.name
+        }
       </Text>
 
-      {searchText === undefined || searchText.length === 0 ? undefined :
+      {parentName &&
         <Text style={styles.parentName}
               importantForAccessibility={"auto"}>
           {DocumentGroup.getParent(group)?.name}
@@ -90,5 +105,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.text.lighter
+  },
+
+  textHighlighted: {
+    color: colors.text.highlighted.foreground,
+    backgroundColor: colors.text.highlighted.background
   }
 });

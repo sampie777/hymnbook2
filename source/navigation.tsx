@@ -62,6 +62,7 @@ export type ParamList = {
   Document: {
     id?: number;
     uuid?: string;
+    highlightText?: string;
   },
   DocumentHistoryRoute: undefined,
 }

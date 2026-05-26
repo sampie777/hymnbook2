@@ -7,7 +7,7 @@ import { DocumentHistoryRoute, DocumentRoute, ParamList } from '../../../../navi
 import Db from '../../../../logic/db/db';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { loadDocumentWithUuidOrId } from "../../../../logic/documents/utils";
-import DocumentItemBaseComponent from "../search/DocumentItemBaseComponent";
+import DocumentItemBaseComponent from "../main/DocumentItemBaseComponent";
 
 type DocumentHistoryGroupedItem = {
   documentTitle: string;
