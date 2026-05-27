@@ -5,17 +5,13 @@ import { DocumentSearch } from "../../../../../logic/documents/documentSearch.ts
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider.tsx";
 import { SongSearch } from "../../../../../logic/songs/songSearch.ts";
 import { rollbar } from "../../../../../logic/rollbar.ts";
-import {
-  isTitleSimilarToOtherDocumentGroups,
-  isTitleSimilarToOtherDocuments
-} from "../../../../../logic/documents/utils.ts";
-import DocumentSearchResultComponent from "./DocumentSearchResultComponent.tsx";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ParamList } from "../../../../../navigation.tsx";
+import { isTitleSimilarToOtherDocumentGroups } from "../../../../../logic/documents/utils.ts";
 import { debounce, useIsMounted } from "../../../../components/utils.ts";
 import Db from "../../../../../logic/db/db.tsx";
 import { InterruptedError } from "../../../../../logic/InterruptedError.ts";
 import DocumentGroupItem from "../DocumentGroupItem.tsx";
+import DocumentItem from "../DocumentItem.tsx";
+import { Document } from "../../../../../logic/db/models/documents/Documents.ts";
 
 type FetchSearchResultsFunction = (text: string) => void;
 
@@ -23,8 +19,8 @@ interface Props {
   searchText: string
   immediateSearchText: RefObject<string>
   selectedGroupUuids: string[]
-  navigation: NativeStackNavigationProp<ParamList, any>
   onGroupPress: (group: DocumentSearch.DbDocumentGroup) => void
+  onDocumentPress: (document: Document) => void
   searchInTitles: boolean
   searchInContent: boolean
   sortOrder: DocumentSearch.OrderBy
@@ -34,13 +30,13 @@ const SearchResultScreen: React.FC<Props> = ({
                                                searchText,
                                                immediateSearchText,
                                                selectedGroupUuids,
-                                               navigation,
                                                onGroupPress,
                                                searchInTitles,
                                                searchInContent,
                                                sortOrder,
+                                               onDocumentPress,
                                              }) => {
-  const isMounted = useIsMounted({ trackFocus: true });
+  const isMounted = useIsMounted();
   const [searchResults, setSearchResults] = useState<DocumentSearch.SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -121,12 +117,6 @@ const SearchResultScreen: React.FC<Props> = ({
 
   const fetchSearchResultsDebounced: FetchSearchResultsFunction = debounce(fetchSearchResults, searchInContent ? 750 : 0);
 
-  const allDocuments = useMemo(() => {
-    return searchResults
-      .filter(it => isDbItemValid(it.document))
-      .map(it => it.document!);
-  }, [searchResults]);
-
   const allGroups = useMemo(() => {
     return searchResults
       .filter(it => isDbItemValid(it.group))
@@ -159,25 +149,21 @@ const SearchResultScreen: React.FC<Props> = ({
           selectedGroupUuids.length > 3 && searchText.length == 0 ? true
             : isTitleSimilarToOtherDocumentGroups(item.group, allGroups);
 
-      return <DocumentGroupItem searchRegex={searchRegex}
-        // showDocumentGroup={showDocumentGroup}
-                                disable={isLoading}
+      return <DocumentGroupItem showDocumentGroup={showDocumentGroup}
+                                disabled={isLoading}
                                 group={item.group!}
                                 onPress={() => onGroupPress(item.group!)} />
     }
 
-    const showDocumentGroup =
-      item.document == undefined || selectedGroupUuids.length == 1 ? false :
-        selectedGroupUuids.length > 3 && searchText.length == 0 ? true
-          : isTitleSimilarToOtherDocuments(item.document, allDocuments);
-
-    return <DocumentSearchResultComponent navigation={navigation}
-                                          searchRegex={searchRegex}
-                                          showDocumentGroup={showDocumentGroup}
-                                          disable={isLoading}
-                                          document={item.document!}
-                                          isTitleMatch={item.isTitleMatch}
-                                          isContentMatch={item.isContentMatch} />;
+    const showDocumentGroup = !selectedGroupUuids.includes(Document.getParent(item.document)?.uuid ?? "")
+      || !(item.document == undefined || selectedGroupUuids.length == 1);
+    return <DocumentItem document={item.document!}
+                         searchRegex={searchRegex}
+                         disabled={isLoading}
+                         isContentMatch={item.isContentMatch}
+                         showDocumentGroup={showDocumentGroup}
+                         onPress={() => onDocumentPress(item.document!)}
+    />
   }, [isLoading]);
 
   return <>
@@ -205,13 +191,11 @@ const SearchResultScreen: React.FC<Props> = ({
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   listContainer: {
     flex: 1,
-    marginTop: 15,
   },
   resultsInfoText: {
     color: colors.text.lighter,
     textAlign: "center",
     fontStyle: "italic",
-    marginTop: 5,
     marginBottom: 15,
     fontSize: 13
   },

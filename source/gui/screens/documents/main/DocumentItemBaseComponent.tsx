@@ -1,22 +1,29 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 interface ScreenProps {
-  documentName: string;
+  documentName: string | ReactNode;
   parentName?: string;
   onPress?: () => void;
+  content?: string | ReactNode;
+  disabled?: boolean;
 }
 
 const DocumentItemBaseComponent: React.FC<ScreenProps> = ({
                                                             documentName,
                                                             parentName,
                                                             onPress,
+                                                            content,
+                                                            disabled = false,
                                                           }) => {
   const styles = createStyles(useTheme());
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity onPress={onPress}
+                      disabled={disabled}
+                      style={styles.container}>
       <Text
         style={[styles.itemName, parentName ? {} : styles.itemExtraPadding]}
         importantForAccessibility={'auto'}>
@@ -24,10 +31,17 @@ const DocumentItemBaseComponent: React.FC<ScreenProps> = ({
       </Text>
 
       {!parentName ? undefined : (
-        <Text style={styles.parentName} importantForAccessibility={'auto'}>
-          {parentName}
-        </Text>
+        <View style={styles.documentGroupContainer}>
+          <Text style={styles.parentName}>
+            <Icon name={"book"} />
+          </Text>
+          <Text style={styles.parentName} importantForAccessibility={'auto'}>
+            {parentName}
+          </Text>
+        </View>
       )}
+
+      {content && <View style={styles.contentContainer}>{content}</View>}
     </TouchableOpacity>
   );
 };
@@ -59,9 +73,22 @@ const createStyles = ({ colors }: ThemeContextProps) =>
     },
 
     parentName: {
-      paddingHorizontal: 15,
       fontSize: 14,
       color: colors.text.lighter,
       fontStyle: 'italic',
+    },
+
+    documentGroupContainer: {
+      paddingHorizontal: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      gap: 10,
+    },
+
+    contentContainer: {
+      paddingHorizontal: 15,
+      paddingBottom: 10,
+      justifyContent: "flex-start"
     },
   });

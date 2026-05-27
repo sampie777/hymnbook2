@@ -1,36 +1,33 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { isDbItemValid } from "../../../../logic/utils/utils.ts";
-import { renderTextWithCustomReplacements } from "../../../components/utils.ts";
 
 
 interface ScreenProps<T extends DocumentGroup> {
   group: T;
   onPress?: (group: T) => void;
-  searchRegex?: string;
-  disable?: boolean;
+  disabled?: boolean;
+  showDocumentGroup?: boolean;
 }
 
 const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<DocumentGroup>>> = ({
                                                                                                  group,
                                                                                                  onPress,
-                                                                                                 searchRegex
+                                                                                                 disabled = false,
+                                                                                                 showDocumentGroup = false,
                                                                                                }) => {
   if (!isDbItemValid(group)) return null;
 
   const styles = createStyles(useTheme());
 
-  const parentName = searchRegex === undefined || searchRegex.length === 0 ? undefined : DocumentGroup.getParent(group)?.name;
+  const parentName = !showDocumentGroup ? undefined : DocumentGroup.getParent(group)?.name;
 
-  const createHighlightedTextComponent = useCallback((text: string, index: number) =>
-    <Text key={index} style={styles.textHighlighted}>
-      {text}
-    </Text>, [searchRegex]);
-
-  return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>
+  return (<TouchableOpacity onPress={() => onPress?.(group)}
+                            disabled={disabled}
+                            style={styles.container}>
     <Icon name={"folder"} style={styles.searchListItemIcon} />
     <View style={styles.nameContainer}>
       <Text style={[
@@ -38,17 +35,18 @@ const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<Docum
         (!parentName && styles.itemExtraPadding)
       ]}
             importantForAccessibility={"auto"}>
-        {searchRegex && searchRegex.length > 0
-          ? renderTextWithCustomReplacements(group.name, searchRegex, createHighlightedTextComponent)
-          : group.name
-        }
+        {group.name}
       </Text>
 
       {parentName &&
-        <Text style={styles.parentName}
-              importantForAccessibility={"auto"}>
-          {DocumentGroup.getParent(group)?.name}
-        </Text>
+        <View style={styles.documentGroupContainer}>
+          <Text style={styles.parentName}>
+            <Icon name={"book"} />
+          </Text>
+          <Text style={styles.parentName} importantForAccessibility={'auto'}>
+            {parentName}
+          </Text>
+        </View>
       }
     </View>
 
@@ -87,10 +85,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 7
   },
   parentName: {
-    paddingHorizontal: 15,
     fontSize: 14,
     color: colors.text.lighter,
     fontStyle: "italic"
+  },
+
+  documentGroupContainer: {
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 10,
   },
 
   searchListItemIcon: {

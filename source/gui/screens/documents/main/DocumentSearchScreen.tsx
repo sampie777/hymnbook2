@@ -221,8 +221,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       ? <SearchResultScreen searchText={searchText}
                             immediateSearchText={immediateSearchText}
                             selectedGroupUuids={group ? [group.uuid] : []}
-                            navigation={navigation}
                             onGroupPress={onGroupPress}
+                            onDocumentPress={onDocumentPress}
                             searchInTitles={searchInTitles}
                             searchInContent={searchInContent}
                             sortOrder={sortOrder} />
@@ -233,7 +233,6 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
           .map(it => <DocumentGroupItem
             key={it.id}
             group={it}
-            searchRegex={searchText}
             onPress={onGroupPress} />)
         }
 
@@ -243,7 +242,6 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
           .sort((a, b) => a.index - b.index)
           .map(it => <DocumentItem key={it.id}
                                    document={it}
-                                   searchText={searchText}
                                    onPress={onDocumentPress} />)}
       </ScrollView>
     }
