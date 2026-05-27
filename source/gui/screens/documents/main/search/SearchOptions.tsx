@@ -25,17 +25,8 @@ const SearchOptions: React.FC<Props> = ({
                                         }) => {
   const [showOrder, setShowOrder] = useState(false);
 
-  const orderToText = (value: DocumentSearch.OrderBy): string => {
-    switch (value) {
-      case DocumentSearch.OrderBy.Relevance:
-        return "Relevance";
-      case DocumentSearch.OrderBy.Group:
-        return "Group";
-    }
-    return value;
-  };
-
-  return <View style={styles.container}>
+  return <Animated.View style={styles.container}
+                        entering={FadeInUp.duration(200)}>
     <View style={styles.row}>
       <SearchOption title={"Titles"} active={isTitleActive} onPress={onTitlePress} />
       <SearchOption title={"Verses"} active={isContentActive} onPress={onContentPress} />
@@ -49,7 +40,7 @@ const SearchOptions: React.FC<Props> = ({
                           onChange={onSortOrderChange} />
       </Animated.View>
     }
-  </View>;
+  </Animated.View>;
 };
 
 const styles = StyleSheet.create({

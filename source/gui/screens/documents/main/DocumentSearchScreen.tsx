@@ -25,6 +25,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
 
   const [isLoading, setIsLoading] = useState(true);
+  const [showSearchOptions, setShowSearchOptions] = useState(false);
   const [group, setGroup] = useState<DocumentSearch.DbDocumentGroup | undefined>(undefined);
   const [rootGroups, setRootGroups] = useState<Array<DocumentSearch.DbDocumentGroup>>([]);
   const [searchText, setSearchText] = useState("");
@@ -45,6 +46,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   const onExit = () => {
     setGroup(undefined);  // Throw away these in case of live reload of the app
     setRootGroups([]);
+    setShowSearchOptions(false);
   };
 
   useFocusEffect(useCallback(() => {
@@ -61,6 +63,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   };
 
   const onBlur = () => {
+    setShowSearchOptions(false);
+
     if (Settings.documentsResetPathToRoot) {
       setGroup(undefined);
       setRootGroups([]);
@@ -74,6 +78,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       setSearchText("");
       return true;
     }
+
+    setShowSearchOptions(false);
 
     if (group !== undefined) {
       previousLevel();
@@ -113,6 +119,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
       return;
     }
 
+    setShowSearchOptions(false);
+
     if (group === undefined) {
       return;
     }
@@ -131,6 +139,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   }
 
   const onGroupPress = (group: DocumentSearch.DbDocumentGroup) => {
+    setShowSearchOptions(false);
+
     if (!checkIfItemIsStillValid(group)) return;
 
     setGroup(group);
@@ -206,13 +216,16 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
     </View>
 
     <View style={styles.searchForm}>
-      <SearchInput value={searchText} onChange={setSearchText} />
-      <SearchOptions isTitleActive={searchInTitles}
-                     onTitlePress={() => setSearchInTitles(!searchInTitles)}
-                     isContentActive={searchInContent}
-                     onContentPress={() => setSearchInContent(!searchInContent)}
-                     sortOrder={sortOrder}
-                     onSortOrderChange={setSortOrder} />
+      <SearchInput value={searchText}
+                   onChange={setSearchText}
+                   onFocus={() => setShowSearchOptions(true)} />
+      {showSearchOptions &&
+        <SearchOptions isTitleActive={searchInTitles}
+                       onTitlePress={() => setSearchInTitles(!searchInTitles)}
+                       isContentActive={searchInContent}
+                       onContentPress={() => setSearchInContent(!searchInContent)}
+                       sortOrder={sortOrder}
+                       onSortOrderChange={setSortOrder} />}
     </View>
 
     {isLoading || rootGroups.length > 0 ? undefined : <DownloadInstructions navigation={navigation} />}
