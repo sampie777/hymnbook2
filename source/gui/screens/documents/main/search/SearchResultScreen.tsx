@@ -85,10 +85,13 @@ const SearchResultScreen: React.FC<Props> = ({
 
     let results: Array<DocumentSearch.SearchResult> = [];
     try {
+      // Include all sub groups in our search
+      const groupAndSubGroupScopeUuids = DocumentSearch.getGroupAndSubGroupScopeUuids(selectedGroupUuids);
+
       results = DocumentSearch.find(text,
         searchInTitles,
         searchInContent,
-        selectedGroupUuids,
+        groupAndSubGroupScopeUuids,
         () => text != immediateSearchText.current || isSearchEmpty(immediateSearchText.current)
       );
     } catch (error) {

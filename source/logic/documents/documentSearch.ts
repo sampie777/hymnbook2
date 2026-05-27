@@ -221,6 +221,46 @@ export namespace DocumentSearch {
     return result / totalContentLines;
   };
 
-  export const createDocumentGroupFilterQuery = (selectedGroupsUuids: string[]) => `ANY _parent.uuid in {${selectedGroupsUuids.map(it => `'${it}'`).join(", ")}}`;
+  export const createDocumentGroupFilterQuery = (selectedGroupsUuids: string[]) =>
+    `ANY _parent.uuid in {${selectedGroupsUuids.map(it => `'${it}'`).join(", ")}}`;
+
+  /**
+   * This method collects all sub groups for a group. To increase efficiency, the goal is to prevent
+   * iterating over groups we already scanned.
+   * @param fromUuids
+   */
+  export const getGroupAndSubGroupScopeUuids = (fromUuids: string[]) => {
+    const dontIncludeFromUuidsQuery = `NOT uuid IN {${fromUuids.map(it => `'${it}'`).join(", ")}} AND `;
+    let allGroups = Array.from(Db.documents.realm().objects<DocumentGroup>(DocumentGroupSchema.name)
+      .filtered(`${fromUuids.length > 0 ? dontIncludeFromUuidsQuery : ''} isRoot = false`))
+
+    const results: string[] = [...fromUuids];
+
+    let groupsToScan: string[] = [...results];
+    let subGroupsFound: string[] = [];
+
+    let previousLength = -1;
+    // Check if the previous iteration resulted in results, otherwise we are done and can stop searching further
+    while (results.length > previousLength) {
+      previousLength = results.length;
+
+      // Find sub groups for the already found groups
+      groupsToScan.forEach(uuid => {
+        allGroups.filter(it => it._parent && it._parent[0].uuid == uuid)
+          .forEach(result => {
+            subGroupsFound.push(result.uuid)
+            results.push(result.uuid);
+
+            // Reduce our search stack (not sure if this makes for more work or less work due to all the looping over)
+            allGroups = allGroups.filter(it => it.id != result.id)
+          })
+      })
+
+      groupsToScan = subGroupsFound;
+      subGroupsFound = [];
+    }
+
+    return results;
+  };
 
 }
