@@ -50,6 +50,8 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
   };
 
   useFocusEffect(useCallback(() => {
+    if (searchText.length > 0) setShowSearchOptions(true);
+
     const backHandlerSubscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => backHandlerSubscription.remove();
   }, [group, searchText]));
