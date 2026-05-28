@@ -4,6 +4,7 @@ import { InterruptedError } from "../InterruptedError.ts";
 import Db from "../db/db.tsx";
 import { SongSearch, } from "../songs/songSearch.ts";
 import { DocumentGroupSchema, DocumentSchema } from "../db/models/documents/DocumentsSchema.ts";
+import { getPathForDocumentOrDocumentGroup } from "./utils.ts";
 
 export namespace DocumentSearch {
   export const titleMatchPoints = 2;
@@ -15,6 +16,7 @@ export namespace DocumentSearch {
     points: number;
     isTitleMatch: boolean;
     isContentMatch: boolean;
+    path: string;
   }
 
   export enum OrderBy {
@@ -74,6 +76,7 @@ export namespace DocumentSearch {
     switch (order) {
       case OrderBy.Relevance:
         return results
+          .sort((a, b) => a.path.localeCompare(b.path))
           .sort((a, b) => b.points - a.points)
           .sort((a, b) => {
             if (a.group != undefined && b.document != undefined) return -1
@@ -82,13 +85,13 @@ export namespace DocumentSearch {
           })
       case OrderBy.Group:
         return results
-          .sort((a, b) => {
-            if (a.group != undefined && b.document != undefined) return 1
-            if (a.document != undefined && b.group != undefined) return 1
-            return (a.document ?? a.group)!.name.localeCompare((b.document ?? b.group)!.name)
-          })
           .sort((a, b) => (a.document?.index ?? 0) - (b.document?.index ?? 0))
-          .sort((a, b) => (Document.getParent(a.document)?.name ?? "").localeCompare(Document.getParent(b.document)?.name ?? ""));
+          .sort((a, b) => a.path.localeCompare(b.path))
+          .sort((a, b) => {
+            if (a.group != undefined && b.document != undefined) return -1
+            if (a.document != undefined && b.group != undefined) return 1
+            return 0
+          })
     }
     return results;
   };
@@ -108,7 +111,8 @@ export namespace DocumentSearch {
           group: it,
           points: calculateMatchPointsForTitleMatch(it.name),
           isTitleMatch: true,
-          isContentMatch: false
+          isContentMatch: false,
+          path: getPathForDocumentOrDocumentGroup(it, false).map(it => it.name).join("  >  ")
         });
       });
 
@@ -117,7 +121,8 @@ export namespace DocumentSearch {
           document: it,
           points: calculateMatchPointsForTitleMatch(it.name),
           isTitleMatch: true,
-          isContentMatch: false
+          isContentMatch: false,
+          path: getPathForDocumentOrDocumentGroup(it, false).map(it => it.name).join("  >  ")
         };
       });
     }
@@ -141,7 +146,8 @@ export namespace DocumentSearch {
             document: it,
             points: points,
             isTitleMatch: false,
-            isContentMatch: true
+            isContentMatch: true,
+            path: getPathForDocumentOrDocumentGroup(it, false).map(it => it.name).join("  >  "),
           };
         }
       });

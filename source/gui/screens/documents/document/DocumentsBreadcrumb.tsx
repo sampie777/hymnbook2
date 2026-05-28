@@ -1,7 +1,7 @@
 import React from "react";
 import Settings from "../../../../settings";
 import { Document } from "../../../../logic/db/models/documents/Documents";
-import { getPathForDocument } from "../../../../logic/documents/utils";
+import { getPathForDocumentOrDocumentGroup } from "../../../../logic/documents/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet } from "react-native";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
@@ -24,7 +24,7 @@ const DocumentsBreadcrumb: React.FC<Props> = ({ document, scale }) => {
       lineHeight: scale.value * 18
     }))
   };
-  const path = getPathForDocument(document);
+  const path = getPathForDocumentOrDocumentGroup(document);
 
   return <Animated.View style={[styles.container, animatedStyles.container]}>
     <Animated.Text style={[styles.text, animatedStyles.text]}

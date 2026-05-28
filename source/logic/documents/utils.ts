@@ -26,8 +26,8 @@ export const getParentForDocumentOrDocumentGroup = (item: Document | DocumentGro
   return DocumentGroup.getParent(item);
 };
 
-export const getPathForDocument = (document: Document): Array<Document | DocumentGroup> => {
-  const path: Array<Document | DocumentGroup> = [document];
+export const getPathForDocumentOrDocumentGroup = (item: Document | DocumentGroup, includeCurrent: boolean = true): Array<Document | DocumentGroup> => {
+  const path: Array<Document | DocumentGroup> = [item];
 
   try {
     let parent;
@@ -38,10 +38,11 @@ export const getPathForDocument = (document: Document): Array<Document | Documen
   } catch (error) {
     rollbar.error(`Failed to get path for document`, {
       ...sanitizeErrorForRollbar(error),
-      document: document
+      document: item
     });
   }
 
+  if (!includeCurrent) path.pop();
   return path;
 };
 

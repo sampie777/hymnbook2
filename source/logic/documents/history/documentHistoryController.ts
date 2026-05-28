@@ -3,7 +3,7 @@ import { rollbar } from '../../rollbar';
 import { DocumentHistory } from '../../db/models/documents/DocumentHistory';
 import Db from '../../db/db';
 import { DocumentHistorySchema } from '../../db/models/documents/DocumentHistorySchema';
-import { getPathForDocument } from '../utils';
+import { getPathForDocumentOrDocumentGroup } from '../utils';
 
 export namespace DocumentHistoryController {
   export const pushDocument = (
@@ -41,7 +41,7 @@ export namespace DocumentHistoryController {
       );
     }
 
-    const path = getPathForDocument(document)
+    const path = getPathForDocumentOrDocumentGroup(document)
       .map(it => it.name)
       .join('  >  ');
 
