@@ -296,7 +296,7 @@ const App: React.FC = () =>
 
 export default App;
 
-const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, isDark, fontFamily }: ThemeContextProps) => StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: colors.background,
@@ -315,7 +315,8 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     elevation: isDark ? 2 : undefined,
   },
   tabBarHeaderTitle: {
-    color: colors.text.header as string
+    color: colors.text.header as string,
+    fontFamily: fontFamily.sansSerif,
   },
 
   tabBarItem: {},
@@ -329,5 +330,6 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   tabBarBadgeStyle: {
     fontSize: 12,
     backgroundColor: colors.primary.default,
+    fontFamily: fontFamily.sansSerif,
   }
 });
