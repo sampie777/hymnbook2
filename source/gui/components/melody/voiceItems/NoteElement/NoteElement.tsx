@@ -8,6 +8,7 @@ import Lines from "../../other/Lines.tsx";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useTheme } from "../../../providers/ThemeProvider.tsx";
 import Chord from "./Chord.tsx";
+import { AnimatedSafeText } from "../../../SafeText.tsx";
 
 interface Props {
   note?: VoiceItemNote;
@@ -37,7 +38,7 @@ const NoteElement: React.FC<Props> = ({
 
     {showChords && <Chord note={note} melodyScale={melodyScale} />}
 
-    <Animated.Text style={[styles.note, animatedStyle.note, (customNote ? { transform: undefined } : {})]}
+    <AnimatedSafeText style={[styles.note, animatedStyle.note, (customNote ? { transform: undefined } : {})]}
                    ellipsizeMode={"tail"}>
       {!note ? customNote : <>
         {" "}
@@ -51,7 +52,7 @@ const NoteElement: React.FC<Props> = ({
         <Rest note={note} />
         {" "}
       </>}
-    </Animated.Text>
+    </AnimatedSafeText>
   </Animated.View>;
 };
 

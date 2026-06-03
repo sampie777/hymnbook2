@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import LoadingIndicator from "../LoadingIndicator";
@@ -10,6 +10,7 @@ import { ValidationError } from "../../../logic/utils/utils.ts";
 import { useIsMounted } from "../utils";
 import config from "../../../config";
 import { useAppContext } from "../providers/AppContextProvider.tsx";
+import SafeText from "../SafeText.tsx";
 
 interface Props {
   amount?: number
@@ -106,10 +107,10 @@ const StripePaymentButton: React.FC<Props> = ({ amount = 100, currency = "ZAR", 
         ? <LoadingIndicator size={22}
                             opacity={1}
                             color={styles.buttonText.color} /> :
-        <Text style={styles.buttonText}>
-          {!developerMode ? "" : <Text style={styles.buttonTextTest}>TEST </Text>}
-          <Text style={{ fontWeight: "bold" }}>Support</Text> with {currency} {amount},-
-        </Text>
+        <SafeText style={styles.buttonText}>
+          {!developerMode ? "" : <SafeText style={styles.buttonTextTest}>TEST </SafeText>}
+          <SafeText style={{ fontWeight: "bold" }}>Support</SafeText> with {currency} {amount},-
+        </SafeText>
       }
     </TouchableOpacity>
   </StripeProvider>

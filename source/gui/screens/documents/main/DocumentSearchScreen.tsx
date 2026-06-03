@@ -12,7 +12,7 @@ import { DocumentGroupSchema } from "../../../../logic/db/models/documents/Docum
 import { getParentForDocumentGroup } from "../../../../logic/documents/utils";
 import { RectangularInset, useCollectionListener } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { Alert, BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import HeaderIconButton from "../../../components/HeaderIconButton";
 import DownloadInstructions from "./DownloadInstructions";
 import SearchInput from "./search/SearchInput";
@@ -20,6 +20,7 @@ import SearchOptions from "./search/SearchOptions.tsx";
 import SearchResultScreen from "./search/SearchResultScreen.tsx";
 import DocumentGroupItem from "./DocumentGroupItem.tsx";
 import DocumentItem from "./DocumentItem.tsx";
+import SafeText from "../../../components/SafeText.tsx";
 
 const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof DocumentSearchRoute>> = ({ navigation }) => {
   const immediateSearchText = useRef(""); // Var for keeping track of search text, which can be used outside the React state scope, like the timed out database fetch function
@@ -200,7 +201,7 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
 
   if (hasInvalidObjects()) {
     return <View style={styles.container}>
-      <Text style={styles.pageTitle}>Please reload this screen</Text>
+      <SafeText style={styles.pageTitle}>Please reload this screen</SafeText>
     </View>;
   }
 
@@ -212,9 +213,9 @@ const DocumentSearchScreen: React.FC<NativeStackScreenProps<ParamList, typeof Do
                           hitSlop={RectangularInset(10)}
                           accessibilityLabel={"Back"} />}
 
-      <Text style={styles.pageTitle}>
+      <SafeText style={styles.pageTitle}>
         {searchText.length > 0 ? "Search" : group?.name || "Browse"}
-      </Text>
+      </SafeText>
     </View>
 
     <View style={styles.searchForm}>

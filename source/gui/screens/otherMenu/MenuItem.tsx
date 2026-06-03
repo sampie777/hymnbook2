@@ -1,7 +1,8 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { StyleProp, StyleSheet, TextStyle, TouchableOpacity, View } from "react-native";
 import { useAppContext } from "../../components/providers/AppContextProvider";
+import SafeText from "../../components/SafeText.tsx";
 
 interface MenuItemProps {
   text: string;
@@ -31,10 +32,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
       {icon?.(styles.icon)}
       {!hasNotification ? null : <View style={styles.badge}></View>}
     </View>
-    <Text style={styles.title}
+    <SafeText style={styles.title}
           importantForAccessibility={"auto"}>
       {text}
-    </Text>
+    </SafeText>
     {statusIcon}
   </TouchableOpacity>
 };

@@ -1,9 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import MultiPickerComponent from "./MultiPickerComponent";
 import { SongBundle } from "../../../logic/db/models/songs/Songs";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
+import SafeText from "../SafeText.tsx";
 
 interface Props {
   bundles: SongBundle[];
@@ -25,18 +26,18 @@ const SongBundlePicker: React.FC<Props> = ({ bundles, selectedBundles, onConfirm
                                onCompleted={onConfirm}
                                rowContentRenderer={(item, isSelected) =>
                                  <View style={styles.container}>
-                                   <Text style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}
+                                   <SafeText style={[styles.titleText, (isSelected ? styles.titleTextSelected : {})]}
                                          importantForAccessibility={"auto"}>
                                      {item.name}
-                                   </Text>
+                                   </SafeText>
 
                                    {!showLanguage ? null :
                                      <View style={styles.infoContainer}>
                                        {item.language === undefined || item.language === "" ? undefined :
-                                         <Text style={styles.infoText}
+                                         <SafeText style={styles.infoText}
                                                importantForAccessibility={"auto"}>
                                            {languageAbbreviationToFullName(item.language)}
-                                         </Text>
+                                         </SafeText>
                                        }
                                      </View>
                                    }

@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
+import SafeText from "./SafeText.tsx";
 
 interface ComponentProps {
   message: string;
@@ -24,7 +25,7 @@ const DisposableMessage: React.FC<ComponentProps>
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
-      <Text style={styles.text}>{message}</Text>
+      <SafeText style={styles.text}>{message}</SafeText>
       <View style={styles.icon}>
         <Icon name="times-circle" size={styles.icon.fontSize} color={styles.icon.color as string} />
       </View>

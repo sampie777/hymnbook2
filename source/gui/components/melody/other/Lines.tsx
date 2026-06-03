@@ -3,6 +3,7 @@ import { AbcConfig, useAbcMusicStyle } from "../config.ts";
 import { useTheme } from "../../providers/ThemeProvider.tsx";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { StyleSheet, useWindowDimensions } from "react-native";
+import { AnimatedSafeText } from "../../SafeText.tsx";
 
 interface Props {
   melodyScale: SharedValue<number>
@@ -23,7 +24,7 @@ const Lines: React.FC<Props> = ({ melodyScale, showChords }) => {
 
   return <Animated.View
     style={[styles.container, animatedStyles.container, { transform: [{ scaleX: 2 * windowDimension.width / charWidth }] }]}>
-    <Animated.Text style={[animatedStyles.note, { color: theme.colors.notes.lines }]}>{"="}</Animated.Text>
+    <AnimatedSafeText style={[animatedStyles.note, { color: theme.colors.notes.lines }]}>{"="}</AnimatedSafeText>
   </Animated.View>
 };
 

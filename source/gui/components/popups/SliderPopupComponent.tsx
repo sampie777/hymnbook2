@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import ConfirmationModal from "./ConfirmationModal";
 import SliderComponent from "../SliderComponent";
+import SafeText from "../SafeText.tsx";
 
 interface Props {
   title: string,
@@ -41,9 +42,9 @@ const SliderPopupComponent: React.FC<Props> = ({
                             onConfirm={onConfirm}>
     <View style={styles.popupContent}>
       {!description ? undefined :
-        <Text style={styles.contentText}>
+        <SafeText style={styles.contentText}>
           {description}
-        </Text>}
+        </SafeText>}
 
       <SliderComponent value={sliderValue}
                        onValueChanged={setSliderValue}

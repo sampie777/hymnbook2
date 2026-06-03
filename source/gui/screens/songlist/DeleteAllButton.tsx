@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
+import SafeText from "../../components/SafeText.tsx";
 
 interface Props {
   onPress: () => void;
@@ -11,9 +12,9 @@ const DeleteAllButton: React.FC<Props> = ({ onPress }) => {
 
   return <TouchableOpacity style={styles.container}
                            onPress={onPress}>
-    <Text style={styles.text}
+    <SafeText style={styles.text}
           importantForAccessibility={"no"}
-          accessibilityElementsHidden={true}>Delete all</Text>
+          accessibilityElementsHidden={true}>Delete all</SafeText>
   </TouchableOpacity>;
 };
 

@@ -11,11 +11,12 @@ import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useAppContext } from "../../components/providers/AppContextProvider";
-import { LayoutChangeEvent, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { LayoutChangeEvent, RefreshControl, ScrollView, StyleSheet, ToastAndroid, View } from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
 import ListNavigation from "./ListNavigation.tsx";
+import SafeText from "../../components/SafeText.tsx";
 
 const Header: React.FC<{
   title: string,
@@ -32,7 +33,7 @@ const Header: React.FC<{
     register?.(title, event.nativeEvent.layout.y);
   }
 
-  return !isVisible ? null : <Text style={styles.settingHeader} onLayout={onLayout}>{title}</Text>;
+  return !isVisible ? null : <SafeText style={styles.settingHeader} onLayout={onLayout}>{title}</SafeText>;
 };
 
 const SettingsScreen: React.FC = () => {

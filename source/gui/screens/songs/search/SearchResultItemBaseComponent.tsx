@@ -1,10 +1,11 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { RectangularInset } from "../../../components/utils";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OffscreenTouchableOpacity from "../../../components/OffscreenTouchableOpacity";
 import SongExtraInfo from "../../../components/SongExtraInfo";
+import SafeText from "../../../components/SafeText";
 
 export const SearchResultItemAddButton: React.FC<{
   songAddedToSongList?: boolean,
@@ -58,7 +59,7 @@ export const SearchResultItemBaseComponent: React.FC<{
                                       onLongPress={onItemLongPress}
                                       style={styles.container}>
       <View style={styles.infoContainer}>
-        <Text
+        <SafeText
           style={[
             styles.itemName,
             { fontSize: styles.itemName.fontSize * fontScale },
@@ -66,7 +67,7 @@ export const SearchResultItemBaseComponent: React.FC<{
           ]}
           importantForAccessibility={"auto"}>
           {songName}
-        </Text>
+        </SafeText>
 
         <SongExtraInfo alternativeTitle={alternativeTitle}
                        songBundle={bundleName} />

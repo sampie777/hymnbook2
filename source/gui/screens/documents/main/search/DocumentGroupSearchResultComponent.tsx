@@ -1,10 +1,11 @@
 import React, { memo, useCallback } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider.tsx";
 import { isDbItemValid } from "../../../../../logic/utils/utils.ts";
 import { DocumentGroup } from "../../../../../logic/db/models/documents/Documents.ts";
 import { renderTextWithCustomReplacements } from "../../../../components/utils.ts";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
   group: DocumentGroup & Realm.Object<DocumentGroup>;
@@ -25,27 +26,27 @@ const DocumentGroupSearchResultComponent: React.FC<Props> = memo(({
   if (!isDbItemValid(group)) return null;
 
   const createHighlightedTextComponent = useCallback((text: string, index: number) =>
-    <Text key={index} style={styles.textHighlighted}>
+    <SafeText key={index} style={styles.textHighlighted}>
       {text}
-    </Text>, [searchRegex]);
+    </SafeText>, [searchRegex]);
 
   return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled : {})]}
                            onPress={disable ? undefined : onPress}>
     <View style={styles.headerContainer}>
       <View style={styles.titleContainer}>
-        <Text style={styles.documentName}
+        <SafeText style={styles.documentName}
               importantForAccessibility={"auto"}>
           {renderTextWithCustomReplacements(group.name, searchRegex, createHighlightedTextComponent)}
-        </Text>
+        </SafeText>
 
         {!showDocumentGroup ? null :
           <View style={styles.documentGroupContainer}>
-            <Text style={styles.extraInfoText}>
+            <SafeText style={styles.extraInfoText}>
               <Icon name={"book"} />
-            </Text>
-            <Text style={styles.extraInfoText}>
+            </SafeText>
+            <SafeText style={styles.extraInfoText}>
               {DocumentGroup.getParent(group)?.name}
-            </Text>
+            </SafeText>
           </View>
         }
       </View>

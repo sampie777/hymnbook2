@@ -1,5 +1,5 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { isDbItemValid, isIOS, sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
 import { DocumentSearch } from "../../../../../logic/documents/documentSearch.ts";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider.tsx";
@@ -12,6 +12,7 @@ import { InterruptedError } from "../../../../../logic/InterruptedError.ts";
 import DocumentGroupItem from "../DocumentGroupItem.tsx";
 import DocumentItem from "../DocumentItem.tsx";
 import { Document } from "../../../../../logic/db/models/documents/Documents.ts";
+import SafeText from "../../../../components/SafeText.tsx";
 
 type FetchSearchResultsFunction = (text: string) => void;
 
@@ -181,11 +182,11 @@ const SearchResultScreen: React.FC<Props> = ({
               keyExtractor={(it: DocumentSearch.SearchResult) => isDbItemValid(it.document ?? it.group) ? (it.document ?? it.group)!.uuid : `invalidated_${Math.random() * 10000}`}
               disableScrollViewPanResponder={true}
               ListHeaderComponent={
-                <Text style={styles.resultsInfoText}>
+                <SafeText style={styles.resultsInfoText}>
                   {isLoading ? "Searching..." :
                     <>{searchResults.length === 0 ? "No" : searchResults.length} results</>
                   }
-                </Text>
+                </SafeText>
               }
               ListFooterComponent={<View style={styles.listFooter} />} />
   </>

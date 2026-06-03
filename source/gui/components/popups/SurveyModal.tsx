@@ -1,9 +1,10 @@
 import React from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Survey } from "../../../logic/survey";
 import ConfirmationModal from "./ConfirmationModal";
 import { openLink } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
+import SafeText from "../SafeText.tsx";
 
 const SurveyModal: React.FC<{
   onCompleted?: () => void,
@@ -29,12 +30,12 @@ const SurveyModal: React.FC<{
                             onClose={onDenied}
                             onConfirm={openSurvey}>
     <View style={styles.popupContent}>
-      <Text style={styles.contentText}>
+      <SafeText style={styles.contentText}>
         To improve your experience with this app, we would like to get some feedback from our users.
-      </Text>
-      <Text style={styles.contentText}>
+      </SafeText>
+      <SafeText style={styles.contentText}>
         Are you willing to help us decide what we should work on next?
-      </Text>
+      </SafeText>
     </View>
   </ConfirmationModal>;
 };

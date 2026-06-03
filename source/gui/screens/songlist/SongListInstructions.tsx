@@ -1,10 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { SearchResultItemAddButton } from "../songs/search/SearchResultItemBaseComponent";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongSearchRoute } from "../../../navigation";
+import SafeText from "../../components/SafeText.tsx";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>
@@ -14,8 +15,8 @@ const SongListInstructions: React.FC<Props> = ({ navigation }) => {
   const styles = createStyles(useTheme());
 
   return <View style={styles.container}>
-    <Text style={styles.text}>Go to the {"  "}<Icon name="music" style={styles.screenIcon} />{"  "} songs screen, search
-      for a song and tap (or hold) the following button to add it to this list:</Text>
+    <SafeText style={styles.text}>Go to the {"  "}<Icon name="music" style={styles.screenIcon} />{"  "} songs screen, search
+      for a song and tap (or hold) the following button to add it to this list:</SafeText>
     <SearchResultItemAddButton onPress={() => navigation.navigate(SongSearchRoute)} />
   </View>;
 };

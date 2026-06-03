@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface ScreenProps {
   documentName: string | ReactNode;
@@ -24,20 +25,20 @@ const DocumentItemBaseComponent: React.FC<ScreenProps> = ({
     <TouchableOpacity onPress={onPress}
                       disabled={disabled}
                       style={styles.container}>
-      <Text
+      <SafeText
         style={[styles.itemName, parentName ? {} : styles.itemExtraPadding]}
         importantForAccessibility={'auto'}>
         {documentName}
-      </Text>
+      </SafeText>
 
       {!parentName ? undefined : (
         <View style={styles.documentGroupContainer}>
-          <Text style={styles.parentName}>
+          <SafeText style={styles.parentName}>
             <Icon name={"book"} />
-          </Text>
-          <Text style={styles.parentName} importantForAccessibility={'auto'}>
+          </SafeText>
+          <SafeText style={styles.parentName} importantForAccessibility={'auto'}>
             {parentName}
-          </Text>
+          </SafeText>
         </View>
       )}
 

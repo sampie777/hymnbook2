@@ -1,7 +1,8 @@
 import React, { PropsWithChildren } from "react";
-import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
+import { StyleProp, StyleSheet, TextStyle, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface ItemProps extends PropsWithChildren {
   isCompleted: boolean,
@@ -14,9 +15,9 @@ const ListItem: React.FC<ItemProps> = ({ children, isCompleted, subTitleStyles }
   return <View style={styles.item}>
     <Icon name={isCompleted ? "check" : "genderless"}
           style={[styles.text, isCompleted ? styles.textCompleted : styles.textNotCompleted, styles.icon]} />
-    <Text style={[subTitleStyles, styles.text, isCompleted ? styles.textCompleted : styles.textNotCompleted]}>
+    <SafeText style={[subTitleStyles, styles.text, isCompleted ? styles.textCompleted : styles.textNotCompleted]}>
       {children}
-    </Text>
+    </SafeText>
   </View>
 }
 
@@ -38,7 +39,7 @@ const SongSearchTutorialList: React.FC<Props> = ({
   const styles = createStyles(useTheme());
 
   return <View style={styles.container}>
-    <Text style={[subTitleStyles, styles.text]}>There are ways to interact with a song:</Text>
+    <SafeText style={[subTitleStyles, styles.text]}>There are ways to interact with a song:</SafeText>
     <ListItem subTitleStyles={subTitleStyles} isCompleted={hasPressedAnItem}>
       Tap on the song name
     </ListItem>
@@ -48,7 +49,7 @@ const SongSearchTutorialList: React.FC<Props> = ({
     <ListItem subTitleStyles={subTitleStyles} isCompleted={hasLongPressedAnItem || hasLongAddedAnItem}>
       Long press either
     </ListItem>
-    <Text style={subTitleStyles}>{'\n'}Try it on the buttons above!</Text>
+    <SafeText style={subTitleStyles}>{'\n'}Try it on the buttons above!</SafeText>
   </View>;
 };
 

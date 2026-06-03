@@ -1,9 +1,10 @@
 import React from "react";
 import { DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { isDbItemValid } from "../../../../logic/utils/utils.ts";
+import SafeText from "../../../components/SafeText.tsx";
 
 
 interface ScreenProps<T extends DocumentGroup> {
@@ -30,31 +31,31 @@ const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<Docum
                             style={styles.container}>
     <Icon name={"folder"} style={styles.searchListItemIcon} />
     <View style={styles.nameContainer}>
-      <Text style={[
+      <SafeText style={[
         styles.itemName,
         (!parentName && styles.itemExtraPadding)
       ]}
             importantForAccessibility={"auto"}>
         {group.name}
-      </Text>
+      </SafeText>
 
       {parentName &&
         <View style={styles.documentGroupContainer}>
-          <Text style={styles.parentName}>
+          <SafeText style={styles.parentName}>
             <Icon name={"book"} />
-          </Text>
-          <Text style={styles.parentName} importantForAccessibility={'auto'}>
+          </SafeText>
+          <SafeText style={styles.parentName} importantForAccessibility={'auto'}>
             {parentName}
-          </Text>
+          </SafeText>
         </View>
       }
     </View>
 
     <View style={styles.infoContainer}>
-      <Text style={styles.infoText}
+      <SafeText style={styles.infoText}
             importantForAccessibility={"no"}>
         {group.size} files
-      </Text>
+      </SafeText>
     </View>
   </TouchableOpacity>);
 };

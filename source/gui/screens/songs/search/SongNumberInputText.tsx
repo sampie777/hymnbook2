@@ -1,9 +1,10 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { StyleSheet, Text, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import Settings from '../../../../settings.ts';
 import { isIOS } from '../../../../logic/utils/utils.ts';
 import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider.tsx';
 import config from '../../../../config.ts';
+import SafeText from "../../../components/SafeText.tsx";
 
 interface Props {
   value: string
@@ -15,17 +16,17 @@ interface Props {
 export const SongNumberInputTextAndroid: React.FC<Props> = ({ value, previousValue, onPress, useSmallerFontSize }) => {
   const styles = createStyles(useTheme());
 
-  return <Text onPress={onPress}
+  return <SafeText onPress={onPress}
                style={[styles.text, (!useSmallerFontSize ? {} : styles.textSmaller)]}
                importantForAccessibility={value ? "auto" : "no"}
                accessibilityElementsHidden={!value}>
     {value ? value
       : (!Settings.songSearchRememberPreviousEntry ? " " :
-          <>{isIOS ? "" : " "}<Text
-            style={styles.placeholder}>{previousValue}</Text> </>
+          <>{isIOS ? "" : " "}<SafeText
+            style={styles.placeholder}>{previousValue}</SafeText> </>
       )
     }
-  </Text>
+  </SafeText>
 };
 
 export const SongNumberInputTextMacBook: React.FC<Props & {
