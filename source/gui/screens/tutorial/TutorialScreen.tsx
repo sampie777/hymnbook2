@@ -11,6 +11,7 @@ import { Tutorial } from "../../../logic/tutorial";
 import TutorialFinishedScreen from "./TutorialFinishedScreen";
 import { useSongBundleCount } from "../../components/utils";
 import SafeText from "../../components/SafeText.tsx";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -28,7 +29,7 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate(DatabasesRoute, { type: Types.Songs });
   }
 
-  return <View style={styles.container}>
+  return <SafeAreaView style={styles.container} edges={["bottom"]}>
     <Onboarding
       onDone={finishTutorial}
       onSkip={finishTutorial}
@@ -57,7 +58,7 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
           subtitle: '',
         },
       ]} />
-  </View>;
+  </SafeAreaView>;
 };
 
 
