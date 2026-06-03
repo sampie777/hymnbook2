@@ -1,6 +1,7 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface Props {
   title: string;
@@ -15,10 +16,10 @@ const SearchOption: React.FC<Props> = ({ title, active, onPress }) => {
   return <TouchableOpacity style={[styles.container, (active ? styles.containerActive : {})]}
                            onPress={onPress}
                            hitSlop={{ top: 13, bottom: 13, }}>
-    <Text style={[styles.title, (active ? styles.titleActive : {})]}
+    <SafeText style={[styles.title, (active ? styles.titleActive : {})]}
           importantForAccessibility={"auto"}>
       {title}
-    </Text>
+    </SafeText>
   </TouchableOpacity>;
 };
 

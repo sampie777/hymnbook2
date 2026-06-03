@@ -5,6 +5,7 @@ import { createHeader } from "../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { StyleSheet } from "react-native";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 
 interface Props {
   song?: Song;
@@ -30,10 +31,10 @@ const Header: React.FC<Props> = ({ song, scale }) => {
   }
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
-    <Animated.Text style={[styles.text, animatedStyle.text]}
+    <AnimatedSafeText style={[styles.text, animatedStyle.text]}
                    selectable={Settings.enableTextSelection}>
       {headerText}
-    </Animated.Text>
+    </AnimatedSafeText>
   </Animated.View>;
 };
 

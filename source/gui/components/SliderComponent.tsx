@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import MultiSlider, { LabelProps } from "@ptomasroos/react-native-multi-slider";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
+import SafeText from "./SafeText.tsx";
 
 const SliderLabel: React.FC<LabelProps & { suffix?: string | undefined }> = ({
                                                                                oneMarkerValue,
@@ -9,9 +10,9 @@ const SliderLabel: React.FC<LabelProps & { suffix?: string | undefined }> = ({
                                                                                suffix
                                                                              }) => {
   const styles = createStyles(useTheme());
-  return <Text style={[styles.label]}>
+  return <SafeText style={[styles.label]}>
     {oneMarkerValue} {suffix}
-  </Text>;
+  </SafeText>;
 };
 
 interface Props {
@@ -65,10 +66,10 @@ const SliderComponent: React.FC<Props> = ({
       <TouchableOpacity style={styles.resetContainer}
                         onPress={onReset}
                         hitSlop={{ bottom: 10 }}>
-        <Text style={styles.resetText}
+        <SafeText style={styles.resetText}
               importantForAccessibility={"auto"}>
           Reset value
-        </Text>
+        </SafeText>
       </TouchableOpacity>
     }
   </View>;

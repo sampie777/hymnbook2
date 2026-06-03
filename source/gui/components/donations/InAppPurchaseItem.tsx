@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { Product } from "react-native-iap";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider.tsx";
+import SafeText from "../SafeText.tsx";
 
 interface Props {
   product: Product;
@@ -13,8 +14,8 @@ const InAppPurchaseItem: React.FC<Props> = ({ product, onPress }) => {
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Text style={styles.priceText}>{product.displayPrice}</Text>
-      <Text style={styles.titleText}>{product.title}</Text>
+      <SafeText style={styles.priceText}>{product.displayPrice}</SafeText>
+      <SafeText style={styles.titleText}>{product.title}</SafeText>
     </TouchableOpacity>
   );
 };

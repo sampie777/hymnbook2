@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import PickerComponent from "../../components/popups/PickerComponent";
+import SafeText from "../../components/SafeText.tsx";
 
 interface ComponentProps {
   languages: Array<string>;
@@ -46,23 +47,23 @@ const LanguageSelectBar: React.FC<ComponentProps> = ({
                        onDenied={closePicker}
                        onCompleted={it => setLanguage(it)}
                        rowContentRenderer={(item, isSelected) =>
-                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
+                         <SafeText style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
                                importantForAccessibility={"auto"}>
                            {languageAbbreviationToFullName(item)}
                            {itemCountPerLanguage.get(item) ? ` (${itemCountPerLanguage.get(item)})` : undefined}
-                         </Text>
+                         </SafeText>
                        } />
     }
 
-    <Text style={styles.label}>Language:</Text>
+    <SafeText style={styles.label}>Language:</SafeText>
 
     <TouchableOpacity style={styles.button}
                       onPress={openPicker}
                       disabled={disabled}>
-      <Text style={styles.selectedLanguage}
+      <SafeText style={styles.selectedLanguage}
             importantForAccessibility={"auto"}>
         {languageAbbreviationToFullName(selectedLanguage)}
-      </Text>
+      </SafeText>
       <Icon name={"caret-down"} style={styles.arrow} />
     </TouchableOpacity>
   </View>;

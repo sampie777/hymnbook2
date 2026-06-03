@@ -3,9 +3,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DatabasesRoute, ParamList } from "../../../../navigation";
 import { Types } from "../../downloads/TypeSelectBar";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useSongBundleCount } from "../../../components/utils";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface ScreenProps {
   navigation: NativeStackNavigationProp<ParamList> | BottomTabNavigationProp<ParamList>;
@@ -23,11 +24,11 @@ const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
 
   return <View style={styles.background}>
     <View style={styles.container}>
-      <Text style={styles.text}>You need to download some song bundles first before you can use them.</Text>
+      <SafeText style={styles.text}>You need to download some song bundles first before you can use them.</SafeText>
       <TouchableOpacity onPress={onPress} style={styles.button}>
-        <Text style={styles.downloadText}
+        <SafeText style={styles.downloadText}
               importantForAccessibility={"auto"}>
-          Take me to downloads </Text>
+          Take me to downloads </SafeText>
       </TouchableOpacity>
     </View>
   </View>;

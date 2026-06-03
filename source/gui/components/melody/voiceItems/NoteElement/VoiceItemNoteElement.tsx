@@ -7,6 +7,7 @@ import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider";
 import NoteElement from "./NoteElement";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { VoiceItemNote } from "@hymnbook/abc";
+import { AnimatedSafeText } from "../../../SafeText.tsx";
 
 interface Props {
   note: VoiceItemNote;
@@ -41,10 +42,10 @@ const VoiceItemNoteElement: React.FC<Props> = ({ note, animatedScaleText, melody
                  melodyScale={melodyScale}
                  showChords={showChords}/>
 
-    <Animated.Text style={[styles.text, animatedStyle.text]}
+    <AnimatedSafeText style={[styles.text, animatedStyle.text]}
                    selectable={Settings.enableTextSelection}>
       {lyrics}
-    </Animated.Text>
+    </AnimatedSafeText>
   </Animated.View>;
 };
 

@@ -1,9 +1,10 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { VoiceItemNote } from "@hymnbook/abc";
-import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "../../../providers/ThemeProvider.tsx";
 import { AbcConfig } from "../../config.ts";
+import { AnimatedSafeText } from "../../../SafeText.tsx";
 
 interface Props {
   note?: VoiceItemNote;
@@ -19,9 +20,9 @@ const Chord: React.FC<Props> = ({ note, melodyScale }) => {
     })),
   }
 
-  return <Animated.Text style={[styles.container, animatedStyles.container]}>
+  return <AnimatedSafeText style={[styles.container, animatedStyles.container]}>
     {(note?.chord ?? []).map(it => it.name).join(" ")}
-  </Animated.Text>
+  </AnimatedSafeText>
 };
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({

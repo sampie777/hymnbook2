@@ -1,8 +1,9 @@
 import React, { PropsWithChildren } from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { objectToArrayIfNotAlready } from "../../../../logic/utils/utils.ts";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface KeyProps extends PropsWithChildren {
   onPress?: () => void;
@@ -25,11 +26,11 @@ export const Key: React.FC<KeyProps> = ({
                            onPress={onPress}
                            onLongPress={onLongPress}
                            accessibilityLabel={accessibilityLabel}>
-    <Text style={keyTextStyle}
+    <SafeText style={keyTextStyle}
           importantForAccessibility={accessibilityLabel ? "no" : "auto"}
           accessibilityElementsHidden={!!accessibilityLabel}>
       {children}
-    </Text>
+    </SafeText>
   </TouchableOpacity>
 };
 

@@ -1,8 +1,9 @@
 import React from "react";
 import { VoiceItemBar } from "@hymnbook/abc";
-import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { AbcConfig, useAbcMusicStyle } from "../../config.ts";
 import { useTheme } from "../../../providers/ThemeProvider.tsx";
+import { AnimatedSafeText } from "../../../SafeText.tsx";
 
 interface Props {
   item: VoiceItemBar;
@@ -18,10 +19,10 @@ const VoiceItemBarElement: React.FC<Props> = ({ item, melodyScale, showChords })
     melody: useAbcMusicStyle(melodyScale, useTheme())
   };
 
-  return <Animated.Text style={[animatedStyles.container, animatedStyles.melody]}>
+  return <AnimatedSafeText style={[animatedStyles.container, animatedStyles.melody]}>
     {item.type == "bar_thin_thick" ? "." : ""}
     {item.type == "bar_thin" ? "Ā" : ""}
-  </Animated.Text>
+  </AnimatedSafeText>
 };
 
 export default VoiceItemBarElement;

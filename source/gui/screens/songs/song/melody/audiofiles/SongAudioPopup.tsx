@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import ConfirmationModal from "../../../../../components/popups/ConfirmationModal";
 import AudioItem from "./AudioItem";
@@ -10,6 +10,7 @@ import { ServerAuth } from "../../../../../../logic/server/auth";
 import { api } from "../../../../../../logic/api";
 import { AbcMelody } from "../../../../../../logic/db/models/songs/AbcMelodies";
 import { useIsMounted } from "../../../../../components/utils";
+import SafeText from "../../../../../components/SafeText.tsx";
 
 interface Props {
   song: Song;
@@ -84,10 +85,10 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
                             onConfirm={selectedItem === undefined ? undefined : playFile}
                             showCloseButton={true}>
     <View style={styles.container}>
-      <Text style={styles.text}>
+      <SafeText style={styles.text}>
         Currently, all audio files come from an online server. Mobile data/WiFi will be used to download and play the
         selected audio file.
-      </Text>
+      </SafeText>
 
       {!isLoading ? undefined :
         <ActivityIndicator style={styles.loadingIcon}
@@ -100,7 +101,7 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
                                          item={it}
                                          isSelected={selectedItem?.uuid === it.uuid}
                                          onPress={() => setSelectedItem(it)} />)
-            : <Text style={styles.text}>There are no audio files for this song, yet.</Text>}
+            : <SafeText style={styles.text}>There are no audio files for this song, yet.</SafeText>}
         </ScrollView>
       }
     </View>

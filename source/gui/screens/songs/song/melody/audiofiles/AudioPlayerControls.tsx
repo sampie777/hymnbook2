@@ -18,6 +18,7 @@ import Animated, {
   useSharedValue,
   withTiming
 } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   song: Song;
@@ -118,7 +119,7 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
 
   const isLoading = playerState.state == State.Loading || playerState.state == State.Buffering;
 
-  return <View style={styles.container}>
+  return <SafeAreaView style={styles.container} edges={["bottom"]}>
     <Animated.View style={[
       styles.progressBarPosition,
       progressBarStyle
@@ -167,7 +168,7 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
         </TouchableOpacity>
       </View>
     </View>
-  </View>;
+  </SafeAreaView>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({

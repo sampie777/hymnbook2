@@ -13,6 +13,7 @@ import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Librarie
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { runAsync } from "../../../../logic/utils/utils.ts";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -115,11 +116,11 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const displayName = SongProcessor.verseShortName(verse);
 
   const createHighlightedTextComponent = (text: string, index: number) =>
-    <Animated.Text key={index}
+    <AnimatedSafeText key={index}
                    style={styles.textHighlighted}
                    selectable={Settings.enableTextSelection}>
       {text}
-    </Animated.Text>;
+    </AnimatedSafeText>;
 
   const memoizedAbc = useMemo(() =>
     ABC.generateAbcForVerse(
@@ -138,18 +139,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={e => onLayout?.(verse, e)}>
     {displayName.length === 0 ? undefined :
-      <Animated.Text style={[
+      <AnimatedSafeText style={[
         styles.title,
         specificStyleForTitle(),
         animatedStyle.title,
         styleForVerseType(getVerseType(verse))
       ]}>
         {displayName}
-      </Animated.Text>
+      </AnimatedSafeText>
     }
 
     {isMelodyLoaded && isMelodyAvailable() ? undefined :
-      <Animated.Text style={[styles.text, animatedStyle.text]}
+      <AnimatedSafeText style={[styles.text, animatedStyle.text]}
                      selectable={Settings.enableTextSelection}
                      onLayout={onTextContainerLayout}
                      onTextLayout={onTextLayout}
@@ -157,7 +158,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         {highlightText == null
           ? content
           : renderTextWithCustomReplacements(content, highlightText, createHighlightedTextComponent)}
-      </Animated.Text>
+      </AnimatedSafeText>
     }
 
     {!(showMelody && isMelodyAvailable()) ? undefined :

@@ -1,26 +1,33 @@
 import React, { useCallback } from "react";
-import { Verse } from "../../../../logic/db/models/songs/Songs";
-import { SongProcessor } from "../../../../logic/songs/songProcessor";
-import { renderTextWithCustomReplacements } from "../../../components/utils";
-import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
+import { renderTextWithCustomReplacements } from "../../../../components/utils";
+import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import { StyleSheet } from "react-native";
-import SafeText from "../../../components/SafeText.tsx";
+import { Document } from "../../../../../logic/db/models/documents/Documents.ts";
+import { htmlToText } from "../../../../../logic/documents/utils.ts";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
-  verse: Verse;
+  document: Document;
   maxLines: number;
   preferredStartLine?: number;
   searchText?: string;
+  maxChars?: number;
 }
 
-const VerseSummary: React.FC<Props> = ({ verse, maxLines, preferredStartLine = 0, searchText }) => {
+const DocumentSummary: React.FC<Props> = ({
+                                            document,
+                                            maxLines,
+                                            preferredStartLine = 0,
+                                            searchText,
+                                            maxChars = 300
+                                          }) => {
   const styles = createStyles(useTheme());
 
-  const lines = verse.content.split("\n");
+  const lines = document.html.split("\n");
   const startLine = preferredStartLine > lines.length - maxLines ? preferredStartLine - 1 : preferredStartLine;
-  const viewableText = lines.slice(startLine, startLine + maxLines).join("\n");
-
-  const displayName = SongProcessor.verseShortName(verse);
+  const text = htmlToText(lines.slice(startLine, startLine + maxLines).join("\n"));
+  // Limit visible text to maxChars chars (up to the next word)
+  const viewableText = text.length > maxChars ? text.slice(0, text.indexOf(" ", maxChars)) : text
 
   const createHighlightedTextComponent = useCallback((text: string, index: number) =>
     <SafeText key={index} style={styles.textHighlighted}>
@@ -30,15 +37,11 @@ const VerseSummary: React.FC<Props> = ({ verse, maxLines, preferredStartLine = 0
   return <SafeText style={styles.text}
                textBreakStrategy={"balanced"}
                importantForAccessibility={"auto"}>
-    {displayName.length === 0 ? undefined :
-      <SafeText style={styles.verseNumber}>{displayName}  </SafeText>
-    }
-
     {startLine > 0 ? "... " : null}
     {searchText === undefined ? viewableText :
       renderTextWithCustomReplacements(viewableText, searchText, createHighlightedTextComponent)
     }
-    {startLine + maxLines < lines.length ? " ..." : null}
+    {startLine + maxLines < lines.length || viewableText.length < text.length ? " ..." : null}
   </SafeText>;
 };
 
@@ -59,4 +62,4 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   }
 });
 
-export default VerseSummary;
+export default DocumentSummary;

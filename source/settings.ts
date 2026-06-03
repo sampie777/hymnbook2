@@ -1,6 +1,7 @@
 import { AccessRequestStatus } from "./logic/server/models";
 import { SettingsBaseClass } from "./logic/settings/settingsBase";
 import { SongSearch } from "./logic/songs/songSearch";
+import { DocumentSearch } from "./logic/documents/documentSearch.ts";
 
 class SettingsClass extends SettingsBaseClass {
   // System
@@ -45,6 +46,11 @@ class SettingsClass extends SettingsBaseClass {
   documentsMultiKeywordSearch = true;
   documentScale = 1.0;
   documentsResetPathToRoot = false;
+
+  // Document search
+  documentSearchInTitles = true;
+  documentSearchInContent = false;
+  documentSearchSortOrder = DocumentSearch.OrderBy.Relevance;
 
   // Server authentication
   authClientName = "";

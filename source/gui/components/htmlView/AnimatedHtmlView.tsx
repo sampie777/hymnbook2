@@ -9,6 +9,7 @@ import { ElementType } from "domelementtype";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import { ChildNode, DataNode, Document, Element, Node, } from 'domhandler';
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { AnimatedSafeText } from "../SafeText.tsx";
 
 interface HtmlStyles {
   defaultText?: StyleProp<TextStyle>,
@@ -133,13 +134,13 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
   const ignoreTags = ["head", "script", "meta"];
 
   const renderTextNode = (node: DataNode, index: number, args?: any) =>
-    <Animated.Text key={index}
+    <AnimatedSafeText key={index}
                    importantForAccessibility={node.data != null && node.data.length > 0 ? undefined : "no"}
                    style={[mergedStyles.defaultText, args?.["style"]]}
                    dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>
       {node.data}
-    </Animated.Text>;
+    </AnimatedSafeText>;
 
   const renderElementDiv = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} style={mergedStyles.div}>
@@ -147,12 +148,12 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
     </Animated.View>;
 
   const renderElementText = (element: Element, index: number, args?: any, style?: StyleProp<TextStyle>) =>
-    <Animated.Text key={index}
+    <AnimatedSafeText key={index}
                    style={style}
                    dataDetectorType={"link"}
                    selectable={Settings.enableTextSelection}>
       {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
-    </Animated.Text>;
+    </AnimatedSafeText>;
 
   const renderElementSup = (element: Element, index: number, args?: any) =>
     <Animated.View key={index} collapsable={false}>
@@ -180,34 +181,34 @@ const AnimatedHtmlView: React.FC<Props> = ({ html, styles = [], scale, onLayout 
 
     const listIndex = args?.listStyleType == "ol" ? `${args?.listIndex.value}.` : "●";
     return <Animated.View key={index} style={mergedStyles.li}>
-      <Animated.Text style={[mergedStyles.liText, mergedStyles.liIndexText]}
+      <AnimatedSafeText style={[mergedStyles.liText, mergedStyles.liIndexText]}
                      selectable={Settings.enableTextSelection}>
         {listIndex}
-      </Animated.Text>
-      <Animated.Text style={mergedStyles.liText}
+      </AnimatedSafeText>
+      <AnimatedSafeText style={mergedStyles.liText}
                      dataDetectorType={"link"}
                      selectable={Settings.enableTextSelection}>
         {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
-      </Animated.Text>
+      </AnimatedSafeText>
     </Animated.View>;
   };
 
   const renderElementBr = (element: Element, index: number, args?: any) =>
-    <Animated.Text key={index}
+    <AnimatedSafeText key={index}
                    style={mergedStyles.br}
                    selectable={Settings.enableTextSelection}>
       {"\n"}
-    </Animated.Text>;
+    </AnimatedSafeText>;
 
   const renderElementA = (element: Element, index: number, args?: any) => {
     const onPress = () => openLink(element.attribs.href)
       .catch(e => Alert.alert("Error opening link", e.message));
-    return <Animated.Text key={index}
+    return <AnimatedSafeText key={index}
                           onPress={onPress}
                           style={mergedStyles.a}
                           selectable={Settings.enableTextSelection}>
       {(element.children as ChildNode[]).map((it, i) => renderNode(it, i, args))}
-    </Animated.Text>;
+    </AnimatedSafeText>;
   };
 
   const renderElement = (element: Element, index: number, args?: any) => {

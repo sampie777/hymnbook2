@@ -1,7 +1,8 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
   title: string,
@@ -14,7 +15,7 @@ const MelodySettingsModelHeader: React.FC<Props> = ({ title, iconName, hideBorde
 
   return <View style={[styles.container, (hideBorder ? styles.noBorder : {})]}>
     {iconName ? <Icon name={iconName} style={styles.icon} /> : null}
-    <Text style={styles.text}>{title}</Text>
+    <SafeText style={styles.text}>{title}</SafeText>
   </View>;
 };
 

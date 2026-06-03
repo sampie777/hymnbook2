@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 import { DimensionValue } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
+import SafeText from "./SafeText.tsx";
 
 type Props = {
   alternativeTitle?: string;
@@ -17,19 +18,19 @@ const SongExtraInfo: React.FC<Props> = ({ alternativeTitle, songBundle, width })
 
   return <View style={[styles.container, { width: width }]}>
     {!alternativeTitle ? null :
-      <Text style={styles.text}
+      <SafeText style={styles.text}
             importantForAccessibility={"auto"}>
         {alternativeTitle}
-      </Text>
+      </SafeText>
     }
     {!songBundle ? null :
       <View style={styles.songBundleContainer}>
-        <Text style={styles.text}>
+        <SafeText style={styles.text}>
           <Icon name={"book"} />
-        </Text>
-        <Text style={styles.text}>
+        </SafeText>
+        <SafeText style={styles.text}>
           {songBundle}
-        </Text>
+        </SafeText>
       </View>
     }
   </View>

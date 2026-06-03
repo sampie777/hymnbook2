@@ -6,6 +6,7 @@ import { StyleSheet, useWindowDimensions } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 
 interface Props {
   song?: Song;
@@ -34,11 +35,11 @@ const Footer: React.FC<Props> = ({ song, scale }) => {
     style={[styles.container, animatedStyle.container, { minHeight: windowDimension.height - useHeaderHeight() - 200 }]}>
     <Animated.View style={[styles.divider, animatedStyle.divider]}></Animated.View>
     {createCopyright(song).map((it, i) =>
-      <Animated.Text key={i}
+      <AnimatedSafeText key={i}
                      style={[styles.text, animatedStyle.text]}
                      selectable={Settings.enableTextSelection}>
         {it}
-      </Animated.Text>
+      </AnimatedSafeText>
     )}
   </Animated.View>;
 };

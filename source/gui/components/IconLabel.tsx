@@ -1,6 +1,7 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
-import { Image, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, View } from "react-native";
+import SafeText from "./SafeText.tsx";
 
 interface Props {
   text?: string;
@@ -14,10 +15,10 @@ const IconLabel: React.FC<Props> = ({ text, iconSource, iconSize = 60, iconStyle
   const styles = createStyles(useTheme(), iconSize);
   return <View style={styles.container}>
     <View style={styles.textContainer}>
-      <Text style={[styles.text, textStyle]}
+      <SafeText style={[styles.text, textStyle]}
             importantForAccessibility={"auto"}>
         {text}
-      </Text>
+      </SafeText>
     </View>
     {iconSource == undefined ? null :
       <Image source={iconSource} style={[styles.icon, iconStyle]} />}

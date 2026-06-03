@@ -3,7 +3,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DatabasesRoute, ParamList } from "../../../../navigation";
 import { Types } from "../../downloads/TypeSelectBar";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import SafeText from "../../../components/SafeText.tsx";
 
 
 interface ScreenProps {
@@ -18,12 +19,12 @@ const DownloadInstructions: React.FC<ScreenProps> = ({ navigation }) => {
   };
 
   return (<View style={styles.container}>
-    <Text style={styles.titleText}>Nothing to show</Text>
-    <Text style={styles.text}>You need to download some documents first before you can use them.</Text>
+    <SafeText style={styles.titleText}>Nothing to show</SafeText>
+    <SafeText style={styles.text}>You need to download some documents first before you can use them.</SafeText>
     <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Text style={styles.downloadText}
+      <SafeText style={styles.downloadText}
             importantForAccessibility={"auto"}>
-        Take me to downloads </Text>
+        Take me to downloads </SafeText>
     </TouchableOpacity>
   </View>);
 };

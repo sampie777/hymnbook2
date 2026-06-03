@@ -4,7 +4,7 @@ import { isIOS } from "../../../../../logic/utils/utils.ts";
 import { AbcMelody } from "../../../../../logic/db/models/songs/AbcMelodies";
 import TrackPlayer from "react-native-track-player";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import SwitchComponent from "./SwitchComponent";
 import ConfirmationModal from "../../../../components/popups/ConfirmationModal";
@@ -12,6 +12,7 @@ import PickerComponent from "../../../../components/popups/PickerComponent";
 import SliderComponent from "../../../../components/SliderComponent";
 import MelodySettingsModelHeader from "./MelodySettingsModelHeader";
 import { SharedValue } from "react-native-reanimated";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
   onClose?: () => void;
@@ -76,10 +77,10 @@ const MelodySettingsModal: React.FC<Props> = ({
                        onDenied={closePicker}
                        onCompleted={it => setMelody(it)}
                        rowContentRenderer={(item, isSelected) =>
-                         <Text style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
+                         <SafeText style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
                                importantForAccessibility={"auto"}>
                            {item.name}
-                         </Text>
+                         </SafeText>
                        } />
     }
     <ConfirmationModal isOpen={isIOS ? !showPicker : true}
@@ -97,17 +98,17 @@ const MelodySettingsModal: React.FC<Props> = ({
                                    hideBorder={true} />
 
         <View style={styles.melodyContainer}>
-          <Text style={styles.label}>Variant</Text>
+          <SafeText style={styles.label}>Variant</SafeText>
 
           <TouchableOpacity style={styles.button}
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
-            <Text style={styles.selectedLanguage}
+            <SafeText style={styles.selectedLanguage}
                   importantForAccessibility={"auto"}>
               {melodies.length === 0
                 ? "No melodies available"
                 : (selectedMelody?.name ?? "No default set")}
-            </Text>
+            </SafeText>
             {melodies?.length < 2 ? undefined : <Icon name={"caret-down"} style={styles.arrow} />}
           </TouchableOpacity>
         </View>
@@ -137,7 +138,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                          }} />
 
         <View style={styles.scaleContainer}>
-          <Text style={styles.scaleLabel}>Melody size:</Text>
+          <SafeText style={styles.scaleLabel}>Melody size:</SafeText>
 
           <SliderComponent value={Math.round(songMelodyScale * 100)}
                            maxValue={150}
@@ -152,7 +153,7 @@ const MelodySettingsModal: React.FC<Props> = ({
         <MelodySettingsModelHeader title={"Audio"} iconName={"volume-up"} />
 
         <View style={styles.scaleContainer}>
-          <Text style={styles.scaleLabel}>Audio playback speed:</Text>
+          <SafeText style={styles.scaleLabel}>Audio playback speed:</SafeText>
 
           <SliderComponent value={songAudioPlaybackSpeed}
                            suffix={"x"}

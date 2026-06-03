@@ -6,7 +6,7 @@ import { useFeatures } from "../../components/providers/FeaturesProvider";
 import { AboutRoute, ParamList, PrivacyPolicyRoute } from "../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import UrlLink from "../../components/UrlLink";
@@ -15,6 +15,7 @@ import BuyMeACoffeePaymentButton from "../../components/donations/BuyMeACoffeePa
 import DonationForm from "../../components/donations/DonationForm";
 import InAppPurchases from "../../components/donations/InAppPurchases.tsx";
 import { isAndroid, isIOS } from "../../../logic/utils/utils.ts";
+import SafeText from "../../components/SafeText.tsx";
 
 
 const AboutScreen: React.FC<{
@@ -27,57 +28,57 @@ const AboutScreen: React.FC<{
     <View style={styles.headerContainer}>
       <View style={styles.headerTitle}>
         <Icon name={"book-open"} size={styles.titleIcon.fontSize} color={styles.titleIcon.color as string} />
-        <Text style={styles.titleContent}>{displayName}</Text>
+        <SafeText style={styles.titleContent}>{displayName}</SafeText>
       </View>
-      <Text style={styles.versionText}
+      <SafeText style={styles.versionText}
             selectable={true}>
         version: {getVersion()} ({getBuildNumber()}) {process.env.NODE_ENV === "production" ? undefined : `(${process.env.NODE_ENV})`}
-      </Text>
+      </SafeText>
     </View>
 
     <View style={styles.content}>
       <View style={styles.scriptureContainer}>
-        <Text style={[styles.contentText, styles.scriptureText]}>
+        <SafeText style={[styles.contentText, styles.scriptureText]}>
           Als de HERE de bouw van een huis niet zegent, is alle moeite nutteloos.
-        </Text>
-        <Text style={styles.scriptureSourceText}>Psalmen 127: 1a (HTB)</Text>
+        </SafeText>
+        <SafeText style={styles.scriptureSourceText}>Psalmen 127: 1a (HTB)</SafeText>
       </View>
 
       <View style={[styles.descriptionContainer]}>
-        <Text style={[styles.contentText]}>
+        <SafeText style={[styles.contentText]}>
           This app is an effort to assist Christians with a readily available, easy-to-use, digital songbook. It can be
           used in church, at home, or wherever you are.
-        </Text>
+        </SafeText>
 
-        <Text style={[styles.contentText]}>
+        <SafeText style={[styles.contentText]}>
           As such apps are already available, the main focus of this app is to enhance user experience with quick
           song-look-up and easy song-list-creation.
-        </Text>
+        </SafeText>
 
-        <Text style={[styles.contentText]}>
+        <SafeText style={[styles.contentText]}>
           Feedback is always welcome. If you think some licenses are incorrect, please let me know.
-        </Text>
+        </SafeText>
       </View>
 
       <View style={styles.donationContainer}>
-        <Text style={[styles.contentText, styles.contributionText]}>
+        <SafeText style={[styles.contentText, styles.contributionText]}>
           This app is made free in order to make the access to Christian songs available for everyone with a digital
           device. As no profit is made, this app fully depends on donations.
           If you want to show your thanks, please consider supporting this good cause:
-        </Text>
+        </SafeText>
 
         {isIOS
           ? <InAppPurchases />
           : (enableSystemPay
             ? <DonationForm />
-            : <Text style={[styles.contentText]}>{isAndroid ? "Google Pay" : (isIOS ? "Apple Pay" : "This")} feature is
-              not available yet.</Text>)
+            : <SafeText style={[styles.contentText]}>{isAndroid ? "Google Pay" : (isIOS ? "Apple Pay" : "This")} feature is
+              not available yet.</SafeText>)
         }
 
         {!goldenEgg ? undefined :
           <View style={styles.donationLinksContainer}>
             {enableSystemPay
-              ? <Text style={[styles.contentText, styles.contributionText]}>You can also use these options:</Text>
+              ? <SafeText style={[styles.contentText, styles.contributionText]}>You can also use these options:</SafeText>
               : null}
             <BuyMeACoffeePaymentButton />
             <PayPalPaymentButton />
@@ -86,27 +87,27 @@ const AboutScreen: React.FC<{
       </View>
 
       <View style={styles.footerContainer}>
-        <Text style={[styles.contentText, styles.footerText]}>
+        <SafeText style={[styles.contentText, styles.footerText]}>
           Made with passion by S. Jansen
-        </Text>
+        </SafeText>
 
         <View style={[styles.row, styles.contactLinks]}>
           <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`}>
             <View style={styles.row}>
               <FontAwesome5Icon name={"envelope"} style={styles.webpageLink} />
-              <Text style={styles.webpageLink}
+              <SafeText style={styles.webpageLink}
                     importantForAccessibility={"auto"}>
                 Mail me
-              </Text>
+              </SafeText>
             </View>
           </UrlLink>
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate(PrivacyPolicyRoute)}>
-          <Text style={styles.webpageLink}
+          <SafeText style={styles.webpageLink}
                 importantForAccessibility={"auto"}>
             Privacy Policy
-          </Text>
+          </SafeText>
         </TouchableOpacity>
       </View>
     </View>

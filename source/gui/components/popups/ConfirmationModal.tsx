@@ -1,18 +1,9 @@
 import React from "react";
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Modal, Pressable, ScrollView, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { RectangularInset } from "../utils";
+import SafeText from "../SafeText.tsx";
 
 interface ComponentProps {
   isOpen: boolean;
@@ -60,7 +51,7 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
           <View style={styles.modalHeader}>
             {!showCloseButton ? <View /> : <View style={styles.headerCloseButton} />}
 
-            <Text style={styles.modalTitle}>{title}</Text>
+            <SafeText style={styles.modalTitle}>{title}</SafeText>
 
             {!showCloseButton ? <View /> :
               <TouchableOpacity style={styles.headerCloseButton}
@@ -73,23 +64,23 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
           </View>
           <ScrollView style={styles.modalMessageContainer} contentContainerStyle={styles.modalMessage}>
             {children ? children :
-              <Text style={styles.modalMessageText}>{message}</Text>}
+              <SafeText style={styles.modalMessageText}>{message}</SafeText>}
           </ScrollView>
 
           <View style={styles.buttons}>
             {onDeny === undefined ? undefined :
               <Pressable style={[styles.button, (onConfirm !== undefined ? {} : styles.soloButton)]}
                          onPress={onDeny}>
-                <Text style={[styles.buttonText, styles.buttonDenyText]}
+                <SafeText style={[styles.buttonText, styles.buttonDenyText]}
                       importantForAccessibility={"auto"}>
                   {closeText}
-                </Text>
+                </SafeText>
               </Pressable>
             }
             {onConfirm === undefined ? undefined :
               <Pressable style={styles.button}
                          onPress={onConfirm}>
-                <Text
+                <SafeText
                   style={[styles.buttonText,
                     styles.buttonConfirmText,
                     (invertConfirmColor ? styles.buttonConfirmTextInvert : {}),
@@ -97,7 +88,7 @@ const ConfirmationModal: React.FC<ComponentProps> = ({
                     confirmationStyle]}
                   importantForAccessibility={"auto"}>
                   {confirmText}
-                </Text>
+                </SafeText>
               </Pressable>
             }
           </View>

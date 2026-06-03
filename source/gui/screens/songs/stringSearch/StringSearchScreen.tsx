@@ -9,13 +9,14 @@ import { isIOS, runAsync, sanitizeErrorForRollbar } from "../../../../logic/util
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamList, SongStringSearchRoute } from "../../../../navigation";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import SearchInput from "../../documents/search/SearchInput";
+import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import SearchInput from "../../documents/main/search/SearchInput";
 import SearchOptions from "./SearchOptions";
 import SearchResultComponent from "./SearchResultComponent";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { isSongValid, isTitleSimilarToOtherSongs } from "../../../../logic/songs/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, typeof SongStringSearchRoute>;
@@ -231,10 +232,10 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
       <SafeAreaView style={styles.showAllContainer}>
         <TouchableOpacity onPress={loadWholeDatabase} style={styles.showAllButton}>
           <Icon name={"ellipsis-h"} style={styles.showAllIcon} />
-          <Text style={styles.showAllText}
+          <SafeText style={styles.showAllText}
                 importantForAccessibility={"auto"}>
             Show all songs
-          </Text>
+          </SafeText>
         </TouchableOpacity>
       </SafeAreaView>
     }
@@ -251,11 +252,11 @@ const StringSearchScreen: React.FC<Props> = ({ navigation }) => {
                 keyExtractor={(it: SongSearch.SearchResult) => isSongValid(it.song) ? it.song.id.toString() : `invalidated_${Math.random() * 10000}`}
                 disableScrollViewPanResponder={true}
                 ListHeaderComponent={
-                  <Text style={styles.resultsInfoText}>
+                  <SafeText style={styles.resultsInfoText}>
                     {isLoading ? "Searching..." :
                       <>{searchResults.length === 0 ? "No" : searchResults.length} results</>
                     }
-                  </Text>
+                  </SafeText>
                 }
                 ListFooterComponent={<View style={styles.listFooter} />} />
     }

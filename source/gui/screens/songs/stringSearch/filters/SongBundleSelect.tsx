@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import { SongBundle } from "../../../../../logic/db/models/songs/Songs";
 import Db from "../../../../../logic/db/db";
@@ -8,6 +8,7 @@ import { sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
 import { SongBundleSchema } from "../../../../../logic/db/models/songs/SongsSchema";
 import SongBundlePicker from "../../../../components/popups/SongBundlePicker";
 import Settings from "../../../../../settings";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
   selectedBundleUuids: string[];
@@ -59,16 +60,16 @@ const SongBundleSelect: React.FC<Props> = ({ selectedBundleUuids, onChange }) =>
 
     <TouchableOpacity style={styles.button}
                       onPress={() => setIsOpen(true)}>
-      <Text style={styles.text}
+      <SafeText style={styles.text}
             numberOfLines={2}
             importantForAccessibility={"auto"}>
         Song bundles:
-      </Text>
-      <Text style={[styles.text, styles.value]}
+      </SafeText>
+      <SafeText style={[styles.text, styles.value]}
             numberOfLines={2}
             importantForAccessibility={"auto"}>
         {selectedBundlesText()}
-      </Text>
+      </SafeText>
 
     </TouchableOpacity>
   </View>;

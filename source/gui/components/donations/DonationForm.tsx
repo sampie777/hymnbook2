@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import StripePaymentButton from './StripePaymentButton';
 import PickerComponent from "../popups/PickerComponent";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { Donations } from '../../../logic/donations';
 import Checkbox from "../Checkbox";
 import { useAppContext } from "../providers/AppContextProvider";
+import SafeText from "../SafeText.tsx";
 
 interface Props {
 }
@@ -59,16 +60,16 @@ const DonationForm: React.FC<Props> = ({}) => {
                        onDenied={closePicker}
                        onCompleted={pickCurrency}
                        rowContentRenderer={(item) =>
-                         <Text
+                         <SafeText
                            style={[styles.pickerRowText, (item.code == currency.code ? styles.pickerRowTextSelected : {})]}
                            importantForAccessibility={"auto"}>
                            {item.flag}{" ".repeat(3)}{item.code}
-                         </Text>
+                         </SafeText>
                        } />
     }
 
     <View style={styles.row}>
-      <Text style={styles.text}>Amount</Text>
+      <SafeText style={styles.text}>Amount</SafeText>
 
       <View style={styles.amountContainer}>
         <TouchableOpacity style={styles.amountButton}
@@ -96,17 +97,17 @@ const DonationForm: React.FC<Props> = ({}) => {
     </View>
 
     <View style={styles.row}>
-      <Text style={styles.text}>Currency</Text>
+      <SafeText style={styles.text}>Currency</SafeText>
 
       <TouchableOpacity onPress={openPicker} style={styles.currencyButton}>
-        <Text style={[styles.text, styles.currencyText]}>{currency.flag}{" ".repeat(3)}{currency.code}</Text>
+        <SafeText style={[styles.text, styles.currencyText]}>{currency.flag}{" ".repeat(3)}{currency.code}</SafeText>
         <Icon name={"caret-down"} style={[styles.text, styles.arrow]} />
       </TouchableOpacity>
     </View>
 
     {!developerMode ? null :
       <View style={styles.row}>
-        <Text style={styles.text}>Automatically process payment</Text>
+        <SafeText style={styles.text}>Automatically process payment</SafeText>
 
         <Checkbox checked={shouldCapturePayment} onChange={setShouldCapturePayment} />
       </View>

@@ -1,30 +1,30 @@
 import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import PickerComponent from "../../../../components/popups/PickerComponent";
-import { SongSearch } from "../../../../../logic/songs/songSearch";
-import SafeText from "../../../../components/SafeText.tsx";
+import { DocumentSearch } from "../../../../../../logic/documents/documentSearch.ts";
+import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider.tsx";
+import PickerComponent from "../../../../../components/popups/PickerComponent.tsx";
+import SafeText from "../../../../../components/SafeText.tsx";
 
 interface Props {
-  value: SongSearch.OrderBy;
-  onChange: (value: SongSearch.OrderBy) => void;
+  value: DocumentSearch.OrderBy;
+  onChange: (value: DocumentSearch.OrderBy) => void;
 }
 
 const OrderByComponent: React.FC<Props> = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styles = createStyles(useTheme());
 
-  const _onChange = (newValue: SongSearch.OrderBy) => {
+  const _onChange = (newValue: DocumentSearch.OrderBy) => {
     setIsOpen(false);
     onChange(newValue);
   };
 
-  const toText = (value: SongSearch.OrderBy): string => {
+  const toText = (value: DocumentSearch.OrderBy): string => {
     switch (value) {
-      case SongSearch.OrderBy.Relevance:
+      case DocumentSearch.OrderBy.Relevance:
         return "Relevance";
-      case SongSearch.OrderBy.SongBundle:
-        return "Song bundle";
+      case DocumentSearch.OrderBy.Group:
+        return "Group";
     }
     return value;
   };
@@ -32,7 +32,7 @@ const OrderByComponent: React.FC<Props> = ({ value, onChange }) => {
   return <View style={styles.container}>
     {!isOpen ? null :
       <PickerComponent selectedValue={value}
-                       values={Object.keys(SongSearch.OrderBy) as SongSearch.OrderBy[]}
+                       values={Object.keys(DocumentSearch.OrderBy) as DocumentSearch.OrderBy[]}
                        keyExtractor={item => item}
                        onDenied={() => setIsOpen(false)}
                        onCompleted={_onChange}

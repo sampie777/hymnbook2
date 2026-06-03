@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from "react-native";
+import { StyleSheet, Switch, TouchableWithoutFeedback, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import Settings from "../../../../settings";
 import { BaseSettingProps, createStyles as settingComponentCreateStyles } from "./SettingComponent";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface BooleanSettingProps extends BaseSettingProps<boolean> {
   onPress?: (setValue: (newValue: boolean) => void, key: string | undefined, newValue: boolean) => void;
@@ -61,15 +62,15 @@ const SettingSwitchComponent: React.FC<BooleanSettingProps> = ({
     <View
       style={[baseStyles.container, styles.switchContainer, (lessObviousStyling ? {} : baseStyles.whiteContainer)]}>
       <View style={baseStyles.titleContainer}>
-        <Text style={baseStyles.titleText}
+        <SafeText style={baseStyles.titleText}
               importantForAccessibility={"auto"}>
           {title}
-        </Text>
+        </SafeText>
         {description === undefined ? undefined :
-          <Text style={baseStyles.descriptionText}
+          <SafeText style={baseStyles.descriptionText}
                 importantForAccessibility={"auto"}>
             {description}
-          </Text>}
+          </SafeText>}
       </View>
       {value === undefined ? undefined :
         <Switch onValueChange={(newValue) => onPress?.(setValue, keyName, invertValue ? !newValue : newValue)}

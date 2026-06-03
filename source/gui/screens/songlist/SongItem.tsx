@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Song, SongMetadataType } from "../../../logic/db/models/songs/Songs";
 import { SongListSongModel } from "../../../logic/db/models/songs/SongListModel";
 import { generateSongTitle, isSongValid } from "../../../logic/songs/utils";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { runAsync } from "../../../logic/utils/utils.ts";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import SongExtraInfo from "../../components/SongExtraInfo";
+import SafeText from "../../components/SafeText.tsx";
 
 interface Props {
   index: number,
@@ -53,7 +54,7 @@ const SongItem: React.FC<Props> = ({
                            onLongPress={onLongPress ? () => onLongPress(index, songListSong) : undefined}
                            style={[styles.container, (isDragging ? styles.dragging : {})]}>
     <View style={styles.infoContainer}>
-      <Text
+      <SafeText
         style={[
           styles.itemName,
           (showSongBundle || alternativeTitle ? {} : styles.itemExtraPadding),
@@ -61,7 +62,7 @@ const SongItem: React.FC<Props> = ({
         ]}
         importantForAccessibility={"auto"}>
         {generateSongTitle(songListSong.song, songListSong.selectedVerses.map(it => it.verse))}
-      </Text>
+      </SafeText>
 
       <SongExtraInfo alternativeTitle={alternativeTitle}
                      songBundle={showSongBundle ? Song.getSongBundle(songListSong.song)?.name : undefined}

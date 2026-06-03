@@ -3,8 +3,9 @@ import config from "../../../config";
 import { Survey } from "../../../logic/survey";
 import { openLink } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../providers/ThemeProvider";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import ConfirmationModal from "./ConfirmationModal";
+import SafeText from "../SafeText.tsx";
 
 const SurveyComponent: React.FC<{ onCompleted?: () => void }> = ({ onCompleted }) => {
   const styles = createStyles(useTheme());
@@ -18,9 +19,9 @@ const SurveyComponent: React.FC<{ onCompleted?: () => void }> = ({ onCompleted }
 
   return <TouchableOpacity style={styles.surveyButton}
                            onPress={openSurvey}>
-    <Text style={styles.surveyText}>
+    <SafeText style={styles.surveyText}>
       Complete the questionnaire
-    </Text>
+    </SafeText>
   </TouchableOpacity>;
 };
 
@@ -55,17 +56,17 @@ const FeedbackComponent: React.FC<{
                             onConfirm={joinWhatsappGroup}
                             showCloseButton={true}>
     <View style={styles.popupContent}>
-      <Text style={styles.contentText}>
+      <SafeText style={styles.contentText}>
         We value your feedback.
-      </Text>
-      <Text style={styles.contentText}>
+      </SafeText>
+      <SafeText style={styles.contentText}>
         Please feel free to join our Whatsapp feedback group, so you can help us make the right
         design choices. This way you can also leave instant feedback about problems you encounter or new ideas you want
         to share. We would appreciate this a lot.
-      </Text>
-      <Text style={styles.contentText}>
+      </SafeText>
+      <SafeText style={styles.contentText}>
         If you don't want to get involved, you can just fill out the feedback form (anonymously).
-      </Text>
+      </SafeText>
 
       {!Survey.mayBeShown() ? null : <SurveyComponent onCompleted={onCompleted} />}
     </View>

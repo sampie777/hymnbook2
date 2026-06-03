@@ -15,10 +15,11 @@ import {
 } from "../../../../../logic/songs/versePicker";
 import { RectangularInset } from "../../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import HeaderIconButton from "../../../../components/HeaderIconButton";
 import VersePickerItem, { versePickerItemStyles as createVersePickerItemStyles } from "./VersePickerItem";
 import { sanitizeErrorForRollbar } from "../../../../../logic/utils/utils.ts";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof VersePickerRoute> {
 }
@@ -122,8 +123,8 @@ const VersePicker: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   return <View style={styles.container}>
     <ScrollView contentContainerStyle={styles.scrollView}>
-      {songTitleWithVerses === undefined ? undefined : <Text style={styles.text}>{songTitleWithVerses}</Text>}
-      {verses !== undefined ? undefined : <Text style={styles.text}>Failed to load verses</Text>}
+      {songTitleWithVerses === undefined ? undefined : <SafeText style={styles.text}>{songTitleWithVerses}</SafeText>}
+      {verses !== undefined ? undefined : <SafeText style={styles.text}>Failed to load verses</SafeText>}
       <View style={styles.verseList}>
         {verses
           ?.filter(hasVisibleNameForPicker)
