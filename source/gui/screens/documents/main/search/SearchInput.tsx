@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
+import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
@@ -7,9 +7,10 @@ interface ScreenProps {
   value: string;
   onChange?: (value: string) => void;
   autoFocus?: boolean;
+  onFocus?: () => void;
 }
 
-const SearchInput: React.FC<ScreenProps> = ({ value, onChange, autoFocus = false }) => {
+const SearchInput: React.FC<ScreenProps> = ({ value, onChange, autoFocus = false, onFocus }) => {
   const styles = createStyles(useTheme());
 
   const clear = () => onChange?.("");
@@ -21,6 +22,7 @@ const SearchInput: React.FC<ScreenProps> = ({ value, onChange, autoFocus = false
                maxLength={255}
                returnKeyType={"search"}
                onChangeText={onChange}
+               onPress={onFocus}
                value={value}
                autoFocus={autoFocus} />
     {value.length === 0

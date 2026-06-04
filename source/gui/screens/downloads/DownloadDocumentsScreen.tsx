@@ -9,7 +9,7 @@ import { languageAbbreviationToFullName, sanitizeErrorForRollbar } from "../../.
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";
-import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, View } from "react-native";
 import { LocalDocumentGroupItem, ServerDocumentGroupItem } from "./documentGroupItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
@@ -20,6 +20,7 @@ import { DocumentGroupSchema } from "../../../logic/db/models/documents/Document
 import { CollectionChangeSet, OrderedCollection } from "realm";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 import { isConnectionError } from "../../../logic/apiUtils";
+import SafeText from "../../components/SafeText.tsx";
 
 type ServerDataType = ServerDocumentGroup;
 type LocalDataType = LocalDocumentGroup;
@@ -332,7 +333,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                        confirmationStyle={{ color: useTheme().colors.text.error }}
                        message={`Delete all documents for ${requestDeleteForItem?.name}?`} />
 
-    <Text style={styles.informationText}>Select documents to download or delete:</Text>
+    <SafeText style={styles.informationText}>Select documents to download or delete:</SafeText>
 
     <LanguageSelectBar languages={getAllLanguagesFromServerData(serverData)}
                        selectedLanguage={filterLanguage}
@@ -341,6 +342,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
     <ScrollView nestedScrollEnabled={true}
                 style={styles.listContainer}
+                contentContainerStyle={{paddingBottom: 100}}
                 refreshControl={<RefreshControl onRefresh={fetchServerData}
                                                 tintColor={styles.refreshControl.color}
                                                 refreshing={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />}>
@@ -372,14 +374,14 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
           </Animated.View>)}
 
       {serverData.length > 0 ? undefined :
-        <Text style={styles.emptyListText}>
+        <SafeText style={styles.emptyListText}>
           {isServerDataLoading || isSpecificItemLoading ? "Loading..." : "No online data available..."}
-        </Text>
+        </SafeText>
       }
       {isLocalDataLoading || isServerDataLoading || serverData.length === 0 || serverData.filter(isOfSelectedLanguage).length > 0 ? undefined :
-        <Text style={styles.emptyListText}>
+        <SafeText style={styles.emptyListText}>
           No documents found for language "{languageAbbreviationToFullName(filterLanguage)}"...
-        </Text>
+        </SafeText>
       }
     </ScrollView>
   </View>;

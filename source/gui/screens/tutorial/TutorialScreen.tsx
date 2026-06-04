@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Onboarding from 'react-native-onboarding-swiper';
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { displayName } from "../../../../app.json";
@@ -10,6 +10,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Tutorial } from "../../../logic/tutorial";
 import TutorialFinishedScreen from "./TutorialFinishedScreen";
 import { useSongBundleCount } from "../../components/utils";
+import SafeText from "../../components/SafeText.tsx";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList>;
@@ -27,7 +29,7 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate(DatabasesRoute, { type: Types.Songs });
   }
 
-  return <View style={styles.container}>
+  return <SafeAreaView style={styles.container} edges={["bottom"]}>
     <Onboarding
       onDone={finishTutorial}
       onSkip={finishTutorial}
@@ -39,9 +41,9 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
       pages={[
         {
           backgroundColor: styles.titlePage.backgroundColor.toString(),
-          image: <Text style={styles.titleContent} numberOfLines={1} adjustsFontSizeToFit={true}>{displayName}</Text>,
+          image: <SafeText style={styles.titleContent} numberOfLines={1} adjustsFontSizeToFit={true}>{displayName}</SafeText>,
           title: '',
-          subtitle: <Text style={[styles.text, styles.textOnPrimary]}>Let's quickly go through the basics!</Text>,
+          subtitle: <SafeText style={[styles.text, styles.textOnPrimary]}>Let's quickly go through the basics!</SafeText>,
         },
         songSearchTutorialPage({
           backgroundColor: styles.page.backgroundColor.toString(),
@@ -56,7 +58,7 @@ const TutorialScreen: React.FC<Props> = ({ navigation }) => {
           subtitle: '',
         },
       ]} />
-  </View>;
+  </SafeAreaView>;
 };
 
 

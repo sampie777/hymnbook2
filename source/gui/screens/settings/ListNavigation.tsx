@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider.tsx";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import SafeText from "../../components/SafeText.tsx";
 
 interface Props {
   headerVerticalPositions: { [key: string]: number }
@@ -48,7 +49,7 @@ const ListNavigation: React.FC<Props> = ({ headerVerticalPositions, onItemPress 
     <TouchableOpacity style={styles.header}
                       onPress={toggleVisibility}>
       <Icon name={"bars"} style={[styles.headerText, styles.headerIcon]} />
-      <Text style={styles.headerText}>Navigation</Text>
+      <SafeText style={styles.headerText}>Navigation</SafeText>
     </TouchableOpacity>
 
     <Animated.View style={[styles.list, animatedStyle]}
@@ -56,7 +57,7 @@ const ListNavigation: React.FC<Props> = ({ headerVerticalPositions, onItemPress 
       {items.map(it =>
         <TouchableOpacity key={it[0]}
                           onPress={() => onPress(it[0], it[1])}>
-          <Text style={styles.text}>{it[0]}</Text>
+          <SafeText style={styles.text}>{it[0]}</SafeText>
         </TouchableOpacity>
       )}
     </Animated.View>

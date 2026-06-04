@@ -52,7 +52,7 @@ import AboutScreen from "./gui/screens/about/AboutScreen";
 import PrivacyPolicyScreen from "./gui/screens/about/PrivacyPolicyScreen";
 import VersePicker from "./gui/screens/songs/song/VersePicker/VersePicker";
 import OtherMenuScreen from "./gui/screens/otherMenu/OtherMenuScreen";
-import DocumentSearchScreen from "./gui/screens/documents/search/DocumentSearchScreen";
+import DocumentSearchScreen from "./gui/screens/documents/main/DocumentSearchScreen";
 import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
@@ -304,7 +304,7 @@ const App: React.FC = () =>
 
 export default App;
 
-const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.create({
+const createStyles = ({ colors, isDark, fontFamily }: ThemeContextProps) => StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: colors.background,
@@ -323,7 +323,8 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
     elevation: isDark ? 2 : undefined,
   },
   tabBarHeaderTitle: {
-    color: colors.text.header as string
+    color: colors.text.header as string,
+    fontFamily: fontFamily.sansSerif,
   },
 
   tabBarItem: {},
@@ -337,5 +338,6 @@ const createStyles = ({ colors, isDark }: ThemeContextProps) => StyleSheet.creat
   tabBarBadgeStyle: {
     fontSize: 12,
     backgroundColor: colors.primary.default,
+    fontFamily: fontFamily.sansSerif,
   }
 });

@@ -13,6 +13,7 @@ import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Librarie
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { runAsync } from "../../../../logic/utils/utils.ts";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -24,6 +25,7 @@ interface ContentVerseProps {
   onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
   showMelodyOnSeparateLines: boolean;
+  showMelodyChords: boolean;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -35,7 +37,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      setIsMelodyLoading,
                                                      onLayout,
                                                      highlightText,
-                                                     showMelodyOnSeparateLines
+                                                     showMelodyOnSeparateLines,
+                                                     showMelodyChords,
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [showMelody, setShowMelody] = useState(false);
@@ -113,13 +116,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const displayName = SongProcessor.verseShortName(verse);
 
   const createHighlightedTextComponent = (text: string, index: number) =>
-    <Animated.Text key={index}
+    <AnimatedSafeText key={index}
                    style={styles.textHighlighted}
                    selectable={Settings.enableTextSelection}>
       {text}
-    </Animated.Text>;
+    </AnimatedSafeText>;
 
-  const memoizedAbc = useMemo(() => ABC.generateAbcForVerse(verse, activeMelody), [activeMelody?.id]);
+  const memoizedAbc = useMemo(() =>
+    ABC.generateAbcForVerse(
+      verse,
+      activeMelody,
+      { trimLines: Settings.showMelodyOnSeparateLines }
+    ), [activeMelody?.id, Settings.showMelodyOnSeparateLines]);
 
   const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) =>
     setTextLineWidth(e.nativeEvent.lines.map(it => ({
@@ -131,18 +139,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={e => onLayout?.(verse, e)}>
     {displayName.length === 0 ? undefined :
-      <Animated.Text style={[
+      <AnimatedSafeText style={[
         styles.title,
         specificStyleForTitle(),
         animatedStyle.title,
         styleForVerseType(getVerseType(verse))
       ]}>
         {displayName}
-      </Animated.Text>
+      </AnimatedSafeText>
     }
 
     {isMelodyLoaded && isMelodyAvailable() ? undefined :
-      <Animated.Text style={[styles.text, animatedStyle.text]}
+      <AnimatedSafeText style={[styles.text, animatedStyle.text]}
                      selectable={Settings.enableTextSelection}
                      onLayout={onTextContainerLayout}
                      onTextLayout={onTextLayout}
@@ -150,7 +158,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         {highlightText == null
           ? content
           : renderTextWithCustomReplacements(content, highlightText, createHighlightedTextComponent)}
-      </Animated.Text>
+      </AnimatedSafeText>
     }
 
     {!(showMelody && isMelodyAvailable()) ? undefined :
@@ -173,6 +181,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
           animatedScale={scale}
           melodyScale={melodyScale}
           showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+          showMelodyChords={showMelodyChords}
         />
       </View>
     }

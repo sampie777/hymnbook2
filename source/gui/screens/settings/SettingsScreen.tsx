@@ -11,20 +11,12 @@ import { Security } from "../../../logic/security";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { useAppContext } from "../../components/providers/AppContextProvider";
-import {
-  LayoutChangeEvent,
-  Platform,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  View
-} from "react-native";
+import { LayoutChangeEvent, RefreshControl, ScrollView, StyleSheet, ToastAndroid, View } from "react-native";
 import { SettingComponent } from "./components/SettingComponent";
 import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
 import ListNavigation from "./ListNavigation.tsx";
+import SafeText from "../../components/SafeText.tsx";
 
 const Header: React.FC<{
   title: string,
@@ -41,7 +33,7 @@ const Header: React.FC<{
     register?.(title, event.nativeEvent.layout.y);
   }
 
-  return !isVisible ? null : <Text style={styles.settingHeader} onLayout={onLayout}>{title}</Text>;
+  return !isVisible ? null : <SafeText style={styles.settingHeader} onLayout={onLayout}>{title}</SafeText>;
 };
 
 const SettingsScreen: React.FC = () => {
@@ -295,7 +287,7 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Use native list component for song verses and documents"}
                                   description={"Try to toggle this if pinch-to-zoom or scrolling glitches."}
-                                  onLongPress={(setValue) => setValue(Platform.OS === "ios")}
+                                  onLongPress={(setValue) => setValue(true)}
                                   keyName={"useNativeFlatList"}
                                   isVisible={showAdvancedSettings} />
 
@@ -318,6 +310,11 @@ const SettingsScreen: React.FC = () => {
                                   description={"Show melody for all verses instead of the first (selected) verse. This may result in reduces performance."}
                                   onLongPress={(setValue) => setValue(false)}
                                   keyName={"showMelodyForAllVerses"}
+                                  isVisible={showAdvancedSettings} />
+          <SettingSwitchComponent title={"Show chords (experimental)"}
+                                  description={"This will show the chords above the notes in the melody, if chords are available."}
+                                  onLongPress={(setValue) => setValue(false)}
+                                  keyName={"showMelodyChords"}
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}

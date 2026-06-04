@@ -5,11 +5,12 @@ import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ParamList, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import VerseSummary from "./VerseSummary";
 import MatchedVersesSummary from "./MatchedVersesSummary";
 import { isSongValid } from "../../../../logic/songs/utils";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamList, any>;
@@ -79,39 +80,39 @@ const SearchResultComponent: React.FC<Props> = memo(({
     )?.value;
 
   const createHighlightedTextComponent = useCallback((text: string, index: number) =>
-    <Text key={index} style={styles.textHighlighted}>
+    <SafeText key={index} style={styles.textHighlighted}>
       {text}
-    </Text>, [searchRegex]);
+    </SafeText>, [searchRegex]);
 
   return <TouchableOpacity style={[styles.container, (disable ? styles.containerDisabled : {})]}
                            onPress={disable ? undefined : onPress}
                            onLongPress={disable ? undefined : onLongPress}>
     <View style={styles.headerContainer}>
       <View style={styles.titleContainer}>
-        <Text style={styles.songName}
+        <SafeText style={styles.songName}
               importantForAccessibility={"auto"}>
           {!isTitleMatch ? song.name :
             renderTextWithCustomReplacements(song.name, searchRegex, createHighlightedTextComponent)
           }
-        </Text>
+        </SafeText>
 
         {!showSongBundle ? null :
           <View style={styles.songBundleContainer}>
-            <Text style={styles.extraInfoText}>
+            <SafeText style={styles.extraInfoText}>
               <Icon name={"book"} />
-            </Text>
-            <Text style={styles.extraInfoText}>
+            </SafeText>
+            <SafeText style={styles.extraInfoText}>
               {Song.getSongBundle(song)?.name}
-            </Text>
+            </SafeText>
           </View>
         }
       </View>
 
       {!alternativeTitle ? undefined :
-        <Text style={[styles.extraInfoText, styles.alternativeTitle]}
+        <SafeText style={[styles.extraInfoText, styles.alternativeTitle]}
               importantForAccessibility={"auto"}>
           {renderTextWithCustomReplacements(alternativeTitle, searchRegex, createHighlightedTextComponent)}
-        </Text>
+        </SafeText>
       }
     </View>
 

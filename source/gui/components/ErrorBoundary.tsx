@@ -1,7 +1,8 @@
 import React, { Component, PropsWithChildren } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { rollbar } from "../../logic/rollbar";
 import { defaultFontFamilies, lightColors } from "../../logic/theme";
+import SafeText from "./SafeText.tsx";
 
 interface ComponentProps extends PropsWithChildren {
 }
@@ -55,8 +56,8 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
   renderCodeLine({ item, index }: { item: string, index: number }) {
     return (
       <View style={styles.line} key={index}>
-        <Text style={styles.lineIndex} selectable={true}>{index + 1}</Text>
-        <Text style={styles.lineText} selectable={true}>{item}</Text>
+        <SafeText style={styles.lineIndex} selectable={true}>{index + 1}</SafeText>
+        <SafeText style={styles.lineText} selectable={true}>{item}</SafeText>
       </View>
     );
   }
@@ -67,24 +68,24 @@ export default class ErrorBoundary extends Component<ComponentProps, ComponentSt
     }
 
     return <View style={styles.container}>
-      <Text style={styles.header}>Whoops</Text>
-      <Text style={styles.paragraph}>Something decided to stop working...</Text>
-      <Text style={styles.paragraph}>And we're really sorry about that.</Text>
+      <SafeText style={styles.header}>Whoops</SafeText>
+      <SafeText style={styles.paragraph}>Something decided to stop working...</SafeText>
+      <SafeText style={styles.paragraph}>And we're really sorry about that.</SafeText>
 
       <View style={styles.resetButtonContainer}>
         <View onTouchStart={this.reset} style={styles.resetButton}>
-          <Text style={styles.resetButtonText}>Try again</Text>
+          <SafeText style={styles.resetButtonText}>Try again</SafeText>
         </View>
         {this.state.catchTimes < 2 ? null :
-          <Text style={styles.catchTimesText}>For the {this.state.catchTimes} time</Text>}
+          <SafeText style={styles.catchTimesText}>For the {this.state.catchTimes} time</SafeText>}
       </View>
 
       {!this.state.showDebugInfo
         ? <View onTouchStart={this.toggleDebugInfo} style={styles.debugButton}>
-          <Text style={styles.debugButtonText}>Show more information</Text>
+          <SafeText style={styles.debugButtonText}>Show more information</SafeText>
         </View>
         : <View style={styles.details}>
-          <Text style={styles.errorName} selectable={true}>{this.state.error && this.state.error.toString()}</Text>
+          <SafeText style={styles.errorName} selectable={true}>{this.state.error && this.state.error.toString()}</SafeText>
 
           <FlatList
             data={this.state.errorInfo.componentStack

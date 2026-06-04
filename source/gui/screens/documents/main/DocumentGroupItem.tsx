@@ -1,47 +1,61 @@
 import React from "react";
 import { DocumentGroup } from "../../../../logic/db/models/documents/Documents";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { isDbItemValid } from "../../../../logic/utils/utils.ts";
+import SafeText from "../../../components/SafeText.tsx";
 
 
 interface ScreenProps<T extends DocumentGroup> {
   group: T;
   onPress?: (group: T) => void;
-  searchText?: string;
+  disabled?: boolean;
+  showDocumentGroup?: boolean;
 }
 
 const DocumentGroupItem: React.FC<ScreenProps<DocumentGroup & Realm.Object<DocumentGroup>>> = ({
                                                                                                  group,
                                                                                                  onPress,
-                                                                                                 searchText
+                                                                                                 disabled = false,
+                                                                                                 showDocumentGroup = false,
                                                                                                }) => {
+  if (!isDbItemValid(group)) return null;
+
   const styles = createStyles(useTheme());
 
-  return (<TouchableOpacity onPress={() => onPress?.(group)} style={styles.container}>
+  const parentName = !showDocumentGroup ? undefined : DocumentGroup.getParent(group)?.name;
+
+  return (<TouchableOpacity onPress={() => onPress?.(group)}
+                            disabled={disabled}
+                            style={styles.container}>
     <Icon name={"folder"} style={styles.searchListItemIcon} />
     <View style={styles.nameContainer}>
-      <Text style={[
+      <SafeText style={[
         styles.itemName,
-        (!(searchText === undefined || searchText.length === 0) ? {} : styles.itemExtraPadding)
+        (!parentName && styles.itemExtraPadding)
       ]}
             importantForAccessibility={"auto"}>
         {group.name}
-      </Text>
+      </SafeText>
 
-      {searchText === undefined || searchText.length === 0 ? undefined :
-        <Text style={styles.parentName}
-              importantForAccessibility={"auto"}>
-          {DocumentGroup.getParent(group)?.name}
-        </Text>
+      {parentName &&
+        <View style={styles.documentGroupContainer}>
+          <SafeText style={styles.parentName}>
+            <Icon name={"book"} />
+          </SafeText>
+          <SafeText style={styles.parentName} importantForAccessibility={'auto'}>
+            {parentName}
+          </SafeText>
+        </View>
       }
     </View>
 
     <View style={styles.infoContainer}>
-      <Text style={styles.infoText}
+      <SafeText style={styles.infoText}
             importantForAccessibility={"no"}>
         {group.size} files
-      </Text>
+      </SafeText>
     </View>
   </TouchableOpacity>);
 };
@@ -72,10 +86,17 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 7
   },
   parentName: {
-    paddingHorizontal: 15,
     fontSize: 14,
     color: colors.text.lighter,
     fontStyle: "italic"
+  },
+
+  documentGroupContainer: {
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 10,
   },
 
   searchListItemIcon: {
@@ -90,5 +111,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.text.lighter
+  },
+
+  textHighlighted: {
+    color: colors.text.highlighted.foreground,
+    backgroundColor: colors.text.highlighted.background
   }
 });

@@ -2,9 +2,10 @@ import React from "react";
 import { Song } from "../../../../../logic/db/models/songs/Songs";
 import { hasMelodyToShow } from "../../../../../logic/songs/utils";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
   song: Song;
@@ -67,28 +68,28 @@ const MelodyHeaderIconButton: React.FC<Props> = ({
               { top: 15, left: 10 },
               (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]} />}
 
-          <Text style={[styles.popupItemText, (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]}
+          <SafeText style={[styles.popupItemText, (!songHasMelodyToShow ? styles.popupItemTextDisabled : {})]}
                 importantForAccessibility={"auto"}>
             {showMelody && songHasMelodyToShow ? "Hide" : "View"}
-          </Text>
+          </SafeText>
         </MenuOption>
 
         <MenuOption style={styles.popupItem}
                     onSelect={() => setShowSongAudioModal(true)}>
           <Icon name={"play"} style={styles.popupItemIcon} />
-          <Text style={styles.popupItemText}
+          <SafeText style={styles.popupItemText}
                 importantForAccessibility={"auto"}>
             Play
-          </Text>
+          </SafeText>
         </MenuOption>
 
         <MenuOption style={styles.popupItem}
                     onSelect={() => setShowMelodySettings(true)}>
           <Icon name={"cog"} style={styles.popupItemIcon} />
-          <Text style={styles.popupItemText}
+          <SafeText style={styles.popupItemText}
                 importantForAccessibility={"auto"}>
             Settings
-          </Text>
+          </SafeText>
         </MenuOption>
       </MenuOptions>
     </Menu>

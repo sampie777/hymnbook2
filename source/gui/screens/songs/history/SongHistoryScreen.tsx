@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, SectionList, StyleSheet, Text, View } from 'react-native';
+import { Alert, SectionList, StyleSheet, View } from 'react-native';
 import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
 import { SongHistory } from '../../../../logic/db/models/songs/SongHistory';
 import { SongHistorySchema } from '../../../../logic/db/models/songs/SongHistorySchema';
@@ -8,6 +8,7 @@ import Db from '../../../../logic/db/db';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { generateSongTitle, loadSongWithUuidOrId, } from '../../../../logic/songs/utils';
 import { SearchResultItemBaseComponent } from '../search/SearchResultItemBaseComponent';
+import SafeText from "../../../components/SafeText.tsx";
 
 type SongHistoryGroupedItem = {
   songTitle: string;
@@ -136,13 +137,14 @@ const SongHistoryScreen: React.FC<
 
   const renderSectionHeader = ({ section }: { section: Section }) => (
     <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>{section.title}</Text>
+      <SafeText style={styles.headerText}>{section.title}</SafeText>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <SectionList
+        contentContainerStyle={{ paddingBottom: 100 }}
         sections={groupedItems}
         renderItem={({ item }) => renderItem({ item })}
         renderSectionHeader={renderSectionHeader}

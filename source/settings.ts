@@ -1,7 +1,7 @@
-import { Platform } from "react-native";
 import { AccessRequestStatus } from "./logic/server/models";
 import { SettingsBaseClass } from "./logic/settings/settingsBase";
 import { SongSearch } from "./logic/songs/songSearch";
+import { DocumentSearch } from "./logic/documents/documentSearch.ts";
 
 class SettingsClass extends SettingsBaseClass {
   // System
@@ -26,7 +26,7 @@ class SettingsClass extends SettingsBaseClass {
   songFadeIn = true;
   showJumpToNextVerseButton = true;
   showSongListCountBadge = true;
-  useNativeFlatList = Platform.OS === "ios";
+  useNativeFlatList = true;
   coloredVerseTitles = true;
   highlightSelectedVerses = true;
   animateAddedToSongList = true;
@@ -35,6 +35,7 @@ class SettingsClass extends SettingsBaseClass {
   songMelodyScale = 1.0;
   showMelodyForAllVerses = false;
   showMelodyOnSeparateLines = true;
+  showMelodyChords = false;
   melodyShowedTimes = 0;
 
   // Songs audio
@@ -45,6 +46,11 @@ class SettingsClass extends SettingsBaseClass {
   documentsMultiKeywordSearch = true;
   documentScale = 1.0;
   documentsResetPathToRoot = false;
+
+  // Document search
+  documentSearchInTitles = true;
+  documentSearchInContent = false;
+  documentSearchSortOrder = DocumentSearch.OrderBy.Relevance;
 
   // Server authentication
   authClientName = "";

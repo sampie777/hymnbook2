@@ -3,7 +3,8 @@ import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
+import SafeText from "../../../components/SafeText.tsx";
 
 interface Props {
   verse: Verse;
@@ -22,15 +23,15 @@ const VerseSummary: React.FC<Props> = ({ verse, maxLines, preferredStartLine = 0
   const displayName = SongProcessor.verseShortName(verse);
 
   const createHighlightedTextComponent = useCallback((text: string, index: number) =>
-    <Text key={index} style={styles.textHighlighted}>
+    <SafeText key={index} style={styles.textHighlighted}>
       {text}
-    </Text>, []);
+    </SafeText>, []);
 
-  return <Text style={styles.text}
+  return <SafeText style={styles.text}
                textBreakStrategy={"balanced"}
                importantForAccessibility={"auto"}>
     {displayName.length === 0 ? undefined :
-      <Text style={styles.verseNumber}>{displayName}  </Text>
+      <SafeText style={styles.verseNumber}>{displayName}  </SafeText>
     }
 
     {startLine > 0 ? "... " : null}
@@ -38,7 +39,7 @@ const VerseSummary: React.FC<Props> = ({ verse, maxLines, preferredStartLine = 0
       renderTextWithCustomReplacements(viewableText, searchText, createHighlightedTextComponent)
     }
     {startLine + maxLines < lines.length ? " ..." : null}
-  </Text>;
+  </SafeText>;
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({

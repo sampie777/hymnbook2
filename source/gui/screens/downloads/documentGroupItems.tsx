@@ -3,9 +3,10 @@ import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/do
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
+import SafeText from "../../components/SafeText.tsx";
 
 interface ServerDocumentGroupItemComponentProps {
   group: ServerDocumentGroup;
@@ -30,22 +31,22 @@ export const ServerDocumentGroupItem: React.FC<ServerDocumentGroupItemComponentP
                       onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}
+      <SafeText style={styles.titleText}
             importantForAccessibility={"auto"}>
         {group.name}
-      </Text>
+      </SafeText>
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.infoText}
+          <SafeText style={styles.infoText}
                 importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(group.language)}
-          </Text>
+          </SafeText>
         }
         {group.size === undefined ? undefined :
-          <Text style={styles.infoText}
+          <SafeText style={styles.infoText}
                 importantForAccessibility={"no"}>
             {group.size} documents
-          </Text>
+          </SafeText>
         }
       </View>
       <View>
@@ -80,21 +81,21 @@ export const LocalDocumentGroupItem: React.FC<LocalDocumentGroupItemComponentPro
                       onLongPress={() => onLongPress?.(group)}
                       style={styles.container}
                       disabled={disabled}>
-      <Text style={styles.titleText}
+      <SafeText style={styles.titleText}
             importantForAccessibility={"auto"}>
         {group.name}
-      </Text>
+      </SafeText>
       <View style={styles.infoContainer}>
         {group.language === undefined || group.language === "" ? undefined :
-          <Text style={styles.infoText}
+          <SafeText style={styles.infoText}
                 importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(group.language)}
-          </Text>
+          </SafeText>
         }
-        <Text style={styles.infoText}
+        <SafeText style={styles.infoText}
               importantForAccessibility={"no"}>
           {group.size} documents
-        </Text>
+        </SafeText>
       </View>
       <View>
         {isUpdating ? <IsDownloadingIcon /> :

@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { openLink } from "../../logic/utils/utils.ts";
+import SafeText from "./SafeText.tsx";
 
 const UrlLink: React.FC<PropsWithChildren<{
   url: string,
@@ -22,10 +23,10 @@ const UrlLink: React.FC<PropsWithChildren<{
     };
 
     if (textOnly) {
-      return <Text onPress={open}
+      return <SafeText onPress={open}
                    importantForAccessibility={"auto"}>
         {children}
-      </Text>;
+      </SafeText>;
     }
 
     return <View style={style}>

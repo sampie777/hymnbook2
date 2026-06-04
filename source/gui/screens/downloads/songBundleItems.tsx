@@ -3,9 +3,10 @@ import { SongBundle as LocalSongBundle } from "../../../logic/db/models/songs/So
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
 import { languageAbbreviationToFullName } from "../../../logic/utils/utils.ts";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { DownloadIcon, IsDownloadedIcon, IsDownloadingIcon, UpdateIcon } from "./common";
 import { useUpdaterContext } from "../../components/providers/UpdaterContextProvider";
+import SafeText from "../../components/SafeText.tsx";
 import { Licenses } from "../../../logic/organizations/licenses.ts";
 import { License } from "../../../logic/db/models/organizations/Organizations.ts";
 
@@ -35,26 +36,26 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
                       disabled={disabled || isUpdating}>
-      <Text style={styles.titleText}
+      <SafeText style={styles.titleText}
             importantForAccessibility={"auto"}>
         {bundle.name}
-      </Text>
+      </SafeText>
       <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
-          <Text style={styles.infoText}
+          <SafeText style={styles.infoText}
                 importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(bundle.language)}
-          </Text>
+          </SafeText>
         }
         {hasLicense ? undefined :
-          <Text style={[styles.infoText, styles.licenseText]} importantForAccessibility={'no'}>
+          <SafeText style={[styles.infoText, styles.licenseText]} importantForAccessibility={'no'}>
             License required
-          </Text>
+          </SafeText>
         }
         {!hasLicense || bundle.size === undefined ? undefined :
-          <Text style={styles.infoText} importantForAccessibility={'no'}>
+          <SafeText style={styles.infoText} importantForAccessibility={'no'}>
             {bundle.size} songs
-          </Text>
+          </SafeText>
         }
       </View>
       <View>
@@ -92,25 +93,25 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
                       onLongPress={() => onLongPress?.(bundle)}
                       style={styles.container}
                       disabled={disabled || isUpdating}>
-      <Text style={styles.titleText}
+      <SafeText style={styles.titleText}
             importantForAccessibility={"auto"}>
         {bundle.name}
-      </Text>
+      </SafeText>
       <View style={styles.infoContainer}>
         {bundle.language === undefined || bundle.language === "" ? undefined :
-          <Text style={styles.infoText}
+          <SafeText style={styles.infoText}
                 importantForAccessibility={"auto"}>
             {languageAbbreviationToFullName(bundle.language)}
-          </Text>
+          </SafeText>
         }
 
         {!hasLicense
-          ? <Text style={[styles.infoText, styles.licenseText]} importantForAccessibility={'no'}>
+          ? <SafeText style={[styles.infoText, styles.licenseText]} importantForAccessibility={'no'}>
             License required
-          </Text>
-          : <Text style={styles.infoText} importantForAccessibility={'no'}>
+          </SafeText>
+          : <SafeText style={styles.infoText} importantForAccessibility={'no'}>
             {bundle.songs.length} songs
-          </Text>
+          </SafeText>
         }
       </View>
       <View>

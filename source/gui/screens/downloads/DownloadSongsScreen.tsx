@@ -10,7 +10,7 @@ import { alertAndThrow, languageAbbreviationToFullName, sanitizeErrorForRollbar 
 import { itemCountPerLanguage } from "./common";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { debounce, useIsMounted } from "../../components/utils";
-import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, View } from "react-native";
 import { LocalSongBundleItem, SongBundleItem } from "./songBundleItems";
 import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import LanguageSelectBar, { ShowAllLanguagesValue } from "./LanguageSelectBar";
@@ -25,6 +25,7 @@ import { isConnectionError } from "../../../logic/apiUtils";
 import { Licenses } from "../../../logic/organizations/licenses.ts";
 import { Organization } from "../../../logic/db/models/organizations/Organizations.ts";
 import { OrganizationSchema } from "../../../logic/db/models/organizations/OrganizationsSchema.ts";
+import SafeText from "../../components/SafeText.tsx";
 
 type ServerDataType = ServerSongBundle;
 type LocalDataType = LocalSongBundle;
@@ -358,18 +359,18 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
                        message={`Delete all songs for ${requestDeleteForItem?.name}?`} />
 
 
-    <Text style={[styles.informationText, styles.subtleInformationText]}>We are still sorting out all the song
+    <SafeText style={[styles.informationText, styles.subtleInformationText]}>We are still sorting out all the song
       licenses, so we trust that you take the
-      responsibility to make sure you have the correct licenses for the songs you download.</Text>
+      responsibility to make sure you have the correct licenses for the songs you download.</SafeText>
 
-    <Text style={[styles.informationText, styles.subtleInformationText]}>
+    <SafeText style={[styles.informationText, styles.subtleInformationText]}>
       If you want to download a song bundle which is not displayed, please feel free to
       <UrlLink url={`mailto:${Config.DEVELOPER_EMAIL}?subject=Hymnbook`} textOnly={true}>
-        <Text style={styles.webpageLink}> contact us</Text>
+        <SafeText style={styles.webpageLink}> contact us</SafeText>
       </UrlLink>.
-    </Text>
+    </SafeText>
 
-    <Text style={styles.informationText}>Select a song bundle to download or delete:</Text>
+    <SafeText style={styles.informationText}>Select a song bundle to download or delete:</SafeText>
 
     <LanguageSelectBar languages={getAllLanguagesFromServerData(serverData)}
                        selectedLanguage={filterLanguage}
@@ -378,6 +379,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
 
     <ScrollView nestedScrollEnabled={true}
                 style={styles.listContainer}
+                contentContainerStyle={{paddingBottom: 100}}
                 refreshControl={<RefreshControl onRefresh={fetchServerData}
                                                 tintColor={styles.refreshControl.color}
                                                 refreshing={isProcessingLocalData || isSpecificItemLoading || isLocalDataLoading || isServerDataLoading} />}>
@@ -411,14 +413,14 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
           </Animated.View>)}
 
       {serverData.length > 0 ? undefined :
-        <Text style={styles.emptyListText}>
+        <SafeText style={styles.emptyListText}>
           {isServerDataLoading || isSpecificItemLoading ? "Loading..." : "No online data available..."}
-        </Text>
+        </SafeText>
       }
       {isLocalDataLoading || isServerDataLoading || serverData.length === 0 || serverData.filter(isOfSelectedLanguage).length > 0 ? undefined :
-        <Text style={styles.emptyListText}>
+        <SafeText style={styles.emptyListText}>
           No bundles found for language "{languageAbbreviationToFullName(filterLanguage)}"...
-        </Text>
+        </SafeText>
       }
     </ScrollView>
   </View>;

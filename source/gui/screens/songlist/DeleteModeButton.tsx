@@ -1,9 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
 import { isIOS } from "../../../logic/utils/utils.ts";
 import DeviceInfo from "react-native-device-info";
+import SafeText from "../../components/SafeText.tsx";
 
 interface Props {
   onPress: () => void,
@@ -19,11 +20,11 @@ const DeleteModeButton: React.FC<Props> = ({ onPress, onLongPress, isActivated =
                            style={styles.deleteModeButton}
                            hitSlop={{ top: 10, right: 10, bottom: isIOS ? 5 : 10, left: 10 }}>
     {isActivated
-      ? <Text style={styles.text}
+      ? <SafeText style={styles.text}
               importantForAccessibility={"auto"}
               accessibilityLabel={listHasBeenChanged ? "Done" : "Cancel delete mode"}>
         {listHasBeenChanged ? "Done" : "Cancel"}
-      </Text>
+      </SafeText>
       : <Icon name={"trash-alt"}
               solid={isActivated}
               accessibilityLabel={"Enable delete mode"}

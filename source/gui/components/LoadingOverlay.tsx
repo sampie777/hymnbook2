@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 import LoadingIndicator from "./LoadingIndicator";
+import SafeText from "./SafeText.tsx";
 
 
 interface Props {
@@ -45,7 +46,7 @@ const LoadingOverlay: React.FC<Props> =
     return (
       <Animated.View style={[styles.container, animatedStyleContainer]}>
         <LoadingIndicator />
-        {text === "" || text === null ? null : <Text style={styles.text}>{text}</Text>}
+        {text === "" || text === null ? null : <SafeText style={styles.text}>{text}</SafeText>}
       </Animated.View>
     );
   };

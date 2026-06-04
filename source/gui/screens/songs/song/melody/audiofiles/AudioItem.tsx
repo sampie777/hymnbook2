@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import { SongAudio } from "../../../../../../logic/db/models/songs/Songs";
 import { readableFileSizeSI } from "../../../../../../logic/utils/utils.ts";
+import SafeText from "../../../../../components/SafeText.tsx";
 
 interface Props {
   item: SongAudio;
@@ -16,15 +17,15 @@ const AudioItem: React.FC<Props> = ({ item, isSelected, onPress }) => {
   return <TouchableOpacity style={styles.container}
                            onPress={onPress}>
     <View style={[styles.selection, (isSelected ? styles.selectionSelected : {})]} />
-    <Text style={[styles.text, (isSelected ? styles.textSelected : {})]}
+    <SafeText style={[styles.text, (isSelected ? styles.textSelected : {})]}
           importantForAccessibility={"auto"}>
       {item.name}
-    </Text>
+    </SafeText>
     {item.fileSize ?
-      <Text style={styles.fileSize}
+      <SafeText style={styles.fileSize}
             importantForAccessibility={"no"}>
         {readableFileSizeSI(item.fileSize)}
-      </Text> : null}
+      </SafeText> : null}
   </TouchableOpacity>;
 };
 

@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SongSearch } from "../../../../logic/songs/songSearch";
 import StringSearchButton from "./StringSearchButton";
 import SongNumberInput from "./SongNumberInput";
@@ -8,6 +8,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { Song } from "../../../../logic/db/models/songs/Songs";
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ParamList } from "../../../../navigation";
+import SafeText from "../../../components/SafeText.tsx";
 
 type Props = {
   value: string
@@ -55,8 +56,8 @@ const SearchHeading: React.FC<Props> = ({
     </View>
 
     <View style={styles.containerCenter}>
-      <Text style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
-        number:</Text>
+      <SafeText style={[styles.infoText, (!useSmallerFontSize ? {} : styles.infoTextSmaller)]}>Enter song
+        number:</SafeText>
 
       <SongNumberInput onPress={onPress}
                        value={value}

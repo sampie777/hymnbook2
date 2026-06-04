@@ -8,17 +8,20 @@ interface Props {
   item: VoiceItem;
   animatedScaleText: SharedValue<number>;
   melodyScale: SharedValue<number>;
+  showChords: boolean;
 }
 
-const VoiceItemElement: React.FC<Props> = ({ item, animatedScaleText, melodyScale }) => {
+const VoiceItemElement: React.FC<Props> = ({ item, animatedScaleText, melodyScale, showChords }) => {
   switch (item.el_type) {
     case "note":
       return <VoiceItemNoteElement note={item}
                                    animatedScaleText={animatedScaleText}
-                                   melodyScale={melodyScale} />;
+                                   melodyScale={melodyScale}
+                                   showChords={showChords}/>;
     case "bar":
       return <VoiceItemBarElement item={item}
-                                  melodyScale={melodyScale} />;
+                                  melodyScale={melodyScale}
+                                  showChords={showChords}/>;
     default:
       return null;
   }

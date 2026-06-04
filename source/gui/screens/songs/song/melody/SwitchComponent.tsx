@@ -1,6 +1,7 @@
 import React from "react";
 import { ThemeContextProps, useTheme } from "../../../../components/providers/ThemeProvider";
-import { StyleSheet, Switch, Text, TouchableWithoutFeedback, View } from "react-native";
+import { StyleSheet, Switch, TouchableWithoutFeedback, View } from "react-native";
+import SafeText from "../../../../components/SafeText.tsx";
 
 interface Props {
   title: string;
@@ -39,15 +40,15 @@ export const SwitchComponent: React.FC<Props> =
     return <TouchableWithoutFeedback onLongPress={onLongPress}>
       <View style={[styles.container, styles.switchContainer]}>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}
+          <SafeText style={styles.titleText}
                 importantForAccessibility={"auto"}>
             {title}
-          </Text>
+          </SafeText>
           {description === undefined ? undefined :
-            <Text style={styles.descriptionText}
+            <SafeText style={styles.descriptionText}
                   importantForAccessibility={"auto"}>
               {description}
-            </Text>}
+            </SafeText>}
         </View>
         {value === undefined ? undefined :
           <Switch onValueChange={onPress}

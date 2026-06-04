@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, SectionList, StyleSheet, Text, View } from 'react-native';
+import { Alert, SectionList, StyleSheet, View } from 'react-native';
 import { ThemeContextProps, useTheme, } from '../../../components/providers/ThemeProvider';
 import { DocumentHistory } from '../../../../logic/db/models/documents/DocumentHistory';
 import { DocumentHistorySchema } from '../../../../logic/db/models/documents/DocumentHistorySchema';
@@ -7,7 +7,8 @@ import { DocumentHistoryRoute, DocumentRoute, ParamList } from '../../../../navi
 import Db from '../../../../logic/db/db';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { loadDocumentWithUuidOrId } from "../../../../logic/documents/utils";
-import DocumentItemBaseComponent from "../search/DocumentItemBaseComponent";
+import DocumentItemBaseComponent from "../main/DocumentItemBaseComponent";
+import SafeText from "../../../components/SafeText.tsx";
 
 type DocumentHistoryGroupedItem = {
   documentTitle: string;
@@ -130,13 +131,14 @@ const DocumentHistoryScreen: React.FC<
 
   const renderSectionHeader = ({ section }: { section: Section }) => (
     <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>{section.title}</Text>
+      <SafeText style={styles.headerText}>{section.title}</SafeText>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <SectionList
+        contentContainerStyle={{paddingBottom: 100}}
         sections={groupedItems}
         renderItem={({ item }) => renderItem({ item })}
         renderSectionHeader={renderSectionHeader}

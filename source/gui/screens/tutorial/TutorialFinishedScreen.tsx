@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { StyleProp, StyleSheet, TextStyle, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider";
+import SafeText from "../../components/SafeText.tsx";
 
 interface Props {
   onFinish: () => void,
@@ -12,20 +13,20 @@ const TutorialFinishedScreen: React.FC<Props> = ({ onFinish, subTitleStyles, bun
   const styles = createStyles(useTheme());
 
   return <View style={styles.container}>
-    <Text style={[subTitleStyles, styles.textOnPrimary]}>
+    <SafeText style={[subTitleStyles, styles.textOnPrimary]}>
       To start using the app, you should first download the song bundles you want to use.
-    </Text>
+    </SafeText>
     {bundlesCount == 0 ? null :
-      <Text style={[subTitleStyles, styles.textOnPrimary]}>
+      <SafeText style={[subTitleStyles, styles.textOnPrimary]}>
         It appears you've already done this, great!
-      </Text>
+      </SafeText>
     }
-    <Text style={[subTitleStyles, styles.textOnPrimary]}>Tap the button to start:</Text>
+    <SafeText style={[subTitleStyles, styles.textOnPrimary]}>Tap the button to start:</SafeText>
 
     <TouchableOpacity onPress={onFinish} style={styles.button}>
-      <Text style={styles.downloadText}
+      <SafeText style={styles.downloadText}
             importantForAccessibility={"auto"}>
-        Let's get started!</Text>
+        Let's get started!</SafeText>
     </TouchableOpacity>
   </View>
 };

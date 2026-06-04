@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Settings from "../../../../settings";
 import { capitalize } from "../../../../logic/utils/utils.ts";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
+import SafeText from "../../../components/SafeText.tsx";
 
 export interface BaseSettingProps<T> {
   title: string;
@@ -67,21 +68,21 @@ export function SettingComponent<T = string>({
       onPress={onPress === undefined ? undefined : () => onPress(setValue, keyName, _value)}
       onLongPress={onLongPress === undefined ? undefined : () => onLongPress(setValue, keyName, _value)}>
       <View style={styles.titleContainer}>
-        <Text style={styles.titleText}
+        <SafeText style={styles.titleText}
               importantForAccessibility={"auto"}>
           {title}
-        </Text>
+        </SafeText>
       </View>
       {description === undefined ? undefined :
-        <Text style={styles.descriptionText}
+        <SafeText style={styles.descriptionText}
               importantForAccessibility={"auto"}>
           {description}
-        </Text>}
+        </SafeText>}
       {value === undefined ? undefined :
-        <Text style={styles.valueText}
+        <SafeText style={styles.valueText}
               importantForAccessibility={"auto"}>
           {valueRender(_value)}
-        </Text>}
+        </SafeText>}
     </TouchableOpacity>
   );
 }
