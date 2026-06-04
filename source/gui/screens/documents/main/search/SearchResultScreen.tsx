@@ -106,8 +106,8 @@ const SearchResultScreen: React.FC<Props> = ({
         searchInContent: searchInContent,
         sortOrder: sortOrder,
         isMounted: isMounted(),
-        dbIsConnected: Db.songs.isConnected(),
-        dbIsClosed: Db.songs.realm().isClosed
+        dbIsConnected: Db.documents.isConnected(),
+        dbIsClosed: Db.documents.realm().isClosed
       });
     }
 

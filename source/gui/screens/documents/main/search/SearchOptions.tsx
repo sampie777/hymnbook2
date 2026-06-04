@@ -29,7 +29,7 @@ const SearchOptions: React.FC<Props> = ({
                         entering={FadeInUp.duration(200)}>
     <View style={styles.row}>
       <SearchOption title={"Titles"} active={isTitleActive} onPress={onTitlePress} />
-      <SearchOption title={"Verses"} active={isContentActive} onPress={onContentPress} />
+      <SearchOption title={"Content"} active={isContentActive} onPress={onContentPress} />
       <FilterButton onPress={() => setShowOrder(prev => !prev)} isOpen={showOrder} />
     </View>
 

@@ -46,11 +46,6 @@ const DocumentSummary: React.FC<Props> = ({
 };
 
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
-  verseNumber: {
-    color: colors.text.lighter,
-    fontSize: 12,
-    fontStyle: "italic"
-  },
   text: {
     color: colors.text.default,
     paddingBottom: 2
