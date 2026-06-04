@@ -9,6 +9,7 @@ import { AudioFiles } from "./songs/audiofiles/audiofiles";
 import { SongDbPatch } from "./db/patches/songs";
 import { DocumentDbPatch } from "./db/patches/documents";
 import { SettingsDbPatch } from "./db/patches/settings/patching";
+import { handleConnectionError } from "./db/utils.ts";
 
 export const closeDatabases = () => {
   Settings.store();
@@ -19,11 +20,7 @@ export const closeDatabases = () => {
 
 export const initSettingsDatabase = (theme?: ThemeContextProps) =>
   Db.settings.connect()
-    .catch(error => {
-      rollbar.error("Could not connect to local settings database: " + error.toString(), sanitizeErrorForRollbar(error));
-      Alert.alert("Could not connect to local settings database: " + error);
-    })
-
+    .catch(error => handleConnectionError(Db.settings, error))
     .then(() => Settings.load())
     .catch(error => {
       rollbar.error("Could not load settings from database: " + error.toString(), sanitizeErrorForRollbar(error));
@@ -49,18 +46,12 @@ export const initSettingsDatabase = (theme?: ThemeContextProps) =>
 
 export const initSongDatabase = () =>
   Db.songs.connect()
-    .catch(error => {
-      rollbar.error("Could not connect to local song database: " + error.toString(), sanitizeErrorForRollbar(error));
-      Alert.alert("Could not connect to local song database: " + error);
-    })
+    .catch(error => handleConnectionError(Db.songs, error))
     .then(SongDbPatch.patch)
     .catch(error => rollbar.error("Could not apply patches to song database", sanitizeErrorForRollbar(error)));
 
 export const initDocumentDatabase = () =>
   Db.documents.connect()
-    .catch(error => {
-      rollbar.error("Could not connect to local document database: " + error.toString(), sanitizeErrorForRollbar(error));
-      Alert.alert("Could not connect to local document database: " + error);
-    })
+    .catch(error => handleConnectionError(Db.documents, error))
     .then(DocumentDbPatch.patch)
     .catch(error => rollbar.error("Could not apply patches to document database", sanitizeErrorForRollbar(error)));

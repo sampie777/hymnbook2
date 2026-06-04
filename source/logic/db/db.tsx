@@ -19,8 +19,8 @@ const generatePath = (name: string): string => {
 }
 
 const Db = {
-
   songs: new DatabaseProvider({
+    label: "Songs",
     path: generatePath("hymnbook_songs"),
     schemas: [
       AbcSubMelodySchema, AbcMelodySchema,
@@ -31,6 +31,7 @@ const Db = {
     schemaVersion: 15
   }),
   documents: new DatabaseProvider({
+    label: "Documents",
     path: generatePath("hymnbook_documents"),
     schemas: [
       DocumentSchema, DocumentGroupSchema,
@@ -39,6 +40,7 @@ const Db = {
     schemaVersion: 8
   }),
   settings: new DatabaseProvider({
+    label: "Settings",
     path: generatePath("hymnbook_settings"),
     schemas: [SettingSchema, SettingPatchSchema],
     schemaVersion: 2

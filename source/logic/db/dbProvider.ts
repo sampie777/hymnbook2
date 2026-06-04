@@ -3,12 +3,14 @@ import { rollbar } from "../rollbar";
 import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 interface DatabaseProps {
+  label?: string;
   path: string;
   schemas: Array<ObjectClass | ObjectSchema>;
   schemaVersion: number;
 }
 
 export class DatabaseProvider {
+  label?: string;
   config: Realm.Configuration;
   _realm: Realm | null = null;
   _isConnected = false;
@@ -16,6 +18,7 @@ export class DatabaseProvider {
   _disconnectTimeout: NodeJS.Timeout | undefined = undefined;
 
   constructor(props: DatabaseProps) {
+    this.label = props.label;
     this.config = {
       path: props.path,
       schema: props.schemas,
