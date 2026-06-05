@@ -164,7 +164,6 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) =>
     headerText: {
       fontSize: 20,
       color: colors.text.default,
-      fontFamily: fontFamily.sansSerif,
       textAlign: 'center',
     },
   });
