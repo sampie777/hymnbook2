@@ -56,7 +56,7 @@
 	<true/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Roboto-Regular.tff</string>
+		<string>Roboto-Regular.ttf</string>
 		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
