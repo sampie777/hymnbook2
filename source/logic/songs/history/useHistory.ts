@@ -4,6 +4,8 @@ import config from "../../../config";
 import { SongHistoryController } from "./songHistoryController";
 import { SongHistoryAction } from "../../db/models/songs/SongHistory";
 import { SongListSongModel } from "../../db/models/songs/SongListModel";
+import { rollbar } from "../../rollbar.ts";
+import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
 
 const useHistory = (
   song: Song | undefined = undefined,
@@ -63,27 +65,39 @@ const useHistory = (
     const difference = endTime.getTime() - startTime.current.getTime();
     if (song == undefined) startTime.current = undefined;
 
-    // Get the current state of these variables, so they cannot change while we are using them
-    const currentPreviousIndex = previousIndex.current;
-    const currentPreviousAction = previousAction.current;
-    const currentPreviousSong = previousSongCurrent ? Song.clone(previousSongCurrent, { includeVerses: true }) : undefined;
+    try {
+      // Get the current state of these variables, so they cannot change while we are using them
+      const currentPreviousIndex = previousIndex.current;
+      const currentPreviousAction = previousAction.current;
+      const currentPreviousSong = previousSongCurrent != undefined
+        ? Song.clone(previousSongCurrent, { includeVerses: true })
+        : undefined;
 
-    // We just opened a song
-    if (currentPreviousIndex == undefined && song != undefined) startTime.current = new Date();
+      // We just opened a song
+      if (currentPreviousIndex == undefined && song != undefined) startTime.current = new Date();
 
-    // Check for valid objects
-    if (currentPreviousSong == undefined) return;
-    if (currentPreviousIndex < 0) return;
+      // Check for valid objects
+      if (currentPreviousSong == undefined) return;
+      if (currentPreviousIndex < 0) return;
 
-    // Check for changes
-    if (song?.uuid == currentPreviousSong.uuid && viewIndex == currentPreviousIndex) return;
+      // Check for changes
+      if (song?.uuid == currentPreviousSong.uuid && viewIndex == currentPreviousIndex) return;
 
-    startTime.current = new Date();
+      startTime.current = new Date();
 
-    if (difference < config.songs.history.minViewTimeMs) return;
+      if (difference < config.songs.history.minViewTimeMs) return;
 
-    const verse = currentPreviousSong.verses[currentPreviousIndex];
-    SongHistoryController.pushVerse(verse, currentPreviousSong, difference, currentPreviousAction, previousSongListItem.current);
+      const verse = currentPreviousSong.verses[currentPreviousIndex];
+      if (verse == undefined) return;
+
+      try {
+        SongHistoryController.pushVerse(verse, currentPreviousSong, difference, currentPreviousAction, previousSongListItem.current);
+      } catch (error) {
+        rollbar.error("Failed to save verse history", sanitizeErrorForRollbar(error))
+      }
+    } catch (error) {
+      rollbar.error("Failed to check view time", sanitizeErrorForRollbar(error))
+    }
   }
 };
 
