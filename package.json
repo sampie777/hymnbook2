@@ -42,7 +42,7 @@
     "react-native-reanimated": "3.19.1",
     "react-native-safe-area-context": "5.6.1",
     "react-native-screens": "4.24.0",
-    "react-native-track-player": "5.0.0-alpha0",
+    "react-native-track-player": "patch:react-native-track-player@npm%3A5.0.0-alpha0-nightly-359af5a12d712d3b685530aed9b9625865a25d74#~/.yarn/patches/react-native-track-player-npm-5.0.0-alpha0-nightly-359af5a12d712d3b685530aed9b9625865a25d74-9bd89e23a2.patch",
     "react-native-vector-icons": "10.3.0",
     "realm": "20.2.0",
     "rollbar": "3.1.0",
