@@ -17,8 +17,8 @@ const Lines: React.FC<Props> = ({ melodyScale, showChords }) => {
 
   const animatedStyles = {
     container: useAnimatedStyle(() => ({
-      top: !showChords ? undefined : melodyScale.value * AbcConfig.chordTopSpace,  // todo: This doesn't update correctly if `showChords` changes
-    }), [showChords]),
+      top: !showChords ? undefined : melodyScale.value * AbcConfig.chordTopSpace,
+    })),
     note: useAbcMusicStyle(melodyScale, theme)
   }
 

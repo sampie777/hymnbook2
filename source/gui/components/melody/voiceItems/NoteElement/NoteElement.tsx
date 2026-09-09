@@ -28,8 +28,8 @@ const NoteElement: React.FC<Props> = ({
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
       marginBottom: melodyScale.value * -15,
-      paddingTop: !showChords ? undefined : melodyScale.value * AbcConfig.chordTopSpace,  // todo: This doesn't update correctly if `showChords` changes
-    }), [showChords]),
+      paddingTop: !showChords ? undefined : melodyScale.value * AbcConfig.chordTopSpace,
+    })),
     note: useAbcMusicStyle(melodyScale, useTheme()),
   }
 
