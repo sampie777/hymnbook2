@@ -192,7 +192,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
           availableWidth={containerWidth}
           marginLeft={-20}
           marginRight={-10}
-          // showMelodyChords={showMelodyChords}
         />
       </View>
     }

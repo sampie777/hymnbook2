@@ -121,7 +121,10 @@ const SkiaMelodyView: React.FC<Props> = ({
 
         lyric = getNoteLyrics(item);
 
-        chord = item.chord?.map(c => c.name).join(" ") || "";
+        chord = item.chord?.map(c => c.name
+          .replace(/♭/g, "b")
+          .replace(/♯/g, "#")
+        ).join(" ") || "";
       } else if (item.el_type === "bar") {
         note = item.type === "bar_thin_thick" ? "." : "Ā";
         isEndBar = item.type === "bar_thin_thick";
@@ -139,7 +142,7 @@ const SkiaMelodyView: React.FC<Props> = ({
     const path = Skia.Path.Make();
     const positions: PositionItem[] = [];
 
-    const lineHeight = 130;
+    const lineHeight = 100 + (showChords ? 30 : 0);
     // Calculate the virtual width available for music based on the current zoom level and 20px padding (10px each side)
     // Prevent effectiveWidth from becoming impossibly small when zoomed in
     const effectiveWidth = Math.max((canvasWidth / activeScale) - 20, 150);
