@@ -53,32 +53,40 @@ const SkiaMelodyView: React.FC<Props> = ({
                                          }) => {
   const canvasWidth = availableWidth - marginLeft - marginRight;
 
-  const [activeScale, setActiveScale] = useState(animatedScale.value * melodyScale.value);
-  const [layoutReady, setLayoutReady] = useState(false);
-  const lastReportedScale = useSharedValue(activeScale);
+  const [currentZoom, setCurrentZoom] = useState(animatedScale.value);
+  const [currentMelodyScale, setCurrentMelodyScale] = useState(melodyScale.value * AbcConfig.baseScale);
+
+  const lastReportedZoom = useSharedValue(currentZoom);
+  const lastReportedMelodyScale = useSharedValue(currentMelodyScale);
   const settleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Safely updates the React state and queues a final precise sync
-  const throttledUpdate = (scale: number) => {
-    setActiveScale(scale);
+  const throttledUpdate = (zoom: number, mScale: number) => {
+    setCurrentZoom(zoom);
+    setCurrentMelodyScale(mScale);
 
     if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
 
     // Ensure the final exact scale is caught when the user stops pinching
     settleTimeoutRef.current = setTimeout(() => {
-      setActiveScale(animatedScale.value * melodyScale.value);
+      setCurrentZoom(animatedScale.value);
+      setCurrentMelodyScale(melodyScale.value * AbcConfig.baseScale);
     }, 150);
   };
 
   // Sync Reanimated shared value to JS state during the gesture with throttling
   useAnimatedReaction(
-    () => animatedScale.value * melodyScale.value,
-    (currentScale) => {
-      // Only resize the native canvas if the zoom changed by more than 2.5%
-      // This prevents the Metal texture allocation crash in the iOS Simulator
-      if (Math.abs(currentScale - lastReportedScale.value) > 0.025) {
-        lastReportedScale.value = currentScale;
-        runOnJS(throttledUpdate)(currentScale);
+    () => ({
+      zoom: animatedScale.value,
+      mScale: melodyScale.value * AbcConfig.baseScale
+    }),
+    (current) => {
+      const zoomDiff = Math.abs(current.zoom - lastReportedZoom.value);
+      const mScaleDiff = Math.abs(current.mScale - lastReportedMelodyScale.value);
+
+      if (zoomDiff > 0.025 || mScaleDiff > 0.01) {
+        lastReportedZoom.value = current.zoom;
+        lastReportedMelodyScale.value = current.mScale;
+        runOnJS(throttledUpdate)(current.zoom, current.mScale);
       }
     },
     [animatedScale, melodyScale]
@@ -95,8 +103,11 @@ const SkiaMelodyView: React.FC<Props> = ({
     setLayoutReady(false);
   }, [abcSong]);
 
+  const [layoutReady, setLayoutReady] = useState(false);
+
   const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize);
   const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.textSize);
+  const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.chordSize);
 
   const flatScore = useMemo(() => {
     if (abcSong == null) return [];
@@ -137,34 +148,41 @@ const SkiaMelodyView: React.FC<Props> = ({
   }, [abcSong]);
 
   const layoutData = useMemo(() => {
-    if (!musicFont || !lyricFont || canvasWidth <= 0 || flatScore.length == 0) return null;
+    if (!musicFont || !lyricFont || !chordFont || canvasWidth <= 0 || flatScore.length == 0) return null;
 
     const path = Skia.Path.Make();
     const positions: PositionItem[] = [];
 
-    const lineHeight = 100 + (showChords ? 30 : 0);
+    // Line spacing accounts for the scaled melody height + fixed base lyric height
+    const baseStaffHeight = 40 * currentMelodyScale;
+    const baseChordOffset = showChords ? 30 * currentMelodyScale : 0;
+    const lineHeight = baseStaffHeight + baseChordOffset + 50;
+
     // Calculate the virtual width available for music based on the current zoom level and 20px padding (10px each side)
     // Prevent effectiveWidth from becoming impossibly small when zoomed in
-    const effectiveWidth = Math.max((canvasWidth / activeScale) - 20, 150);
+    const effectiveWidth = Math.max((canvasWidth / currentZoom) - 20, 150);
 
     let currentX = 10;
     let currentY = lineHeight - 50;
 
     let prevWordDashed = false;
-    const wordSpacing = 16;
+    const wordSpacing = 16 * currentMelodyScale;
 
     // 2. Track where the staff lines should dynamically end
     let lineEndX = effectiveWidth + 10;
 
-    const clefWidth = musicFont.measureText(flatScore[0].char).width;
+    const clefWidth = musicFont.measureText(flatScore[0].char).width * currentMelodyScale;
     const lineStartX = 10 + clefWidth + 8;
 
     for (let i = 0; i < flatScore.length; i++) {
       const item = flatScore[i];
 
-      const noteWidth = musicFont.measureText(item.char).width;
+      // Note and chord scale with currentMelodyScale; lyrics maintain standard text size
+      const noteWidth = musicFont.measureText(item.char).width * currentMelodyScale;
       const lyricWidth = item.lyric ? lyricFont.measureText(item.lyric).width : 0;
-      const chordWidth = showChords && item.chord ? lyricFont.measureText(item.chord).width : 0;
+      const chordWidth = showChords && item.chord
+        ? chordFont.measureText(item.chord).width * currentMelodyScale
+        : 0;
 
       // The raw width of the content elements
       const contentWidth = Math.max(noteWidth, lyricWidth, chordWidth);
@@ -174,7 +192,7 @@ const SkiaMelodyView: React.FC<Props> = ({
       // Wrap Guard: Only wrap if we have already placed at least one note on this line
       if (currentX + itemWidth > effectiveWidth && currentX > lineStartX) {
         for (let j = 0; j < 5; j++) {
-          const lineOffset = currentY - (j * 10) + 0.7;
+          const lineOffset = currentY - (j * 10 * currentMelodyScale) + 0.7;
           path.moveTo(10, lineOffset);
           // 3. Draw lines using the calculated end X coordinate
           path.lineTo(lineEndX, lineOffset);
@@ -242,17 +260,16 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     // Draw the final trailing staff lines using the tracked end point
     for (let j = 0; j < 5; j++) {
-      const lineOffset = currentY - (j * 10) + 0.7;
+      const lineOffset = currentY - (j * 10 * currentMelodyScale) + 0.7;
       path.moveTo(10, lineOffset);
       path.lineTo(lineEndX, lineOffset);
     }
 
-    let totalScaledHeight = (currentY + 60) * activeScale;
-    // 3. The Texture Limit: iOS simulator crash if a texture exceeds 2730px.
+    let totalScaledHeight = (currentY + 50) * currentZoom;
     if (isDevelopmentEnv) totalScaledHeight = Math.min(totalScaledHeight, 2730);
 
     return { positions, staffPath: path, canvasHeight: totalScaledHeight };
-  }, [flatScore, activeScale, canvasWidth, musicFont, lyricFont, showChords]);
+  }, [flatScore, currentZoom, currentMelodyScale, canvasWidth, musicFont, lyricFont, showChords]);
 
   useEffect(() => {
     if (layoutData && musicFont && lyricFont) {
@@ -266,7 +283,7 @@ const SkiaMelodyView: React.FC<Props> = ({
     }
   }, [layoutData, musicFont, lyricFont]);
 
-  if (!layoutData || !musicFont || !lyricFont || canvasWidth <= 0) {
+  if (!layoutData || !musicFont || !lyricFont || !chordFont || canvasWidth <= 0) {
     return null;
   }
 
@@ -280,19 +297,46 @@ const SkiaMelodyView: React.FC<Props> = ({
         opacity: layoutReady ? 1 : 0
       }}
     >
-      <Group transform={[{ scale: activeScale }]} origin={{ x: 0, y: 0 }}>
+      {/* Outer Group: Pinch zoom scales everything consistently */}
+      <Group transform={[{ scale: currentZoom }]} origin={{ x: 0, y: 0 }}>
+        {/* Staff lines scale with melody */}
         <Path path={layoutData.staffPath} color="#444" style="stroke" strokeWidth={1} />
 
         {layoutData.positions.map((item, index) => (
           <React.Fragment key={index}>
+            {/* Chords scale with melodyScale */}
             {showChords && item.chord ? (
-              <Text x={item.xChord} y={item.y - 55} text={item.chord} font={lyricFont} color="#222" />
+              <Group
+                transform={[{ scale: currentMelodyScale }]}
+                origin={{ x: item.xChord, y: item.y - (85 * currentMelodyScale) }}
+              >
+                <Text
+                  x={item.xChord}
+                  y={item.y - (45 * currentMelodyScale)}
+                  text={item.chord}
+                  font={chordFont}
+                  color="#222"
+                />
+              </Group>
             ) : null}
 
-            <Text x={item.xNote} y={item.y} text={item.char} font={musicFont} color="#222" />
+            {/* Notes scale with melodyScale */}
+            <Group
+              transform={[{ scale: currentMelodyScale }]}
+              origin={{ x: item.xNote, y: item.y }}
+            >
+              <Text x={item.xNote} y={item.y} text={item.char} font={musicFont} color="#222" />
+            </Group>
 
+            {/* Lyrics remain unscaled by melodyScale */}
             {item.lyric ? (
-              <Text x={item.xLyric} y={item.y + 35} text={item.lyric} font={lyricFont} color="#000" />
+              <Text
+                x={item.xLyric}
+                y={item.y + 30}
+                text={item.lyric}
+                font={lyricFont}
+                color="#000"
+              />
             ) : null}
           </React.Fragment>
         ))}
