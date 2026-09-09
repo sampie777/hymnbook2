@@ -13,6 +13,7 @@ import {
 } from "../../../logic/songs/abc/utils.ts";
 import { isDevelopmentEnv } from "../../../logic/utils/utils.ts";
 import { isMacOS } from "react-native-reanimated/src/PlatformChecker.ts";
+import { useTheme } from "../providers/ThemeProvider.tsx";
 
 enum Alignment {
   Left,
@@ -60,6 +61,7 @@ const SkiaMelodyView: React.FC<Props> = ({
                                            onLoaded,
                                            textAlignment = MelodyTextAlignment.Left,
                                          }) => {
+  const { colors } = useTheme();
   const canvasWidth = availableWidth - marginLeft - marginRight;
 
   const [currentZoom, setCurrentZoom] = useState(animatedScale.value);
@@ -449,7 +451,7 @@ const SkiaMelodyView: React.FC<Props> = ({
       }}
     >
       <Group transform={[{ scale: currentZoom }]} origin={{ x: 0, y: 0 }}>
-        <Path path={layoutData.staffPath} color="#444" style="stroke" strokeWidth={1} />
+        <Path path={layoutData.staffPath} color={colors.notes.lines as string} style="stroke" strokeWidth={1} />
 
         {layoutData.positions.map((item, index) => (
           <React.Fragment key={index}>
@@ -463,7 +465,7 @@ const SkiaMelodyView: React.FC<Props> = ({
                   y={item.y - (45 * currentMelodyScale)}
                   text={item.chord}
                   font={chordFont}
-                  color="#222"
+                  color={colors.text.default as string}
                 />
               </Group>
             ) : null}
@@ -472,7 +474,7 @@ const SkiaMelodyView: React.FC<Props> = ({
               transform={[{ scale: currentMelodyScale }]}
               origin={{ x: item.xNote, y: item.y }}
             >
-              <Text x={item.xNote} y={item.y} text={item.char} font={musicFont} color="#222" />
+              <Text x={item.xNote} y={item.y} text={item.char} font={musicFont} color={colors.notes.color as string} />
             </Group>
 
             {item.lyric ? (
@@ -481,7 +483,7 @@ const SkiaMelodyView: React.FC<Props> = ({
                 y={item.y + 30}
                 text={item.lyric}
                 font={lyricFont}
-                color="#000"
+                color={colors.text.default as string}
               />
             ) : null}
 
@@ -491,7 +493,7 @@ const SkiaMelodyView: React.FC<Props> = ({
                 y={item.y + 30}
                 text="-"
                 font={lyricFont}
-                color="#000"
+                color={colors.text.default as string}
               />
             ) : null}
           </React.Fragment>
