@@ -75,7 +75,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
 
   const baseScale = useSharedValue(Settings.songScale); // Just store the value so it is accesible by the UI thread
-  const animatedScale = useSharedValue(baseScale.value);
+  const animatedScale = useSharedValue(Settings.songScale);
   const melodyScale = useSharedValue(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const animatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);

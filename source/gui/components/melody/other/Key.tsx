@@ -20,7 +20,6 @@ const Key: React.FC<Props> = ({ melodyScale, keySignature, showChords }) => {
   ]
   const baseKeyChar = "¡".charCodeAt(0);
 
-  console.log(keySignature)
   const text = (keySignature.root == "C") ? "="
     : String.fromCharCode(baseKeyChar + keyToCharMap.indexOf(keySignature.root + keySignature.acc));
 
