@@ -413,7 +413,10 @@ const SkiaMelodyView: React.FC<Props> = ({
       layoutRowItems(rowItems, rowIndex);
     });
 
-    let totalScaledHeight = (currentY + 50) * currentZoom;
+    // Subtract the unused lineHeight added by the final loop iteration.
+    // We add 60px back to account for the lyrics drawn below the baseline.
+    let totalScaledHeight = (currentY - lineHeight + 60) * currentZoom;
+
     // Limit to 2730 for simulator on macos as a higher value will crash the app
     if (isDevelopmentEnv && isMacOS()) totalScaledHeight = Math.min(totalScaledHeight, 2730);
 
