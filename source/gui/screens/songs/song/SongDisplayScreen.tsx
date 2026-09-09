@@ -21,7 +21,13 @@ import {
   loadSongWithUuidOrId,
   storeLastUsedMelody
 } from "../../../../logic/songs/utils";
-import { hash, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
+import {
+  hash,
+  isDevelopmentEnv,
+  isIOS,
+  keepScreenAwake,
+  sanitizeErrorForRollbar
+} from "../../../../logic/utils/utils.ts";
 import {
   Alert,
   BackHandler,
@@ -129,11 +135,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     // so we can ignore state and animation updates.
     if (song === undefined) return;
 
+    // Reset this value in case it was temporary changed in handleSetShowMelody()
+    setShowMelodyForAllVerses(Settings.showMelodyForAllVerses);
+
     if (Settings.songFadeIn) {
       animateSongFadeIn();
     }
 
-    setIsMelodyLoading(showMelody)
+    setIsMelodyLoading(showMelody);
 
     // Use a timeout so we can first scroll to the selected verse
     setTimeout(() => {
@@ -200,13 +209,84 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       title: title,
       headerRight: () => <ScreenHeader song={song}
                                        showMelody={showMelody}
-                                       setShowMelody={setShowMelody}
+                                       setShowMelody={handleSetShowMelody}
                                        setShowSongAudioModal={setShowSongAudioModal}
                                        setShowMelodySettings={setShowMelodySettings}
                                        isMelodyLoading={isMelodyLoading}
                                        openVersePicker={() => openVersePicker(song)} />
     });
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
+
+  const willRenderingMelodyBePerformandEnough = (versedToBeRenderedCount: number) =>
+    versedToBeRenderedCount < (isDevelopmentEnv ? 5 : isIOS ? 7 : 5);
+
+  const handleSetShowMelody = (newValue: boolean) => {
+    console.log("spam")
+    if (!newValue || !Settings.showMelodyForAllVerses || !song?.verses) {
+      return setShowMelody(newValue);
+    }
+
+    const versedToBeRenderedCount = route.params.selectedVerses && route.params.selectedVerses.length > 0
+      ? route.params.selectedVerses.length
+      : song.verses.length;
+
+    if (willRenderingMelodyBePerformandEnough(versedToBeRenderedCount)) {
+      return setShowMelody(newValue);
+    }
+
+    Alert.alert(
+      "Performance Warning",
+      `Rendering the melody for all verses of this song might slow down your device significantly. Would you like to temporarly only render the melody for the first verse to improve render speed?`,
+      [
+        {
+          text: "Turn Off",
+          onPress: () => {
+            setShowMelodyForAllVerses(false);
+            setShowMelody(true);
+          }
+        },
+        {
+          text: "Keep On",
+          style: "cancel",
+          onPress: () => setShowMelody(true)
+        }
+      ]
+    );
+  };
+
+  const handleSetShowMelodyForAllVerses = (newValue: boolean) => {
+    if (!newValue || !showMelody || !song?.verses) {
+      return setShowMelodyForAllVerses(newValue);
+    }
+
+    const versedToBeRenderedCount = route.params.selectedVerses && route.params.selectedVerses.length > 0
+      ? route.params.selectedVerses.length
+      : song.verses.length;
+
+    if (willRenderingMelodyBePerformandEnough(versedToBeRenderedCount)) {
+      return setShowMelodyForAllVerses(newValue);
+    }
+
+    Alert.alert(
+      "Performance Warning",
+      `Rendering the melody for all verses of this song might slow down your device significantly. Do you still want to turn on "Show melody for all verses"?`,
+      [
+        {
+          text: "Keep Off",
+          style: "cancel",
+          onPress: () => {
+            // Revert the mutation that already occurred inside MelodySettingsModal
+            Settings.showMelodyForAllVerses = false;
+            setShowMelodyForAllVerses(false);
+          }
+        },
+        {
+          text: "Turn On",
+          onPress: () => setShowMelodyForAllVerses(true)
+        }
+      ]
+    );
+  };
 
   const loadSong = () => {
     const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
@@ -290,7 +370,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   const afterSongFadeIn = () => {
-    setShowMelody(shouldMelodyShowWhenSongIsLoaded.current);
+    handleSetShowMelody(shouldMelodyShowWhenSongIsLoaded.current);
     shouldMelodyShowWhenSongIsLoaded.current = false;
   };
 
@@ -505,7 +585,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         onMelodySelect={setSelectedMelody}
         melodies={song?.abcMelodies}
         showMelodyForAllVerses={showMelodyForAllVerses}
-        setShowMelodyForAllVerses={setShowMelodyForAllVerses}
+        setShowMelodyForAllVerses={handleSetShowMelodyForAllVerses}
         showMelodyOnSeparateLines={showMelodyOnSeparateLines}
         setShowMelodyOnSeparateLines={setShowMelodyOnSeparateLines}
         melodyScale={melodyScale} />}
@@ -529,6 +609,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
               data={song?.verses}
               renderItem={renderContentItem}
               initialNumToRender={20}
+              extraData={[showMelody, showMelodyForAllVerses]}
               keyExtractor={(item: Verse) => item.id.toString()}
               getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
               contentContainerStyle={styles.contentSectionList}
