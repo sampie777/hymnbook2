@@ -18,11 +18,14 @@ enum Alignment {
   Right
 }
 
-interface PositionItem {
+interface ScoreItem {
   char: string;
   lyric: string;
   chord: string;
   isEndBar: boolean;
+}
+
+interface PositionItem extends ScoreItem {
   y: number;
   xNote: number;
   xLyric: number;
@@ -34,6 +37,7 @@ interface Props {
   animatedScale: SharedValue<number>;
   melodyScale: SharedValue<number>;
   showChords: boolean;
+  showMelodyOnSeparateLines?: boolean;
   availableWidth: number;
   marginLeft?: number;
   marginRight?: number;
@@ -45,6 +49,7 @@ const SkiaMelodyView: React.FC<Props> = ({
                                            animatedScale,
                                            melodyScale,
                                            showChords,
+                                           showMelodyOnSeparateLines = false,
                                            availableWidth,
                                            marginLeft = 0,
                                            marginRight = 0,
@@ -65,14 +70,12 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
 
-    // Ensure the final exact scale is caught when the user stops pinching
     settleTimeoutRef.current = setTimeout(() => {
       setCurrentZoom(animatedScale.value);
       setCurrentMelodyScale(melodyScale.value * AbcConfig.baseScale);
     }, 150);
   };
 
-  // Sync Reanimated shared value to JS state during the gesture with throttling
   useAnimatedReaction(
     () => ({
       zoom: animatedScale.value,
@@ -97,10 +100,9 @@ const SkiaMelodyView: React.FC<Props> = ({
     };
   }, []);
 
-  // Reset layoutReady whenever the input song or verse melody changes
   useEffect(() => {
     setLayoutReady(false);
-  }, [abcSong]);
+  }, [abcSong, showMelodyOnSeparateLines]);
 
   const [layoutReady, setLayoutReady] = useState(false);
 
@@ -108,167 +110,191 @@ const SkiaMelodyView: React.FC<Props> = ({
   const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.textSize);
   const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.chordSize);
 
-  const flatScore = useMemo(() => {
-    if (abcSong == null) return [];
+  const clefItem: ScoreItem = useMemo(() => ({
+    char: abcSong?.clef?.type !== "bass" ? " &" : " 0",
+    lyric: "",
+    chord: "",
+    isEndBar: false
+  }), [abcSong?.clef?.type]);
 
-    const items: Array<{ char: string, lyric: string, chord: string, isEndBar: boolean }> = [];
-    items.push({ char: abcSong.clef.type !== "bass" ? " &" : " 0", lyric: "", chord: "", isEndBar: false });
+  const mapVoiceItem = (item: VoiceItem): ScoreItem => {
+    let note = "";
+    let lyric = "";
+    let chord = "";
+    let isEndBar = false;
 
+    if (item.el_type === "note") {
+      item.pitches?.forEach((pitch) => {
+        const noteAccidental = getNoteAccidental(pitch.pitch, pitch.accidental);
+        const noteChar = getNoteChar(pitch.pitch, item.duration);
+        const noteDot = getNoteDot(pitch.pitch, item.duration);
+        note += noteAccidental + noteChar + noteDot;
+      });
+      note += getNoteRest(item) ?? "";
+
+      lyric = getNoteLyrics(item);
+
+      chord = item.chord?.map(c => c.name
+        .replace(/♭/g, "b")
+        .replace(/♯/g, "#")
+      ).join(" ") || "";
+    } else if (item.el_type === "bar") {
+      note = item.type === "bar_thin_thick" ? "." : "Ā";
+      isEndBar = item.type === "bar_thin_thick";
+    }
+
+    return { char: note, lyric, chord, isEndBar };
+  };
+
+  const rawScoreLines: ScoreItem[][] = useMemo(() => {
+    if (!abcSong?.melody) return [];
+
+    if (showMelodyOnSeparateLines) {
+      return abcSong.melody.map((line: VoiceItem[], index: number) => {
+        const lineItems = line.map(mapVoiceItem);
+        return index === 0 ? [clefItem, ...lineItems] : lineItems;
+      });
+    }
+
+    const allItems: ScoreItem[] = [clefItem];
     abcSong.melody.flat().forEach((item: VoiceItem) => {
-      let note = "";
-      let lyric = "";
-      let chord = "";
-      let isEndBar = false;
-
-      if (item.el_type === "note") {
-        item.pitches?.forEach((pitch) => {
-          const noteAccidental = getNoteAccidental(pitch.pitch, pitch.accidental);
-          const noteChar = getNoteChar(pitch.pitch, item.duration);
-          const noteDot = getNoteDot(pitch.pitch, item.duration);
-          note += noteAccidental + noteChar + noteDot;
-        });
-        note += getNoteRest(item) ?? "";
-
-        lyric = getNoteLyrics(item);
-
-        chord = item.chord?.map(c => c.name
-          .replace(/♭/g, "b")
-          .replace(/♯/g, "#")
-        ).join(" ") || "";
-      } else if (item.el_type === "bar") {
-        note = item.type === "bar_thin_thick" ? "." : "Ā";
-        isEndBar = item.type === "bar_thin_thick";
-      }
-
-      items.push({ char: note, lyric, chord, isEndBar });
+      allItems.push(mapVoiceItem(item));
     });
-
-    return items;
-  }, [abcSong]);
+    return [allItems];
+  }, [abcSong, clefItem, showMelodyOnSeparateLines]);
 
   const layoutData = useMemo(() => {
-    if (!musicFont || !lyricFont || !chordFont || canvasWidth <= 0 || flatScore.length == 0) return null;
+    if (!musicFont || !lyricFont || !chordFont || canvasWidth <= 0 || rawScoreLines.length === 0) return null;
 
     const path = Skia.Path.Make();
     const positions: PositionItem[] = [];
 
-    // Line spacing accounts for the scaled melody height + fixed base lyric height
     const baseStaffHeight = 40 * currentMelodyScale;
     const baseChordOffset = showChords ? 30 * currentMelodyScale : 0;
     const lineHeight = baseStaffHeight + baseChordOffset + 50;
 
-    // Calculate the virtual width available for music based on the current zoom level and 20px padding (10px each side)
-    // Prevent effectiveWidth from becoming impossibly small when zoomed in
     const effectiveWidth = Math.max((canvasWidth / currentZoom) - 20, 150);
+    const standardSpacing = 16 * currentMelodyScale;
 
-    let currentX = 10;
-    let currentY = lineHeight - 50;
+    interface MeasuredItem {
+      item: ScoreItem;
+      noteWidth: number;
+      lyricWidth: number;
+      chordWidth: number;
+      contentWidth: number;
+    }
 
-    let prevWordDashed = false;
-    const wordSpacing = 16 * currentMelodyScale;
+    const balancedRows: MeasuredItem[][] = [];
 
-    // 2. Track where the staff lines should dynamically end
-    let lineEndX = effectiveWidth + 10;
-
-    const clefWidth = musicFont.measureText(flatScore[0].char).width * currentMelodyScale;
-    const lineStartX = 10 + clefWidth + 8;
-
-    for (let i = 0; i < flatScore.length; i++) {
-      const item = flatScore[i];
-
-      // Note and chord scale with currentMelodyScale; lyrics maintain standard text size
-      const noteWidth = musicFont.measureText(item.char).width * currentMelodyScale;
-      const lyricWidth = item.lyric ? lyricFont.measureText(item.lyric).width : 0;
-      const chordWidth = showChords && item.chord
-        ? chordFont.measureText(item.chord).width * currentMelodyScale
-        : 0;
-
-      // The raw width of the content elements
-      const contentWidth = Math.max(noteWidth, lyricWidth, chordWidth);
-      // The total allocated width for this item cell
-      const itemWidth = contentWidth + wordSpacing;
-
-      // Wrap Guard: Only wrap if we have already placed at least one note on this line
-      if (currentX + itemWidth > effectiveWidth && currentX > lineStartX) {
-        for (let j = 0; j < 5; j++) {
-          const lineOffset = currentY - (j * 10 * currentMelodyScale) + 0.7;
-          path.moveTo(10, lineOffset);
-          // 3. Draw lines using the calculated end X coordinate
-          path.lineTo(lineEndX, lineOffset);
-        }
-
-        currentX = 10;
-        currentY += lineHeight;
-
-        // Reset line end for the new line
-        lineEndX = effectiveWidth + 10;
-      }
-
-      let align = Alignment.Center;
-
-      if (item.lyric) {
-        const trimmedLyric = item.lyric.trim();
-        const currDashed = trimmedLyric.endsWith("-");
-
-        // 4. State machine using the new enum
-        if (currDashed && !prevWordDashed) {
-          align = Alignment.Right;
-        } else if (currDashed && prevWordDashed) {
-          align = Alignment.Center;
-        } else if (!currDashed && prevWordDashed) {
-          align = Alignment.Left;
-        } else {
-          align = Alignment.Center;
-        }
-
-        prevWordDashed = currDashed;
-      } else {
-        prevWordDashed = false;
-      }
-
-      let contentStartX: number;
-      if (align === Alignment.Right) {
-        contentStartX = currentX + wordSpacing;
-      } else if (align === Alignment.Left) {
-        contentStartX = currentX;
-      } else {
-        contentStartX = currentX + (wordSpacing / 2);
-      }
-
-      const centerX = contentStartX + (contentWidth / 2);
-
-      const xNote = centerX - (noteWidth / 2);
-
-      positions.push({
-        ...item,
-        y: currentY,
-        xNote,
-        xLyric: centerX - (lyricWidth / 2),
-        xChord: centerX - (chordWidth / 2),
+    // Process each line and split evenly if it overflows or contains multiple lyrics
+    rawScoreLines.forEach((phraseItems) => {
+      const measuredPhrase: MeasuredItem[] = phraseItems.map((item) => {
+        const noteWidth = musicFont.measureText(item.char).width * currentMelodyScale;
+        const lyricWidth = item.lyric ? lyricFont.measureText(item.lyric).width : 0;
+        const chordWidth = showChords && item.chord
+          ? chordFont.measureText(item.chord).width * currentMelodyScale
+          : 0;
+        const contentWidth = Math.max(noteWidth, lyricWidth, chordWidth);
+        return { item, noteWidth, lyricWidth, chordWidth, contentWidth };
       });
 
-      // 5. If this is the end of the song/section, cap the staff lines to the edge of the bar
-      if (item.isEndBar) {
-        lineEndX = xNote + noteWidth - 2;
+      // Calculate total width of this phrase
+      let totalPhraseWidth = 0;
+      measuredPhrase.forEach((m) => {
+        totalPhraseWidth += m.contentWidth + standardSpacing;
+      });
+
+      // Determine how many visual lines are required based on width limit
+      const minLinesNeeded = Math.max(1, Math.ceil(totalPhraseWidth / effectiveWidth));
+
+      // Also ensure we split evenly by lyric/word counts if there are enough lyrics
+      const lyricCount = measuredPhrase.filter(m => m.item.lyric.trim().length > 0).length;
+      const targetLines = lyricCount > 6 ? Math.max(minLinesNeeded, Math.ceil(lyricCount / 6)) : minLinesNeeded;
+
+      if (targetLines === 1) {
+        balancedRows.push(measuredPhrase);
       } else {
-        lineEndX = effectiveWidth + 10;
+        // Split evenly into targetLines chunks
+        const itemsPerChunk = Math.ceil(measuredPhrase.length / targetLines);
+        for (let i = 0; i < measuredPhrase.length; i += itemsPerChunk) {
+          balancedRows.push(measuredPhrase.slice(i, i + itemsPerChunk));
+        }
+      }
+    });
+
+    let currentY = lineHeight - 50;
+    let lineEndX = effectiveWidth + 10;
+
+    balancedRows.forEach((rowItems) => {
+      let currentX = 10;
+      let prevWordDashed = false;
+
+      rowItems.forEach((m) => {
+        const itemWidth = m.contentWidth + standardSpacing;
+
+        let align = Alignment.Center;
+        if (m.item.lyric) {
+          const trimmedLyric = m.item.lyric.trim();
+          const currDashed = trimmedLyric.endsWith("-");
+
+          if (currDashed && !prevWordDashed) {
+            align = Alignment.Right;
+          } else if (currDashed && prevWordDashed) {
+            align = Alignment.Center;
+          } else if (!currDashed && prevWordDashed) {
+            align = Alignment.Left;
+          } else {
+            align = Alignment.Center;
+          }
+          prevWordDashed = currDashed;
+        } else {
+          prevWordDashed = false;
+        }
+
+        let contentStartX: number;
+        if (align === Alignment.Right) {
+          contentStartX = currentX + standardSpacing;
+        } else if (align === Alignment.Left) {
+          contentStartX = currentX;
+        } else {
+          contentStartX = currentX + (standardSpacing / 2);
+        }
+
+        const centerX = contentStartX + (m.contentWidth / 2);
+        const xNote = centerX - (m.noteWidth / 2);
+
+        positions.push({
+          ...m.item,
+          y: currentY,
+          xNote,
+          xLyric: centerX - (m.lyricWidth / 2),
+          xChord: centerX - (m.chordWidth / 2),
+        });
+
+        if (m.item.isEndBar) {
+          lineEndX = xNote + m.noteWidth - 2;
+        } else {
+          lineEndX = effectiveWidth + 10;
+        }
+
+        currentX += itemWidth;
+      });
+
+      for (let j = 0; j < 5; j++) {
+        const lineOffset = currentY - (j * 10 * currentMelodyScale) + 0.7;
+        path.moveTo(10, lineOffset);
+        path.lineTo(lineEndX, lineOffset);
       }
 
-      currentX += itemWidth;
-    }
-
-    // Draw the final trailing staff lines using the tracked end point
-    for (let j = 0; j < 5; j++) {
-      const lineOffset = currentY - (j * 10 * currentMelodyScale) + 0.7;
-      path.moveTo(10, lineOffset);
-      path.lineTo(lineEndX, lineOffset);
-    }
+      currentY += lineHeight;
+      lineEndX = effectiveWidth + 10;
+    });
 
     let totalScaledHeight = (currentY + 50) * currentZoom;
     if (isDevelopmentEnv) totalScaledHeight = Math.min(totalScaledHeight, 2730);
 
     return { positions, staffPath: path, canvasHeight: totalScaledHeight };
-  }, [flatScore, currentZoom, currentMelodyScale, canvasWidth, musicFont, lyricFont, chordFont, showChords]);
+  }, [rawScoreLines, currentZoom, currentMelodyScale, canvasWidth, musicFont, lyricFont, chordFont, showChords]);
 
   useEffect(() => {
     if (layoutData && musicFont && lyricFont && chordFont) {
@@ -300,14 +326,11 @@ const SkiaMelodyView: React.FC<Props> = ({
         opacity: layoutReady ? 1 : 0
       }}
     >
-      {/* Outer Group: Pinch zoom scales everything consistently */}
       <Group transform={[{ scale: currentZoom }]} origin={{ x: 0, y: 0 }}>
-        {/* Staff lines scale with melody */}
         <Path path={layoutData.staffPath} color="#444" style="stroke" strokeWidth={1} />
 
         {layoutData.positions.map((item, index) => (
           <React.Fragment key={index}>
-            {/* Chords scale with melodyScale */}
             {showChords && item.chord ? (
               <Group
                 transform={[{ scale: currentMelodyScale }]}
@@ -323,7 +346,6 @@ const SkiaMelodyView: React.FC<Props> = ({
               </Group>
             ) : null}
 
-            {/* Notes scale with melodyScale */}
             <Group
               transform={[{ scale: currentMelodyScale }]}
               origin={{ x: item.xNote, y: item.y }}
@@ -331,7 +353,6 @@ const SkiaMelodyView: React.FC<Props> = ({
               <Text x={item.xNote} y={item.y} text={item.char} font={musicFont} color="#222" />
             </Group>
 
-            {/* Lyrics remain unscaled by melodyScale */}
             {item.lyric ? (
               <Text
                 x={item.xLyric}
