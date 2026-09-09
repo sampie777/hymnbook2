@@ -21,13 +21,7 @@ import {
   loadSongWithUuidOrId,
   storeLastUsedMelody
 } from "../../../../logic/songs/utils";
-import {
-  hash,
-  isDevelopmentEnv,
-  isIOS,
-  keepScreenAwake,
-  sanitizeErrorForRollbar
-} from "../../../../logic/utils/utils.ts";
+import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import {
   Alert,
   BackHandler,
@@ -135,6 +129,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     // so we can ignore state and animation updates.
     if (song === undefined) return;
 
+    // Immediately clear old melody so new lyrics aren't paired with old notes
+    setSelectedMelody(undefined);
+
     // Reset this value in case it was temporary changed in handleSetShowMelody()
     setShowMelodyForAllVerses(Settings.showMelodyForAllVerses);
 
@@ -218,7 +215,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const willRenderingMelodyBePerformandEnough = (versedToBeRenderedCount: number) =>
-    versedToBeRenderedCount < (isDevelopmentEnv ? 5 : isIOS ? 7 : 5);
+    versedToBeRenderedCount < (isIOS ? 12 : 5);
 
   const handleSetShowMelody = (newValue: boolean) => {
     console.log("spam")

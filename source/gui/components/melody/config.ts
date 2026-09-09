@@ -4,7 +4,7 @@ import { ThemeContextProps } from "../providers/ThemeProvider.tsx";
 export const AbcConfig = {
   baseScale: 0.9,
 
-  noteSize: 40,
+  noteSize: 50,
   notePadding: 0,
   noteWidth: 14.8,
   accidentalWidth: 18,
