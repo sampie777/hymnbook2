@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { InteractionManager } from "react-native";
 import { Canvas, Group, Path, Skia, Text, useFont } from "@shopify/react-native-skia";
 import { runOnJS, SharedValue, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { AbcSong, VoiceItem } from "@hymnbook/abc";
@@ -269,19 +268,23 @@ const SkiaMelodyView: React.FC<Props> = ({
     if (isDevelopmentEnv) totalScaledHeight = Math.min(totalScaledHeight, 2730);
 
     return { positions, staffPath: path, canvasHeight: totalScaledHeight };
-  }, [flatScore, currentZoom, currentMelodyScale, canvasWidth, musicFont, lyricFont, showChords]);
+  }, [flatScore, currentZoom, currentMelodyScale, canvasWidth, musicFont, lyricFont, chordFont, showChords]);
 
   useEffect(() => {
-    if (layoutData && musicFont && lyricFont) {
-      const task = InteractionManager.runAfterInteractions(() => {
-        requestAnimationFrame(() => {
+    if (layoutData && musicFont && lyricFont && chordFont) {
+      let isMounted = true;
+      const raf = requestAnimationFrame(() => {
+        if (isMounted) {
           setLayoutReady(true);
           onLoaded?.();
-        });
+        }
       });
-      return () => task.cancel();
+      return () => {
+        isMounted = false;
+        cancelAnimationFrame(raf);
+      };
     }
-  }, [layoutData, musicFont, lyricFont]);
+  }, [layoutData, musicFont, lyricFont, chordFont]);
 
   if (!layoutData || !musicFont || !lyricFont || !chordFont || canvasWidth <= 0) {
     return null;
