@@ -88,3 +88,8 @@ export const getNoteLyrics = (note: VoiceItemNote) => {
     ?.map(it => it.divider !== "-" ? it.syllable : it.syllable + "" + it.divider)
     .join(" ") || ""
 }
+
+export enum MelodyTextAlignment {
+  Left = "Left",
+  Center = "Center",
+}

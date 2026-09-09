@@ -13,6 +13,7 @@ import SliderComponent from "../../../../components/SliderComponent";
 import MelodySettingsModelHeader from "./MelodySettingsModelHeader";
 import { SharedValue } from "react-native-reanimated";
 import SafeText from "../../../../components/SafeText.tsx";
+import { MelodyTextAlignment } from "../../../../../logic/songs/abc/utils.ts";
 
 interface Props {
   onClose?: () => void;
@@ -24,6 +25,8 @@ interface Props {
   showMelodyOnSeparateLines: boolean;
   setShowMelodyOnSeparateLines?: (value: boolean) => void;
   melodyScale: SharedValue<number>;
+  melodyTextAlignment: MelodyTextAlignment;
+  setMelodyTextAlignment: (value: MelodyTextAlignment) => void;
 }
 
 const MelodySettingsModal: React.FC<Props> = ({
@@ -35,7 +38,9 @@ const MelodySettingsModal: React.FC<Props> = ({
                                                 setShowMelodyForAllVerses,
                                                 showMelodyOnSeparateLines,
                                                 setShowMelodyOnSeparateLines,
-                                                melodyScale
+                                                melodyScale,
+                                                melodyTextAlignment,
+                                                setMelodyTextAlignment,
                                               }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [songMelodyScale, setSongMelodyScale] = useState(Settings.songMelodyScale);
@@ -78,7 +83,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                        onCompleted={it => setMelody(it)}
                        rowContentRenderer={(item, isSelected) =>
                          <SafeText style={[styles.pickerRowText, (isSelected ? styles.pickerRowTextSelected : {})]}
-                               importantForAccessibility={"auto"}>
+                                   importantForAccessibility={"auto"}>
                            {item.name}
                          </SafeText>
                        } />
@@ -104,7 +109,7 @@ const MelodySettingsModal: React.FC<Props> = ({
                             disabled={melodies?.length < 2}
                             onPress={openPicker}>
             <SafeText style={styles.selectedLanguage}
-                  importantForAccessibility={"auto"}>
+                      importantForAccessibility={"auto"}>
               {melodies.length === 0
                 ? "No melodies available"
                 : (selectedMelody?.name ?? "No default set")}
@@ -135,6 +140,20 @@ const MelodySettingsModal: React.FC<Props> = ({
                          onLongPress={() => {
                            Settings.showMelodyForAllVerses = false;
                            setShowMelodyForAllVerses?.(false);
+                         }} />
+
+        <SwitchComponent title={"Align lyrics center"}
+                         isVisible={true}
+                         value={melodyTextAlignment == MelodyTextAlignment.Center}
+                         onPress={() => {
+                           Settings.melodyTextAlignment = melodyTextAlignment == MelodyTextAlignment.Left
+                             ? MelodyTextAlignment.Center
+                             : MelodyTextAlignment.Left;
+                           setMelodyTextAlignment(Settings.melodyTextAlignment);
+                         }}
+                         onLongPress={() => {
+                           Settings.melodyTextAlignment = MelodyTextAlignment.Left;
+                           setMelodyTextAlignment(Settings.melodyTextAlignment);
                          }} />
 
         <View style={styles.scaleContainer}>

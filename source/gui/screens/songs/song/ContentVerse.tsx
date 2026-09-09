@@ -14,6 +14,7 @@ import { runAsync } from "../../../../logic/utils/utils.ts";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 import SkiaMelodyView from "../../../components/melody/SkiaMelodyView.tsx";
+import { MelodyTextAlignment } from "../../../../logic/songs/abc/utils.ts";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -26,6 +27,7 @@ interface ContentVerseProps {
   highlightText?: string;
   showMelodyOnSeparateLines: boolean;
   showMelodyChords: boolean;
+  melodyTextAlignment: MelodyTextAlignment;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -39,6 +41,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      highlightText,
                                                      showMelodyOnSeparateLines,
                                                      showMelodyChords,
+                                                     melodyTextAlignment,
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [showMelody, setShowMelody] = useState(false);
@@ -192,6 +195,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
           availableWidth={containerWidth}
           marginLeft={-20}
           marginRight={-10}
+          textAlignment={melodyTextAlignment}
         />
       </View>
     }
