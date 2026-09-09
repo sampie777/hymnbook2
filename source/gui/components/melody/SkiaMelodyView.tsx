@@ -14,6 +14,7 @@ import {
 import { isDevelopmentEnv } from "../../../logic/utils/utils.ts";
 import { isMacOS } from "react-native-reanimated/src/PlatformChecker.ts";
 import { useTheme } from "../providers/ThemeProvider.tsx";
+import { PixelRatio } from "react-native";
 
 enum Alignment {
   Left,
@@ -113,9 +114,10 @@ const SkiaMelodyView: React.FC<Props> = ({
 
   const [layoutReady, setLayoutReady] = useState(false);
 
-  const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize);
-  const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.textSize);
-  const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.chordSize);
+  const fontScale = PixelRatio.getFontScale();
+  const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize * fontScale);
+  const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.textSize * fontScale);
+  const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.chordSize * fontScale);
 
   const clefItem: ScoreItem = useMemo(() => ({
     char: abcSong?.clef?.type !== "bass" ? " &" : " 0",
