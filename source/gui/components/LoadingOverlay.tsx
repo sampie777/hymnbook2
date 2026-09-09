@@ -14,15 +14,8 @@ interface Props {
 
 const LoadingOverlay: React.FC<Props> =
   ({ isVisible, text, animate = false }) => {
-    if (!isVisible) {
-      return null;
-    }
 
     const styles = createStyles(useTheme());
-
-    if (text === undefined) {
-      text = "Loading...";
-    }
 
     const animatedOpacity = useSharedValue(animate ? 0 : 1);
     const _animate = () => {
@@ -31,17 +24,31 @@ const LoadingOverlay: React.FC<Props> =
         return;
       }
 
+      animatedOpacity.value = 0;
       animatedOpacity.value = withTiming(1, {
         duration: 2000,
         easing: Easing.inOut(Easing.ease)
       });
     };
 
-    useEffect(_animate, []);
+    // Trigger animation when the overlay becomes visible
+    useEffect(() => {
+      if (isVisible) {
+        _animate();
+      }
+    }, [isVisible, animate]);
 
     const animatedStyleContainer = useAnimatedStyle(() => ({
       opacity: animatedOpacity.value
     }));
+
+    if (!isVisible) {
+      return null;
+    }
+
+    if (text === undefined) {
+      text = "Loading...";
+    }
 
     return (
       <Animated.View style={[styles.container, animatedStyleContainer]}>
