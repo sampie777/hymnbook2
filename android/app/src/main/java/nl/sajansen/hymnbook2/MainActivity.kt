@@ -21,6 +21,15 @@ class MainActivity : ReactActivity() {
   }
 
   /**
+     * When the user backs out of the root screen, move the task to the back
+     * rather than finishing the Activity. This prevents the native FragmentManager
+     * and OnBackPressedDispatcher from desynchronizing from the React Native JS runtime.
+     */
+    override fun invokeDefaultOnBackPressed() {
+      moveTaskToBack(true)
+    }
+
+  /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
    * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
    */
