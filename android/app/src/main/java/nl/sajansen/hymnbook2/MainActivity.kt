@@ -5,7 +5,6 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
 
 class MainActivity : ReactActivity() {
 
@@ -16,8 +15,9 @@ class MainActivity : ReactActivity() {
   override fun getMainComponentName(): String = "hymnbook2"
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-    super.onCreate(savedInstanceState);
+    // Pass null to prevent Android from restoring Fragment states independently
+    // of React Navigation's JavaScript state tree.
+    super.onCreate(null)
   }
 
   /**

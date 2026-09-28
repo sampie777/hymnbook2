@@ -70,8 +70,13 @@ import DocumentHistoryScreen from "./gui/screens/documents/history/DocumentHisto
 import { throwIfConnectionError } from "./logic/apiUtils.ts";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+const InitStack = createNativeStackNavigator();
 const RootNav = createNativeStackNavigator<ParamList>();
 const HomeNav = createBottomTabNavigator<ParamList>();
+
+const InitialLoadingScreen: React.FC = () => {
+  return <LoadingOverlay isVisible={true} />;
+};
 
 const RootNavigation = () => {
   const styles = createStyles(useTheme());
@@ -257,10 +262,12 @@ const AppRoot: React.FC = () => {
 
   return <SafeAreaView style={styles.safeAreaView}
                        edges={['left', 'right']}>
-    <LoadingOverlay isVisible={isLoading} />
-
-    {isLoading ? undefined :
-      <NavigationContainer>
+    <NavigationContainer>
+      {isLoading ? (
+        <InitStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+          <InitStack.Screen name="InitLoading" component={InitialLoadingScreen} />
+        </InitStack.Navigator>
+      ) : (
         <DeepLinkHandler>
           <UpdaterContextProvider>
             <SongHistoryProvider>
@@ -268,8 +275,8 @@ const AppRoot: React.FC = () => {
             </SongHistoryProvider>
           </UpdaterContextProvider>
         </DeepLinkHandler>
-      </NavigationContainer>
-    }
+      )}
+    </NavigationContainer>
 
     <StatusBar barStyle={!theme.isDark ? "dark-content" : "light-content"}
                backgroundColor={theme.colors.background}
