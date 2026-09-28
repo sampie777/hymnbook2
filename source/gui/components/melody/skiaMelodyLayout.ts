@@ -342,7 +342,7 @@ export const computeLayout = (
       }
 
       let shiftX = 0;
-      const shiftAmount = standardSpacing * 0.4;
+      const shiftAmount = standardSpacing * 0.3;
       if (align === Alignment.Right) {
         shiftX = shiftAmount;
       } else if (align === Alignment.Left) {
