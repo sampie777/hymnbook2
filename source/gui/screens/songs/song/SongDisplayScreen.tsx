@@ -216,7 +216,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const willRenderingMelodyBePerformandEnough = (versedToBeRenderedCount: number) =>
-    versedToBeRenderedCount < (isIOS ? 12 : 5);
+    versedToBeRenderedCount < (isIOS ? 60 : 30);
 
   const handleSetShowMelody = (newValue: boolean) => {
     if (!newValue || !Settings.showMelodyForAllVerses || !song?.verses) {
