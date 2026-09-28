@@ -14,7 +14,10 @@ import {
 import { isDevelopmentEnv } from "../../../logic/utils/utils.ts";
 import { isMacOS } from "react-native-reanimated/src/PlatformChecker.ts";
 import { useTheme } from "../providers/ThemeProvider.tsx";
-import { PixelRatio } from "react-native";
+import { PixelRatio, Platform } from "react-native";
+
+const ANDROID_MUSIC_SCALE = Platform.OS === "android" ? 1.17 : 1;
+const ANDROID_MUSIC_Y_OFFSET = Platform.OS === "android" ? -0.1 : 0;
 
 enum Alignment {
   Left,
@@ -115,7 +118,7 @@ const SkiaMelodyView: React.FC<Props> = ({
   const [layoutReady, setLayoutReady] = useState(false);
 
   const fontScale = PixelRatio.getFontScale();
-  const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize * fontScale);
+  const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize * fontScale * ANDROID_MUSIC_SCALE);
   const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.textSize * fontScale);
   const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.chordSize * fontScale);
 
@@ -479,7 +482,7 @@ const SkiaMelodyView: React.FC<Props> = ({
               transform={[{ scale: currentMelodyScale }]}
               origin={{ x: item.xNote, y: item.y }}
             >
-              <Text x={item.xNote} y={item.y} text={item.char} font={musicFont} color={colors.notes.color as string} />
+              <Text x={item.xNote} y={item.y + 0.4 + ANDROID_MUSIC_Y_OFFSET} text={item.char} font={musicFont} color={colors.notes.color as string} />
             </Group>
 
             {item.lyric ? (

@@ -219,7 +219,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     versedToBeRenderedCount < (isIOS ? 12 : 5);
 
   const handleSetShowMelody = (newValue: boolean) => {
-    console.log("spam")
     if (!newValue || !Settings.showMelodyForAllVerses || !song?.verses) {
       return setShowMelody(newValue);
     }
