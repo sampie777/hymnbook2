@@ -189,6 +189,8 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     const baseStaffHeight = 40 * currentMelodyScale;
     const baseChordOffset = showChords ? 30 * currentMelodyScale : 0;
+    // Expanded buffer for chord height and top margin so chords clear Y=0 with padding
+    const topMargin = showChords ? AbcConfig.chordSize * currentMelodyScale : 0;
 
     const effectiveWidth = Math.max((canvasWidth / currentZoom) - 20, 50);
     const standardSpacing = 16 * currentMelodyScale;
@@ -203,7 +205,7 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     const balancedRows: MeasuredItem[][] = [];
 
-    let currentY = baseStaffHeight + baseChordOffset;
+    let currentY = topMargin + baseStaffHeight + baseChordOffset;
     let maxBottomY = currentY;
 
     const layoutRowItems = (rowItems: MeasuredItem[], rowIndex: number) => {
