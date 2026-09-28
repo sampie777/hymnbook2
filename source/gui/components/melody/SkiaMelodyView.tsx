@@ -30,6 +30,7 @@ interface ScoreItem {
   lyric: string;
   chord: string;
   isEndBar: boolean;
+  minPitch: number;
 }
 
 interface PositionItem extends ScoreItem {
@@ -38,6 +39,7 @@ interface PositionItem extends ScoreItem {
   xLyric: number;
   xChord: number;
   dashX?: number;
+  lyricOffsetY: number;
 }
 
 interface Props {
@@ -126,7 +128,8 @@ const SkiaMelodyView: React.FC<Props> = ({
     char: abcSong?.clef?.type !== "bass" ? " &" : " 0",
     lyric: "",
     chord: "",
-    isEndBar: false
+    isEndBar: false,
+    minPitch: Infinity,
   }), [abcSong?.clef?.type]);
 
   const mapVoiceItem = (item: VoiceItem): ScoreItem => {
@@ -134,9 +137,12 @@ const SkiaMelodyView: React.FC<Props> = ({
     let lyric = "";
     let chord = "";
     let isEndBar = false;
+    let minPitch = Infinity;
 
     if (item.el_type === "note") {
       item.pitches?.forEach((pitch) => {
+        minPitch = Math.min(minPitch, pitch.pitch);
+
         const noteAccidental = getNoteAccidental(pitch.pitch, pitch.accidental);
         const noteChar = getNoteChar(pitch.pitch, item.duration);
         const noteDot = getNoteDot(pitch.pitch, item.duration);
@@ -155,7 +161,7 @@ const SkiaMelodyView: React.FC<Props> = ({
       isEndBar = item.type === "bar_thin_thick";
     }
 
-    return { char: note, lyric, chord, isEndBar };
+    return { char: note, lyric, chord, isEndBar, minPitch };
   };
 
   const rawScoreLines: ScoreItem[][] = useMemo(() => {
@@ -183,7 +189,6 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     const baseStaffHeight = 40 * currentMelodyScale;
     const baseChordOffset = showChords ? 30 * currentMelodyScale : 0;
-    const lineHeight = baseStaffHeight + baseChordOffset + 50;
 
     const effectiveWidth = Math.max((canvasWidth / currentZoom) - 20, 50);
     const standardSpacing = 16 * currentMelodyScale;
@@ -198,6 +203,9 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     const balancedRows: MeasuredItem[][] = [];
 
+    let currentY = baseStaffHeight + baseChordOffset;
+    let maxBottomY = currentY;
+
     const layoutRowItems = (rowItems: MeasuredItem[], rowIndex: number) => {
       const isFirstRow = rowIndex === 0;
       const isLastRow = rowIndex === balancedRows.length - 1;
@@ -211,6 +219,22 @@ const SkiaMelodyView: React.FC<Props> = ({
 
       const leftBound = 10;
       const rightBound = effectiveWidth + 10;
+
+      // Extract the absolute lowest pitch in the entire current row
+      let rowMinPitch = Infinity;
+      rowItems.forEach((m) => {
+        rowMinPitch = Math.min(rowMinPitch, m.item.minPitch);
+      });
+
+      // Calculate dynamic linear drop based on how far below -1 the note goes
+      let extraLyricDrop = 0;
+      if (rowMinPitch < -1) {
+        const pitchStepsBelowBase = -1 - rowMinPitch;
+        extraLyricDrop = 6 + pitchStepsBelowBase * (2 * currentMelodyScale);
+      }
+
+      const currentLyricOffset = 30 + extraLyricDrop;
+      const currentLineHeight = baseStaffHeight + baseChordOffset + 50 + extraLyricDrop;
 
       let middleWidth = 0;
       middleItems.forEach((m, idx) => {
@@ -244,6 +268,7 @@ const SkiaMelodyView: React.FC<Props> = ({
           xNote: leftBound,
           xLyric: leftBound,
           xChord: leftBound,
+          lyricOffsetY: currentLyricOffset,
         });
       }
 
@@ -312,6 +337,7 @@ const SkiaMelodyView: React.FC<Props> = ({
           xNote,
           xLyric: centerX - (cleanLyricWidth / 2),
           xChord: centerX - (m.chordWidth / 2),
+          lyricOffsetY: currentLyricOffset,
         });
 
         currentX += m.contentWidth;
@@ -328,6 +354,7 @@ const SkiaMelodyView: React.FC<Props> = ({
           xNote,
           xLyric: xNote,
           xChord: xNote,
+          lyricOffsetY: currentLyricOffset,
         });
       }
 
@@ -338,7 +365,8 @@ const SkiaMelodyView: React.FC<Props> = ({
         path.lineTo(rightBound, lineOffset);
       }
 
-      currentY += lineHeight;
+      maxBottomY = Math.max(maxBottomY, currentY + currentLyricOffset + 40);
+      currentY += currentLineHeight;
     };
 
     rawScoreLines.forEach((phraseItems) => {
@@ -412,20 +440,21 @@ const SkiaMelodyView: React.FC<Props> = ({
       }
     });
 
-    let currentY = lineHeight - 50;
-
     balancedRows.forEach((rowItems, rowIndex) => {
       layoutRowItems(rowItems, rowIndex);
     });
 
-    // Subtract the unused lineHeight added by the final loop iteration.
-    // We add 60px back to account for the lyrics drawn below the baseline.
-    let totalScaledHeight = (currentY - lineHeight + 60) * currentZoom;
+    // Remove the bottom padding of 30px to avoid unnecessary whitespace at the bottom of the canvas
+    let totalScaledHeight = (maxBottomY - 30) * currentZoom;
 
     // Limit to 2730 for simulator on macos as a higher value will crash the app
     if (isDevelopmentEnv && isMacOS()) totalScaledHeight = Math.min(totalScaledHeight, 2730);
 
-    return { positions, staffPath: path, canvasHeight: totalScaledHeight };
+    return {
+      positions,
+      staffPath: path,
+      canvasHeight: totalScaledHeight
+    };
   }, [rawScoreLines, currentZoom, currentMelodyScale, canvasWidth, musicFont, lyricFont, chordFont, showChords, textAlignment, clefItem]);
 
   useEffect(() => {
@@ -482,13 +511,14 @@ const SkiaMelodyView: React.FC<Props> = ({
               transform={[{ scale: currentMelodyScale }]}
               origin={{ x: item.xNote, y: item.y }}
             >
-              <Text x={item.xNote} y={item.y + 0.4 + ANDROID_MUSIC_Y_OFFSET} text={item.char} font={musicFont} color={colors.notes.color as string} />
+              <Text x={item.xNote} y={item.y + 0.4 + ANDROID_MUSIC_Y_OFFSET} text={item.char} font={musicFont}
+                    color={colors.notes.color as string} />
             </Group>
 
             {item.lyric ? (
               <Text
                 x={item.xLyric}
-                y={item.y + 30}
+                y={item.y + item.lyricOffsetY}
                 text={item.lyric}
                 font={lyricFont}
                 color={colors.text.default as string}
@@ -498,7 +528,7 @@ const SkiaMelodyView: React.FC<Props> = ({
             {item.dashX ? (
               <Text
                 x={item.dashX}
-                y={item.y + 30}
+                y={item.y + item.lyricOffsetY}
                 text="-"
                 font={lyricFont}
                 color={colors.text.default as string}
