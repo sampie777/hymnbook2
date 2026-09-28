@@ -11,8 +11,7 @@ import {
   getNoteRest,
   MelodyTextAlignment,
 } from "../../../logic/songs/abc/utils.ts";
-import { isDevelopmentEnv } from "../../../logic/utils/utils.ts";
-import { isMacOS } from "react-native-reanimated/src/PlatformChecker.ts";
+import { isAndroid, isDevelopmentEnv } from "../../../logic/utils/utils.ts";
 import { useTheme } from "../providers/ThemeProvider.tsx";
 import { PixelRatio, Platform } from "react-native";
 
@@ -72,6 +71,7 @@ const SkiaMelodyView: React.FC<Props> = ({
 
   const [currentZoom, setCurrentZoom] = useState(animatedScale.value);
   const [currentMelodyScale, setCurrentMelodyScale] = useState(melodyScale.value * AbcConfig.baseScale);
+  const [layoutReady, setLayoutReady] = useState(false);
 
   const lastReportedZoom = useSharedValue(currentZoom);
   const lastReportedMelodyScale = useSharedValue(currentMelodyScale);
@@ -116,8 +116,6 @@ const SkiaMelodyView: React.FC<Props> = ({
   useEffect(() => {
     setLayoutReady(false);
   }, [abcSong, showMelodyOnSeparateLines]);
-
-  const [layoutReady, setLayoutReady] = useState(false);
 
   const fontScale = PixelRatio.getFontScale();
   const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize * fontScale * ANDROID_MUSIC_SCALE);
@@ -188,9 +186,8 @@ const SkiaMelodyView: React.FC<Props> = ({
     const positions: PositionItem[] = [];
 
     const baseStaffHeight = 40 * currentMelodyScale;
-    const baseChordOffset = showChords ? 30 * currentMelodyScale : 0;
-    // Expanded buffer for chord height and top margin so chords clear Y=0 with padding
-    const topMargin = showChords ? AbcConfig.chordSize * currentMelodyScale : 0;
+    const baseChordOffsetValue = 30 * currentMelodyScale;
+    const topMarginValue = AbcConfig.chordSize * currentMelodyScale;
 
     const effectiveWidth = Math.max((canvasWidth / currentZoom) - 20, 50);
     const standardSpacing = 16 * currentMelodyScale;
@@ -205,7 +202,81 @@ const SkiaMelodyView: React.FC<Props> = ({
 
     const balancedRows: MeasuredItem[][] = [];
 
-    let currentY = topMargin + baseStaffHeight + baseChordOffset;
+    // Pre-wrap rows first to inspect line contents
+    rawScoreLines.forEach((phraseItems) => {
+      const measuredPhrase: MeasuredItem[] = phraseItems.map((item) => {
+        const noteWidth = musicFont.measureText(item.char).width * currentMelodyScale;
+        const lyricWidth = item.lyric ? lyricFont.measureText(item.lyric).width : 0;
+        const chordWidth = showChords && item.chord
+          ? chordFont.measureText(item.chord).width * currentMelodyScale
+          : 0;
+        const contentWidth = Math.max(noteWidth, lyricWidth, chordWidth);
+        return { item, noteWidth, lyricWidth, chordWidth, contentWidth };
+      });
+
+      const leftPadding = textAlignment === MelodyTextAlignment.Left ? 25 * currentMelodyScale : 0;
+      const rowChromeWidth = leftPadding + (measuredPhrase[0].item === clefItem ? measuredPhrase[0].contentWidth + standardSpacing : 0);
+
+      // Calculate a strict hard bound for the line to ensure it never overflows right edge
+      const maxLineWidth = Math.max(50, effectiveWidth - rowChromeWidth - (20 * currentMelodyScale));
+
+      let totalPhraseWidth = 0;
+      measuredPhrase.forEach((m, idx) => {
+        totalPhraseWidth += m.contentWidth + (idx > 0 ? standardSpacing : 0);
+      });
+
+      let targetLines = Math.max(1, Math.ceil(totalPhraseWidth / maxLineWidth));
+      const totalItems = measuredPhrase.length;
+      let startIndex = 0;
+
+      for (let line = 0; line < targetLines; line++) {
+        if (startIndex >= totalItems) break;
+
+        let remainingWidth = 0;
+        for (let i = startIndex; i < totalItems; i++) {
+          remainingWidth += measuredPhrase[i].contentWidth + (i > startIndex ? standardSpacing : 0);
+        }
+
+        const remainingLines = targetLines - line;
+        const idealLineTarget = remainingWidth / remainingLines;
+
+        let currentWidth = 0;
+        let cutIndex = startIndex;
+
+        for (let i = startIndex; i < totalItems; i++) {
+          let w = measuredPhrase[i].contentWidth + (i > startIndex ? standardSpacing : 0);
+
+          if (currentWidth + w > maxLineWidth && cutIndex > startIndex) {
+            break;
+          }
+
+          if (currentWidth > 0 && currentWidth + (w / 2) >= idealLineTarget && remainingLines > 1) {
+            break;
+          }
+
+          currentWidth += w;
+          cutIndex++;
+        }
+
+        // Failsafe to guarantee loop progression if extreme zoom is applied
+        if (cutIndex === startIndex) {
+          cutIndex++;
+        }
+
+        balancedRows.push(measuredPhrase.slice(startIndex, cutIndex));
+        startIndex = cutIndex;
+
+        // If items were left behind, forcefully increase lines to catch overflow
+        if (line === targetLines - 1 && startIndex < totalItems) {
+          targetLines++;
+        }
+      }
+    });
+
+    if (balancedRows.length === 0) return null;
+
+    // Track the bottom boundary of the previous row (starts at 5 for subtle top padding)
+    let currentY = 5;
     let maxBottomY = currentY;
 
     const layoutRowItems = (rowItems: MeasuredItem[], rowIndex: number) => {
@@ -222,13 +293,21 @@ const SkiaMelodyView: React.FC<Props> = ({
       const leftBound = 10;
       const rightBound = effectiveWidth + 10;
 
-      // Extract the absolute lowest pitch in the entire current row
+      // Determine chord height requirement specifically for THIS row
+      const rowHasChords = showChords && rowItems.some(m => Boolean(m.item.chord?.trim()));
+      const rowChordOffset = rowHasChords ? baseChordOffsetValue : 0;
+      const rowTopMargin = (isFirstRow && rowHasChords) ? topMarginValue : 0;
+
+      // The baseline for this row's staff directly incorporates this row's chord and top height
+      const staffY = currentY + rowTopMargin + rowChordOffset + baseStaffHeight;
+
+      // Extract lowest pitch in row for dynamic linear lyric offset
       let rowMinPitch = Infinity;
       rowItems.forEach((m) => {
         rowMinPitch = Math.min(rowMinPitch, m.item.minPitch);
       });
 
-      // Calculate dynamic linear drop based on how far below -1 the note goes
+      // Linear drop lyrics when notes get too low
       let extraLyricDrop = 0;
       if (rowMinPitch < -1) {
         const pitchStepsBelowBase = -1 - rowMinPitch;
@@ -236,7 +315,6 @@ const SkiaMelodyView: React.FC<Props> = ({
       }
 
       const currentLyricOffset = 30 + extraLyricDrop;
-      const currentLineHeight = baseStaffHeight + baseChordOffset + 50 + extraLyricDrop;
 
       let middleWidth = 0;
       middleItems.forEach((m, idx) => {
@@ -266,7 +344,7 @@ const SkiaMelodyView: React.FC<Props> = ({
       if (hasClef) {
         positions.push({
           ...rowItems[0].item,
-          y: currentY,
+          y: staffY,
           xNote: leftBound,
           xLyric: leftBound,
           xChord: leftBound,
@@ -335,7 +413,7 @@ const SkiaMelodyView: React.FC<Props> = ({
           ...m.item,
           lyric: cleanLyric,
           dashX,
-          y: currentY,
+          y: staffY,
           xNote,
           xLyric: centerX - (cleanLyricWidth / 2),
           xChord: centerX - (m.chordWidth / 2),
@@ -352,7 +430,7 @@ const SkiaMelodyView: React.FC<Props> = ({
         const xNote = rightBound - m.noteWidth;
         positions.push({
           ...m.item,
-          y: currentY,
+          y: staffY,
           xNote,
           xLyric: xNote,
           xChord: xNote,
@@ -362,95 +440,26 @@ const SkiaMelodyView: React.FC<Props> = ({
 
       // Draw full-width staff lines edge-to-edge
       for (let j = 0; j < 5; j++) {
-        const lineOffset = currentY - (j * 10 * currentMelodyScale) + 0.7;
+        const lineOffset = staffY - (j * 10 * currentMelodyScale) + 0.7;
         path.moveTo(leftBound, lineOffset);
         path.lineTo(rightBound, lineOffset);
       }
 
-      maxBottomY = Math.max(maxBottomY, currentY + currentLyricOffset + 40);
-      currentY += currentLineHeight;
+      // Track bottom bounds
+      maxBottomY = Math.max(maxBottomY, staffY + currentLyricOffset + 20);
+
+      // Advance currentY to the bottom of this row's lyrics + a clean row gap
+      currentY = staffY + currentLyricOffset + 20;
     };
-
-    rawScoreLines.forEach((phraseItems) => {
-      const measuredPhrase: MeasuredItem[] = phraseItems.map((item) => {
-        const noteWidth = musicFont.measureText(item.char).width * currentMelodyScale;
-        const lyricWidth = item.lyric ? lyricFont.measureText(item.lyric).width : 0;
-        const chordWidth = showChords && item.chord
-          ? chordFont.measureText(item.chord).width * currentMelodyScale
-          : 0;
-        const contentWidth = Math.max(noteWidth, lyricWidth, chordWidth);
-        return { item, noteWidth, lyricWidth, chordWidth, contentWidth };
-      });
-
-      const leftPadding = textAlignment === MelodyTextAlignment.Left ? 25 * currentMelodyScale : 0;
-      const rowChromeWidth = leftPadding + (measuredPhrase[0].item === clefItem ? measuredPhrase[0].contentWidth + standardSpacing : 0);
-
-      // Calculate a strict hard bound for the line to ensure it never overflows right edge
-      const maxLineWidth = Math.max(50, effectiveWidth - rowChromeWidth - (20 * currentMelodyScale));
-
-      let totalPhraseWidth = 0;
-      measuredPhrase.forEach((m, idx) => {
-        totalPhraseWidth += m.contentWidth + (idx > 0 ? standardSpacing : 0);
-      });
-
-      let targetLines = Math.max(1, Math.ceil(totalPhraseWidth / maxLineWidth));
-      const totalItems = measuredPhrase.length;
-      let startIndex = 0;
-
-      // Evenly distribute by ACCUMULATED WIDTH, not item count
-      for (let line = 0; line < targetLines; line++) {
-        if (startIndex >= totalItems) break;
-
-        let remainingWidth = 0;
-        for (let i = startIndex; i < totalItems; i++) {
-          remainingWidth += measuredPhrase[i].contentWidth + (i > startIndex ? standardSpacing : 0);
-        }
-
-        const remainingLines = targetLines - line;
-        const idealLineTarget = remainingWidth / remainingLines;
-
-        let currentWidth = 0;
-        let cutIndex = startIndex;
-
-        for (let i = startIndex; i < totalItems; i++) {
-          let w = measuredPhrase[i].contentWidth + (i > startIndex ? standardSpacing : 0);
-
-          if (currentWidth + w > maxLineWidth && cutIndex > startIndex) {
-            break; // Absolute max boundary breached
-          }
-
-          if (currentWidth > 0 && currentWidth + (w / 2) >= idealLineTarget && remainingLines > 1) {
-            break; // Ideal even distribution met
-          }
-
-          currentWidth += w;
-          cutIndex++;
-        }
-
-        // Failsafe to guarantee loop progression if extreme zoom is applied
-        if (cutIndex === startIndex) {
-          cutIndex++;
-        }
-
-        balancedRows.push(measuredPhrase.slice(startIndex, cutIndex));
-        startIndex = cutIndex;
-
-        // If items were left behind, forcefully increase lines to catch overflow
-        if (line === targetLines - 1 && startIndex < totalItems) {
-          targetLines++;
-        }
-      }
-    });
 
     balancedRows.forEach((rowItems, rowIndex) => {
       layoutRowItems(rowItems, rowIndex);
     });
 
-    // Remove the bottom padding of 30px to avoid unnecessary whitespace at the bottom of the canvas
-    let totalScaledHeight = (maxBottomY - 30) * currentZoom;
+    let totalScaledHeight = maxBottomY * currentZoom;
 
     // Limit to 2730 for simulator on macos as a higher value will crash the app
-    if (isDevelopmentEnv && isMacOS()) totalScaledHeight = Math.min(totalScaledHeight, 2730);
+    if (isDevelopmentEnv && !isAndroid) totalScaledHeight = Math.min(totalScaledHeight, 2730);
 
     return {
       positions,
@@ -513,8 +522,13 @@ const SkiaMelodyView: React.FC<Props> = ({
               transform={[{ scale: currentMelodyScale }]}
               origin={{ x: item.xNote, y: item.y }}
             >
-              <Text x={item.xNote} y={item.y + 0.4 + ANDROID_MUSIC_Y_OFFSET} text={item.char} font={musicFont}
-                    color={colors.notes.color as string} />
+              <Text
+                x={item.xNote}
+                y={item.y + 0.4 + ANDROID_MUSIC_Y_OFFSET}
+                text={item.char}
+                font={musicFont}
+                color={colors.notes.color as string}
+              />
             </Group>
 
             {item.lyric ? (
