@@ -105,7 +105,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     setIsMelodyLoaded(true);
   }, []);
 
-  const hasCalculatedLineWidths = useRef<boolean>(false);
+  // This is to fix the bug where the text is not wrapped correctly when the verse is first rendered.
+  // We need to wait until the text is rendered and we have the correct width of each line,
+  // then we can calculate the correct content with line breaks.
+  const hasCalculatedLineWidths = useRef(false);
   useEffect(() => {
     if (hasCalculatedLineWidths.current) return;
     if (containerWidth == 0) return;
@@ -154,7 +157,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const onTextContainerLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width);
 
-  return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={e => onLayout?.(verse, e)}>
+  const handleContainerLayout = (e: LayoutChangeEvent) => {
+    const newWidth = e.nativeEvent.layout.width;
+    if (newWidth > 0 && Math.abs(newWidth - containerWidth) > 1) {
+      setContainerWidth(newWidth);
+    }
+    onLayout?.(verse, e);
+  };
+
+  return <Animated.View
+    style={[styles.container, animatedStyle.container]}
+    onLayout={handleContainerLayout}
+  >
     {displayName.length === 0 ? undefined :
       <AnimatedSafeText style={[
         styles.title,
@@ -184,19 +198,20 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         position: isMelodyLoaded ? "relative" : "absolute",
         opacity: isMelodyLoaded ? 1 : 0
       }}>
-        <SkiaMelodyView
-          onLoaded={onMelodyLoaded}
-          key={`${verse.id}_${activeMelody?.id}`}
-          abcSong={memoizedAbc!}
-          animatedScale={scale}
-          melodyScale={melodyScale}
-          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
-          showChords={showMelodyChords}
-          availableWidth={containerWidth}
-          marginLeft={-20}
-          marginRight={-10}
-          textAlignment={melodyTextAlignment}
-        />
+        {containerWidth > 0 &&
+          <SkiaMelodyView
+            onLoaded={onMelodyLoaded}
+            key={`${verse.id}_${activeMelody?.id}_${Math.round(containerWidth)}`}
+            abcSong={memoizedAbc!}
+            animatedScale={scale}
+            melodyScale={melodyScale}
+            showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+            showChords={showMelodyChords}
+            availableWidth={containerWidth}
+            marginLeft={-20}
+            marginRight={-10}
+            textAlignment={melodyTextAlignment}
+          />}
       </View>
     }
   </Animated.View>;
