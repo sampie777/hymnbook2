@@ -301,13 +301,7 @@ const SettingsScreen: React.FC = () => {
                                    isVisible={showAdvancedSettings}
                                    valueRender={(it) => Math.round(it * 100) + " %"}
                                    defaultValue={1.0} />
-          <SettingSwitchComponent title={"Compact melody view"}
-                                  description={"Disable to view each line on its own line."}
-                                  onLongPress={(setValue) => setValue(true)}
-                                  keyName={"showMelodyOnSeparateLines"}
-                                  invertValue={true}
-                                  isVisible={showAdvancedSettings} />
-          <SettingSwitchComponent title={"Show melody for all verses (experimental)"}
+          <SettingSwitchComponent title={"Show melody for all verses"}
                                   description={"Show melody for all verses instead of the first (selected) verse. This may result in reduces performance."}
                                   onLongPress={(setValue) => setValue(false)}
                                   keyName={"showMelodyForAllVerses"}
@@ -315,7 +309,7 @@ const SettingsScreen: React.FC = () => {
           <SettingComponent<MelodyTextAlignment>
             title={"Lyric alignment"}
             keyName={"melodyTextAlignment"}
-            description={"Tap here to change the location of the song search button."}
+            description={"Tap to change lyric alignment."}
             onPress={(setValue) => {
               const keys = Object.keys(MelodyTextAlignment);
               const currentIndex = keys.indexOf(Settings.melodyTextAlignment);
@@ -333,6 +327,12 @@ const SettingsScreen: React.FC = () => {
                   return "Unknown";
               }
             }} />
+          <SettingSwitchComponent title={"Compact melody view"}
+                                  description={"Disable to view each line on its own line."}
+                                  onLongPress={(setValue) => setValue(true)}
+                                  keyName={"showMelodyOnSeparateLines"}
+                                  invertValue={true}
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Show chords (experimental)"}
                                   description={"This will show the chords above the notes in the melody, if chords are available."}
                                   onLongPress={(setValue) => setValue(false)}

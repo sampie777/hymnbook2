@@ -118,18 +118,6 @@ const MelodySettingsModal: React.FC<Props> = ({
           </TouchableOpacity>
         </View>
 
-        <SwitchComponent title={"Compact view"}
-                         isVisible={true}
-                         value={!showMelodyOnSeparateLines}
-                         onPress={() => {
-                           Settings.showMelodyOnSeparateLines = !showMelodyOnSeparateLines;
-                           setShowMelodyOnSeparateLines?.(!showMelodyOnSeparateLines);
-                         }}
-                         onLongPress={() => {
-                           Settings.showMelodyOnSeparateLines = true;
-                           setShowMelodyOnSeparateLines?.(true);
-                         }} />
-
         <SwitchComponent title={"Show melody for all verses"}
                          isVisible={true}
                          value={showMelodyForAllVerses}
@@ -142,18 +130,16 @@ const MelodySettingsModal: React.FC<Props> = ({
                            setShowMelodyForAllVerses?.(false);
                          }} />
 
-        <SwitchComponent title={"Align lyrics center"}
+        <SwitchComponent title={"Compact view"}
                          isVisible={true}
-                         value={melodyTextAlignment == MelodyTextAlignment.Center}
+                         value={!showMelodyOnSeparateLines}
                          onPress={() => {
-                           Settings.melodyTextAlignment = melodyTextAlignment == MelodyTextAlignment.Left
-                             ? MelodyTextAlignment.Center
-                             : MelodyTextAlignment.Left;
-                           setMelodyTextAlignment(Settings.melodyTextAlignment);
+                           Settings.showMelodyOnSeparateLines = !showMelodyOnSeparateLines;
+                           setShowMelodyOnSeparateLines?.(!showMelodyOnSeparateLines);
                          }}
                          onLongPress={() => {
-                           Settings.melodyTextAlignment = MelodyTextAlignment.Left;
-                           setMelodyTextAlignment(Settings.melodyTextAlignment);
+                           Settings.showMelodyOnSeparateLines = true;
+                           setShowMelodyOnSeparateLines?.(true);
                          }} />
 
         <View style={styles.scaleContainer}>
