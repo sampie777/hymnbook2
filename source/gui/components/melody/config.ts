@@ -2,7 +2,7 @@ import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { ThemeContextProps } from "../providers/ThemeProvider.tsx";
 
 export const AbcConfig = {
-  baseScale: 0.8,
+  baseScale: 0.56,
 
   noteSize: 50,
   notePadding: 0,
