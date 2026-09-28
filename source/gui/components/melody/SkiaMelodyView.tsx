@@ -32,12 +32,20 @@ interface Props {
 }
 
 const useZoomThrottler = (animatedScale: SharedValue<number>, melodyScale: SharedValue<number>) => {
-  const [currentZoom, setCurrentZoom] = useState(animatedScale.value);
-  const [currentMelodyScale, setCurrentMelodyScale] = useState(melodyScale.value * AbcConfig.baseScale);
+  const [currentZoom, setCurrentZoom] = useState(1);
+  const [currentMelodyScale, setCurrentMelodyScale] = useState(AbcConfig.baseScale);
 
   const lastReportedZoom = useSharedValue(currentZoom);
   const lastReportedMelodyScale = useSharedValue(currentMelodyScale);
   const settleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Synchronize to the actual shared value immediately after mounting
+  useEffect(() => {
+    setCurrentZoom(animatedScale.value);
+    setCurrentMelodyScale(melodyScale.value * AbcConfig.baseScale);
+    lastReportedZoom.value = animatedScale.value;
+    lastReportedMelodyScale.value = melodyScale.value * AbcConfig.baseScale;
+  }, [animatedScale, melodyScale]);
 
   const throttledUpdate = (zoom: number, mScale: number) => {
     setCurrentZoom(zoom);
