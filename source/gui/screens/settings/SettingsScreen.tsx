@@ -17,6 +17,7 @@ import SettingSwitchComponent from "./components/SettingSwitchComponent";
 import SettingsSliderComponent from "./components/SettingsSliderComponent";
 import ListNavigation from "./ListNavigation.tsx";
 import SafeText from "../../components/SafeText.tsx";
+import { MelodyTextAlignment } from "../../../logic/songs/abc/utils.ts";
 
 const Header: React.FC<{
   title: string,
@@ -311,6 +312,27 @@ const SettingsScreen: React.FC = () => {
                                   onLongPress={(setValue) => setValue(false)}
                                   keyName={"showMelodyForAllVerses"}
                                   isVisible={showAdvancedSettings} />
+          <SettingComponent<MelodyTextAlignment>
+            title={"Lyric alignment"}
+            keyName={"melodyTextAlignment"}
+            description={"Tap here to change the location of the song search button."}
+            onPress={(setValue) => {
+              const keys = Object.keys(MelodyTextAlignment);
+              const currentIndex = keys.indexOf(Settings.melodyTextAlignment);
+              const newValue = keys[(currentIndex + 1) % keys.length];
+              setValue(newValue);
+            }}
+            onLongPress={(setValue) => setValue(MelodyTextAlignment.Left)}
+            valueRender={(it) => {
+              switch (it) {
+                case MelodyTextAlignment.Left:
+                  return "Left";
+                case MelodyTextAlignment.Center:
+                  return "Center";
+                default:
+                  return "Unknown";
+              }
+            }} />
           <SettingSwitchComponent title={"Show chords (experimental)"}
                                   description={"This will show the chords above the notes in the melody, if chords are available."}
                                   onLongPress={(setValue) => setValue(false)}

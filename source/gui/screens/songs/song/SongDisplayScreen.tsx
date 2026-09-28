@@ -21,13 +21,7 @@ import {
   loadSongWithUuidOrId,
   storeLastUsedMelody
 } from "../../../../logic/songs/utils";
-import {
-  hash,
-  isDevelopmentEnv,
-  isIOS,
-  keepScreenAwake,
-  sanitizeErrorForRollbar
-} from "../../../../logic/utils/utils.ts";
+import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import {
   Alert,
   BackHandler,
@@ -75,6 +69,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [showMelody, setShowMelody] = useState(false);
   const [showMelodyForAllVerses, setShowMelodyForAllVerses] = useState(Settings.showMelodyForAllVerses);
   const [showMelodyOnSeparateLines, setShowMelodyOnSeparateLines] = useState(Settings.showMelodyOnSeparateLines);
+  const [melodyTextAlignment, setMelodyTextAlignment] = useState(Settings.melodyTextAlignment);
   const [showMelodyChords, setShowMelodyChords] = useState(Settings.showMelodyChords);
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
@@ -134,6 +129,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     // If song is undefined, we're probably leaving this screen,
     // so we can ignore state and animation updates.
     if (song === undefined) return;
+
+    // Immediately clear old melody so new lyrics aren't paired with old notes
+    setSelectedMelody(undefined);
 
     // Reset this value in case it was temporary changed in handleSetShowMelody()
     setShowMelodyForAllVerses(Settings.showMelodyForAllVerses);
@@ -218,10 +216,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
   const willRenderingMelodyBePerformandEnough = (versedToBeRenderedCount: number) =>
-    versedToBeRenderedCount < (isDevelopmentEnv ? 5 : isIOS ? 7 : 5);
+    versedToBeRenderedCount < (isIOS ? 60 : 30);
 
   const handleSetShowMelody = (newValue: boolean) => {
-    console.log("spam")
     if (!newValue || !Settings.showMelodyForAllVerses || !song?.verses) {
       return setShowMelody(newValue);
     }
@@ -552,7 +549,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          onLayout={storeVerseHeight}
                          highlightText={highlightText}
                          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
-                         showMelodyChords={showMelodyChords} />;
+                         showMelodyChords={showMelodyChords}
+                         melodyTextAlignment={melodyTextAlignment} />;
   };
 
   const listViewabilityConfigPairs = React.useRef<ViewabilityConfigCallbackPairs>([
@@ -588,7 +586,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         setShowMelodyForAllVerses={handleSetShowMelodyForAllVerses}
         showMelodyOnSeparateLines={showMelodyOnSeparateLines}
         setShowMelodyOnSeparateLines={setShowMelodyOnSeparateLines}
-        melodyScale={melodyScale} />}
+        melodyScale={melodyScale}
+        melodyTextAlignment={melodyTextAlignment}
+        setMelodyTextAlignment={setMelodyTextAlignment} />}
 
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>

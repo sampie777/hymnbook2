@@ -8,12 +8,13 @@ import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { generateVerseContentWithCorrectWidth, getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import MelodyView from "../../../components/melody/MelodyView";
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { runAsync } from "../../../../logic/utils/utils.ts";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { AnimatedSafeText } from "../../../components/SafeText.tsx";
+import SkiaMelodyView from "../../../components/melody/SkiaMelodyView.tsx";
+import { MelodyTextAlignment } from "../../../../logic/songs/abc/utils.ts";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -26,6 +27,7 @@ interface ContentVerseProps {
   highlightText?: string;
   showMelodyOnSeparateLines: boolean;
   showMelodyChords: boolean;
+  melodyTextAlignment: MelodyTextAlignment;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
@@ -39,6 +41,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      highlightText,
                                                      showMelodyOnSeparateLines,
                                                      showMelodyChords,
+                                                     melodyTextAlignment,
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [showMelody, setShowMelody] = useState(false);
@@ -102,7 +105,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     setIsMelodyLoaded(true);
   }, []);
 
-  const hasCalculatedLineWidths = useRef<boolean>(false);
+  // This is to fix the bug where the text is not wrapped correctly when the verse is first rendered.
+  // We need to wait until the text is rendered and we have the correct width of each line,
+  // then we can calculate the correct content with line breaks.
+  const hasCalculatedLineWidths = useRef(false);
   useEffect(() => {
     if (hasCalculatedLineWidths.current) return;
     if (containerWidth == 0) return;
@@ -117,17 +123,31 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const createHighlightedTextComponent = (text: string, index: number) =>
     <AnimatedSafeText key={index}
-                   style={styles.textHighlighted}
-                   selectable={Settings.enableTextSelection}>
+                      style={styles.textHighlighted}
+                      selectable={Settings.enableTextSelection}>
       {text}
     </AnimatedSafeText>;
 
-  const memoizedAbc = useMemo(() =>
-    ABC.generateAbcForVerse(
+  const memoizedAbc = useMemo(() => {
+    if (!activeMelody || !verse.abcLyrics) return null;
+
+    const abcString = ABC.generateAbcForVerse(
       verse,
       activeMelody,
       { trimLines: Settings.showMelodyOnSeparateLines }
-    ), [activeMelody?.id, Settings.showMelodyOnSeparateLines]);
+    );
+    // const abcString="X: 1\n" +
+    //   "T: Cooley's\n" +
+    //   "M: 4/4\n" +
+    //   "L: 1/8\n" +
+    //   "R: reel\n" +
+    //   "K: Emin\n" +
+    //   "A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12\n" +
+    //   "w: A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12"
+    if (abcString.length == 0) return null;
+
+    return ABC.parse(abcString)
+  }, [verse, activeMelody?.id, Settings.showMelodyOnSeparateLines]);
 
   const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) =>
     setTextLineWidth(e.nativeEvent.lines.map(it => ({
@@ -137,7 +157,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
   const onTextContainerLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width);
 
-  return <Animated.View style={[styles.container, animatedStyle.container]} onLayout={e => onLayout?.(verse, e)}>
+  const handleContainerLayout = (e: LayoutChangeEvent) => {
+    const newWidth = e.nativeEvent.layout.width;
+    if (newWidth > 0 && Math.abs(newWidth - containerWidth) > 1) {
+      setContainerWidth(newWidth);
+    }
+    onLayout?.(verse, e);
+  };
+
+  return <Animated.View
+    style={[styles.container, animatedStyle.container]}
+    onLayout={handleContainerLayout}
+  >
     {displayName.length === 0 ? undefined :
       <AnimatedSafeText style={[
         styles.title,
@@ -151,10 +182,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
     {isMelodyLoaded && isMelodyAvailable() ? undefined :
       <AnimatedSafeText style={[styles.text, animatedStyle.text]}
-                     selectable={Settings.enableTextSelection}
-                     onLayout={onTextContainerLayout}
-                     onTextLayout={onTextLayout}
-                     textBreakStrategy={"balanced"}>
+                        selectable={Settings.enableTextSelection}
+                        onLayout={onTextContainerLayout}
+                        onTextLayout={onTextLayout}
+                        textBreakStrategy={"balanced"}>
         {highlightText == null
           ? content
           : renderTextWithCustomReplacements(content, highlightText, createHighlightedTextComponent)}
@@ -167,22 +198,20 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         position: isMelodyLoaded ? "relative" : "absolute",
         opacity: isMelodyLoaded ? 1 : 0
       }}>
-        <MelodyView
-          onLoaded={onMelodyLoaded}
-          abc={memoizedAbc}
-          // abc={"X: 1\n" +
-          //   "T: Cooley's\n" +
-          //   "M: 4/4\n" +
-          //   "L: 1/8\n" +
-          //   "R: reel\n" +
-          //   "K: Emin\n" +
-          //   "A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12\n" +
-          //   "w: A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12"}
-          animatedScale={scale}
-          melodyScale={melodyScale}
-          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
-          showMelodyChords={showMelodyChords}
-        />
+        {containerWidth > 0 &&
+          <SkiaMelodyView
+            onLoaded={onMelodyLoaded}
+            key={`${verse.id}_${activeMelody?.id}_${Math.round(containerWidth)}`}
+            abcSong={memoizedAbc!}
+            animatedScale={scale}
+            melodyScale={melodyScale}
+            showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+            showChords={showMelodyChords}
+            availableWidth={containerWidth}
+            marginLeft={-20}
+            marginRight={-10}
+            textAlignment={melodyTextAlignment}
+          />}
       </View>
     }
   </Animated.View>;

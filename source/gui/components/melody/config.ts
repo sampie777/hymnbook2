@@ -2,15 +2,15 @@ import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { ThemeContextProps } from "../providers/ThemeProvider.tsx";
 
 export const AbcConfig = {
-  baseScale: 0.9,
+  baseScale: 0.56,
 
-  noteSize: 40,
+  noteSize: 50,
   notePadding: 0,
   noteWidth: 14.8,
   accidentalWidth: 18,
   spacerWidth: 7,
 
-  chordSize: 20,
+  chordSize: 24,
   chordTopSpace: 10,
 
   textPadding: 3,

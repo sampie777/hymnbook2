@@ -2,6 +2,7 @@ import { AccessRequestStatus } from "./logic/server/models";
 import { SettingsBaseClass } from "./logic/settings/settingsBase";
 import { SongSearch } from "./logic/songs/songSearch";
 import { DocumentSearch } from "./logic/documents/documentSearch.ts";
+import { MelodyTextAlignment } from "./logic/songs/abc/utils.ts";
 
 class SettingsClass extends SettingsBaseClass {
   // System
@@ -37,6 +38,7 @@ class SettingsClass extends SettingsBaseClass {
   showMelodyOnSeparateLines = true;
   showMelodyChords = false;
   melodyShowedTimes = 0;
+  melodyTextAlignment = MelodyTextAlignment.Left;
 
   // Songs audio
   songAudioPlaybackSpeed = 1.0;
