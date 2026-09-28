@@ -234,6 +234,7 @@ const SettingsScreen: React.FC = () => {
             title={"Search button location"}
             keyName={"stringSearchButtonPlacement"}
             description={"Tap here to change the location of the song search button."}
+            isVisible={showAdvancedSettings}
             onPress={(setValue) => {
               const keys = Object.keys(SongSearch.StringSearchButtonPlacement);
               const currentIndex = keys.indexOf(Settings.stringSearchButtonPlacement);
@@ -255,7 +256,8 @@ const SettingsScreen: React.FC = () => {
             }} />
           <SettingSwitchComponent title={"Use colored verse numbers"}
                                   onLongPress={(setValue) => setValue(true)}
-                                  keyName={"coloredVerseTitles"} />
+                                  keyName={"coloredVerseTitles"}
+                                  isVisible={showAdvancedSettings} />
           <SettingSwitchComponent title={"Highlight selected verses"}
                                   description={"Give verse titles an accent when selected."}
                                   onLongPress={(setValue) => setValue(true)}
@@ -304,12 +306,12 @@ const SettingsScreen: React.FC = () => {
           <SettingSwitchComponent title={"Show melody for all verses"}
                                   description={"Show melody for all verses instead of the first (selected) verse. This may result in reduces performance."}
                                   onLongPress={(setValue) => setValue(false)}
-                                  keyName={"showMelodyForAllVerses"}
-                                  isVisible={showAdvancedSettings} />
+                                  keyName={"showMelodyForAllVerses"} />
           <SettingComponent<MelodyTextAlignment>
             title={"Lyric alignment"}
             keyName={"melodyTextAlignment"}
             description={"Tap to change lyric alignment."}
+            isVisible={showAdvancedSettings}
             onPress={(setValue) => {
               const keys = Object.keys(MelodyTextAlignment);
               const currentIndex = keys.indexOf(Settings.melodyTextAlignment);
@@ -331,8 +333,7 @@ const SettingsScreen: React.FC = () => {
                                   description={"Disable to view each line on its own line."}
                                   onLongPress={(setValue) => setValue(true)}
                                   keyName={"showMelodyOnSeparateLines"}
-                                  invertValue={true}
-                                  isVisible={showAdvancedSettings} />
+                                  invertValue={true} />
           <SettingSwitchComponent title={"Show chords (experimental)"}
                                   description={"This will show the chords above the notes in the melody, if chords are available."}
                                   onLongPress={(setValue) => setValue(false)}
@@ -340,7 +341,6 @@ const SettingsScreen: React.FC = () => {
                                   isVisible={showAdvancedSettings} />
 
           <Header title={"Documents"}
-                  isVisible={showAdvancedSettings}
                   register={registerHeaderVerticalPosition} />
           <SettingsSliderComponent title={"Document text size"}
                                    keyName={"documentScale"}
@@ -355,8 +355,7 @@ const SettingsScreen: React.FC = () => {
           <SettingSwitchComponent title={"Reset search path"}
                                   description={"After viewing a document, start browsing from the upper root instead of from where you left."}
                                   onLongPress={(setValue) => setValue(false)}
-                                  keyName={"documentsResetPathToRoot"}
-                                  isVisible={showAdvancedSettings} />
+                                  keyName={"documentsResetPathToRoot"} />
 
           <Header title={"Other"}
                   register={registerHeaderVerticalPosition} />
@@ -364,6 +363,7 @@ const SettingsScreen: React.FC = () => {
             title={"Auto update databases"}
             keyName={"autoUpdateDatabasesCheckIntervalInDays"}
             description={"Tap here to change or disable the auto updating frequency of the song and document databases."}
+            isVisible={showAdvancedSettings}
             onPress={(setValue) => {
               // Only allow the 'once a day' mode for developers, to not overload the backend servers
               if (Settings.autoUpdateDatabasesCheckIntervalInDays < 1 && appContext.developerMode) setValue(1);
