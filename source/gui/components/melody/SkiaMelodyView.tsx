@@ -102,8 +102,8 @@ const SkiaMelodyView: React.FC<Props> = ({
 
   const fontScale = PixelRatio.getFontScale();
   const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize * fontScale * ANDROID_MUSIC_SCALE);
-  const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.textSize * fontScale);
-  const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular.ttf"), AbcConfig.chordSize * fontScale);
+  const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular-Extended.ttf"), AbcConfig.textSize * fontScale);
+  const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular-Extended.ttf"), AbcConfig.chordSize * fontScale);
 
   const clefItem = useMemo(() => createClefItem(abcSong), [abcSong?.clef?.type]);
 
