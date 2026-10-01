@@ -592,13 +592,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
-        <SongControls navigation={navigation}
-                      songListIndex={route.params.songListIndex}
-                      song={song}
-                      listViewIndex={viewIndex}
-                      flatListComponentRef={flatListComponentRef.current || undefined}
-                      selectedVerses={route.params.selectedVerses} />
-
         <GestureDetector gesture={tapGesture}>
           <ReAnimated.View style={[
             styles.contentSectionListContainer,
@@ -638,6 +631,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                           (route.params.id != undefined && route.params.uuid != undefined)
                           && (song === undefined || (song.id !== route.params.id && song.uuid !== route.params.uuid))}
                         animate={Settings.songFadeIn} />
+
+        <SongControls navigation={navigation}
+                      songListIndex={route.params.songListIndex}
+                      song={song}
+                      listViewIndex={viewIndex}
+                      flatListComponentRef={flatListComponentRef.current || undefined}
+                      selectedVerses={route.params.selectedVerses} />
       </View>
     </GestureDetector>
 

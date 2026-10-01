@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider.tsx";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -70,10 +70,8 @@ export default ListNavigation;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     backgroundColor: colors.surface2,
-    ...Platform.select({
-      ios: { zIndex: 100 },
-      android: { elevation: 5 },
-    }),
+    zIndex: 100,
+    elevation: 5,
 
     shadowColor: "#000",
     shadowOffset: {
@@ -82,7 +80,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
   },
 
   header: {
@@ -93,10 +90,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 20,
     backgroundColor: colors.surface2,
-    ...Platform.select({
-      ios: { zIndex: 2 },
-      android: { elevation: 2 },
-    }),
+    zIndex: 2,
+    elevation: 2,
   },
   headerIcon: {},
   headerText: {
@@ -112,9 +107,7 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border.lightVariant,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    ...Platform.select({
-      ios: { zIndex: -1 },
-    }),
+    zIndex: 1,
   },
 
   text: {

@@ -223,12 +223,6 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
 
   return <GestureDetector gesture={pinchGesture}>
     <View style={styles.container}>
-      <DocumentControls navigation={navigation}
-                        document={document}
-                        forceShow={onPressed}
-                        scrollOffset={scrollOffset}
-                        bottomOffset={bottomOffset} />
-
       {document === undefined ? undefined :
         <ScrollView
           ref={scrollViewComponent}
@@ -257,6 +251,12 @@ const SingleDocument: React.FC<NativeStackScreenProps<ParamList, typeof Document
                         route.params.id !== undefined
                         && (document === undefined || document.id !== route.params.id)}
                       animate={Settings.songFadeIn} />
+
+      <DocumentControls navigation={navigation}
+                        document={document}
+                        forceShow={onPressed}
+                        scrollOffset={scrollOffset}
+                        bottomOffset={bottomOffset} />
     </View>
   </GestureDetector>;
 };
