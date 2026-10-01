@@ -7,6 +7,7 @@
 #import <RNDeviceInfo/DeviceUID.h>
 #import <React/RCTLinkingManager.h>
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#import <unistd.h>
 
 @implementation AppDelegate
 
@@ -34,6 +35,27 @@
   [RollbarReactNative initWithConfiguration:options];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+  if ([super respondsToSelector:@selector(applicationWillTerminate:)]) {
+    [super applicationWillTerminate:application];
+  }
+
+  // When quitting on macOS ("Designed for iPad" on Apple Silicon Mac or Mac Catalyst), standard exit()
+  // triggers __cxa_finalize_ranges (C++ static object destructors) while background React Native
+  // threads (Hermes JS / Fabric) are still running, causing a SIGSEGV / EXC_BAD_ACCESS race condition.
+  // _exit(0) terminates the process immediately at the kernel level without invoking static destructors.
+#if TARGET_OS_MACCATALYST
+  _exit(0);
+#else
+  if (@available(iOS 14.0, *)) {
+    if ([NSProcessInfo processInfo].isiOSAppOnMac) {
+      _exit(0);
+    }
+  }
+#endif
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
