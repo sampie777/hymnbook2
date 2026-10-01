@@ -8,7 +8,7 @@ import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import { getNextVerseIndex } from "../../../../logic/songs/utils";
 import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -160,7 +160,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     position: "absolute",
     paddingHorizontal: 3,
     bottom: 30,
-    zIndex: 1
+    ...Platform.select({
+      ios: { zIndex: 1 },
+      android: { elevation: 5 },
+    }),
   },
 
   buttonBase: {
@@ -175,7 +178,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     alignItems: "center",
     shadowColor: "#000",
 
-    zIndex: 10,
     shadowOffset: {
       width: 0,
       height: 2

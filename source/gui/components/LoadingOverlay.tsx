@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { ThemeContextProps, useTheme } from "./providers/ThemeProvider";
 import LoadingIndicator from "./LoadingIndicator";
@@ -72,7 +72,10 @@ const createStyles = ({ isDark, colors }: ThemeContextProps) => StyleSheet.creat
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 9
+    ...Platform.select({
+      ios: { zIndex: 9 },
+      android: { elevation: 9 },
+    }),
   },
   text: {
     paddingTop: 10,

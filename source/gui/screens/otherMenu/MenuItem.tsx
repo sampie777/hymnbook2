@@ -81,7 +81,6 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderRadius: 8,
     top: 0,
     right: 2,
-    zIndex: 2,
     elevation: 2
   }
 });

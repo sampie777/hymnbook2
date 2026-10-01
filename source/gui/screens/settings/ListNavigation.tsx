@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../components/providers/ThemeProvider.tsx";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -53,7 +53,8 @@ const ListNavigation: React.FC<Props> = ({ headerVerticalPositions, onItemPress 
     </TouchableOpacity>
 
     <Animated.View style={[styles.list, animatedStyle]}
-                   onLayout={event => setListHeight(event.nativeEvent.layout.height)}>
+                   onLayout={event => setListHeight(event.nativeEvent.layout.height)}
+                   pointerEvents={visible ? "auto" : "none"}>
       {items.map(it =>
         <TouchableOpacity key={it[0]}
                           onPress={() => onPress(it[0], it[1])}>
@@ -69,7 +70,10 @@ export default ListNavigation;
 const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   container: {
     backgroundColor: colors.surface2,
-    zIndex: 100,
+    ...Platform.select({
+      ios: { zIndex: 100 },
+      android: { elevation: 5 },
+    }),
 
     shadowColor: "#000",
     shadowOffset: {
@@ -89,6 +93,10 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 20,
     backgroundColor: colors.surface2,
+    ...Platform.select({
+      ios: { zIndex: 2 },
+      android: { elevation: 2 },
+    }),
   },
   headerIcon: {},
   headerText: {
@@ -104,7 +112,9 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderColor: colors.border.lightVariant,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    zIndex: -1,
+    ...Platform.select({
+      ios: { zIndex: -1 },
+    }),
   },
 
   text: {

@@ -4,6 +4,7 @@ import { SongListModelSchema } from "../../../logic/db/models/songs/SongListMode
 import SongList from "../../../logic/songs/songList";
 import Settings from "../../../settings";
 import { objectToArrayIfNotAlready, sanitizeErrorForRollbar } from "../../../logic/utils/utils.ts";
+import { Platform } from "react-native";
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { rollbar } from "../../../logic/rollbar";
@@ -21,7 +22,9 @@ const SongListMenuIcon: React.FC<Props> = ({ size, color, style }) => {
     transform: [
       { scale: interpolate(animatedValue.current.value, [0, 100], [1, 4]) }
     ],
-    zIndex: interpolate(animatedValue.current.value, [0, 100], [0, 100]),
+    ...(Platform.OS === "ios"
+      ? { zIndex: interpolate(animatedValue.current.value, [0, 100], [0, 100]) }
+      : { elevation: interpolate(animatedValue.current.value, [0, 100], [0, 10]) }),
     opacity: interpolate(animatedValue.current.value, [0, 100], [1, 0.8])
   }));
 
