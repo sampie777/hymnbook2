@@ -1,6 +1,31 @@
 import { readableFileSizeSI } from "../../../logic/utils/utils";
 import { SongBundle as LocalSongBundle } from "../../../logic/db/models/songs/Songs";
 import { DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
+import { api } from "../../../logic/api";
+
+const songBundleDownloadSizeCache = new Map<string, number>();
+
+export const getCachedSongBundleDownloadSize = (idOrUuid: string | number): number | undefined =>
+  songBundleDownloadSizeCache.get(String(idOrUuid));
+
+export const clearDownloadSizeCache = () => {
+  songBundleDownloadSizeCache.clear();
+};
+
+export const fetchSongBundleDownloadSize = (idOrUuid: string | number): Promise<number | undefined> => {
+  const key = String(idOrUuid);
+  if (songBundleDownloadSizeCache.has(key)) {
+    return Promise.resolve(songBundleDownloadSizeCache.get(key));
+  }
+  return api.songBundles.getDownloadSize(idOrUuid)
+    .then((bytes) => {
+      if (bytes !== undefined && bytes > 0) {
+        songBundleDownloadSizeCache.set(key, bytes);
+      }
+      return bytes;
+    })
+    .catch(() => undefined);
+};
 
 export const calculateLocalSongBundleSize = (bundle: LocalSongBundle): number => {
   let bytes = 0;
@@ -30,11 +55,15 @@ export const calculateLocalSongBundleSize = (bundle: LocalSongBundle): number =>
 
 export const formatSongBundleDownloadSize = (
   bundle?: { size?: number } | null,
-  localBundle?: LocalSongBundle | null
+  localBundle?: LocalSongBundle | null,
+  exactRemoteBytes?: number | null
 ): string | undefined => {
   if (localBundle) {
     const bytes = calculateLocalSongBundleSize(localBundle);
     if (bytes > 0) return readableFileSizeSI(bytes);
+  }
+  if (exactRemoteBytes !== undefined && exactRemoteBytes !== null && exactRemoteBytes > 0) {
+    return readableFileSizeSI(exactRemoteBytes);
   }
   const songCount = bundle?.size ?? localBundle?.songs?.length;
   if (songCount !== undefined && songCount > 0) {

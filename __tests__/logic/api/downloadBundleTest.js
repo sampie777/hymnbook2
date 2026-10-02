@@ -1,4 +1,4 @@
-import { api } from "../../../source/logic/api";
+import { api, fetchContentLength } from "../../../source/logic/api";
 import { Server } from "../../../source/logic/server/server";
 import { describe, expect, it, beforeEach, afterEach, jest } from "@jest/globals";
 
@@ -146,5 +146,75 @@ describe("Song bundle download via XMLHttpRequest", () => {
 
     const result = await Server.downloadSongBundleWithProgress({ uuid: "fallback-uuid" });
     expect(result.uuid).toBe("fallback-uuid");
+  });
+  describe("fetchContentLength", () => {
+    it("returns content-length from HEAD when available", async () => {
+      const mockHeadResponse = {
+        ok: true,
+        headers: {
+          get: (header) => (header.toLowerCase() === "content-length" ? "954514" : null)
+        }
+      };
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue(mockHeadResponse);
+
+      try {
+        const size = await fetchContentLength("http://example.com/test");
+        expect(size).toBe(954514);
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it("falls back to GET and aborts on HEAD failure", async () => {
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockRejectedValue(new Error("HEAD failed"));
+
+      try {
+        const sizePromise = fetchContentLength("http://example.com/test");
+
+        for (let i = 0; i < 10 && mockXHRInstances.length === 0; i++) {
+          await new Promise(resolve => setTimeout(resolve, 5));
+        }
+
+        expect(mockXHRInstances.length).toBe(1);
+        const xhr = mockXHRInstances[0];
+        xhr.readyState = 2; // HEADERS_RECEIVED
+        xhr.getResponseHeader = jest.fn().mockReturnValue("888123");
+        xhr.abort = jest.fn();
+        xhr.onreadystatechange();
+
+        const size = await sizePromise;
+        expect(size).toBe(888123);
+        expect(xhr.abort).toHaveBeenCalled();
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it("returns undefined when no content-length available", async () => {
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockRejectedValue(new Error("HEAD failed"));
+
+      try {
+        const sizePromise = fetchContentLength("http://example.com/test");
+
+        for (let i = 0; i < 10 && mockXHRInstances.length === 0; i++) {
+          await new Promise(resolve => setTimeout(resolve, 5));
+        }
+
+        expect(mockXHRInstances.length).toBe(1);
+        const xhr = mockXHRInstances[0];
+        xhr.readyState = 2;
+        xhr.getResponseHeader = jest.fn().mockReturnValue(null);
+        xhr.abort = jest.fn();
+        xhr.onreadystatechange();
+
+        const size = await sizePromise;
+        expect(size).toBeUndefined();
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
   });
 });

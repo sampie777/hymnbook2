@@ -47,6 +47,93 @@ const get = (url: string) =>
     })
   );
 
+
+export const fetchContentLength = (
+  url: string,
+  requiresAuth = false
+): Promise<number | undefined> => {
+  const getHeaders = (jwt?: string): Record<string, string> => {
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    };
+    if (jwt) {
+      headers["Authorization"] = `Bearer ${jwt}`;
+    }
+    return headers;
+  };
+
+  const tryGetWithAbort = (jwt?: string): Promise<number | undefined> => {
+    return new Promise((resolve) => {
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        const headers = getHeaders(jwt);
+        Object.keys(headers).forEach((key) => {
+          xhr.setRequestHeader(key, headers[key]);
+        });
+
+        let finished = false;
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState >= 2 /* HEADERS_RECEIVED */ && !finished) {
+            finished = true;
+            const lengthHeader = xhr.getResponseHeader("Content-Length");
+            try {
+              xhr.abort();
+            } catch {
+              // Ignore abort error
+            }
+            if (lengthHeader) {
+              const parsed = parseInt(lengthHeader, 10);
+              if (!isNaN(parsed) && parsed > 0) {
+                return resolve(parsed);
+              }
+            }
+            resolve(undefined);
+          }
+        };
+
+        xhr.onerror = () => {
+          if (!finished) {
+            finished = true;
+            resolve(undefined);
+          }
+        };
+
+        xhr.ontimeout = () => {
+          if (!finished) {
+            finished = true;
+            resolve(undefined);
+          }
+        };
+
+        xhr.send();
+      } catch {
+        resolve(undefined);
+      }
+    });
+  };
+
+  const jwt = requiresAuth ? ServerAuth.getJwt() : undefined;
+
+  return fetch(url, {
+    method: "HEAD",
+    headers: getHeaders(jwt),
+  })
+    .then((response) => {
+      if (response && response.ok) {
+        const header = response.headers?.get?.("content-length");
+        if (header) {
+          const parsed = parseInt(header, 10);
+          if (!isNaN(parsed) && parsed > 0) {
+            return parsed;
+          }
+        }
+      }
+      return tryGetWithAbort(jwt);
+    })
+    .catch(() => tryGetWithAbort(jwt));
+};
+
 export const api = {
   songBundles: {
     list: (loadSongs = false,
@@ -138,6 +225,8 @@ export const api = {
 
       return startRequest(true);
     },
+    getDownloadSize: (idOrUuid: string | number): Promise<number | undefined> =>
+      fetchContentLength(`${databaseApiEndpoint}/songs/bundles/${idOrUuid}/download`),
   },
 
   songs: {

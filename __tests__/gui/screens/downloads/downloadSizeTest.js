@@ -2,10 +2,20 @@ import {
   calculateLocalDocumentGroupSize,
   calculateLocalSongBundleSize,
   formatDocumentGroupDownloadSize,
-  formatSongBundleDownloadSize
+  formatSongBundleDownloadSize,
+  fetchSongBundleDownloadSize,
+  getCachedSongBundleDownloadSize,
+  clearDownloadSizeCache
 } from "../../../../source/gui/screens/downloads/downloadSize";
+import { api } from "../../../../source/logic/api";
+import { describe, expect, it, beforeEach, jest } from "@jest/globals";
 
 describe("downloadSize", () => {
+  beforeEach(() => {
+    clearDownloadSizeCache();
+    jest.restoreAllMocks();
+  });
+
   describe("calculateLocalSongBundleSize", () => {
     it("calculates total byte size of songs, verses, and melodies", () => {
       const bundle = {
@@ -51,7 +61,15 @@ describe("downloadSize", () => {
       expect(formatted.startsWith("~")).toBe(false);
     });
 
-    it("formats estimated server bundle size when only server exists", () => {
+    it("formats exact remote byte size when available", () => {
+      const serverBundle = { size: 100 };
+      const formatted = formatSongBundleDownloadSize(serverBundle, undefined, 954514);
+      expect(formatted).toBeDefined();
+      expect(formatted.startsWith("~")).toBe(false);
+      expect(formatted).toContain("955 kB");
+    });
+
+    it("formats estimated server bundle size when only server exists without exact bytes", () => {
       const serverBundle = {
         size: 100
       };
@@ -107,6 +125,23 @@ describe("downloadSize", () => {
       expect(formatted).toBeDefined();
       expect(formatted.startsWith("~")).toBe(true);
       expect(formatted).toContain("kB");
+    });
+  });
+
+  describe("caching and fetching download sizes", () => {
+    it("fetches and caches song bundle download size", async () => {
+      jest.spyOn(api.songBundles, "getDownloadSize").mockResolvedValueOnce(954514);
+
+      expect(getCachedSongBundleDownloadSize("bundle-1")).toBeUndefined();
+
+      const size = await fetchSongBundleDownloadSize("bundle-1");
+      expect(size).toBe(954514);
+      expect(getCachedSongBundleDownloadSize("bundle-1")).toBe(954514);
+
+      // Second call uses cache
+      const cached = await fetchSongBundleDownloadSize("bundle-1");
+      expect(cached).toBe(954514);
+      expect(api.songBundles.getDownloadSize).toHaveBeenCalledTimes(1);
     });
   });
 });

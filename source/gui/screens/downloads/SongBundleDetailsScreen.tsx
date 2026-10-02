@@ -30,7 +30,7 @@ import ConfirmationModal from "../../components/popups/ConfirmationModal";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { IsDownloadingIcon } from "./common";
 import { useIsMounted } from "../../components/utils";
-import { formatSongBundleDownloadSize } from "./downloadSize";
+import { formatSongBundleDownloadSize, fetchSongBundleDownloadSize, getCachedSongBundleDownloadSize } from "./downloadSize";
 
 interface Props extends NativeStackScreenProps<ParamList, typeof SongBundleDetailsRoute> {}
 
@@ -58,6 +58,9 @@ const SongBundleDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const [isProcessingAction, setIsProcessingAction] = useState(false);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [exactRemoteSize, setExactRemoteSize] = useState<number | undefined>(
+    getCachedSongBundleDownloadSize(bundleUuid)
+  );
 
   const isMounted = useIsMounted();
   const theme = useTheme();
@@ -79,6 +82,25 @@ const SongBundleDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     }
     return undefined;
   }, []);
+
+  // Fetch exact download size in background if not downloaded locally
+  useEffect(() => {
+    const cached = getCachedSongBundleDownloadSize(currentUuid);
+    setExactRemoteSize(cached);
+
+    if (localBundle) return;
+    if (cached !== undefined) return;
+
+    let active = true;
+    fetchSongBundleDownloadSize(currentUuid).then((bytes) => {
+      if (active && bytes !== undefined) {
+        setExactRemoteSize(bytes);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [currentUuid, localBundle]);
 
   // Sync local bundle on uuid change & listen for Realm changes
   useEffect(() => {
@@ -137,6 +159,7 @@ const SongBundleDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       return;
     }
 
+    setServerBundle(undefined);
     setIsLoadingServer(true);
     Server.fetchSongBundle({ uuid: currentUuid }, { loadSongs: false, loadVerses: false, loadAbcMelodies: false })
       .then(data => {
@@ -316,7 +339,7 @@ ${DeepLinking.generateLinkForSongBundle(activeBundle)}`
 
   const songCount = localBundle ? localBundle.songs.length : (serverBundle?.size ?? serverBundle?.songs?.length ?? 0);
   const bundleYear = getBundleYear(activeBundle);
-  const downloadSize = formatSongBundleDownloadSize(serverBundle, localBundle);
+  const downloadSize = formatSongBundleDownloadSize(serverBundle, localBundle, exactRemoteSize);
   const bundleCopyright = (activeBundle?.copyright?.trim())
     || (localBundle?.copyright?.trim())
     || (serverBundle?.copyright?.trim())
@@ -443,9 +466,9 @@ ${DeepLinking.generateLinkForSongBundle(activeBundle)}`
             <SafeText style={styles.infoRowValue}>{bundleCopyright}</SafeText>
           </View>
 
-          <SafeText style={styles.licenseDescription}>
-            This song bundle is provided for personal, church, and community worship use under open access permissions.
-          </SafeText>
+          {/*<SafeText style={styles.licenseDescription}>*/}
+            {/*This song bundle is provided for personal, church, and community worship use under open access permissions.*/}
+          {/*</SafeText>*/}
         </View>
 
         {/* Action Buttons */}

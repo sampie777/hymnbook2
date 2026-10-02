@@ -133,6 +133,7 @@ const DocumentGroupDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       return;
     }
 
+    setServerGroup(undefined);
     setIsLoadingServer(true);
     DocumentServer.fetchDocumentGroup({ uuid: currentUuid }, { loadGroups: false, loadItems: false, loadContent: false })
       .then(data => {
@@ -426,9 +427,9 @@ const DocumentGroupDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             <SafeText style={styles.infoRowValue}>Public Domain / Church Community</SafeText>
           </View>
 
-          <SafeText style={styles.licenseDescription}>
-            These documents are made available for personal, study, and liturgical worship use under open access permissions.
-          </SafeText>
+          {/*<SafeText style={styles.licenseDescription}>*/}
+          {/*  These documents are made available for personal, study, and liturgical worship use under open access permissions.*/}
+          {/*</SafeText>*/}
         </View>
 
         {/* Action Buttons */}
