@@ -341,3 +341,4 @@ export const isDbItemValid = (item: unknown) =>
     typeof (item as Realm.Object).isValid !== 'function'
     || (item as Realm.Object).isValid()
   );
+export const isUuidEmpty = (uuid?: string | null): boolean => !uuid || uuid.trim().length === 0;

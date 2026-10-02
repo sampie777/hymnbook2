@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { isUuidEmpty } from "../../../logic/utils/utils.ts";
+import React, { useEffect, useRef, useState } from "react";
 import Config from "react-native-config";
 import { SongBundle, SongBundle as LocalSongBundle } from "../../../logic/db/models/songs/Songs";
 import { SongBundle as ServerSongBundle } from "../../../logic/server/models/ServerSongsModel";
@@ -23,6 +24,9 @@ import { CollectionChangeSet, OrderedCollection } from "realm";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 import { isConnectionError } from "../../../logic/apiUtils";
 import SafeText from "../../components/SafeText.tsx";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ParamList, SongBundleDetailsRoute } from "../../../navigation";
 
 type ServerDataType = ServerSongBundle;
 type LocalDataType = LocalSongBundle;
@@ -40,6 +44,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
                                                          dismissPromptForUuid
                                                        }) => {
   const isMounted = useIsMounted();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamList>>();
   const [isProcessingLocalData, setIsProcessingLocalData] = useState(false);
   const [isServerDataLoading, setIsServerDataLoading] = useState(false);
   const [isLocalDataLoading, setIsLocalDataLoading] = useState(true);
@@ -53,14 +58,30 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
   const [filterLanguage, setFilterLanguage] = useState("");
   const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
+  const hasPromptedMigrationOnOpen = useRef(false);
 
   useEffect(() => {
     onOpen();
     return onClose;
   }, []);
 
+  const checkMigrationOnOpen = () => {
+    try {
+      if (Db.songs.isConnected()) {
+        const localObjects = Db.songs.realm().objects<ItemType>(SongBundleSchema.name);
+        if (localObjects.some(it => isUuidEmpty(it.uuid))) {
+          hasPromptedMigrationOnOpen.current = true;
+          promptDatabaseUpdate();
+        }
+      }
+    } catch (error) {
+      rollbar.error("Failed to check SongBundle migration on open", sanitizeErrorForRollbar(error));
+    }
+  };
+
   const onOpen = () => {
     fetchServerData();
+    checkMigrationOnOpen();
     try {
       Db.songs.realm().objects<ItemType>(SongBundleSchema.name).addListener(onCollectionChange);
     } catch (error) {
@@ -85,6 +106,14 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     if (isLocalDataLoading) return;
     loadAndPromptSpecificItem();
   }, [promptForUuid, isLocalDataLoading]);
+
+  useEffect(() => {
+    if (isLocalDataLoading || hasPromptedMigrationOnOpen.current) return;
+    if (localData.some(b => isUuidEmpty(b.uuid))) {
+      hasPromptedMigrationOnOpen.current = true;
+      promptDatabaseUpdate();
+    }
+  }, [isLocalDataLoading, localData]);
 
   const processLocalDataChanges = (collection: OrderedCollection<Realm.Object<ItemType> & ItemType>) => {
     if (!isMounted()) return;
@@ -120,6 +149,18 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     processLocalDataChangesDebounced(collection, changes);
   }
 
+  const openBundleDetails = (uuid: string) => {
+    const visibleBundles = [
+      ...localData.filter(isOfSelectedLanguage),
+      ...serverData.filter(it => !SongProcessor.isBundleLocal(localData, it)).filter(isOfSelectedLanguage)
+    ];
+
+    navigation.navigate(SongBundleDetailsRoute, {
+      bundleUuid: uuid,
+      bundleUuids: visibleBundles.map(it => it.uuid),
+    });
+  };
+
   const loadAndPromptSpecificItem = () => {
     if (!promptForUuid) return;
     if (localData.find(it => it.uuid === promptForUuid)) return;
@@ -132,7 +173,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
         if (localData.find(it => it.uuid === promptForUuid)) return;
 
         setFilterLanguage(data.language);
-        setRequestDownloadForItem(data);
+        openBundleDetails(data.uuid);
       })
       .catch(error => {
         if (isConnectionError(error)) {
@@ -169,10 +210,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
       });
   };
 
-  const applyUuidUpdateForPullRequest8 = () => {
-    SongUpdater.updateLocalBundlesWithUuid(localData, serverData);
-  };
-  useEffect(applyUuidUpdateForPullRequest8, [serverData]);
+
 
   const isPopupOpen = () => requestDeleteForItem !== undefined || requestDownloadForItem !== undefined;
 
@@ -190,23 +228,58 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
       }));
   };
 
-  const onServerItemPress = (item: ServerDataType) => {
+  const updateUuidsDirectly = async () => {
+    let serverList = serverData;
+    if (serverList.length === 0) {
+      try {
+        setIsServerDataLoading(true);
+        serverList = await Server.fetchSongBundles();
+        setServerData(serverList);
+      } catch (error) {
+        Alert.alert("Update failed", "Could not fetch updates from server. Please check your internet connection.");
+        return;
+      } finally {
+        setIsServerDataLoading(false);
+      }
+    }
+    SongUpdater.updateLocalBundlesWithUuid(localData, serverList);
+  };
+
+  const promptDatabaseUpdate = () => {
+    Alert.alert(
+      "Database update required",
+      "You need to update your databases, otherwise the app won't work correctly.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Update",
+          onPress: updateUuidsDirectly
+        }
+      ]
+    );
+  };
+
+  const handleItemPressWithMigrationCheck = (item: LocalDataType | ServerDataType) => {
     if (isProcessingLocalData || isPopupOpen()) return;
 
-    setRequestDownloadForItem(item);
+    const hasEmptyUuids = isUuidEmpty(item.uuid) || localData.some(b => isUuidEmpty(b.uuid));
+    if (hasEmptyUuids) {
+      promptDatabaseUpdate();
+      return;
+    }
+
+    openBundleDetails(item.uuid);
+  };
+
+  const onServerItemPress = (item: ServerDataType) => {
+    handleItemPressWithMigrationCheck(item);
   };
 
   const onLocalItemPress = (item: LocalDataType) => {
-    if (isProcessingLocalData || isPopupOpen()) return;
-
-    if (SongProcessor.hasUpdate(serverData, item)) {
-      const serverItem = SongProcessor.getMatchingServerBundle(serverData, item);
-      if (serverItem !== undefined) {
-        return setRequestUpdateForItem(serverItem);
-      }
-    }
-
-    setRequestDeleteForItem(item);
+    handleItemPressWithMigrationCheck(item);
   };
 
   const onConfirmDownload = () => {

@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import {objectToArrayIfNotAlready, readableFileSizeIEC, readableFileSizeSI} from "../../source/logic/utils/utils";
+import {isUuidEmpty, objectToArrayIfNotAlready, readableFileSizeIEC, readableFileSizeSI} from "../../source/logic/utils/utils";
 
 describe("test utils", () => {
   it("converts any object to an array type", () => {
@@ -8,6 +8,19 @@ describe("test utils", () => {
     expect(objectToArrayIfNotAlready([1])).toStrictEqual([1]);
     expect(objectToArrayIfNotAlready([1, 3])).toStrictEqual([1, 3]);
     expect(objectToArrayIfNotAlready([1, [2, 3]])).toStrictEqual([1, [2, 3]]);
+  });
+
+  it("checks whether uuid is empty (permits all zeros, but not empty)", () => {
+    expect(isUuidEmpty(undefined)).toBe(true);
+    expect(isUuidEmpty(null)).toBe(true);
+    expect(isUuidEmpty("")).toBe(true);
+    expect(isUuidEmpty("   ")).toBe(true);
+    // Zeros are permitted (not empty)
+    expect(isUuidEmpty("0")).toBe(false);
+    expect(isUuidEmpty("00000000-0000-0000-0000-000000000000")).toBe(false);
+    // Normal uuids
+    expect(isUuidEmpty("uuid-123")).toBe(false);
+    expect(isUuidEmpty("c9bf9e57-1685-4c89-bafb-ff5af830be8a")).toBe(false);
   });
 
   it("converts file size to readable file sizes in SI units (1000th)", () => {
@@ -22,7 +35,7 @@ describe("test utils", () => {
     expect(readableFileSizeSI((1000 - 1) * 1000)).toBe("999 kB");
     expect(readableFileSizeSI(1000 * 1000)).toBe("1.0 MB");
     expect(readableFileSizeSI(1000 * 1000 * 1000)).toBe("1.0 GB");
-  })
+  });
 
   it("converts file size to readable file sizes in IEC units (1024th)", () => {
     expect(readableFileSizeIEC(0)).toBe("0 bytes");
@@ -36,5 +49,5 @@ describe("test utils", () => {
     expect(readableFileSizeIEC((1024 - 1) * 1024)).toBe("1023 KiB");
     expect(readableFileSizeIEC(1024 * 1024)).toBe("1.0 MiB");
     expect(readableFileSizeIEC(1024 * 1024 * 1024)).toBe("1.0 GiB");
-  })
+  });
 });

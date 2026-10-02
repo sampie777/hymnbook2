@@ -1,5 +1,5 @@
 import { SongBundle as ServerSongBundle } from "../../server/models/ServerSongsModel";
-import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
+import { isUuidEmpty, sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";
 import { Server } from "../../server/server";
@@ -29,7 +29,7 @@ export namespace SongUpdater {
     }
 
     localBundles
-      .filter(it => it.uuid == "")
+      .filter(it => isUuidEmpty(it.uuid))
       .forEach(it => {
         const serverBundle = serverBundles.find(serverBundle => serverBundle.name == it.name);
         if (serverBundle === undefined) {

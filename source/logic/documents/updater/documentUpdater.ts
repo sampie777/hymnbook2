@@ -1,5 +1,5 @@
 import { DocumentGroup as ServerDocumentGroup } from "../../server/models/Documents";
-import { sanitizeErrorForRollbar } from "../../utils/utils.ts";
+import { isUuidEmpty, sanitizeErrorForRollbar } from "../../utils/utils.ts";
 import { DocumentServer } from "../documentServer";
 import Db from "../../db/db";
 import { rollbar } from "../../rollbar";
@@ -31,9 +31,14 @@ export namespace DocumentUpdater {
       throw new Error("Document group contains no documents or groups");
     }
 
-    const existingGroup = Db.documents.realm()
+    let existingGroup = Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
       .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
+    if (existingGroup.length === 0 && group.name) {
+      existingGroup = Db.documents.realm()
+        .objects<DocumentGroup>(DocumentGroupSchema.name)
+        .filtered(`name = "${group.name}" AND isRoot = true`);
+    }
     if (existingGroup.length > 0) {
       throw new Error(`Document group ${group.name} already exists`);
     }
@@ -101,7 +106,7 @@ export namespace DocumentUpdater {
     }
 
     localGroups
-      .filter(it => it.uuid == "")
+      .filter(it => isUuidEmpty(it.uuid))
       .forEach(it => {
         const serverGroup = serverGroups.find(serverGroup => serverGroup.name == it.name);
         if (serverGroup === undefined) {

@@ -1,6 +1,6 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
-import { Result, sanitizeErrorForRollbar } from "../utils/utils.ts";
+import { Result, isUuidEmpty, sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { DocumentGroup } from "../db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../server/models/Documents";
 import { DocumentGroupSchema } from "../db/models/documents/DocumentsSchema";
@@ -94,10 +94,10 @@ export namespace DocumentProcessor {
   };
 
   export const getMatchingServerGroup = (serverGroups: ServerDocumentGroup[], group: DocumentGroup): ServerDocumentGroup | undefined => {
-    return serverGroups.find(it => it.uuid == group.uuid);
+    return serverGroups.find(it => (!isUuidEmpty(group.uuid) && it.uuid == group.uuid) || (Boolean(group.name) && it.name.trim().toLowerCase() == group.name.trim().toLowerCase()));
   };
 
   export const isGroupLocal = (localGroups: DocumentGroup[], group: ServerDocumentGroup) => {
-    return localGroups.some(it => it.uuid == group.uuid);
+    return localGroups.some(it => (!isUuidEmpty(it.uuid) && it.uuid == group.uuid) || (Boolean(it.name) && it.name.trim().toLowerCase() == group.name.trim().toLowerCase()));
   };
 }

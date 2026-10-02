@@ -5,6 +5,22 @@ import { DocumentGroup as ServerDocumentGroup, ServerDocumentGroupUpdateStatus }
 import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
 export namespace DocumentServer {
+  const documentGroupsCache: Map<string, ServerDocumentGroup> = new Map();
+
+  export const getCachedDocumentGroup = (uuid: string): ServerDocumentGroup | undefined => {
+    return documentGroupsCache.get(uuid);
+  };
+
+  export const setDocumentGroupsCache = (groups: ServerDocumentGroup[]) => {
+    groups.forEach(it => {
+      if (it.uuid) documentGroupsCache.set(it.uuid, it);
+    });
+  };
+
+  export const clearDocumentGroupsCache = () => {
+    documentGroupsCache.clear();
+  };
+
   export const fetchDocumentGroups = (includeOther: boolean = false): Promise<ServerDocumentGroup[]> => {
     return api.documents.groups.root()
       .then(r => parseJscheduleResponse<ServerDocumentGroup[]>(r))
@@ -13,6 +29,7 @@ export namespace DocumentServer {
           groups = groups.filter(it => it.name !== "Other");
         }
 
+        setDocumentGroupsCache(groups);
         return groups;
       })
       .catch(error => {
@@ -43,8 +60,21 @@ export namespace DocumentServer {
     loadItems = false,
     loadContent = false
   }): Promise<ServerDocumentGroup> => {
+    if (!loadGroups && !loadItems && !loadContent) {
+      const cached = documentGroupsCache.get(group.uuid);
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+    }
+
     return api.documents.groups.get(group.uuid, loadGroups, loadItems, loadContent)
       .then(r => parseJscheduleResponse<ServerDocumentGroup>(r))
+      .then(result => {
+        if (result && result.uuid) {
+          documentGroupsCache.set(result.uuid, result);
+        }
+        return result;
+      })
       .catch(error => {
         throwIfConnectionError(error);
 

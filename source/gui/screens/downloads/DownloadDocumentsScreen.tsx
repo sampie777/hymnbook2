@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { isUuidEmpty } from "../../../logic/utils/utils.ts";
+import React, { useEffect, useRef, useState } from "react";
 import { DocumentGroup, DocumentGroup as LocalDocumentGroup } from "../../../logic/db/models/documents/Documents";
 import { DocumentGroup as ServerDocumentGroup } from "../../../logic/server/models/Documents";
 import { DocumentProcessor } from "../../../logic/documents/documentProcessor";
@@ -21,6 +22,9 @@ import { CollectionChangeSet, OrderedCollection } from "realm";
 import Animated, { FadeInUp, FadeOut } from "react-native-reanimated";
 import { isConnectionError } from "../../../logic/apiUtils";
 import SafeText from "../../components/SafeText.tsx";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { DocumentGroupDetailsRoute, ParamList } from "../../../navigation";
 
 type ServerDataType = ServerDocumentGroup;
 type LocalDataType = LocalDocumentGroup;
@@ -38,6 +42,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
                                                              dismissPromptForUuid
                                                            }) => {
   const isMounted = useIsMounted();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamList>>();
   const [isProcessingLocalData, setIsProcessingLocalData] = useState(false);
   const [isServerDataLoading, setIsServerDataLoading] = useState(false);
   const [isLocalDataLoading, setIsLocalDataLoading] = useState(true);
@@ -51,6 +56,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   const [filterLanguage, setFilterLanguage] = useState("");
   const updaterContext = useUpdaterContext();
   const styles = createStyles(useTheme());
+  const hasPromptedMigrationOnOpen = useRef(false);
 
   useEffect(() => {
     onOpen();
@@ -88,6 +94,14 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     loadAndPromptSpecificItem();
   }, [promptForUuid, isLocalDataLoading]);
 
+  useEffect(() => {
+    if (isLocalDataLoading || hasPromptedMigrationOnOpen.current) return;
+    if (localData.some(g => isUuidEmpty(g.uuid))) {
+      hasPromptedMigrationOnOpen.current = true;
+      promptDatabaseUpdate();
+    }
+  }, [isLocalDataLoading, localData]);
+
   const processLocalDataChanges = (collection: OrderedCollection<Realm.Object<ItemType> & ItemType>) => {
     if (!isMounted()) return;
     setIsLocalDataLoading(true);
@@ -109,18 +123,28 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(distinctData));
       }
     } catch (error) {
-      rollbar.error("Failed to load local DocumentGroups from collection change", sanitizeErrorForRollbar(error));
+      rollbar.error("Failed to process DocumentGroup local data change", sanitizeErrorForRollbar(error));
     }
-
     setIsLocalDataLoading(false);
   };
-
-  const processLocalDataChangesDebounced = debounce(processLocalDataChanges, 300);
+  const processLocalDataChangesDebounced = debounce(processLocalDataChanges, 100);
 
   const onCollectionChange = (collection: OrderedCollection<Realm.Object<ItemType> & ItemType>, changes: CollectionChangeSet) => {
     if (!isMounted()) return;
     processLocalDataChangesDebounced(collection, changes);
   }
+
+  const openGroupDetails = (uuid: string) => {
+    const visibleGroups = [
+      ...localData.filter(isOfSelectedLanguage),
+      ...serverData.filter(it => !DocumentProcessor.isGroupLocal(localData, it)).filter(isOfSelectedLanguage)
+    ];
+
+    navigation.navigate(DocumentGroupDetailsRoute, {
+      groupUuid: uuid,
+      groupUuids: visibleGroups.map(it => it.uuid),
+    });
+  };
 
   const loadAndPromptSpecificItem = () => {
     if (!promptForUuid) return;
@@ -134,7 +158,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
         if (localData.find(it => it.uuid === promptForUuid)) return;
 
         setFilterLanguage(data.language);
-        setRequestDownloadForItem(data);
+        openGroupDetails(data.uuid);
       })
       .catch(error => {
         if (isConnectionError(error)) {
@@ -171,10 +195,7 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       });
   };
 
-  const applyUuidUpdateForPullRequest8 = () => {
-    DocumentUpdater.updateLocalGroupsWithUuid(localData, serverData);
-  };
-  useEffect(applyUuidUpdateForPullRequest8, [serverData]);
+
 
   const isPopupOpen = () => requestDeleteForItem !== undefined || requestDownloadForItem !== undefined;
 
@@ -192,23 +213,58 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       }));
   };
 
-  const onServerItemPress = (item: ServerDataType) => {
+  const updateUuidsDirectly = async () => {
+    let serverList = serverData;
+    if (serverList.length === 0) {
+      try {
+        setIsServerDataLoading(true);
+        serverList = await DocumentServer.fetchDocumentGroups();
+        setServerData(serverList);
+      } catch (error) {
+        Alert.alert("Update failed", "Could not fetch updates from server. Please check your internet connection.");
+        return;
+      } finally {
+        setIsServerDataLoading(false);
+      }
+    }
+    DocumentUpdater.updateLocalGroupsWithUuid(localData, serverList);
+  };
+
+  const promptDatabaseUpdate = () => {
+    Alert.alert(
+      "Database update required",
+      "You need to update your databases, otherwise the app won't work correctly.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Update",
+          onPress: updateUuidsDirectly
+        }
+      ]
+    );
+  };
+
+  const handleItemPressWithMigrationCheck = (item: LocalDataType | ServerDataType) => {
     if (isProcessingLocalData || isPopupOpen()) return;
 
-    setRequestDownloadForItem(item);
+    const hasEmptyUuids = isUuidEmpty(item.uuid) || localData.some(g => isUuidEmpty(g.uuid));
+    if (hasEmptyUuids) {
+      promptDatabaseUpdate();
+      return;
+    }
+
+    openGroupDetails(item.uuid);
+  };
+
+  const onServerItemPress = (item: ServerDataType) => {
+    handleItemPressWithMigrationCheck(item);
   };
 
   const onLocalItemPress = (item: LocalDataType) => {
-    if (isProcessingLocalData || isPopupOpen()) return;
-
-    if (DocumentProcessor.hasUpdate(serverData, item)) {
-      const serverItem = DocumentProcessor.getMatchingServerGroup(serverData, item);
-      if (serverItem !== undefined) {
-        return setRequestUpdateForItem(serverItem);
-      }
-    }
-
-    setRequestDeleteForItem(item);
+    handleItemPressWithMigrationCheck(item);
   };
 
   const onConfirmDownload = () => {

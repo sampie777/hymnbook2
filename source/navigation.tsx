@@ -14,6 +14,8 @@ export const AboutRoute = "About";
 export const PrivacyPolicyRoute = "PrivacyPolicy";
 export const OtherMenuRoute = "OtherMenu";
 export const DatabasesRoute = "Databases";
+export const SongBundleDetailsRoute = "SongBundleDetails";
+export const DocumentGroupDetailsRoute = "DocumentGroupDetails";
 export const SongSearchRoute = "SongSearch";
 export const SongListRoute = "SongList";
 export const SongRoute = "Song";
@@ -34,6 +36,14 @@ export type ParamList = {
   Databases: {
     type?: Types,
     promptForUuid?: string;
+  },
+  SongBundleDetails: {
+    bundleUuid: string;
+    bundleUuids?: string[];
+  },
+  DocumentGroupDetails: {
+    groupUuid: string;
+    groupUuids?: string[];
   },
 
   SongSearch: undefined,

@@ -6,6 +6,22 @@ import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { Song, SongAudio } from "../db/models/songs/Songs";
 
 export namespace Server {
+  const songBundlesCache: Map<string, SongBundle> = new Map();
+
+  export const getCachedSongBundle = (uuid: string): SongBundle | undefined => {
+    return songBundlesCache.get(uuid);
+  };
+
+  export const setSongBundlesCache = (bundles: SongBundle[]) => {
+    bundles.forEach(it => {
+      if (it.uuid) songBundlesCache.set(it.uuid, it);
+    });
+  };
+
+  export const clearSongBundlesCache = () => {
+    songBundlesCache.clear();
+  };
+
   export const fetchSongBundles = (includeOther: boolean = false): Promise<SongBundle[]> => {
     return api.songBundles.list()
       .then(r => parseJscheduleResponse<SongBundle[]>(r))
@@ -14,6 +30,7 @@ export namespace Server {
           bundles = bundles.filter(it => it.name !== "Other");
         }
 
+        setSongBundlesCache(bundles);
         return bundles;
       })
       .catch(error => {
@@ -44,8 +61,21 @@ export namespace Server {
     loadVerses = false,
     loadAbcMelodies = false
   }): Promise<SongBundle> => {
+    if (!loadSongs && !loadVerses && !loadAbcMelodies) {
+      const cached = songBundlesCache.get(bundle.uuid);
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+    }
+
     return api.songBundles.get(bundle.uuid, loadSongs, loadVerses, loadAbcMelodies)
       .then(r => parseJscheduleResponse<SongBundle>(r))
+      .then(result => {
+        if (result && result.uuid) {
+          songBundlesCache.set(result.uuid, result);
+        }
+        return result;
+      })
       .catch(error => {
         throwIfConnectionError(error);
 

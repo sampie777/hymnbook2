@@ -1,7 +1,7 @@
 import { rollbar } from "../rollbar";
 import Db from "../db/db";
 import config from "../../config";
-import { sanitizeErrorForRollbar } from "../utils/utils.ts";
+import { isUuidEmpty, sanitizeErrorForRollbar } from "../utils/utils.ts";
 import { SongBundle, Verse } from "../db/models/songs/Songs";
 import { AbcMelody as ServerAbcMelody, SongBundle as ServerSongBundle, } from "../server/models/ServerSongsModel";
 import { SongBundleSchema } from "../db/models/songs/SongsSchema";
@@ -24,8 +24,21 @@ export namespace SongProcessor {
       .map(it => it);  // Convert to array. Array.from() will crash tests
   };
 
-  export const getExistingBundle = (bundle: { uuid: string }) => {
-    return Db.songs.realm()
+  export const getExistingBundle = (bundle: { uuid: string; name?: string }) => {
+    const realm = Db.songs.realm();
+    if (!isUuidEmpty(bundle.uuid)) {
+      const byUuid = realm
+        .objects<SongBundle>(SongBundleSchema.name)
+        .filtered(`uuid = "${bundle.uuid}"`);
+      if (byUuid.length > 0) return byUuid;
+    }
+    if (bundle.name) {
+      const byName = realm
+        .objects<SongBundle>(SongBundleSchema.name)
+        .filtered(`name = "${bundle.name}"`);
+      if (byName.length > 0) return byName;
+    }
+    return realm
       .objects<SongBundle>(SongBundleSchema.name)
       .filtered(`uuid = "${bundle.uuid}"`);
   };
@@ -128,11 +141,11 @@ export namespace SongProcessor {
   };
 
   export const getMatchingServerBundle = (serverBundles: ServerSongBundle[], bundle: SongBundle): ServerSongBundle | undefined => {
-    return serverBundles.find(it => it.uuid == bundle.uuid);
+    return serverBundles.find(it => (!isUuidEmpty(bundle.uuid) && it.uuid == bundle.uuid) || (Boolean(bundle.name) && it.name.trim().toLowerCase() == bundle.name.trim().toLowerCase()));
   };
 
   export const isBundleLocal = (localBundles: SongBundle[], serverBundle: ServerSongBundle) => {
-    return localBundles.some(it => it.uuid == serverBundle.uuid);
+    return localBundles.some(it => (!isUuidEmpty(it.uuid) && it.uuid == serverBundle.uuid) || (Boolean(it.name) && it.name.trim().toLowerCase() == serverBundle.name.trim().toLowerCase()));
   };
 
   export const verseShortName = (verse: Verse) => verse.name.trim()

@@ -24,7 +24,9 @@ import {
   OtherMenuRoute,
   ParamList,
   PrivacyPolicyRoute,
+  DocumentGroupDetailsRoute,
   SettingsRoute,
+  SongBundleDetailsRoute,
   SongHistoryRoute,
   SongListRoute,
   SongRoute,
@@ -55,6 +57,8 @@ import DocumentSearchScreen from "./gui/screens/documents/main/DocumentSearchScr
 import SingleDocument from "./gui/screens/documents/document/SingleDocument";
 import SongListMenuIcon from "./gui/screens/songlist/SongListMenuIcon";
 import DownloadsScreen from "./gui/screens/downloads/DownloadsScreen";
+import SongBundleDetailsScreen from "./gui/screens/downloads/SongBundleDetailsScreen";
+import DocumentGroupDetailsScreen from "./gui/screens/downloads/DocumentGroupDetailsScreen";
 import StringSearchScreen from "./gui/screens/songs/stringSearch/StringSearchScreen";
 import FeaturesProvider, { useFeatures } from "./gui/components/providers/FeaturesProvider";
 import DeepLinkHandler from "./gui/components/DeepLinkHandler";
@@ -140,6 +144,10 @@ const RootNavigation = () => {
                     initialParams={{
                       type: Types.Songs
                     }} />
+    <RootNav.Screen name={SongBundleDetailsRoute} component={SongBundleDetailsScreen}
+                    options={{ title: "Details" }} />
+    <RootNav.Screen name={DocumentGroupDetailsRoute} component={DocumentGroupDetailsScreen}
+                    options={{ title: "Details" }} />
   </RootNav.Navigator>;
 };
 
