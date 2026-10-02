@@ -64,7 +64,9 @@ const SongBundleDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const styles = createStyles(theme);
   const updaterContext = useUpdaterContext();
 
-  const isUpdating = updaterContext.songBundlesUpdating.some(it => it.uuid === currentUuid);
+  const updatingItem = updaterContext.songBundlesUpdating.find(it => it.uuid === currentUuid);
+  const isUpdating = Boolean(updatingItem);
+  const progress = updatingItem?.progress ?? 0;
 
   const queryLocalBundle = useCallback((uuid: string): LocalSongBundle | undefined => {
     try {
@@ -197,9 +199,11 @@ ${error}`);
     if (!serverBundle || isUpdating || isProcessingAction) return;
 
     setIsProcessingAction(true);
-    updaterContext.addSongBundleUpdating(serverBundle);
+    updaterContext.addSongBundleUpdating({ uuid: serverBundle.uuid, progress: 0 });
 
-    SongUpdater.fetchAndSaveSongBundle(serverBundle)
+    SongUpdater.fetchAndSaveSongBundle(serverBundle, (prog) => {
+      updaterContext.updateSongBundleProgress(serverBundle.uuid, prog.percent);
+    })
       .then(() => {
         if (!isMounted()) return;
         setLocalBundle(queryLocalBundle(currentUuid));
@@ -214,9 +218,10 @@ ${error}`);
         }
       })
       .finally(() => {
-        if (!isMounted()) return;
+        if (isMounted()) {
+          setIsProcessingAction(false);
+        }
         updaterContext.removeSongBundleUpdating(serverBundle);
-        setIsProcessingAction(false);
       });
   };
 
@@ -224,9 +229,11 @@ ${error}`);
     if (!serverBundle || isUpdating || isProcessingAction) return;
 
     setIsProcessingAction(true);
-    updaterContext.addSongBundleUpdating(serverBundle);
+    updaterContext.addSongBundleUpdating({ uuid: serverBundle.uuid, progress: 0 });
 
-    SongUpdater.fetchAndUpdateSongBundle(serverBundle)
+    SongUpdater.fetchAndUpdateSongBundle(serverBundle, (prog) => {
+      updaterContext.updateSongBundleProgress(serverBundle.uuid, prog.percent);
+    })
       .then(() => {
         if (!isMounted()) return;
         setLocalBundle(queryLocalBundle(currentUuid));
@@ -241,9 +248,10 @@ ${error}`);
         }
       })
       .finally(() => {
-        if (!isMounted()) return;
+        if (isMounted()) {
+          setIsProcessingAction(false);
+        }
         updaterContext.removeSongBundleUpdating(serverBundle);
-        setIsProcessingAction(false);
       });
   };
 
@@ -253,9 +261,8 @@ ${error}`);
 
     setIsProcessingAction(true);
     try {
-      const message = SongProcessor.deleteSongBundle(localBundle);
+      SongProcessor.deleteSongBundle(localBundle);
       setLocalBundle(undefined);
-      Alert.alert("Success", message);
     } catch (error) {
       rollbar.error("Failed to delete song bundle", sanitizeErrorForRollbar(error));
       Alert.alert("Error", `Could not delete song bundle: 
@@ -443,6 +450,14 @@ ${DeepLinking.generateLinkForSongBundle(activeBundle)}`
 
         {/* Action Buttons */}
         <View style={styles.actionsCard}>
+          {isUpdating ? (
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBarTrack}>
+                <View style={[styles.progressBarIndicator, { width: `${Math.max(2, Math.round(progress * 100))}%` }]} />
+              </View>
+            </View>
+          ) : null}
+
           {!isLocal && serverBundle ? (
             <TouchableOpacity
               style={[styles.primaryButton, isUpdating && styles.buttonDisabled]}
@@ -722,6 +737,21 @@ const createStyles = ({ colors }: ThemeContextProps) =>
     actionsCard: {
       gap: 10,
       marginBottom: 16,
+    },
+    progressContainer: {
+      marginBottom: 14,
+      width: "100%",
+    },
+    progressBarTrack: {
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: colors.surface3,
+      overflow: "hidden",
+    },
+    progressBarIndicator: {
+      height: "100%",
+      borderRadius: 3,
+      backgroundColor: colors.primary.default,
     },
     primaryButton: {
       backgroundColor: colors.primary.default,

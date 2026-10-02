@@ -1,13 +1,21 @@
 import { ServerAuth } from "./server/auth";
 import { databaseHost, hymnbookHost } from "../../app.json";
 import { Song, SongAudio } from "./db/models/songs/Songs";
+import { BackendError, HttpError } from "./apiUtils";
+import { SongBundle as ServerSongBundle } from "./server/models/ServerSongsModel";
 import Settings from "../settings";
 import fetchBuilder from "fetch-retry";
 import config from "../config";
 
 export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
-const databaseApiEndpoint = `${databaseHost}/api/v1`;
+export interface DownloadProgress {
+  loaded: number;
+  total: number;
+  percent: number;
+}
+
+export const databaseApiEndpoint = `${databaseHost}/api/v1`;
 export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
 
 export const isLocalhostServer = (url: string = databaseHost): boolean => {
@@ -55,6 +63,81 @@ export const api = {
         `&loadVerses=${loadVerses ? "true" : "false"}` +
         `&loadAbcMelodies=${loadAbcMelodies ? "true" : "false"}`),
     updates: () => get(`${databaseApiEndpoint}/songs/bundles/updates`),
+    download: (
+      idOrUuid: string | number,
+      onProgress?: (progress: DownloadProgress) => void
+    ): Promise<ServerSongBundle> => {
+      const startRequest = (retryAuth = true): Promise<ServerSongBundle> => {
+        return new Promise<ServerSongBundle>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          const url = `${databaseApiEndpoint}/songs/bundles/${idOrUuid}/download`;
+
+          xhr.open("GET", url, true);
+          xhr.setRequestHeader("Accept", "application/json");
+          const jwt = ServerAuth.getJwt();
+          if (jwt) {
+            xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
+          }
+
+          xhr.onprogress = (event) => {
+            if (event.lengthComputable && event.total > 0) {
+              const percent = Math.min(1, Math.max(0, event.loaded / event.total));
+              onProgress?.({
+                loaded: event.loaded,
+                total: event.total,
+                percent,
+              });
+            } else if (event.loaded > 0) {
+              onProgress?.({
+                loaded: event.loaded,
+                total: event.total || event.loaded,
+                percent: 0,
+              });
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status === 401 || xhr.status === 403) {
+              if (retryAuth) {
+                ServerAuth.authenticate()
+                  .then(() => resolve(startRequest(false)))
+                  .catch(reject);
+                return;
+              }
+            }
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const response = JSON.parse(xhr.responseText);
+                if (response && response.type === "SUCCESS" && response.content) {
+                  resolve(response.content as ServerSongBundle);
+                } else if (response && response.type === "ERROR") {
+                  reject(new BackendError(response.content || "Download error"));
+                } else {
+                  resolve((response.content ?? response) as ServerSongBundle);
+                }
+              } catch (e) {
+                reject(new Error(`Failed to parse download response: ${e}`));
+              }
+            } else {
+              reject(new HttpError(`Download failed with status ${xhr.status}: ${xhr.statusText || xhr.responseText}`));
+            }
+          };
+
+          xhr.onerror = () => {
+            reject(new TypeError("Network request failed"));
+          };
+
+          xhr.ontimeout = () => {
+            reject(new TypeError("Network request failed"));
+          };
+
+          xhr.send();
+        });
+      };
+
+      return startRequest(true);
+    },
   },
 
   songs: {

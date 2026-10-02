@@ -209,9 +209,10 @@ const DocumentGroupDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         }
       })
       .finally(() => {
-        if (!isMounted()) return;
+        if (isMounted()) {
+          setIsProcessingAction(false);
+        }
         updaterContext.removeDocumentGroupUpdating(serverGroup);
-        setIsProcessingAction(false);
       });
   };
 
@@ -235,9 +236,10 @@ const DocumentGroupDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         }
       })
       .finally(() => {
-        if (!isMounted()) return;
+        if (isMounted()) {
+          setIsProcessingAction(false);
+        }
         updaterContext.removeDocumentGroupUpdating(serverGroup);
-        setIsProcessingAction(false);
       });
   };
 

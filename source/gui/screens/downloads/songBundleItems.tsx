@@ -24,7 +24,9 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
      }) => {
   const styles = createStyles(useTheme());
   const { songBundlesUpdating } = useUpdaterContext();
-  const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+  const updatingItem = songBundlesUpdating.find(it => it.uuid === bundle.uuid);
+  const isUpdating = Boolean(updatingItem);
+  const progress = updatingItem?.progress ?? 0;
 
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
@@ -52,6 +54,11 @@ export const SongBundleItem: React.FC<SongBundleItemComponentProps>
       <View>
         {isUpdating ? <IsDownloadingIcon /> : <DownloadIcon />}
       </View>
+      {isUpdating ? (
+        <View style={styles.progressBarTrack}>
+          <View style={[styles.progressBarIndicator, { width: `${Math.max(2, Math.round(progress * 100))}%` }]} />
+        </View>
+      ) : null}
     </TouchableOpacity>
   );
 };
@@ -74,7 +81,9 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
      }) => {
   const styles = createStyles(useTheme());
   const { songBundlesUpdating } = useUpdaterContext();
-  const isUpdating = songBundlesUpdating.some(it => it.uuid === bundle.uuid);
+  const updatingItem = songBundlesUpdating.find(it => it.uuid === bundle.uuid);
+  const isUpdating = Boolean(updatingItem);
+  const progress = updatingItem?.progress ?? 0;
 
   return (
     <TouchableOpacity onPress={() => onPress(bundle)}
@@ -101,6 +110,11 @@ export const LocalSongBundleItem: React.FC<LocalSongBundleItemComponentProps>
         {isUpdating ? <IsDownloadingIcon /> :
           (!hasUpdate ? <IsDownloadedIcon /> : <UpdateIcon />)}
       </View>
+      {isUpdating ? (
+        <View style={styles.progressBarTrack}>
+          <View style={[styles.progressBarIndicator, { width: `${Math.max(2, Math.round(progress * 100))}%` }]} />
+        </View>
+      ) : null}
     </TouchableOpacity>
   );
 };
@@ -114,7 +128,8 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
     borderBottomWidth: 1,
     backgroundColor: colors.surface1,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    overflow: "hidden"
   },
   titleText: {
     paddingLeft: 20,
@@ -130,5 +145,18 @@ const createStyles = ({ colors }: ThemeContextProps) => StyleSheet.create({
   infoText: {
     fontSize: 13,
     color: colors.text.lighter
+  },
+  progressBarTrack: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    backgroundColor: colors.surface3,
+    overflow: "hidden",
+  },
+  progressBarIndicator: {
+    height: "100%",
+    backgroundColor: colors.primary.default,
   }
 });

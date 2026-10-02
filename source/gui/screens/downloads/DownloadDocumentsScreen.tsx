@@ -348,7 +348,9 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
     updaterContext.removeDocumentGroupUpdating(item);
 
     const result = DocumentProcessor.deleteDocumentGroup(item);
-    result.alert();
+    if (!result.success) {
+      result.alert();
+    }
     setIsProcessingLocalData(false);
     result.throwIfException();
   };

@@ -5,18 +5,25 @@ import { rollbar } from "../../rollbar";
 import { Server } from "../../server/server";
 import { SongBundle } from "../../db/models/songs/Songs";
 import { SongUpdaterUtils } from "./songUpdaterUtils";
+import { DownloadProgress } from "../../api";
 
 export namespace SongUpdater {
-  export const fetchAndSaveSongBundle = (bundle: { uuid: string }): Promise<any> =>
-    Server.fetchSongBundleWithSongsAndVerses(bundle)
+  export const fetchAndSaveSongBundle = (
+    bundle: { uuid: string; id?: number },
+    onProgress?: (progress: DownloadProgress) => void
+  ): Promise<any> =>
+    Server.downloadSongBundleWithProgress(bundle, onProgress)
       .then(saveSongBundleToDatabase);
 
   const saveSongBundleToDatabase = (bundle: ServerSongBundle) => {
     SongUpdaterUtils.saveServerSongBundleToDatabase(bundle);
   };
 
-  export const fetchAndUpdateSongBundle = (bundle: { uuid: string }): Promise<any> =>
-    Server.fetchSongBundleWithSongsAndVerses(bundle)
+  export const fetchAndUpdateSongBundle = (
+    bundle: { uuid: string; id?: number },
+    onProgress?: (progress: DownloadProgress) => void
+  ): Promise<any> =>
+    Server.downloadSongBundleWithProgress(bundle, onProgress)
       .then(updateAndSaveSongBundle);
 
   const updateAndSaveSongBundle = (bundle: ServerSongBundle) => {

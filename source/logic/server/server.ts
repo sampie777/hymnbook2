@@ -1,4 +1,4 @@
-import { api } from "../api";
+import { api, DownloadProgress } from "../api";
 import { rollbar } from "../rollbar";
 import { parseJscheduleResponse, throwIfConnectionError } from "../apiUtils";
 import { ServerSongBundleUpdateStatus, SongBundle } from "./models/ServerSongsModel";
@@ -96,6 +96,34 @@ export namespace Server {
       loadVerses: true,
       loadAbcMelodies: true
     });
+
+  export const downloadSongBundleWithProgress = (
+    bundle: { uuid?: string; id?: number },
+    onProgress?: (progress: DownloadProgress) => void
+  ): Promise<SongBundle> => {
+    const idOrUuid = bundle.uuid || bundle.id;
+    if (!idOrUuid) {
+      return Promise.reject(new Error("Cannot download song bundle without uuid or id"));
+    }
+
+    return api.songBundles.download(idOrUuid, onProgress)
+      .then(result => {
+        if (result && result.uuid) {
+          songBundlesCache.set(result.uuid, result);
+        }
+        return result;
+      })
+      .catch(error => {
+        throwIfConnectionError(error);
+
+        rollbar.warning("Download endpoint failed, falling back to standard bundle fetch", {
+          ...sanitizeErrorForRollbar(error),
+          songBundle: bundle,
+        });
+
+        return fetchSongBundleWithSongsAndVerses({ uuid: bundle.uuid || String(bundle.id) });
+      });
+  };
 
   export const fetchAudioFilesForSong = (song: Song): Promise<SongAudio[]> =>
     api.songs.audio.all(song)

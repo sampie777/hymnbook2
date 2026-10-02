@@ -312,11 +312,15 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
   const saveItem = (item: ServerDataType, isUpdate: boolean) => {
     if (!isMounted()) return;
     setIsProcessingLocalData(true);
-    updaterContext.addSongBundleUpdating(item);
+    updaterContext.addSongBundleUpdating({ uuid: item.uuid, progress: 0 });
+
+    const onProgress = (prog: { percent: number }) => {
+      updaterContext.updateSongBundleProgress(item.uuid, prog.percent);
+    };
 
     const call = isUpdate
-      ? SongUpdater.fetchAndUpdateSongBundle(item)
-      : SongUpdater.fetchAndSaveSongBundle(item);
+      ? SongUpdater.fetchAndUpdateSongBundle(item, onProgress)
+      : SongUpdater.fetchAndSaveSongBundle(item, onProgress);
 
     call
       .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
@@ -363,8 +367,7 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
     updaterContext.removeSongBundleUpdating(item);
 
     try {
-      const successMessage = SongProcessor.deleteSongBundle(item)
-      Alert.alert("Success", successMessage);
+      SongProcessor.deleteSongBundle(item);
     } catch (error) {
       alertAndThrow(error);
     } finally {
