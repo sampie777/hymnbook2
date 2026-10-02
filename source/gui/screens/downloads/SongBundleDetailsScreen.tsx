@@ -61,6 +61,7 @@ const SongBundleDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const [exactRemoteSize, setExactRemoteSize] = useState<number | undefined>(
     getCachedSongBundleDownloadSize(bundleUuid)
   );
+  const [isLoadingSize, setIsLoadingSize] = useState(false);
 
   const isMounted = useIsMounted();
   const theme = useTheme();
@@ -88,17 +89,31 @@ const SongBundleDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     const cached = getCachedSongBundleDownloadSize(currentUuid);
     setExactRemoteSize(cached);
 
-    if (localBundle) return;
-    if (cached !== undefined) return;
+    if (localBundle) {
+      setIsLoadingSize(false);
+      return;
+    }
+    if (cached !== undefined) {
+      setIsLoadingSize(false);
+      return;
+    }
 
+    setIsLoadingSize(true);
     let active = true;
-    fetchSongBundleDownloadSize(currentUuid).then((bytes) => {
-      if (active && bytes !== undefined) {
-        setExactRemoteSize(bytes);
-      }
-    });
+    fetchSongBundleDownloadSize(currentUuid)
+      .then((bytes) => {
+        if (active && bytes !== undefined) {
+          setExactRemoteSize(bytes);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setIsLoadingSize(false);
+        }
+      });
     return () => {
       active = false;
+      setIsLoadingSize(false);
     };
   }, [currentUuid, localBundle]);
 
@@ -417,13 +432,24 @@ ${DeepLinking.generateLinkForSongBundle(activeBundle)}`
             <SafeText style={styles.infoRowValue}>{songCount} songs</SafeText>
           </View>
 
-          {downloadSize ? (
+          {downloadSize || isLoadingSize ? (
             <View style={styles.infoRow}>
               <View style={styles.infoRowLabelContainer}>
                 <Icon name="database" size={15} color={theme.colors.text.lighter as string} style={styles.infoRowIcon} />
                 <SafeText style={styles.infoRowLabel}>{isLocal ? "Size" : "Download size"}</SafeText>
               </View>
-              <SafeText style={styles.infoRowValue}>{downloadSize}</SafeText>
+              <View style={styles.infoRowValueContainer}>
+                {isLoadingSize ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={theme.colors.text.light as string}
+                    style={styles.sizeLoadingIndicator}
+                  />
+                ) : null}
+                {downloadSize ? (
+                  <SafeText numberOfLines={1} style={styles.infoRowSizeValue}>{downloadSize}</SafeText>
+                ) : null}
+              </View>
             </View>
           ) : null}
 
@@ -749,6 +775,22 @@ const createStyles = ({ colors }: ThemeContextProps) =>
       color: colors.text.default,
       maxWidth: "55%",
       textAlign: "right",
+    },
+    infoRowValueContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      maxWidth: "55%",
+    },
+    infoRowSizeValue: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: colors.text.default,
+      textAlign: "right",
+    },
+    sizeLoadingIndicator: {
+      marginRight: 6,
+      transform: [{ scale: 0.8 }],
     },
     licenseDescription: {
       fontSize: 13,
