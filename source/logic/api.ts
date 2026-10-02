@@ -9,7 +9,23 @@ export const fetchRetry = fetchBuilder(fetch, { retries: config.fetchRetries });
 
 const databaseApiEndpoint = `${databaseHost}/api/v1`;
 export const hymnbookApiEndpoint = `${hymnbookHost}/api/v1`;
-export const developmentApiEndpoint = `http://192.168.1.100:3000/api/v1`;
+
+export const isLocalhostServer = (url: string = databaseHost): boolean => {
+  if (!url) return false;
+  try {
+    const clean = url.trim().toLowerCase();
+    return (
+      clean.includes("localhost") ||
+      clean.includes("127.0.0.1") ||
+      clean.includes("10.0.2.2") ||
+      clean.includes("0.0.0.0") ||
+      clean.includes("[::1]") ||
+      /(https?:\/\/)?(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+|.*\.local)(:\d+)?/i.test(clean)
+    );
+  } catch {
+    return false;
+  }
+};
 
 const get = (url: string) =>
   ServerAuth.fetchWithJwt(jwt =>
