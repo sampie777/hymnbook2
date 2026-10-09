@@ -23,6 +23,9 @@ jobs:
   test_and_build:
     name: Test, Build & Release Android
     runs-on: ubuntu-latest
+    env:
+      # `secrets` is not available in step-level `if:` expressions, so expose it via env
+      PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
 
     steps:
       - name: Checkout repository
@@ -110,7 +113,7 @@ jobs:
 
       # Generate dynamic release notes from commits between previous and current release tag (capped to 500 chars for Play Store limit)
       - name: Generate Google Play Release Notes
-        if: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.PLAY_STORE_JSON_KEY != '' }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && env.PLAY_STORE_JSON_KEY != '' }}
         run: |
           mkdir -p distribution/whatsnew
           PREV_TAG=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
@@ -137,7 +140,7 @@ jobs:
 
       # Automatically publish .aab to Google Play Store (Open Testing / beta track) if service account secret is provided
       - name: Upload .aab to Google Play (Open Testing track)
-        if: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.PLAY_STORE_JSON_KEY != '' }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && env.PLAY_STORE_JSON_KEY != '' }}
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON_KEY }}
