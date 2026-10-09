@@ -26,22 +26,34 @@ jobs:
     env:
       # `secrets` is not available in step-level `if:` expressions, so expose it via env
       PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
+      # Prevent Corepack from interactively asking to download Yarn
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Fetch full history and tags for git rev-list version computation & release generation
           fetch-depth: 0
 
+      # Enable Corepack before setup-node, as its yarn cache lookup must already use Yarn 4 (package.json "packageManager")
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: 'yarn'
 
+      # Re-enable Corepack for the Node.js version installed by setup-node
+      - name: Enable Corepack (selected Node.js)
+        run: |
+          corepack enable
+          yarn --version
+
       - name: Setup Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -66,7 +78,7 @@ jobs:
           yarn lint
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       # Build both APK and Bundle (.aab) on release tags or when chosen via manual dispatch
       - name: Build Android Release Bundle (.aab)
@@ -88,7 +100,7 @@ jobs:
           HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
 
       - name: Upload Android Build Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-release-artifacts
           path: |
@@ -99,7 +111,7 @@ jobs:
       # When a release tag is pushed (e.g. v1.34.0 via release.sh), create/update the GitHub Release as pre-release and attach the APK & AAB
       - name: Create GitHub Pre-Release with APK & Bundle
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
