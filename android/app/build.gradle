@@ -12,10 +12,26 @@ def getNpmVersion() {
     return packageJson["version"]
 }
 
-/* calculated from git commits to give sequential integers */
+/* calculated from git commits on develop (fallback to master) to give sequential integers */
 def getGitVersion() {
-    def process = "git rev-list develop --first-parent --count".execute()
-    return process.text.toInteger()
+    // Priority: develop (local -> remote), fallback: master (local -> remote)
+    def candidateRefs = [
+        "develop", "origin/develop",
+        "master", "origin/master"
+    ]
+
+    for (ref in candidateRefs) {
+        try {
+            def process = ["git", "rev-list", ref, "--first-parent", "--count"].execute()
+            def out = process.text.trim()
+            if (process.waitFor() == 0 && out.isInteger()) {
+                return out.toInteger()
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    return 1
 }
 
 /**
