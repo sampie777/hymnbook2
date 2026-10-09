@@ -83,7 +83,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
         run: cd android && ./gradlew bundleRelease --no-daemon
         env:
-          HYMNBOOK_UPLOAD_STORE_FILE: ${{ env.ANDROID_KEYSTORE_PATH }}
+          HYMNBOOK_UPLOAD_STORE_FILE: ${{ secrets.HYMNBOOK_UPLOAD_STORE_FILE }}
           HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
           HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
           HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
@@ -92,7 +92,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
         run: cd android && ./gradlew assembleRelease --no-daemon
         env:
-          HYMNBOOK_UPLOAD_STORE_FILE: ${{ env.ANDROID_KEYSTORE_PATH }}
+          HYMNBOOK_UPLOAD_STORE_FILE: ${{ secrets.HYMNBOOK_UPLOAD_STORE_FILE }}
           HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
           HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
           HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
