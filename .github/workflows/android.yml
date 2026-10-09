@@ -1,0 +1,91 @@
+name: Android Release Build
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (bundle or apk)'
+        required: true
+        default: 'bundle'
+        type: choice
+        options:
+          - bundle
+          - apk
+          - both
+
+jobs:
+  test_and_build:
+    name: Test & Build Android Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for git rev-list version computation
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'yarn'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Run CI Setup (Environment, .env & Secrets)
+        run: .github/scripts/ci_setup.sh
+        env:
+          ROLLBAR_API_KEY: ${{ secrets.ROLLBAR_API_KEY }}
+          DEVELOPER_EMAIL: ${{ secrets.DEVELOPER_EMAIL }}
+          WHATSAPP_USER_GROUP_LINK: ${{ secrets.WHATSAPP_USER_GROUP_LINK }}
+          HYMNBOOK_STRIPE_PUBLISHABLE_KEY: ${{ secrets.HYMNBOOK_STRIPE_PUBLISHABLE_KEY }}
+          HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY: ${{ secrets.HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY }}
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
+      - name: Install JavaScript dependencies
+        run: yarn install --immutable || yarn install
+
+      - name: Run Tests & Linter
+        run: |
+          yarn test
+          yarn lint
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build Android Release Bundle (.aab)
+        if: ${{ github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
+        run: cd android && ./gradlew bundleRelease --no-daemon
+        env:
+          HYMNBOOK_UPLOAD_STORE_FILE: ${{ env.ANDROID_KEYSTORE_PATH }}
+          HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
+          HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
+          HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
+
+      - name: Build Android Release APK (.apk)
+        if: ${{ github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' }}
+        run: cd android && ./gradlew assembleRelease --no-daemon
+        env:
+          HYMNBOOK_UPLOAD_STORE_FILE: ${{ env.ANDROID_KEYSTORE_PATH }}
+          HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
+          HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
+          HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
+
+      - name: Upload Android Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-artifacts
+          path: |
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
