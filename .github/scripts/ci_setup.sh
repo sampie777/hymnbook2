@@ -32,7 +32,7 @@ if [[ -n "${ANDROID_KEYSTORE_BASE64}" ]]; then
   KEYSTORE_PATH="${REPO_ROOT}/android/app/release.keystore"
   echo "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "${KEYSTORE_PATH}"
   echo "ANDROID_KEYSTORE_PATH=${KEYSTORE_PATH}" >> "${GITHUB_ENV:-/dev/null}"
-  HYMNBOOK_UPLOAD_STORE_FILE=${KEYSTORE_PATH}
+  echo "HYMNBOOK_UPLOAD_STORE_FILE=${KEYSTORE_PATH}" >> "${GITHUB_ENV:-/dev/null}"
 fi
 
 # 4. Check and validate version format in package.json
