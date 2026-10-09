@@ -26,17 +26,7 @@ if [[ -z "${ROLLBAR_API_KEY}" ]]; then
   echo "Warning: ROLLBAR_API_KEY is not defined in GitHub environment/secrets!" >&2
 fi
 
-# 3. Check for google-services.json
-if [[ -n "${GOOGLE_SERVICES_JSON_BASE64}" ]]; then
-  echo "Decoding google-services.json from secret..."
-  echo "${GOOGLE_SERVICES_JSON_BASE64}" | base64 --decode > "${REPO_ROOT}/android/app/google-services.json"
-fi
-
-if [[ ! -f "${REPO_ROOT}/android/app/google-services.json" ]]; then
-  echo "Warning: 'android/app/google-services.json' is not present."
-fi
-
-# 4. Decode Android upload keystore if provided in secrets
+# 3. Decode Android upload keystore if provided in secrets
 if [[ -n "${ANDROID_KEYSTORE_BASE64}" ]]; then
   echo "Decoding Android keystore from secret..."
   KEYSTORE_PATH="${REPO_ROOT}/android/app/release.keystore"
@@ -44,11 +34,11 @@ if [[ -n "${ANDROID_KEYSTORE_BASE64}" ]]; then
   echo "ANDROID_KEYSTORE_PATH=${KEYSTORE_PATH}" >> "${GITHUB_ENV:-/dev/null}"
 fi
 
-# 5. Check and validate version format in package.json
+# 4. Check and validate version format in package.json
 VERSION=$(node -p "require('./package.json').version" 2>/dev/null || true)
 echo "Detected package.json version: '${VERSION}'"
 
-# 6. Verify required tools
+# 5. Verify required tools
 for cmd in node yarn git; do
   if ! command -v "$cmd" &>/dev/null; then
     echo "Error: Required tool '$cmd' is not installed or not in PATH." >&2

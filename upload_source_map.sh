@@ -34,7 +34,7 @@ if [[ -z "$SERVERKEY" ]]; then
   exit 1
 fi
 
-VERSION=$(sed -n 's/.*"version": *"\{0,1\}\([^",]*\)"\{0,1\}.*/\1/p' ./package.json)
+VERSION=$(node -p "require('./package.json').version" 2>/dev/null || true)
 if [[ -z "$VERSION" ]]; then
   echo "Error: Could not determine version from package.json!" >&2
   exit 1
@@ -54,11 +54,11 @@ function retry() {
 
 function removeDuplicateFiles {
   echo "Remove duplicate files (Android)"
-  rm -rf android/app/src/main/res/drawable-hdpi/
-  rm -rf android/app/src/main/res/drawable-mdpi/
-  rm -rf android/app/src/main/res/drawable-xhdpi/
-  rm -rf android/app/src/main/res/drawable-xxhdpi/
-  rm -rf android/app/src/main/res/drawable-xxxhdpi/
+  # Due to a bug in react native duplicate files are produced when building android and ios in the same react native project
+  # https://github.com/facebook/react-native/issues/16906
+  # https://stackoverflow.com/questions/54290146/duplicate-resource-error-in-react-native-release-build
+  # The following command resolves this:
+  rm -rf android/app/build/intermediates/res/merged/release/raw/
   rm -rf android/app/src/main/res/raw/
 }
 
