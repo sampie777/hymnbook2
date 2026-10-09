@@ -249,7 +249,7 @@ function setVersion() {
 function updateDependencies {
   yarn install || return 1
   cd ios || return 1
-  bundle exec pod install || { cd ..; return 1; }
+  bundle exec pod install || pod install || { cd ..; return 1; }
   cd .. || return 1
 
   git add .yarnrc.yml 2>/dev/null || true
@@ -275,7 +275,7 @@ function releasePatch {
   retry git pull || return 1
 
   # Create patch version
-  CURRENT_VERSION=$(sed -n 's/.*"version": *\([^\"]*\)".*/\1/p' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\{0,1\}\([^",]*\)"\{0,1\}.*/\1/p' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | awk -F'.' '{print $1"."$2"."$3+1}')
 
   git merge develop || return 1
@@ -292,7 +292,7 @@ function releaseMinor {
   retry git pull || return 1
 
   # Create version
-  CURRENT_VERSION=$(sed -n 's/.*"version": *\([^\"]*\)".*/\1/p' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\{0,1\}\([^",]*\)"\{0,1\}.*/\1/p' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1"."$2+1".0"}')
 
   git merge develop || return 1
@@ -309,7 +309,7 @@ function releaseMajor {
   retry git pull || return 1
 
   # Create version
-  CURRENT_VERSION=$(sed -n 's/.*"version": *\([^\"]*\)".*/\1/p' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\{0,1\}\([^",]*\)"\{0,1\}.*/\1/p' ./package.json)
   RELEASE_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1+1".0.0"}')
 
   git merge develop || return 1
@@ -322,7 +322,7 @@ function releaseMajor {
 function pushAndRelease {
   yarn test || return 1
 
-  RELEASE_VERSION=$(sed -n 's/.*"version": *\([^\"]*\)".*/\1/p' ./package.json)
+  RELEASE_VERSION=$(sed -n 's/.*"version": *"\{0,1\}\([^",]*\)"\{0,1\}.*/\1/p' ./package.json)
   echo "Release version: ${RELEASE_VERSION}"
 
   git add package.json || return 1
@@ -363,7 +363,7 @@ function setNextDevelopmentVersion {
   git rebase master || return 1
 
   # Generate next (minor) development version
-  CURRENT_VERSION=$(sed -n 's/.*"version": *\([^\"]*\)".*/\1/p' ./package.json)
+  CURRENT_VERSION=$(sed -n 's/.*"version": *"\{0,1\}\([^",]*\)"\{0,1\}.*/\1/p' ./package.json)
   DEV_VERSION=$(echo ${CURRENT_VERSION} | sed 's/v//g' | awk -F'.' '{print $1"."$2+1".0"}')-SNAPSHOT
 
   echo "Next development version: ${DEV_VERSION}"

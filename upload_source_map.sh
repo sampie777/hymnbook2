@@ -99,8 +99,12 @@ function verifyRollbarResponse {
 function uploadSourceMapAndroid {
   local map_file="./android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map"
   if [[ ! -f "$map_file" ]]; then
-    echo "Error: Android source map file not found at '$map_file'!" >&2
-    return 1
+    if [[ -f "sourcemap.android.js" ]]; then
+      map_file="sourcemap.android.js"
+    else
+      echo "Error: Android source map file not found at '$map_file'!" >&2
+      return 1
+    fi
   fi
 
   echo "Uploading source map (Android)..."
@@ -123,6 +127,12 @@ function uploadSourceMapAndroid {
 
 function createAndUploadSourceMapAndroid {
   echo 'Creating source map (Android)'
+  local map_file="./android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map"
+  if [[ ! -f "$map_file" ]]; then
+    npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output \
+      android/index.android.bundle --assets-dest android/app/src/main/res/ --sourcemap-output \
+      sourcemap.android.js --sourcemap-sources-root ./ || return 1
+  fi
   retry uploadSourceMapAndroid || return 1
   removeDuplicateFiles
 }
