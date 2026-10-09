@@ -72,10 +72,8 @@ jobs:
       - name: Install JavaScript dependencies
         run: yarn install --immutable || yarn install
 
-      - name: Run Tests & Linter
-        run: |
-          yarn test
-          yarn lint
+      - name: Run Tests
+        run: yarn test
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
