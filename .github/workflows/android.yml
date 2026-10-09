@@ -107,3 +107,42 @@ jobs:
             android/app/build/outputs/bundle/release/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Generate dynamic release notes from commits between previous and current release tag (capped to 500 chars for Play Store limit)
+      - name: Generate Google Play Release Notes
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.PLAY_STORE_JSON_KEY != '' }}
+        run: |
+          mkdir -p distribution/whatsnew
+          PREV_TAG=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+          echo "Current Tag: ${GITHUB_REF_NAME}"
+          echo "Previous Tag: ${PREV_TAG}"
+
+          if [ -n "$PREV_TAG" ]; then
+            COMMITS=$(git log "${PREV_TAG}..${GITHUB_REF_NAME}" --no-merges --pretty=format:"- %s" | grep -v -E "(- version release:|- next development version)" || true)
+          else
+            COMMITS=$(git log -n 10 --no-merges --pretty=format:"- %s" | grep -v -E "(- version release:|- next development version)" || true)
+          fi
+
+          if [ -z "$COMMITS" ]; then
+            COMMITS="- Bug fixes and performance improvements."
+          fi
+
+          # Google Play limit is 500 characters per language
+          NOTES=$(echo "$COMMITS" | cut -c 1-490)
+
+          echo "Generated Google Play release notes:"
+          echo "$NOTES"
+
+          echo "$NOTES" > distribution/whatsnew/whatsnew-en-US
+
+      # Automatically publish .aab to Google Play Store (Open Testing / beta track) if service account secret is provided
+      - name: Upload .aab to Google Play (Open Testing track)
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.PLAY_STORE_JSON_KEY != '' }}
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON_KEY }}
+          packageName: nl.sajansen.hymnbook2
+          releaseFiles: android/app/build/outputs/bundle/release/*.aab
+          track: beta
+          whatsNewDirectory: distribution/whatsnew
+          status: completed

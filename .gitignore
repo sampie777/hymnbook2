@@ -100,3 +100,4 @@ rsa_key.pub
 hymnbook_songs.broken
 
 !.idea/codeStyles/
+*.key.json
