@@ -2,30 +2,33 @@ name: Android Release Build
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
     inputs:
       build_type:
         description: 'Build type (bundle or apk)'
         required: true
-        default: 'bundle'
+        default: 'both'
         type: choice
         options:
           - bundle
           - apk
           - both
 
+permissions:
+  contents: write
+
 jobs:
   test_and_build:
-    name: Test & Build Android Release
+    name: Test, Build & Release Android
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Fetch full history for git rev-list version computation
+          # Fetch full history and tags for git rev-list version computation & release generation
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -63,8 +66,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Build both APK and Bundle (.aab) on release tags or when chosen via manual dispatch
       - name: Build Android Release Bundle (.aab)
-        if: ${{ github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
         run: cd android && ./gradlew bundleRelease --no-daemon
         env:
           HYMNBOOK_UPLOAD_STORE_FILE: ${{ env.ANDROID_KEYSTORE_PATH }}
@@ -73,7 +77,7 @@ jobs:
           HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
 
       - name: Build Android Release APK (.apk)
-        if: ${{ github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
         run: cd android && ./gradlew assembleRelease --no-daemon
         env:
           HYMNBOOK_UPLOAD_STORE_FILE: ${{ env.ANDROID_KEYSTORE_PATH }}
@@ -81,7 +85,7 @@ jobs:
           HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
           HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
 
-      - name: Upload Android Release Artifacts
+      - name: Upload Android Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: android-release-artifacts
@@ -89,3 +93,18 @@ jobs:
             android/app/build/outputs/bundle/release/*.aab
             android/app/build/outputs/apk/release/*.apk
           if-no-files-found: warn
+
+      # When a release tag is pushed (e.g. v1.34.0 via release.sh), create/update the GitHub Release as pre-release and attach the APK & AAB
+      - name: Create GitHub Pre-Release with APK & Bundle
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
