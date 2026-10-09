@@ -81,21 +81,21 @@ jobs:
       # Build both APK and Bundle (.aab) on release tags or when chosen via manual dispatch
       - name: Build Android Release Bundle (.aab)
         if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
-        run: cd android && ./gradlew bundleRelease --no-daemon
+        run: cd android && ./gradlew bundleRelease --no-daemon --stacktrace
         env:
-          HYMNBOOK_UPLOAD_STORE_FILE: ${{ github.workspace }}/android/app/release.keystore
-          HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
-          HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
-          HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_FILE: ${{ github.workspace }}/android/app/release.keystore
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
 
       - name: Build Android Release APK (.apk)
         if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
         run: cd android && ./gradlew assembleRelease --no-daemon
         env:
-          HYMNBOOK_UPLOAD_STORE_FILE: ${{ github.workspace }}/android/app/release.keystore
-          HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
-          HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
-          HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_FILE: ${{ github.workspace }}/android/app/release.keystore
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
 
       - name: Upload Android Build Artifacts
         uses: actions/upload-artifact@v7
