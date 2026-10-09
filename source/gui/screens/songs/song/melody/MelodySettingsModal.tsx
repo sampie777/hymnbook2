@@ -130,6 +130,20 @@ const MelodySettingsModal: React.FC<Props> = ({
                            setShowMelodyForAllVerses?.(false);
                          }} />
 
+        <SwitchComponent title={"Align lyrics center"}
+                         isVisible={true}
+                         value={melodyTextAlignment == MelodyTextAlignment.Center}
+                         onPress={() => {
+                           Settings.melodyTextAlignment = melodyTextAlignment == MelodyTextAlignment.Left
+                             ? MelodyTextAlignment.Center
+                             : MelodyTextAlignment.Left;
+                           setMelodyTextAlignment(Settings.melodyTextAlignment);
+                         }}
+                         onLongPress={() => {
+                           Settings.melodyTextAlignment = MelodyTextAlignment.Left;
+                           setMelodyTextAlignment(Settings.melodyTextAlignment);
+                         }} />
+
         <SwitchComponent title={"Compact view"}
                          isVisible={true}
                          value={!showMelodyOnSeparateLines}
