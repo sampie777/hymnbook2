@@ -82,13 +82,19 @@ fi
 # Ensure node/npm/yarn paths are exported for subsequent Xcode Cloud build phases
 NODE_BIN_DIR="$(dirname "$(which node)")"
 export PATH="${NODE_BIN_DIR}:${PATH}"
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 # 5. Setup Yarn & Install Dependencies
 echo "===== Setting up Yarn ====="
-if ! command -v yarn &>/dev/null; then
-  echo "Enabling corepack and installing yarn..."
+if command -v corepack &>/dev/null; then
+  echo "Enabling corepack..."
   corepack enable || true
-  corepack install yarn || npm install -g yarn
+  corepack install || true
+fi
+
+if ! command -v yarn &>/dev/null; then
+  echo "Installing yarn via npm..."
+  npm install -g yarn --force
 fi
 
 echo "Yarn version: $(yarn --version)"
