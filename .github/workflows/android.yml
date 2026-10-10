@@ -1,0 +1,161 @@
+name: Android Release Build
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (bundle or apk)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - bundle
+          - apk
+          - both
+
+permissions:
+  contents: write
+
+jobs:
+  test_and_build:
+    name: Test, Build & Release Android
+    runs-on: ubuntu-latest
+    env:
+      # `secrets` is not available in step-level `if:` expressions, so expose it via env
+      PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
+      # Prevent Corepack from interactively asking to download Yarn
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Fetch full history and tags for git rev-list version computation & release generation
+          fetch-depth: 0
+
+      # Enable Corepack before setup-node, as its yarn cache lookup must already use Yarn 4 (package.json "packageManager")
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'yarn'
+
+      # Re-enable Corepack for the Node.js version installed by setup-node
+      - name: Enable Corepack (selected Node.js)
+        run: |
+          corepack enable
+          yarn --version
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Run CI Setup (Environment, .env & Secrets)
+        run: .github/scripts/ci_setup.sh
+        env:
+          ROLLBAR_API_KEY: ${{ secrets.ROLLBAR_API_KEY }}
+          DEVELOPER_EMAIL: ${{ secrets.DEVELOPER_EMAIL }}
+          WHATSAPP_USER_GROUP_LINK: ${{ secrets.WHATSAPP_USER_GROUP_LINK }}
+          HYMNBOOK_STRIPE_PUBLISHABLE_KEY: ${{ secrets.HYMNBOOK_STRIPE_PUBLISHABLE_KEY }}
+          HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY: ${{ secrets.HYMNBOOK_STRIPE_TEST_PUBLISHABLE_KEY }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
+      - name: Install JavaScript dependencies
+        run: yarn install --immutable || yarn install
+
+      - name: Run Tests
+        run: yarn test
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # Build both APK and Bundle (.aab) on release tags or when chosen via manual dispatch
+      - name: Build Android Release Bundle (.aab)
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
+        run: cd android && ./gradlew bundleRelease --no-daemon --stacktrace
+        env:
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_FILE: ${{ github.workspace }}/android/app/release.keystore
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
+
+      - name: Build Android Release APK (.apk)
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
+        run: cd android && ./gradlew assembleRelease --no-daemon
+        env:
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_FILE: ${{ github.workspace }}/android/app/release.keystore
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_STORE_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_STORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
+
+      - name: Upload Android Build Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-release-artifacts
+          path: |
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
+
+      # When a release tag is pushed (e.g. v1.34.0 via release.sh), create/update the GitHub Release as pre-release and attach the APK & AAB
+      - name: Create GitHub Pre-Release with APK & Bundle
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Generate dynamic release notes from commits between previous and current release tag (capped to 500 chars for Play Store limit)
+      - name: Generate Google Play Release Notes
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && env.PLAY_STORE_JSON_KEY != '' }}
+        run: |
+          mkdir -p distribution/whatsnew
+          PREV_TAG=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+          echo "Current Tag: ${GITHUB_REF_NAME}"
+          echo "Previous Tag: ${PREV_TAG}"
+
+          if [ -n "$PREV_TAG" ]; then
+            COMMITS=$(git log "${PREV_TAG}..${GITHUB_REF_NAME}" --no-merges --pretty=format:"- %s" | grep -v -E "(- version release:|- next development version)" || true)
+          else
+            COMMITS=$(git log -n 10 --no-merges --pretty=format:"- %s" | grep -v -E "(- version release:|- next development version)" || true)
+          fi
+
+          if [ -z "$COMMITS" ]; then
+            COMMITS="- Bug fixes and performance improvements."
+          fi
+
+          # Google Play limit is 500 characters per language
+          NOTES=$(echo "$COMMITS" | cut -c 1-490)
+
+          echo "Generated Google Play release notes:"
+          echo "$NOTES"
+
+          echo "$NOTES" > distribution/whatsnew/whatsnew-en-US
+
+      # Automatically publish .aab to Google Play Store (Open Testing / beta track) if service account secret is provided
+      - name: Upload .aab to Google Play (Open Testing track)
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && env.PLAY_STORE_JSON_KEY != '' }}
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON_KEY }}
+          packageName: nl.sajansen.hymnbook2
+          releaseFiles: android/app/build/outputs/bundle/release/*.aab
+          track: beta
+          whatsNewDirectory: distribution/whatsnew
+          status: completed
