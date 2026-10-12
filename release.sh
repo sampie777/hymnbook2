@@ -264,7 +264,7 @@ function setVersion() {
 function updateDependencies {
   yarn install || return 1
   cd ios || return 1
-  bundle exec pod install || { cd ..; return 1; }
+  bundle exec pod install || pod install || { cd ..; return 1; }
   cd .. || return 1
 
   git add .yarnrc.yml 2>/dev/null || true
