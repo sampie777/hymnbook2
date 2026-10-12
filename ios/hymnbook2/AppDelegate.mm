@@ -39,7 +39,7 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-  if ([super respondsToSelector:@selector(applicationWillTerminate:)]) {
+  if ([[AppDelegate superclass] instancesRespondToSelector:@selector(applicationWillTerminate:)]) {
     [super applicationWillTerminate:application];
   }
 
