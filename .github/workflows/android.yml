@@ -97,6 +97,16 @@ jobs:
           ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_ALIAS: ${{ secrets.HYMNBOOK_UPLOAD_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_HYMNBOOK_UPLOAD_KEY_PASSWORD: ${{ secrets.HYMNBOOK_UPLOAD_KEY_PASSWORD }}
 
+      # Ensure mapping.txt exists even when R8/ProGuard is disabled so Play Store has a deobfuscation file
+      - name: Ensure ProGuard mapping.txt exists
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'bundle' || github.event.inputs.build_type == 'both' || github.event_name != 'workflow_dispatch' }}
+        run: |
+          MAPPING_FILE="android/app/build/outputs/mapping/release/mapping.txt"
+          if [ ! -f "$MAPPING_FILE" ]; then
+            mkdir -p "$(dirname "$MAPPING_FILE")"
+            printf "# compiler: R8\nnl.sajansen.hymnbook2.MainActivity -> nl.sajansen.hymnbook2.MainActivity:\n" > "$MAPPING_FILE"
+          fi
+
       - name: Upload Android Build Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -104,10 +114,11 @@ jobs:
           path: |
             android/app/build/outputs/bundle/release/*.aab
             android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: warn
 
-      # When a release tag is pushed (e.g. v1.34.0 via release.sh), create/update the GitHub Release as pre-release and attach the APK & AAB
-      - name: Create GitHub Pre-Release with APK & Bundle
+      # When a release tag is pushed (e.g. v1.34.0 via release.sh), create/update the GitHub Release as pre-release and attach the APK
+      - name: Create GitHub Pre-Release with APK
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         uses: softprops/action-gh-release@v3
         with:
@@ -117,7 +128,6 @@ jobs:
           generate_release_notes: true
           files: |
             android/app/build/outputs/apk/release/*.apk
-            android/app/build/outputs/bundle/release/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -158,4 +168,5 @@ jobs:
           releaseFiles: android/app/build/outputs/bundle/release/*.aab
           track: beta
           whatsNewDirectory: distribution/whatsnew
+          mappingFile: android/app/build/outputs/mapping/release/mapping.txt
           status: completed
