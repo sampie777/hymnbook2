@@ -2,6 +2,9 @@ import Realm, { ObjectClass, ObjectSchema } from "realm";
 import { rollbar } from "../rollbar";
 import { sanitizeErrorForRollbar } from "../utils/utils.ts";
 
+export const COMPACTION_MIN_BYTES = 2 * 1024 * 1024; // 2 MB
+export const COMPACTION_MAX_USAGE_RATIO = 0.8; // Compact if less than 80% used (>20% slack)
+
 interface DatabaseProps {
   label?: string;
   path: string;
@@ -22,7 +25,23 @@ export class DatabaseProvider {
     this.config = {
       path: props.path,
       schema: props.schemas,
-      schemaVersion: props.schemaVersion
+      schemaVersion: props.schemaVersion,
+      shouldCompact: (totalBytes: number, usedBytes: number) => {
+        const reclaimedBytes = Math.max(0, totalBytes - usedBytes);
+        const reclaimedPercent = totalBytes > 0 ? (reclaimedBytes / totalBytes) * 100 : 0;
+        const willCompact = totalBytes > COMPACTION_MIN_BYTES && (usedBytes / totalBytes) < COMPACTION_MAX_USAGE_RATIO;
+
+        if (!willCompact) return willCompact;
+
+        rollbar.debug(`Database compacted on launch`, {
+          database: this.label || props.path,
+          totalBytes,
+          usedBytes,
+          reclaimedBytes,
+          reclaimedPercent: `${reclaimedPercent.toFixed(1)}%`
+        });
+        return willCompact;
+      }
     };
   }
 
@@ -97,12 +116,19 @@ export class DatabaseProvider {
   }
 
   realm = () => {
-    if (this._realm == null) {
-      this.waitForConnection(1000);
+    if (this._realm == null || this._realm.isClosed) {
+      try {
+        this._isConnected = false;
+        this._realm = new Realm(this.config);
+        this._isConnected = true;
+      } catch (error) {
+        rollbar.error(`Failed to synchronously reopen realm for ${this.label}`, sanitizeErrorForRollbar(error));
+        this.waitForConnection(1000);
+      }
     }
 
-    if (this._realm == null) {
-      throw Error("Cannot use realm: realm is null");
+    if (this._realm == null || this._realm.isClosed) {
+      throw Error(`Cannot use realm ${this.label}: realm is null or closed`);
     }
 
     return this._realm;
