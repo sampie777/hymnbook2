@@ -7,13 +7,18 @@ import SafeText from "../SafeText.tsx";
 interface Props {
   product: Product;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
-const InAppPurchaseItem: React.FC<Props> = ({ product, onPress }) => {
+const InAppPurchaseItem: React.FC<Props> = ({ product, onPress, disabled = false }) => {
   const styles = createStyles(useTheme());
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, disabled && styles.containerDisabled]}
+      onPress={onPress}
+      disabled={disabled}
+    >
       <SafeText style={styles.priceText}>{product.displayPrice}</SafeText>
       <SafeText style={styles.titleText}>{product.title}</SafeText>
     </TouchableOpacity>
@@ -41,6 +46,9 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) =>
       shadowOpacity: 0.1,
       shadowRadius: 3,
       elevation: 5,
+    },
+    containerDisabled: {
+      opacity: 0.6,
     },
     priceText: {
       fontSize: 16,

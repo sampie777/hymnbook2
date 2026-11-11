@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import { PurchaseIOS, useIAP, VerifyPurchaseResultIOS } from "react-native-iap";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import { ErrorCode, PurchaseIOS, useIAP } from "react-native-iap";
 import { isIOS, sanitizeErrorForRollbar } from "../../../logic/utils/utils.ts";
 import InAppPurchaseItem from "./InAppPurchaseItem.tsx";
 import { rollbar } from "../../../logic/rollbar.ts";
@@ -9,40 +9,79 @@ import { Donations } from "../../../logic/donations.ts";
 interface Props {
 }
 
+const processedTransactionIds = new Set<string>();
+
 const InAppPurchases: React.FC<Props> = ({}) => {
   if (!isIOS) return null;
 
-  const { connected, products, fetchProducts, requestPurchase, verifyPurchase, } = useIAP({
-    onPurchaseSuccess: (purchase) => {
-      validatePurchase(purchase as PurchaseIOS);
+  const [processing, setProcessing] = useState(false);
+
+  const { connected, products, fetchProducts, requestPurchase, finishTransaction } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      await validateAndFinishPurchase(purchase as PurchaseIOS);
     },
     onPurchaseError: (error) => {
-      rollbar.error('Failed to complete in-app purchase', sanitizeErrorForRollbar(error));
+      setProcessing(false);
+      if (error.code !== ErrorCode.UserCancelled) {
+        rollbar.error('Failed to complete in-app purchase', sanitizeErrorForRollbar(error));
+      }
     },
   });
 
   useEffect(() => {
     if (connected) {
-      fetchProducts({ skus: Donations.inAppProductIds, type: 'in-app' });
+      fetchProducts({ skus: Donations.inAppProductIds, type: 'in-app' })
+        .catch(error => {
+          rollbar.warning("Failed to fetch in-app products", sanitizeErrorForRollbar(error));
+        });
     }
   }, [connected]);
 
-  const validatePurchase = async (purchase: PurchaseIOS) => {
+  const validateAndFinishPurchase = async (purchase: PurchaseIOS) => {
+    const transactionId = purchase?.id || purchase?.transactionId;
+    if (!transactionId || !purchase?.productId) {
+      rollbar.warning("In-app purchase receipt is invalid", { purchase });
+      setProcessing(false);
+      return;
+    }
+
+    if (processedTransactionIds.has(transactionId)) {
+      setProcessing(false);
+      return;
+    }
+    processedTransactionIds.add(transactionId);
+
     try {
-      const result = (await verifyPurchase({ apple: { sku: purchase.productId } })) as VerifyPurchaseResultIOS;
-
-      if (!result.isValid) {
-        rollbar.warning("In-app purchase receipt is invalid", { purchase, result });
-        return;
-      }
-
       rollbar.info("Donation received", {
         type: "in-app",
         product: purchase.productId,
-      })
+      });
       Alert.alert("Thank you!", "Your donation is greatly appreciated\nand motivates me to keep on going with this work.");
     } catch (error) {
       rollbar.warning("Failed to validate in-app purchase", { ...sanitizeErrorForRollbar(error), purchase });
+    } finally {
+      try {
+        await finishTransaction({ purchase, isConsumable: true });
+      } catch (finishError) {
+        rollbar.error("Failed to finish in-app transaction", { ...sanitizeErrorForRollbar(finishError), purchase });
+      }
+      setProcessing(false);
+    }
+  };
+
+  const handlePurchase = async (productId: string) => {
+    if (processing) return;
+    setProcessing(true);
+    rollbar.info("Requesting in-app purchase", { productId });
+
+    try {
+      await requestPurchase({
+        request: { apple: { sku: productId } },
+        type: 'in-app',
+      });
+    } catch (error) {
+      setProcessing(false);
+      rollbar.warning("In-app purchase request failed", sanitizeErrorForRollbar(error));
     }
   };
 
@@ -52,14 +91,11 @@ const InAppPurchases: React.FC<Props> = ({}) => {
         <InAppPurchaseItem
           key={product.id}
           product={product}
-          onPress={() => {
-            rollbar.info("Requesting in-app purchase", { productId: product.id });
-            requestPurchase({
-              request: { apple: { sku: product.id } },
-              type: 'in-app',
-            })
-          }} />
+          disabled={processing}
+          onPress={() => handlePurchase(product.id)}
+        />
       )}
+      {processing && <ActivityIndicator style={styles.loader} size="small" />}
     </View>
   );
 };
@@ -73,6 +109,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     gap: 20,
+  },
+  loader: {
+    marginVertical: 10,
   },
 });
 
