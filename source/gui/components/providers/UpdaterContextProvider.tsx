@@ -23,24 +23,24 @@ const UpdaterContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [documentGroupsUpdating, setDocumentGroupsUpdating] = useState<{ uuid: string }[]>([]);
 
   const addSongBundleUpdating = (obj: { uuid: string }) =>
-    setSongBundlesUpdating([...songBundlesUpdating, obj]);
+    setSongBundlesUpdating(prev => (prev.some(it => it.uuid === obj.uuid) ? prev : [...prev, obj]));
 
   const removeSongBundleUpdating = (obj: { uuid: string }) =>
-    setSongBundlesUpdating(songBundlesUpdating.filter(it => it.uuid !== obj.uuid));
+    setSongBundlesUpdating(prev => prev.filter(it => it.uuid !== obj.uuid));
 
   const addDocumentGroupUpdating = (obj: { uuid: string }) =>
-    setDocumentGroupsUpdating([...documentGroupsUpdating, obj]);
+    setDocumentGroupsUpdating(prev => (prev.some(it => it.uuid === obj.uuid) ? prev : [...prev, obj]));
 
   const removeDocumentGroupUpdating = (obj: { uuid: string }) =>
-    setDocumentGroupsUpdating(documentGroupsUpdating.filter(it => it.uuid !== obj.uuid));
+    setDocumentGroupsUpdating(prev => prev.filter(it => it.uuid !== obj.uuid));
 
   const defaultContext: UpdaterContextProps = {
-    songBundlesUpdating: songBundlesUpdating,
-    addSongBundleUpdating: addSongBundleUpdating,
-    removeSongBundleUpdating: removeSongBundleUpdating,
-    documentGroupsUpdating: documentGroupsUpdating,
-    addDocumentGroupUpdating: addDocumentGroupUpdating,
-    removeDocumentGroupUpdating: removeDocumentGroupUpdating,
+    songBundlesUpdating,
+    addSongBundleUpdating,
+    removeSongBundleUpdating,
+    documentGroupsUpdating,
+    addDocumentGroupUpdating,
+    removeDocumentGroupUpdating,
   };
 
   return <UpdaterContextProviderContext.Provider value={defaultContext}>
