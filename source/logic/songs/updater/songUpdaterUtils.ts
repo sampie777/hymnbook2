@@ -221,7 +221,9 @@ export namespace SongUpdaterUtils {
     const isInSongStringSearchSelectedBundlesUuids = Settings.songStringSearchSelectedBundlesUuids.includes(songBundle.uuid);
 
     if (existingBundles.length > 0) {
-      SongProcessor.deleteSongBundle(existingBundles[0]);
+      existingBundles.forEach(existing => {
+        SongProcessor.deleteSongBundle(existing);
+      });
     }
 
     if (!isUpdate || isInSongSearchSelectedBundlesUuids) Settings.songSearchSelectedBundlesUuids.push(songBundle.uuid);

@@ -2,8 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import Db from "../../../../source/logic/db/db";
 import { Song, SongBundle } from "../../../../source/logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../source/logic/db/models/songs/AbcMelodies";
-import { SongBundleSchema } from "../../../../source/logic/db/models/songs/SongsSchema";
+import { SongBundleSchema, SongSchema } from "../../../../source/logic/db/models/songs/SongsSchema";
+import { AbcMelodySchema } from "../../../../source/logic/db/models/songs/AbcMelodiesSchema";
 import { SongUpdaterUtils } from "../../../../source/logic/songs/updater/songUpdaterUtils";
+import { SongBundle as ServerSongBundle } from "../../../../source/logic/server/models/ServerSongsModel";
 
 describe("copy user settings during songbundle update", () => {
   let songId = 1;
@@ -97,5 +99,43 @@ describe("copy user settings during songbundle update", () => {
     expect(newDbBundle.songs[1].lastUsedMelody).toBeNull();
     expect(newDbBundle.songs[2].lastUsedMelody?.uuid).toBe(newDbBundle.songs[2].abcMelodies[0].uuid);
     expect(newDbBundle.songs[3].lastUsedMelody?.uuid).toBe(newDbBundle.songs[3].abcMelodies[1].uuid);
+  });
+
+  it("deletes all existing duplicate bundles when updating a song bundle", () => {
+    songId = Db.songs.getIncrementedPrimaryKey(SongSchema);
+    songBundleId = Db.songs.getIncrementedPrimaryKey(SongBundleSchema);
+    melodyId = Db.songs.getIncrementedPrimaryKey(AbcMelodySchema);
+    const bundleA = createBundle();
+    bundleA.uuid = "bundle-uuid";
+    const bundleB = createBundle();
+    bundleB.uuid = "bundle-uuid";
+
+    Db.songs.realm().write(() => {
+      Db.songs.realm().create(SongBundleSchema.name, bundleA);
+      Db.songs.realm().create(SongBundleSchema.name, bundleB);
+    });
+
+    expect(Db.songs.realm().objects<SongBundle>(SongBundleSchema.name).filtered('uuid = "bundle-uuid"').length).toBe(2);
+
+    const serverBundle = new ServerSongBundle(
+      10,
+      "ABBR",
+      "New Updated Bundle",
+      "NL",
+      "Author",
+      "Copyright",
+      [],
+      new Date().toISOString(),
+      new Date().toISOString(),
+      "bundle-uuid",
+      "new-hash",
+      10,
+    );
+
+    SongUpdaterUtils.saveServerSongBundleToDatabase(serverBundle);
+
+    const localBundles = Db.songs.realm().objects<SongBundle>(SongBundleSchema.name).filtered('uuid = "bundle-uuid"');
+    expect(localBundles.length).toBe(1);
+    expect(localBundles[0].name).toBe("New Updated Bundle");
   });
 });

@@ -165,4 +165,58 @@ describe("test document processor", () => {
     expect(result.message).toBe("Could not find document group group 2 in database");
     expect(Db.documents.realm().objects(DocumentGroupSchema.name).length).toBe(1);
   });
+
+  it("updateAndSaveDocumentGroup does not delete newly created group when none existed locally", () => {
+    const newGroup = serverGroup("New Group", 1);
+    newGroup.items.push(serverDocument("doc 1", 1));
+
+    DocumentUpdater.updateAndSaveDocumentGroup(newGroup);
+
+    const rootGroups = Db.documents.realm().objects(DocumentGroupSchema.name).filtered("isRoot = true");
+    expect(rootGroups.length).toBe(1);
+    expect(rootGroups[0].name).toBe("New Group");
+    expect(rootGroups[0].uuid).toBe(newGroup.uuid);
+  });
+
+  it("updateAndSaveDocumentGroup updates existing group and deletes old group", () => {
+    const oldGroup = serverGroup("Old Group", 1);
+    oldGroup.items.push(serverDocument("doc 1", 1));
+    DocumentUpdater.saveDocumentGroupToDatabase(oldGroup);
+
+    expect(Db.documents.realm().objects(DocumentGroupSchema.name).filtered("isRoot = true").length).toBe(1);
+
+    const updatedGroup = serverGroup("Updated Group", 2);
+    updatedGroup.uuid = oldGroup.uuid; // Same UUID
+    updatedGroup.items.push(serverDocument("doc 1 updated", 2));
+    DocumentUpdater.updateAndSaveDocumentGroup(updatedGroup);
+
+    const rootGroups = Db.documents.realm().objects(DocumentGroupSchema.name).filtered("isRoot = true");
+    expect(rootGroups.length).toBe(1);
+    expect(rootGroups[0].name).toBe("Updated Group");
+    expect(rootGroups[0].uuid).toBe(oldGroup.uuid);
+  });
+
+  it("updateAndSaveDocumentGroup deletes all older duplicates when multiple exist", () => {
+    const groupA = group("Duplicate 1", 10, true);
+    groupA.uuid = "dup-uuid";
+    const groupB = group("Duplicate 2", 11, true);
+    groupB.uuid = "dup-uuid";
+
+    Db.documents.realm().write(() => {
+      Db.documents.realm().create(DocumentGroupSchema.name, groupA);
+      Db.documents.realm().create(DocumentGroupSchema.name, groupB);
+    });
+
+    expect(Db.documents.realm().objects(DocumentGroupSchema.name).filtered('uuid = "dup-uuid" AND isRoot = true').length).toBe(2);
+
+    const serverUpdate = serverGroup("Clean Updated Group", 12);
+    serverUpdate.uuid = "dup-uuid";
+    serverUpdate.items.push(serverDocument("clean doc", 12));
+
+    DocumentUpdater.updateAndSaveDocumentGroup(serverUpdate);
+
+    const rootGroups = Db.documents.realm().objects(DocumentGroupSchema.name).filtered('uuid = "dup-uuid" AND isRoot = true');
+    expect(rootGroups.length).toBe(1);
+    expect(rootGroups[0].name).toBe("Clean Updated Group");
+  });
 });

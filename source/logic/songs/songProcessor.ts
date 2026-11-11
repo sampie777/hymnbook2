@@ -24,10 +24,11 @@ export namespace SongProcessor {
       .map(it => it);  // Convert to array. Array.from() will crash tests
   };
 
-  export const getExistingBundle = (bundle: { uuid: string }) => {
+  export const getExistingBundle = (bundle: { uuid: string }): (SongBundle & Realm.Object<SongBundle>)[] => {
     return Db.songs.realm()
       .objects<SongBundle>(SongBundleSchema.name)
-      .filtered(`uuid = "${bundle.uuid}"`);
+      .filtered(`uuid = "${bundle.uuid}"`)
+      .map(it => it);
   };
 
   export const sortSongMelodyByName = (a: (ServerAbcMelody | AbcMelody), b: (ServerAbcMelody | AbcMelody)): number => {

@@ -55,7 +55,7 @@ export namespace DocumentUpdater {
     }
   };
 
-  const updateAndSaveDocumentGroup = (group: ServerDocumentGroup) => {
+  export const updateAndSaveDocumentGroup = (group: ServerDocumentGroup) => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot update documents: document database is not connected");
       throw new Error("Database is not connected");
@@ -73,11 +73,14 @@ export namespace DocumentUpdater {
     };
     const documentGroup = DocumentUpdaterUtils.convertServerDocumentGroupToLocalDocumentGroup(group, conversionState, true);
 
-    const existingGroup = Db.documents.realm()
+    const existingGroups = [...Db.documents.realm()
       .objects<DocumentGroup>(DocumentGroupSchema.name)
-      .filtered(`uuid = "${group.uuid}" AND isRoot = true`);
-    if (existingGroup.length === 0) {
+      .filtered(`uuid = "${group.uuid}" AND isRoot = true`)];
+    if (existingGroups.length === 0) {
       rollbar.warning("To-be-updated document group doesn't exists locally: " + group.name, group);
+    }
+    if (existingGroups.length > 1) {
+      rollbar.warning("Multiple existing document groups found for to-be-updated group: " + group.name, group);
     }
 
     try {
@@ -89,9 +92,11 @@ export namespace DocumentUpdater {
       throw new Error(`Failed to update documents: ${error}`);
     }
 
-    if (existingGroup.length > 0) {
-      const deleteResult = DocumentProcessor.deleteDocumentGroup(existingGroup[0]);
-      deleteResult.throwIfException();
+    if (existingGroups.length > 0) {
+      existingGroups.forEach(existing => {
+        const deleteResult = DocumentProcessor.deleteDocumentGroup(existing);
+        deleteResult.throwIfException();
+      });
     }
   };
 
