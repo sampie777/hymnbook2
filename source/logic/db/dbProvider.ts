@@ -45,7 +45,7 @@ export class DatabaseProvider {
     };
   }
 
-  async connect() {
+  connect = async () => {
     this.cancelQueuedDisconnect();
 
     if (this.isConnected()) {
@@ -59,17 +59,17 @@ export class DatabaseProvider {
     });
 
     return this._realm;
-  }
+  };
 
   // Queue disconnect for development purposes: when the app hot reloads, a disconnect might be queued. But the new
   // app boot will cancel this disconnect, preventing Realm == null errors.
-  queueDisconnect() {
+  queueDisconnect = () => {
     this.cancelQueuedDisconnect();
     this._isQueuedForDisconnect = true;
-    this._disconnectTimeout = setTimeout(this.disconnect, 300)
-  }
+    this._disconnectTimeout = setTimeout(() => this.disconnect(), 300);
+  };
 
-  cancelQueuedDisconnect() {
+  cancelQueuedDisconnect = () => {
     if (this._disconnectTimeout) {
       try {
         clearTimeout(this._disconnectTimeout);
@@ -79,9 +79,9 @@ export class DatabaseProvider {
     }
     this._disconnectTimeout = undefined;
     this._isQueuedForDisconnect = false;
-  }
+  };
 
-  disconnect() {
+  disconnect = () => {
     this._isConnected = false;
     if (this._realm == null) {
       return;
@@ -89,7 +89,7 @@ export class DatabaseProvider {
     this._realm.close();
     this._realm = null;
     this._isQueuedForDisconnect = false;
-  }
+  };
 
   isConnected = () => {
     try {
@@ -113,7 +113,7 @@ export class DatabaseProvider {
 
     rollbar.error("Failed to connect to realm after timeout", { timeout: timeout });
     return false;
-  }
+  };
 
   realm = () => {
     if (this._realm == null || this._realm.isClosed) {
@@ -134,14 +134,14 @@ export class DatabaseProvider {
     return this._realm;
   };
 
-  deleteDb() {
+  deleteDb = () => {
     if (this.isConnected()) {
       this.disconnect();
     }
 
     console.info("Deleting database");
     Realm.deleteFile(this.config);
-  }
+  };
 
   getIncrementedPrimaryKey = (schema: ObjectSchema) => {
     if (schema.primaryKey === undefined) {
