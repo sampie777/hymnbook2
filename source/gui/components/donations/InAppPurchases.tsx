@@ -45,18 +45,15 @@ const InAppPurchases: React.FC<Props> = ({}) => {
       return;
     }
 
-    if (processedTransactionIds.has(transactionId)) {
-      setProcessing(false);
-      return;
-    }
-    processedTransactionIds.add(transactionId);
-
     try {
-      rollbar.info("Donation received", {
-        type: "in-app",
-        product: purchase.productId,
-      });
-      Alert.alert("Thank you!", "Your donation is greatly appreciated\nand motivates me to keep on going with this work.");
+      if (!processedTransactionIds.has(transactionId)) {
+        processedTransactionIds.add(transactionId);
+        rollbar.info("Donation received", {
+          type: "in-app",
+          product: purchase.productId,
+        });
+        Alert.alert("Thank you!", "Your donation is greatly appreciated\nand motivates me to keep on going with this work.");
+      }
     } catch (error) {
       rollbar.warning("Failed to validate in-app purchase", { ...sanitizeErrorForRollbar(error), purchase });
     } finally {
@@ -87,7 +84,7 @@ const InAppPurchases: React.FC<Props> = ({}) => {
 
   return (
     <View style={styles.container}>
-      {products.map(product =>
+      {products.map((product) =>
         <InAppPurchaseItem
           key={product.id}
           product={product}
@@ -102,11 +99,9 @@ const InAppPurchases: React.FC<Props> = ({}) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    paddingHorizontal: 30,
+    marginVertical: 30,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
     gap: 20,
   },
