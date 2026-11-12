@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../../../components/providers/ThemeProvider";
 import ConfirmationModal from "../../../../../components/popups/ConfirmationModal";
 import AudioItem from "./AudioItem";
@@ -11,6 +11,9 @@ import { api } from "../../../../../../logic/api";
 import { AbcMelody } from "../../../../../../logic/db/models/songs/AbcMelodies";
 import { useIsMounted } from "../../../../../components/utils";
 import SafeText from "../../../../../components/SafeText.tsx";
+import { isConnectionError } from "../../../../../../logic/apiUtils";
+import { rollbar } from "../../../../../../logic/rollbar";
+import { sanitizeErrorForRollbar } from "../../../../../../logic/utils/utils.ts";
 
 interface Props {
   song: Song;
@@ -52,6 +55,13 @@ const SongAudioPopup: React.FC<Props> = ({ song, selectedMelody, onClose }) => {
       .then(data => {
         if (!isMounted()) return;
         setItems(data);
+      })
+      .catch(error => {
+        if (!isMounted()) return;
+        if (!isConnectionError(error)) {
+          rollbar.error("Failed to fetch audio files for song", sanitizeErrorForRollbar(error));
+        }
+        Alert.alert("Failed to load audio recordings", isConnectionError(error) ? "No internet connection" : "Could not fetch audio recordings from the server.");
       })
       .finally(() => {
         if (!isMounted()) return;

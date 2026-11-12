@@ -52,7 +52,8 @@ const AudioPlayerControls: React.FC<Props> = ({ song, showMelodySettings }) => {
   }, []);
 
   useEffect(() => {
-    progressBarPosition.value = withTiming(position / duration * 100, {
+    const progress = duration > 0 ? (position / duration) * 100 : 0;
+    progressBarPosition.value = withTiming(progress, {
       duration: progressBarUpdateIntervalMs,
       easing: ReAnimatedEasing.linear
     });

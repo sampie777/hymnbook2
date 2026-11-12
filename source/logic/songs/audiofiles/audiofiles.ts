@@ -28,8 +28,14 @@ export namespace AudioFiles {
       }
     }
 
-    // Do this at every init player, as the setting may have changed
-    await TrackPlayer.setRate(Settings.songAudioPlaybackSpeed);
+    if (isInitialized) {
+      try {
+        // Do this at every init player, as the setting may have changed
+        await TrackPlayer.setRate(Settings.songAudioPlaybackSpeed);
+      } catch (error) {
+        rollbar.error("Failed to set track player playback rate", sanitizeErrorForRollbar(error));
+      }
+    }
   };
 
   const setupPlayer = async (): Promise<boolean> => {
