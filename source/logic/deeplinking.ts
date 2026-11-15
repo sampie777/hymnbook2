@@ -29,8 +29,8 @@ export namespace DeepLinking {
     callbacks.set(path, callback);
   };
 
-  export const validateUrl = (url: string): boolean =>
-    config.deepLinkPaths.some(path => url.startsWith(path));
+  export const validateUrl = (url?: string | null): boolean =>
+    url != null && config.deepLinkPaths.some(path => url.startsWith(path));
 
   export const parseUrl = (url: string): Route | null => {
     const schemeRegex = /^(.*?):\/\//;
@@ -84,8 +84,8 @@ export namespace DeepLinking {
     return Object.fromEntries(result);
   };
 
-  export const handle = (url: string | null, validate = true) => {
-    if (url === null) return;
+  export const handle = (url?: string | null, validate = true) => {
+    if (url == null) return;
 
     if (validate && !validateUrl(url)) {
       // Ignore track player notification clicks
