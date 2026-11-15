@@ -236,6 +236,7 @@ export const computeLayout = (
   const baseStaffHeight = 40 * currentMelodyScale;
   const baseChordOffsetValue = 30 * currentMelodyScale;
   const topMarginValue = AbcConfig.chordSize * currentMelodyScale;
+  const clefTopMarginValue = 8 * currentMelodyScale;
   const standardSpacing = 16 * currentMelodyScale;
 
   let currentY = 5;
@@ -258,7 +259,7 @@ export const computeLayout = (
     // Determine chord height requirement specifically for THIS row
     const rowHasChords = showChords && rowItems.some(m => Boolean(m.item.chord?.trim()));
     const rowChordOffset = rowHasChords ? baseChordOffsetValue : 0;
-    const rowTopMargin = (isFirstRow && rowHasChords) ? topMarginValue : 0;
+    const rowTopMargin = isFirstRow ? (rowHasChords ? topMarginValue : clefTopMarginValue) : 0;
 
     // Staff baseline incorporates this specific row's chord and top height requirements
     const staffY = currentY + rowTopMargin + rowChordOffset + baseStaffHeight;

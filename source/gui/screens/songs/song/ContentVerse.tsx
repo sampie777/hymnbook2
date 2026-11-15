@@ -50,6 +50,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const [textLineWidth, setTextLineWidth] = useState<{ text: string, width: number }[]>([]);
   const [content, setContent] = useState(verse.content);
 
+  // Shorten name
+  const displayName = SongProcessor.verseShortName(verse);
+  const isMelodyAvailable = Boolean(activeMelody !== undefined && verse.abcLyrics);
+
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
@@ -58,11 +62,11 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     })),
     title: useAnimatedStyle(() => ({
       fontSize: scale.value * 19,
-      paddingBottom: scale.value * 5
+      paddingBottom: isMelodyLoaded && isMelodyAvailable ? 0 : scale.value * 5
     })),
     titleLarge: useAnimatedStyle(() => ({
       fontSize: scale.value * 30,
-      paddingBottom: scale.value * 5
+      paddingBottom: isMelodyLoaded && isMelodyAvailable ? 0 : scale.value * 5
     })),
     text: useAnimatedStyle(() => ({
       fontSize: scale.value * 20,
@@ -88,12 +92,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
-  const isMelodyAvailable = () => Boolean(activeMelody !== undefined && verse.abcLyrics);
-
   useEffect(() => {
     setIsMelodyLoaded(false);
     if (activeMelody !== undefined) {
-      setIsMelodyLoading(isMelodyAvailable());
+      setIsMelodyLoading(isMelodyAvailable);
       runAsync(() => setShowMelody(true));
     } else {
       setShowMelody(false)
@@ -117,9 +119,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     setContent(generateVerseContentWithCorrectWidth(verse.content, containerWidth, textLineWidth));
     hasCalculatedLineWidths.current = true;
   }, [containerWidth, textLineWidth]);
-
-  // Shorten name
-  const displayName = SongProcessor.verseShortName(verse);
 
   const createHighlightedTextComponent = (text: string, index: number) =>
     <AnimatedSafeText key={index}
@@ -180,7 +179,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       </AnimatedSafeText>
     }
 
-    {isMelodyLoaded && isMelodyAvailable() ? undefined :
+    {isMelodyLoaded && isMelodyAvailable ? undefined :
       <AnimatedSafeText style={[styles.text, animatedStyle.text]}
                         selectable={Settings.enableTextSelection}
                         onLayout={onTextContainerLayout}
@@ -192,7 +191,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       </AnimatedSafeText>
     }
 
-    {!(showMelody && isMelodyAvailable()) ? undefined :
+    {!(showMelody && isMelodyAvailable) ? undefined :
       <View style={{
         // Hide view while melody is loading. Do this outside the MelodyView component to avoid re-renders
         position: isMelodyLoaded ? "relative" : "absolute",

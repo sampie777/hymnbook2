@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
-import { FlatList, Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Gesture, GestureDetector, ScrollView as GestureScrollView } from "react-native-gesture-handler";
 import ReAnimated, {
   Easing as ReAnimatedEasing,
   runOnJS,
@@ -15,7 +15,6 @@ import { AbcMelody, AbcSubMelody } from "../../../../logic/db/models/songs/AbcMe
 import { ParamList, SettingsRoute, SongRoute, VersePickerMethod, VersePickerRoute } from "../../../../navigation";
 import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import {
-  calculateVerseHeight,
   generateSongTitle,
   getDefaultMelody,
   loadSongWithUuidOrId,
@@ -25,12 +24,12 @@ import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../
 import {
   Alert,
   BackHandler,
-  FlatList as NativeFlatList,
   LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView as NativeScrollView,
   StyleSheet,
-  View,
-  ViewabilityConfigCallbackPairs,
-  ViewToken
+  View
 } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { useIsMounted } from "../../../components/utils";
@@ -46,6 +45,7 @@ import { useSongHistory } from "../../../components/providers/SongHistoryProvide
 import MelodySettingsModal from "./melody/MelodySettingsModal.tsx";
 import Header from "./Header.tsx";
 import Footer from "./Footer.tsx";
+import SongTextVerses from "./SongTextVerses";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -55,10 +55,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const isMounted = useIsMounted({ trackFocus: true });
   const fadeInTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const scrollTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
-  const flatListComponentRef = useRef<FlatList<Verse>>(null);
-  const verseHeights = useRef<Record<number, number>>({});
+  const scrollViewComponentRef = useRef<NativeScrollView | GestureScrollView>(null);
+  const verseOffsets = useRef<Record<number, number>>({});
   const shouldMelodyShowWhenSongIsLoaded = useRef(false);
-  const shownMelodyHashes: (string | null)[] = [];
   const appContext = useAppContext();
   const history = useSongHistory();
 
@@ -122,7 +121,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    verseHeights.current = {};
+    verseOffsets.current = {};
     history.setSong(song);
     history.setSongListItem(SongList.getSongAtIndex(route.params.songListIndex));
 
@@ -152,7 +151,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   useEffect(() => {
     if (song == null) return;
     // Wait for the song to be loaded
-    if (song?.id != route.params.id || song?.uuid != route.params.uuid) return;
+    if (route.params.id != null && song?.id !== route.params.id) return;
+    if (route.params.uuid != null && song?.uuid !== route.params.uuid) return;
 
     delayScrollToFirstVerse();
   }, [song?.id, route.params.selectedVerses]);
@@ -323,7 +323,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   };
 
-  const animateSongFadeIn = (maxTries = 10) => {
+  const animateSongFadeIn = () => {
     if (showMelody) {
       // Disable melody while loading new song to improve loading speed
       // Re-enable melody after song is completely loaded.
@@ -340,26 +340,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     if (!isMounted() || song == null) return;
 
-    if (maxTries > 0 && (verseHeights.current == null || Object.keys(verseHeights.current).length == 0)) {
-      // Wait for the verses to load before fading song in, otherwise the screen will look glitchy.
-      fadeInTimeout.current = setTimeout(() => animateSongFadeIn(maxTries - 1), 10);
-      return;
-    }
-
-    if (maxTries <= 0) {
-      rollbar.warning("Max song load animation tries elapsed", {
-        songName: song?.name ?? "null",
-        verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted(),
-        maxTries: maxTries,
-        SettingsSongFadeIn: Settings.songFadeIn,
-        showMelody: showMelody,
-        isMelodyLoading: isMelodyLoading,
-        viewIndex: viewIndex,
-        songList: getSongListInformationForErrorReporting()
-      });
-    }
-
     animatedOpacity.value = withTiming(1, {
       duration: 180,
       easing: ReAnimatedEasing.inOut(ReAnimatedEasing.ease)
@@ -371,27 +351,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     shouldMelodyShowWhenSongIsLoaded.current = false;
   };
 
-  const onListViewableItemsChangedForSongControls = React.useRef(
-    ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
-      if (viewableItems.length === 0) {
-        setViewIndex(-1);
-      } else if (viewableItems[0].index !== null) {
-        setViewIndex(viewableItems[0].index);
-      }
-    });
+  const onScrollViewScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    if (!song?.verses || song.verses.length === 0) return;
 
-  const onListViewableItemsChangedForHistory = React.useRef(
-    ({ viewableItems }: { viewableItems: Array<ViewToken>, changed: Array<ViewToken> }) => {
-      if (viewableItems.length === 0) {
-        history.setIndex(-1);
-      } else if (viewableItems[0].index !== null) {
-        history.setIndex(viewableItems[0].index);
+    // Find the currently visible verse based on recorded offsets
+    let currentVerseIndex = 0;
+    for (let i = 0; i < song.verses.length; i++) {
+      const offset = verseOffsets.current[i] ?? 0;
+      if (scrollY >= offset - 50) {
+        currentVerseIndex = i;
       }
-    });
+    }
 
-  const onListEndReached = () => {
-    if (!isMounted()) return;
-    setViewIndex((song?.verses?.length ?? 0) - 1);
+    setViewIndex(currentVerseIndex);
+    history.setIndex(currentVerseIndex);
   };
 
   // Use small timeout for scrollToFirstVerse to prevent scroll being stuck / not firing..
@@ -406,7 +380,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     if (maxTries <= 0) {
       rollbar.warning("Max scroll tries elapsed.", {
         songName: song?.name ?? "null",
-        verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
+        verseHeights: verseOffsets.current == null ? "null" : Object.keys(verseOffsets.current).length,
         isMounted: isMounted(),
         selectedVerses: route.params.selectedVerses?.map(it => it.name),
         showMelody: showMelody,
@@ -418,9 +392,10 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       return;
     }
 
-    // First wait for the verses to be loaded
-    if (verseHeights.current == null || Object.keys(verseHeights.current).length == 0) {
+    // First wait for the verse offsets to be measured
+    if (verseOffsets.current == null || Object.keys(verseOffsets.current).length == 0) {
       scrollTimeout.current = setTimeout(() => delayScrollToFirstVerse(maxTries - 1), 200);
+      return;
     }
 
     // Once loaded, scroll to position
@@ -442,130 +417,158 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     return undefined;
   };
 
+  const scrollToVerseIndex = (index: number) => {
+    const targetOffset = verseOffsets.current[index] ?? 0;
+    (scrollViewComponentRef.current as any)?.scrollTo?.({
+      y: Math.max(0, targetOffset - 10),
+      animated: Settings.animateScrolling
+    });
+  };
+
   const scrollToFirstVerse = () => {
     if (!isMounted()) return;
 
     if (song === undefined
       || song?.verses === undefined || song?.verses.length === 0
       || route.params.selectedVerses === undefined || route.params.selectedVerses.length === 0) {
-      flatListComponentRef.current?.scrollToOffset({
-        offset: 0,
+      (scrollViewComponentRef.current as any)?.scrollTo?.({
+        y: 0,
         animated: Settings.animateScrolling
       });
       return;
     }
 
-    const scrollIndex = song.verses.findIndex(it => it.id === route.params.selectedVerses!![0].id);
+    const scrollIndex = song.verses.findIndex(it =>
+      it.id === route.params.selectedVerses?.[0]?.id ||
+      it.index === route.params.selectedVerses?.[0]?.index
+    );
     if (scrollIndex == null || scrollIndex < 0) {
       return;
     }
 
-    try {
-      flatListComponentRef.current?.scrollToIndex({
-        index: scrollIndex || 0,
-        animated: Settings.animateScrolling
-      });
-    } catch (error) {
-      rollbar.warning(`Failed to scroll to index`, {
-        ...sanitizeErrorForRollbar(error),
-        scrollIndex: scrollIndex,
-        songName: song?.name ?? "null",
-        songId: song?.id ?? "null",
-        routeParamId: route.params.id,
-        verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-        isMounted: isMounted(),
-        selectedVerses: route.params.selectedVerses?.map(it => it.name),
-        songList: getSongListInformationForErrorReporting()
-      });
-    }
+    scrollToVerseIndex(scrollIndex);
   };
 
-  const storeVerseHeight = useCallback((verse: Verse, event: LayoutChangeEvent) => {
-    if (verseHeights.current == null) return;
-    verseHeights.current[verse.index] = event.nativeEvent.layout.height;
+  const storeVerseLayout = useCallback((verse: Verse, event: LayoutChangeEvent) => {
+    if (verseOffsets.current == null) return;
+    verseOffsets.current[verse.index] = event.nativeEvent.layout.y;
   }, []);
 
-  const calculateVerseLayout = (data: ArrayLike<Verse> | null | undefined, index: number): {
-    length: number;
-    offset: number;
-    index: number
-  } => {
-    if (data == null || data.length == 0 || verseHeights.current == null) {
-      return {
-        length: 0,
-        offset: 0,
-        index: 0
-      };
-    }
+  const melodyVerseIds = useMemo(() => {
+    const ids = new Set<number>();
+    if (!song?.verses || !showMelody || !selectedMelody) return ids;
 
-    return calculateVerseHeight(index, verseHeights.current);
-  };
-
-  // When verse is shown (either no verses as selected or this verse selected no matter if it's first or not)
-  // and the verse custom melody isn't shown yet
-  const isVerseVisibleAndHasUniqueMelody = (verse: Verse, selectedVerses: Verse[]): boolean => {
-    if (!selectedMelody) return false;
-
-    const isNotSelectedVerse = selectedVerses.length > 0 && !selectedVerses.some(it => it.id === verse.id);
-    if (isNotSelectedVerse) return false;
-
-    const melody = AbcSubMelody.getForVerse(selectedMelody, verse)?.melody || selectedMelody.melody;
-    if (!melody) return false;
-
-    const melodyHash = hash(melody);
-    if (shownMelodyHashes.includes(melodyHash)) return false;
-
-    shownMelodyHashes.push(melodyHash);
-    return true;
-  };
-
-  const renderContentItem = ({ item }: { item: Verse }) => {
+    const shownHashes: string[] = [];
     const selectedVerses = route.params.selectedVerses || [];
 
-    // Show melody if verse is part of (all) selected verses
-    const noVersesSelectedButAllMustBeShown = showMelodyForAllVerses && selectedVerses.length === 0;
-    const verseIsSelectedAndAllMustBeShown = showMelodyForAllVerses && selectedVerses.some(it => it.id == item.id);
-    // Show melody because it's first selected verse
-    const isFirstSelectedVerse = selectedVerses.length > 0 && selectedVerses[0].id == item.id;
-    // Show melody because it's first verse of song
-    const isFirstVerseOfSongWithNoSelectedVerses = selectedVerses.length === 0 && item.index === 0;
+    song.verses.forEach((verse) => {
+      const isNotSelected = selectedVerses.length > 0 && !selectedVerses.some(it =>
+        (it.id != null && it.id === verse.id) || (it.index != null && it.index === verse.index)
+      );
+      if (isNotSelected) return;
 
-    // Do the variable assignment here, so the function `isVerseVisibleAndHasUniqueMelody()` will always run, as it keeps track of `shownMelodyHashes`.
-    const verseIsVisibleAndHasUniqueMelody = isVerseVisibleAndHasUniqueMelody(item, selectedVerses);
+      const noVersesSelectedButAllMustBeShown = showMelodyForAllVerses && selectedVerses.length === 0;
+      const verseIsSelectedAndAllMustBeShown = showMelodyForAllVerses && selectedVerses.some(it =>
+        (it.id != null && it.id === verse.id) || (it.index != null && it.index === verse.index)
+      );
+      const isFirstSelectedVerse = selectedVerses.length > 0 &&
+        (selectedVerses[0].id === verse.id || selectedVerses[0].index === verse.index);
+      const isFirstVerseOfSongWithNoSelectedVerses = selectedVerses.length === 0 && verse.index === 0;
 
-    const shouldMelodyBeShownForVerse = showMelody
-      && (noVersesSelectedButAllMustBeShown
-        || verseIsSelectedAndAllMustBeShown
-        || isFirstSelectedVerse
-        || isFirstVerseOfSongWithNoSelectedVerses
-        || verseIsVisibleAndHasUniqueMelody);
+      const melody = AbcSubMelody.getForVerse(selectedMelody, verse)?.melody || selectedMelody.melody;
+      const melodyHash = melody ? hash(melody) : null;
+      const isUniqueMelody = melodyHash != null && !shownHashes.includes(melodyHash);
 
-    return <ContentVerse verse={item}
+      if (!(
+        noVersesSelectedButAllMustBeShown ||
+        verseIsSelectedAndAllMustBeShown ||
+        isFirstSelectedVerse ||
+        isFirstVerseOfSongWithNoSelectedVerses ||
+        isUniqueMelody
+      )) return;
+
+      ids.add(verse.id);
+      if (melodyHash) {
+        shownHashes.push(melodyHash);
+      }
+    });
+
+    return ids;
+  }, [song?.verses, showMelody, selectedMelody, showMelodyForAllVerses, route.params.selectedVerses]);
+
+  const renderContentItem = (item: Verse) => {
+    const selectedVerses = route.params.selectedVerses || [];
+    const shouldMelodyBeShownForVerse = melodyVerseIds.has(item.id);
+
+    return <ContentVerse key={item.id.toString()}
+                         verse={item}
                          scale={animatedScale}
                          melodyScale={melodyScale}
                          selectedVerses={selectedVerses}
                          activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
                          setIsMelodyLoading={setIsMelodyLoading}
-                         onLayout={storeVerseHeight}
+                         onLayout={storeVerseLayout}
                          highlightText={highlightText}
                          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
                          showMelodyChords={showMelodyChords}
                          melodyTextAlignment={melodyTextAlignment} />;
   };
 
-  const listViewabilityConfigPairs = React.useRef<ViewabilityConfigCallbackPairs>([
-    {
-      viewabilityConfig: { itemVisiblePercentThreshold: 10 },
-      onViewableItemsChanged: onListViewableItemsChangedForSongControls.current,
-    },
-    {
-      viewabilityConfig: { itemVisiblePercentThreshold: 35 },
-      onViewableItemsChanged: onListViewableItemsChangedForHistory.current,
-    },
-  ]);
+  const renderVerses = () => {
+    if (!song?.verses || song.verses.length === 0) return null;
 
-  // With NativeFlatList, pinch-to-zoom won't work properly on Android
-  const VerseList = Settings.useNativeFlatList ? NativeFlatList : FlatList;
+    const selectedVerses = route.params.selectedVerses || [];
+
+    if (!showMelody) {
+      return (
+        <SongTextVerses
+          verses={song.verses}
+          scale={animatedScale}
+          selectedVerses={selectedVerses}
+          highlightText={highlightText}
+          onVerseOffset={(verse, y) => {
+            if (verseOffsets.current) verseOffsets.current[verse.index] = y;
+          }}
+        />
+      );
+    }
+
+    const elements: React.ReactNode[] = [];
+    let textBuffer: Verse[] = [];
+
+    const flushTextBuffer = () => {
+      if (textBuffer.length > 0) {
+        const chunk = [...textBuffer];
+        elements.push(
+          <SongTextVerses
+            key={`text_chunk_${chunk[0].id}`}
+            verses={chunk}
+            scale={animatedScale}
+            selectedVerses={selectedVerses}
+            highlightText={highlightText}
+            onVerseOffset={(verse, y) => {
+              if (verseOffsets.current) verseOffsets.current[verse.index] = y;
+            }}
+          />
+        );
+        textBuffer = [];
+      }
+    };
+
+    song.verses.forEach((verse) => {
+      if (melodyVerseIds.has(verse.id)) {
+        flushTextBuffer();
+        elements.push(renderContentItem(verse));
+      } else {
+        textBuffer.push(verse);
+      }
+    });
+
+    flushTextBuffer();
+    return elements;
+  };
+
+  const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
 
   return <View style={{ flex: 1 }}>
     {!showSongAudioModal || song === undefined ? undefined :
@@ -574,7 +577,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                       onClose={() => {
                         if (!isMounted()) return;
                         setShowSongAudioModal(false)
-                      }} />}
+                      }} />
+    }
 
     {!showMelodySettings ? undefined :
       <MelodySettingsModal
@@ -588,7 +592,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         setShowMelodyOnSeparateLines={setShowMelodyOnSeparateLines}
         melodyScale={melodyScale}
         melodyTextAlignment={melodyTextAlignment}
-        setMelodyTextAlignment={setMelodyTextAlignment} />}
+        setMelodyTextAlignment={setMelodyTextAlignment} />
+    }
 
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
@@ -597,32 +602,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             styles.contentSectionListContainer,
             useAnimatedStyle(() => ({ opacity: animatedOpacity.value }))
           ]}>
-            <VerseList
-              ref={flatListComponentRef}
-              data={song?.verses}
-              renderItem={renderContentItem}
-              initialNumToRender={20}
-              extraData={[showMelody, showMelodyForAllVerses]}
-              keyExtractor={(item: Verse) => item.id.toString()}
-              getItemLayout={song && song?.verses.length > 20 ? calculateVerseLayout : undefined}
+            <ScrollView
+              ref={scrollViewComponentRef as any}
               contentContainerStyle={styles.contentSectionList}
-              viewabilityConfigCallbackPairs={listViewabilityConfigPairs.current}
-              onEndReached={onListEndReached}
-              onScrollToIndexFailed={(info) => rollbar.warning("Failed to scroll to index.", {
-                info: info,
-                songName: song?.name ?? "null",
-                songId: song?.id ?? "null",
-                routeParamId: route.params.id,
-                verseHeights: verseHeights.current == null ? "null" : Object.keys(verseHeights.current).length,
-                isMounted: isMounted(),
-                viewIndex: viewIndex,
-                selectedVerses: route.params.selectedVerses?.map(it => it.name),
-                songList: getSongListInformationForErrorReporting()
-              })}
-              ListHeaderComponent={<Header song={song} scale={animatedScale} />}
-              ListFooterComponent={<Footer song={song} scale={animatedScale} />}
-              removeClippedSubviews={false} // Set this to false to enable text selection. Work around can be: https://stackoverflow.com/a/62936447/2806723
-            />
+              onScroll={onScrollViewScroll}
+              scrollEventThrottle={100}
+              showsVerticalScrollIndicator={true}
+              removeClippedSubviews={false}
+            >
+              <Header song={song} scale={animatedScale} />
+              {renderVerses()}
+              <Footer song={song} scale={animatedScale} />
+            </ScrollView>
           </ReAnimated.View>
         </GestureDetector>
 
@@ -636,7 +627,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                       songListIndex={route.params.songListIndex}
                       song={song}
                       listViewIndex={viewIndex}
-                      flatListComponentRef={flatListComponentRef.current || undefined}
+                      onScrollToVerseIndex={scrollToVerseIndex}
                       selectedVerses={route.params.selectedVerses} />
       </View>
     </GestureDetector>

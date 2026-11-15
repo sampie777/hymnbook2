@@ -9,7 +9,6 @@ import { getNextVerseIndex } from "../../../../logic/songs/utils";
 import { RectangularInset } from "../../../components/utils";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,8 +17,8 @@ interface ComponentProps {
   songListIndex?: number;
   song?: Song;
   listViewIndex: number;
-  flatListComponentRef?: FlatList<any>;
   selectedVerses?: Array<Verse>;
+  onScrollToVerseIndex?: (index: number) => void;
 }
 
 const SongControls: React.FC<ComponentProps> =
@@ -28,8 +27,8 @@ const SongControls: React.FC<ComponentProps> =
      songListIndex,
      song,
      listViewIndex,
-     flatListComponentRef,
-     selectedVerses = []
+     selectedVerses = [],
+     onScrollToVerseIndex,
    }) => {
     const previousSong = songListIndex === undefined ? undefined : SongList.previousSong(songListIndex);
     const nextSong = songListIndex === undefined ? undefined : SongList.nextSong(songListIndex);
@@ -76,10 +75,7 @@ const SongControls: React.FC<ComponentProps> =
       nextIndex = Math.min((song?.verses.length ?? 1) - 1, nextIndex);
 
       setJumpToVerseTargetIndex(nextIndex);
-      flatListComponentRef?.scrollToIndex({
-        index: nextIndex,
-        animated: Settings.animateScrolling
-      });
+      onScrollToVerseIndex?.(nextIndex);
     };
 
     const jumpToLastVerse = () => {
@@ -93,10 +89,7 @@ const SongControls: React.FC<ComponentProps> =
       }
 
       setJumpToVerseTargetIndex(lastIndex);
-      flatListComponentRef?.scrollToIndex({
-        index: lastIndex,
-        animated: Settings.animateScrolling
-      });
+      onScrollToVerseIndex?.(lastIndex);
     };
 
     return <SafeAreaView style={styles.container} pointerEvents={"box-none"}>
