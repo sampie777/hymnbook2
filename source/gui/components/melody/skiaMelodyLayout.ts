@@ -228,8 +228,8 @@ export const computeLayout = (
   showChords: boolean,
   textAlignment: MelodyTextAlignment,
   clefItem: ScoreItem,
-  lyricFont: SkFont
-) => {
+  lyricFont: SkFont,
+  horizontal_margin: number) => {
   const path = Skia.Path.Make();
   const positions: PositionItem[] = [];
 
@@ -253,8 +253,8 @@ export const computeLayout = (
     const endIndex = hasEndBar ? rowItems.length - 1 : rowItems.length;
     const middleItems = rowItems.slice(startIndex, endIndex);
 
-    const leftBound = 10;
-    const rightBound = effectiveWidth + 10;
+    const leftBound = horizontal_margin;
+    const rightBound = effectiveWidth + horizontal_margin;
 
     // Determine chord height requirement specifically for THIS row
     const rowHasChords = showChords && rowItems.some(m => Boolean(m.item.chord?.trim()));

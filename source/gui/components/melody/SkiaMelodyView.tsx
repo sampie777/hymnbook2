@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, Group, Path, Text, useFont } from "@shopify/react-native-skia";
+import { Canvas, Group, Path, Text } from "@shopify/react-native-skia";
 import { runOnJS, SharedValue, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { AbcSong } from "@hymnbook/abc";
 import { AbcConfig } from "./config";
 import { MelodyTextAlignment } from "../../../logic/songs/abc/utils.ts";
 import { isAndroid, isDevelopmentEnv } from "../../../logic/utils/utils.ts";
 import { useTheme } from "../providers/ThemeProvider.tsx";
-import { PixelRatio, Platform } from "react-native";
 import {
   balanceRows,
   computeLayout,
@@ -14,9 +13,10 @@ import {
   extractScoreLines,
   measureScoreLines
 } from "./skiaMelodyLayout.ts";
+import { useMelodyFonts } from "./melodyFonts.ts";
 
-const ANDROID_MUSIC_SCALE = Platform.OS === "android" ? 1.17 : 1;
-const ANDROID_MUSIC_Y_OFFSET = Platform.OS === "android" ? -0.1 : 0;
+const ANDROID_MUSIC_Y_OFFSET = isAndroid ? -0.1 : 0;
+const HORIZONTAL_MARGIN = 10;
 
 interface Props {
   abcSong: AbcSong;
@@ -27,7 +27,7 @@ interface Props {
   availableWidth: number;
   marginLeft?: number;
   marginRight?: number;
-  onLoaded?: () => void;
+  onLoaded?: (canvasHeight: number) => void;
   textAlignment?: MelodyTextAlignment;
 }
 
@@ -108,10 +108,7 @@ const SkiaMelodyView: React.FC<Props> = ({
     setLayoutReady(false);
   }, [abcSong, showMelodyOnSeparateLines, canvasWidth]);
 
-  const fontScale = PixelRatio.getFontScale();
-  const musicFont = useFont(require("../../../../assets/fonts/MusiQwikCustom.ttf"), AbcConfig.noteSize * fontScale * ANDROID_MUSIC_SCALE);
-  const lyricFont = useFont(require("../../../../assets/fonts/Roboto-Regular-Extended.ttf"), AbcConfig.textSize * fontScale);
-  const chordFont = useFont(require("../../../../assets/fonts/Roboto-Regular-Extended.ttf"), AbcConfig.chordSize * fontScale);
+  const { musicFont, lyricFont, chordFont } = useMelodyFonts();
 
   const clefItem = useMemo(() => createClefItem(abcSong), [abcSong?.clef?.type]);
 
@@ -122,7 +119,7 @@ const SkiaMelodyView: React.FC<Props> = ({
   const layoutData = useMemo(() => {
     if (!musicFont || !lyricFont || !chordFont || canvasWidth <= 0 || rawScoreLines.length === 0) return null;
 
-    const effectiveWidth = Math.max((canvasWidth / currentZoom) - 20, 50);
+    const effectiveWidth = Math.max((canvasWidth / currentZoom) - 2 * HORIZONTAL_MARGIN, 50);
 
     const measuredPhrases = measureScoreLines(rawScoreLines, musicFont, lyricFont, chordFont, currentMelodyScale, showChords);
     const balancedRows = balanceRows(measuredPhrases, effectiveWidth, currentMelodyScale, textAlignment, clefItem);
@@ -136,7 +133,8 @@ const SkiaMelodyView: React.FC<Props> = ({
       showChords,
       textAlignment,
       clefItem,
-      lyricFont
+      lyricFont,
+      HORIZONTAL_MARGIN
     );
 
     let totalScaledHeight = maxBottomY * currentZoom;
@@ -157,7 +155,7 @@ const SkiaMelodyView: React.FC<Props> = ({
       const raf = requestAnimationFrame(() => {
         if (isMounted) {
           setLayoutReady(true);
-          onLoaded?.();
+          onLoaded?.(layoutData.canvasHeight);
         }
       });
       return () => {
@@ -178,7 +176,7 @@ const SkiaMelodyView: React.FC<Props> = ({
         height: layoutData.canvasHeight,
         marginLeft: marginLeft,
         marginRight: marginRight,
-        opacity: layoutReady ? 1 : 0
+        opacity: (layoutReady || layoutData != null) ? 1 : 0
       }}
     >
       <Group transform={[{ scale: currentZoom }]} origin={{ x: 0, y: 0 }}>

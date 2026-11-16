@@ -1,5 +1,5 @@
-import React, { memo, useCallback, useMemo, useState, useEffect } from "react";
-import { LayoutChangeEvent, StyleSheet, View } from "react-native";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { LayoutChangeEvent, StyleSheet } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
@@ -8,10 +8,24 @@ import { isVerseInList } from "../../../../logic/songs/versePicker";
 import { getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  LinearTransition,
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 import SkiaMelodyView from "../../../components/melody/SkiaMelodyView.tsx";
 import { MelodyTextAlignment } from "../../../../logic/songs/abc/utils.ts";
+import { renderTextWithCustomReplacements } from "../../../components/utils";
+import config from "../../../../config.ts";
+
+const transitionLayout = LinearTransition
+  .duration(config.songs.melody.animationDuration)
+  .easing(Easing.bezier(0.25, 0.1, 0.25, 1));
 
 interface ContentVerseProps {
   verse: Verse;
@@ -19,6 +33,7 @@ interface ContentVerseProps {
   melodyScale: SharedValue<number>;
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
+  showMelody?: boolean;
   setIsMelodyLoading?: (value: boolean) => void;
   onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
@@ -26,29 +41,40 @@ interface ContentVerseProps {
   showMelodyChords: boolean;
   melodyTextAlignment: MelodyTextAlignment;
   availableWidth?: number;
+  initialHeight?: number;
   onMelodyReady?: () => void;
+  onHideComplete?: () => void;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
-  verse,
-  scale,
-  melodyScale,
-  selectedVerses,
-  activeMelody,
-  setIsMelodyLoading,
-  onLayout,
-  showMelodyOnSeparateLines,
-  showMelodyChords,
-  melodyTextAlignment,
-  availableWidth,
-  onMelodyReady,
-}) => {
+                                                     verse,
+                                                     scale,
+                                                     melodyScale,
+                                                     selectedVerses,
+                                                     activeMelody,
+                                                     showMelody = true,
+                                                     setIsMelodyLoading,
+                                                     onLayout,
+                                                     highlightText,
+                                                     showMelodyOnSeparateLines,
+                                                     showMelodyChords,
+                                                     melodyTextAlignment,
+                                                     availableWidth,
+                                                     initialHeight,
+                                                     onMelodyReady,
+                                                     onHideComplete,
+                                                   }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
   const [containerWidth, setContainerWidth] = useState(availableWidth || 0);
   const effectiveWidth = (availableWidth && availableWidth > 0) ? availableWidth : containerWidth;
 
   const displayName = SongProcessor.verseShortName(verse);
   const isMelodyAvailable = Boolean(activeMelody !== undefined && verse.abcLyrics);
+
+  const [canvasHeightState, setCanvasHeightState] = useState<number | null>(null);
+  const [isTransitionComplete, setIsTransitionComplete] = useState<boolean>(showMelody === false);
+
+  const transitionProgress = useSharedValue(showMelody !== false ? 0 : 0);
 
   const styles = createStyles(useTheme());
   const animatedStyle = {
@@ -58,13 +84,30 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     })),
     title: useAnimatedStyle(() => ({
       fontSize: scale.value * 19,
+      lineHeight: scale.value * 28,
       paddingBottom: 0
     })),
     titleLarge: useAnimatedStyle(() => ({
       fontSize: scale.value * 30,
+      lineHeight: scale.value * 40,
       paddingBottom: 0
     })),
+    text: useAnimatedStyle(() => ({
+      fontSize: scale.value * 20,
+      lineHeight: scale.value * 30,
+    })),
   };
+
+  const isMelodyDrivingHeight = Boolean(showMelody !== false && canvasHeightState != null);
+  const shouldAnimateLayout = !isTransitionComplete || showMelody === false;
+
+  const animatedTextStyle = useAnimatedStyle(() => ({
+    opacity: 1 - transitionProgress.value,
+  }));
+
+  const animatedMelodyStyle = useAnimatedStyle(() => ({
+    opacity: transitionProgress.value,
+  }));
 
   const styleForVerseType = (type: VerseType) => {
     switch (type) {
@@ -84,10 +127,44 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
-  const onMelodyLoaded = useCallback(() => {
+  const onMelodyLoaded = useCallback((height: number) => {
     setIsMelodyLoading?.(false);
     onMelodyReady?.();
+    setCanvasHeightState(height);
   }, [setIsMelodyLoading, onMelodyReady]);
+
+  useEffect(() => {
+    if (showMelody === false) {
+      setIsTransitionComplete(false);
+      transitionProgress.value = withTiming(
+        0,
+        {
+          duration: config.songs.melody.animationDuration,
+          easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        },
+        (finished) => {
+          if (finished) {
+            if (onHideComplete) {
+              runOnJS(onHideComplete)();
+            }
+          }
+        }
+      );
+    } else if (showMelody === true && canvasHeightState != null) {
+      transitionProgress.value = withTiming(
+        1,
+        {
+          duration: config.songs.melody.animationDuration,
+          easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        },
+        (finished) => {
+          if (finished) {
+            runOnJS(setIsTransitionComplete)(true);
+          }
+        }
+      );
+    }
+  }, [showMelody, canvasHeightState, onHideComplete]);
 
   const memoizedAbc = useMemo(() => {
     if (!activeMelody || !verse.abcLyrics) return null;
@@ -124,6 +201,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     onLayout?.(verse, e);
   };
 
+  const createHighlightedTextComponent = (text: string, index: number) => (
+    <AnimatedSafeText key={index} style={styles.textHighlighted}>
+      {text}
+    </AnimatedSafeText>
+  );
+
   if (!isMelodyAvailable || !memoizedAbc) {
     return null;
   }
@@ -131,6 +214,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   return (
     <Animated.View
       style={[styles.container, animatedStyle.container]}
+      layout={shouldAnimateLayout ? transitionLayout : undefined}
       onLayout={handleContainerLayout}
     >
       {displayName.length === 0 ? null : (
@@ -146,21 +230,53 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         </AnimatedSafeText>
       )}
 
-      {effectiveWidth > 0 && (
-        <SkiaMelodyView
-          onLoaded={onMelodyLoaded}
-          key={`${verse.id}_${activeMelody?.id}_${Math.round(effectiveWidth)}`}
-          abcSong={memoizedAbc}
-          animatedScale={scale}
-          melodyScale={melodyScale}
-          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
-          showChords={showMelodyChords}
-          availableWidth={effectiveWidth}
-          marginLeft={-20}
-          marginRight={-10}
-          textAlignment={melodyTextAlignment}
-        />
-      )}
+      <Animated.View
+        style={styles.bodyContainer}
+        layout={shouldAnimateLayout ? transitionLayout : undefined}
+      >
+        <Animated.View
+          style={[
+            isMelodyDrivingHeight ? styles.layerAbsolute : styles.layerRelative,
+            styles.textLayer,
+            animatedTextStyle
+          ]}
+          pointerEvents={isMelodyDrivingHeight ? "none" : "auto"}
+        >
+          <AnimatedSafeText
+            style={[styles.text, animatedStyle.text]}
+            selectable={Settings.enableTextSelection}
+            textBreakStrategy="balanced"
+          >
+            {highlightText == null
+              ? verse.content
+              : renderTextWithCustomReplacements(verse.content, highlightText, createHighlightedTextComponent)}
+          </AnimatedSafeText>
+        </Animated.View>
+
+        {effectiveWidth > 0 && (
+          <Animated.View
+            style={[
+              isMelodyDrivingHeight ? styles.layerRelative : styles.layerAbsolute,
+              animatedMelodyStyle
+            ]}
+            pointerEvents={isMelodyDrivingHeight ? "auto" : "none"}
+          >
+            <SkiaMelodyView
+              onLoaded={onMelodyLoaded}
+              key={`${verse.id}_${activeMelody?.id}_${Math.round(effectiveWidth + 30)}`}
+              abcSong={memoizedAbc}
+              animatedScale={scale}
+              melodyScale={melodyScale}
+              showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+              showChords={showMelodyChords}
+              availableWidth={effectiveWidth + 30}
+              marginLeft={0}
+              marginRight={0}
+              textAlignment={melodyTextAlignment}
+            />
+          </Animated.View>
+        )}
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -194,4 +310,33 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontStyle: "normal",
     color: colors.primary.default
   },
+
+  bodyContainer: {
+    position: "relative",
+    overflow: "hidden",
+    marginLeft: -20,
+    marginRight: -10,
+  },
+  layerRelative: {
+    position: "relative",
+    width: "100%",
+  },
+  layerAbsolute: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  textLayer: {
+    paddingLeft: 20,
+    paddingRight: 10,
+  },
+
+  text: {
+    color: colors.text.default,
+  },
+  textHighlighted: {
+    color: colors.text.highlighted.foreground,
+    backgroundColor: colors.text.highlighted.background
+  }
 });

@@ -36,6 +36,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { useIsMounted } from "../../../components/utils";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ContentVerse from "./ContentVerse";
+import { preloadMelodyFonts } from "../../../components/melody/melodyFonts";
 import SongControls from "./SongControls";
 import ScreenHeader from "./ScreenHeader";
 import SongAudioPopup from "./melody/audiofiles/SongAudioPopup";
@@ -77,9 +78,17 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const { width: windowWidth } = useWindowDimensions();
   const [contentWidth, setContentWidth] = useState(windowWidth - 50);
   const [readyMelodyVerseIds, setReadyMelodyVerseIds] = useState<Set<number>>(new Set());
+  const [isHidingMelody, setIsHidingMelody] = useState(false);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setReadyMelodyVerseIds(new Set());
+    preloadMelodyFonts();
+  }, []);
+
+  useEffect(() => {
+    if (!isHidingMelody) {
+      setReadyMelodyVerseIds(new Set());
+    }
   }, [song?.id, selectedMelody?.id, showMelody, showMelodyForAllVerses, showMelodyOnSeparateLines, showMelodyChords, melodyTextAlignment]);
 
 
@@ -125,6 +134,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const onBlur = () => {
     keepScreenAwake(false);
+    setIsHidingMelody(false);
+    if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     setSong(undefined);
     history.setSong(undefined);
   };
@@ -224,11 +235,44 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
+  const onMelodyHideComplete = useCallback((verseId: number) => {
+    setReadyMelodyVerseIds(prev => {
+      const next = new Set(prev);
+      next.delete(verseId);
+      if (next.size === 0) {
+        setIsHidingMelody(false);
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current);
+          hideTimeoutRef.current = null;
+        }
+      }
+      return next;
+    });
+  }, []);
+
   const willRenderingMelodyBePerformandEnough = (versedToBeRenderedCount: number) =>
     versedToBeRenderedCount < (isIOS ? 60 : 30);
 
   const handleSetShowMelody = (newValue: boolean) => {
-    if (!newValue || !Settings.showMelodyForAllVerses || !song?.verses) {
+    if (!newValue) {
+      if (readyMelodyVerseIds.size > 0) {
+        setIsHidingMelody(true);
+        if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = setTimeout(() => {
+          setIsHidingMelody(false);
+          setReadyMelodyVerseIds(new Set());
+        }, 700);
+      }
+      return setShowMelody(false);
+    }
+
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    setIsHidingMelody(false);
+
+    if (!Settings.showMelodyForAllVerses || !song?.verses) {
       return setShowMelody(newValue);
     }
 
@@ -296,6 +340,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const loadSong = () => {
     const dbSong = loadSongWithUuidOrId(route.params.uuid, route.params.id);
+    setIsHidingMelody(false);
+    if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     setSong(dbSong ? Song.clone(dbSong, { includeVerses: true }) : undefined);
     history.setSong(song);
 
@@ -465,7 +511,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const melodyVerseIds = useMemo(() => {
     const ids = new Set<number>();
-    if (!song?.verses || !showMelody || !selectedMelody) return ids;
+    if (!song?.verses || (!showMelody && !isHidingMelody) || !selectedMelody) return ids;
 
     const shownHashes: string[] = [];
     const selectedVerses = route.params.selectedVerses || [];
@@ -521,7 +567,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
   const renderContentItem = (item: Verse) => {
     const selectedVerses = route.params.selectedVerses || [];
-    const shouldMelodyBeShownForVerse = melodyVerseIds.has(item.id);
 
     return <ContentVerse key={item.id.toString()}
                          verse={item}
@@ -529,13 +574,15 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          melodyScale={melodyScale}
                          selectedVerses={selectedVerses}
                          activeMelody={selectedMelody}
+                         showMelody={showMelody}
                          setIsMelodyLoading={setIsMelodyLoading}
                          onLayout={storeVerseLayout}
                          highlightText={highlightText}
                          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
                          showMelodyChords={showMelodyChords}
                          melodyTextAlignment={melodyTextAlignment}
-                         availableWidth={contentWidth} />;
+                         availableWidth={contentWidth}
+                         onHideComplete={() => onMelodyHideComplete(item.id)} />;
   };
 
   const renderVerses = () => {
@@ -543,7 +590,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
 
     const selectedVerses = route.params.selectedVerses || [];
 
-    if (!showMelody) {
+    if (!showMelody && !isHidingMelody) {
       return (
         <SongTextVerses
           verses={song.verses}
@@ -565,6 +612,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         const chunk = [...textBuffer];
         elements.push(
           <SongTextVerses
+            animateLayout={isHidingMelody || isMelodyLoading}
             key={`text_chunk_${chunk[0].id}`}
             verses={chunk}
             scale={animatedScale}
@@ -580,7 +628,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     };
 
     song.verses.forEach((verse) => {
-      if (showMelody && readyMelodyVerseIds.has(verse.id)) {
+      if ((showMelody || isHidingMelody) && readyMelodyVerseIds.has(verse.id)) {
         flushTextBuffer();
         elements.push(renderContentItem(verse));
       } else {

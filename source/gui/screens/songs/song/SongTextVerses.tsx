@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useRef } from "react";
 import { LayoutChangeEvent, StyleSheet } from "react-native";
-import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { Easing, LinearTransition, SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import Settings from "../../../../settings";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
@@ -10,6 +10,11 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { AnimatedSafeText } from "../../../components/SafeText";
+import config from "../../../../config.ts";
+
+const transitionLayout = LinearTransition
+  .duration(config.songs.melody.animationDuration)
+  .easing(Easing.bezier(0.25, 0.1, 0.25, 1));
 
 interface SongTextVersesProps {
   verses: Verse[];
@@ -18,16 +23,18 @@ interface SongTextVersesProps {
   highlightText?: string;
   onVerseOffset?: (verse: Verse, y: number) => void;
   onLayout?: (e: LayoutChangeEvent) => void;
+  animateLayout?: boolean;
 }
 
 const SongTextVerses: React.FC<SongTextVersesProps> = ({
-  verses,
-  scale,
-  selectedVerses,
-  highlightText,
-  onVerseOffset,
-  onLayout
-}) => {
+                                                         verses,
+                                                         scale,
+                                                         selectedVerses,
+                                                         highlightText,
+                                                         onVerseOffset,
+                                                         onLayout,
+                                                         animateLayout = false,
+                                                       }) => {
   const styles = createStyles(useTheme());
   const containerYRef = useRef(0);
   const relativeOffsetsRef = useRef<Map<number, number>>(new Map());
@@ -138,6 +145,7 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
   return (
     <Animated.View
       style={[styles.container, animatedStyle.container]}
+      layout={animateLayout ? transitionLayout : undefined}
       onLayout={handleContainerLayout}
     >
       <AnimatedSafeText
@@ -169,10 +177,10 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
                 {highlightText == null
                   ? verse.content
                   : renderTextWithCustomReplacements(
-                      verse.content,
-                      highlightText,
-                      createHighlightedTextComponent
-                    )}
+                    verse.content,
+                    highlightText,
+                    createHighlightedTextComponent
+                  )}
               </AnimatedSafeText>
 
               {isLastVerse ? null : (
@@ -198,11 +206,13 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic"
   },
+
   titleNotSelected: {},
   titleSelected: {
     fontWeight: "bold"
   },
   titleNoSelection: {},
+
   titleColoredNotSelected: {
     fontStyle: "normal"
   },
@@ -215,8 +225,9 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontStyle: "normal",
     color: colors.primary.default
   },
+
   text: {
-    color: colors.text.default
+    color: colors.text.default,
   },
   textHighlighted: {
     color: colors.text.highlighted.foreground,

@@ -31,6 +31,9 @@ const config = {
   songs: {
     history: {
       minViewTimeMs: 12000,
+    },
+    melody: {
+      animationDuration: 200,
     }
   },
 
