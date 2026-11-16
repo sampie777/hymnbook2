@@ -101,10 +101,10 @@ export const darkColors: ThemeColors = {
     variant: "#1576d5",
     light: "#2776cc"
   },
-  background: "#202020",
-  surface1: "#303030",
-  surface2: "#3a3a3a",
-  surface3: "#3a3a3a",
+  background: "#121212",
+  surface1: "#1f1f1f",
+  surface2: "#222222",
+  surface3: "#262626",
   onPrimary: "#eee",
   text: {
     default: "#eee",
