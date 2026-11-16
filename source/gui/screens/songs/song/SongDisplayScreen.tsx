@@ -29,6 +29,7 @@ import {
   NativeSyntheticEvent,
   ScrollView as NativeScrollView,
   StyleSheet,
+  useWindowDimensions,
   View
 } from "react-native";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
@@ -73,6 +74,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const [isMelodyLoading, setIsMelodyLoading] = useState(false);
   const [selectedMelody, setSelectedMelody] = useState<AbcMelody | undefined>(undefined);
   const [highlightText, setHighlightText] = useState<string | undefined>(route.params.highlightText);
+  const { width: windowWidth } = useWindowDimensions();
+  const [contentWidth, setContentWidth] = useState(windowWidth - 50);
+  const [readyMelodyVerseIds, setReadyMelodyVerseIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    setReadyMelodyVerseIds(new Set());
+  }, [song?.id, selectedMelody?.id, showMelody, showMelodyForAllVerses, showMelodyOnSeparateLines, showMelodyChords, melodyTextAlignment]);
+
 
   const baseScale = useSharedValue(Settings.songScale); // Just store the value so it is accesible by the UI thread
   const animatedScale = useSharedValue(Settings.songScale);
@@ -496,6 +505,20 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     return ids;
   }, [song?.verses, showMelody, selectedMelody, showMelodyForAllVerses, route.params.selectedVerses]);
 
+  useEffect(() => {
+    if (!showMelody || !selectedMelody) {
+      setIsMelodyLoading(false);
+      return;
+    }
+    if (melodyVerseIds.size === 0) {
+      setIsMelodyLoading(false);
+      return;
+    }
+    const allReady = Array.from(melodyVerseIds).every(id => readyMelodyVerseIds.has(id));
+    setIsMelodyLoading(!allReady);
+  }, [melodyVerseIds, readyMelodyVerseIds, showMelody, selectedMelody]);
+
+
   const renderContentItem = (item: Verse) => {
     const selectedVerses = route.params.selectedVerses || [];
     const shouldMelodyBeShownForVerse = melodyVerseIds.has(item.id);
@@ -505,13 +528,14 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                          scale={animatedScale}
                          melodyScale={melodyScale}
                          selectedVerses={selectedVerses}
-                         activeMelody={!shouldMelodyBeShownForVerse ? undefined : selectedMelody}
+                         activeMelody={selectedMelody}
                          setIsMelodyLoading={setIsMelodyLoading}
                          onLayout={storeVerseLayout}
                          highlightText={highlightText}
                          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
                          showMelodyChords={showMelodyChords}
-                         melodyTextAlignment={melodyTextAlignment} />;
+                         melodyTextAlignment={melodyTextAlignment}
+                         availableWidth={contentWidth} />;
   };
 
   const renderVerses = () => {
@@ -556,7 +580,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     };
 
     song.verses.forEach((verse) => {
-      if (melodyVerseIds.has(verse.id)) {
+      if (showMelody && readyMelodyVerseIds.has(verse.id)) {
         flushTextBuffer();
         elements.push(renderContentItem(verse));
       } else {
@@ -567,6 +591,11 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     flushTextBuffer();
     return elements;
   };
+
+  const versesNeedingPreload = useMemo(() => {
+    if (!showMelody || !selectedMelody || !song?.verses) return [];
+    return song.verses.filter(v => melodyVerseIds.has(v.id) && !readyMelodyVerseIds.has(v.id));
+  }, [song?.verses, showMelody, selectedMelody, melodyVerseIds, readyMelodyVerseIds]);
 
   const ScrollView = Settings.useNativeFlatList ? NativeScrollView : GestureScrollView;
 
@@ -598,10 +627,18 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     <GestureDetector gesture={pinchGesture}>
       <View style={styles.container}>
         <GestureDetector gesture={tapGesture}>
-          <ReAnimated.View style={[
-            styles.contentSectionListContainer,
-            useAnimatedStyle(() => ({ opacity: animatedOpacity.value }))
-          ]}>
+          <ReAnimated.View
+            style={[
+              styles.contentSectionListContainer,
+              useAnimatedStyle(() => ({ opacity: animatedOpacity.value }))
+            ]}
+            onLayout={(e) => {
+              const w = e.nativeEvent.layout.width - 50;
+              if (w > 0 && Math.abs(w - contentWidth) > 1) {
+                setContentWidth(w);
+              }
+            }}
+          >
             <ScrollView
               ref={scrollViewComponentRef as any}
               contentContainerStyle={styles.contentSectionList}
@@ -616,6 +653,44 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
             </ScrollView>
           </ReAnimated.View>
         </GestureDetector>
+
+        {versesNeedingPreload.length > 0 && (
+          <View
+            pointerEvents="none"
+            style={{
+              position: "absolute",
+              top: -9999,
+              left: -9999,
+              opacity: 0,
+              height: 0,
+              width: contentWidth,
+              overflow: "hidden"
+            }}
+          >
+            {versesNeedingPreload.map(verse => (
+              <ContentVerse
+                key={`preload_${verse.id}_${selectedMelody?.id}_${Math.round(contentWidth)}`}
+                verse={verse}
+                scale={animatedScale}
+                melodyScale={melodyScale}
+                selectedVerses={route.params.selectedVerses || []}
+                activeMelody={selectedMelody}
+                highlightText={highlightText}
+                showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+                showMelodyChords={showMelodyChords}
+                melodyTextAlignment={melodyTextAlignment}
+                availableWidth={contentWidth}
+                onMelodyReady={() => {
+                  setReadyMelodyVerseIds(prev => {
+                    const next = new Set(prev);
+                    next.add(verse.id);
+                    return next;
+                  });
+                }}
+              />
+            ))}
+          </View>
+        )}
 
         <LoadingOverlay text={null}
                         isVisible={

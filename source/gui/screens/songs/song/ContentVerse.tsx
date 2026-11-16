@@ -1,16 +1,13 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useMemo, useState, useEffect } from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
 import Settings from "../../../../settings";
 import * as ABC from "@hymnbook/abc";
 import { isVerseInList } from "../../../../logic/songs/versePicker";
-import { generateVerseContentWithCorrectWidth, getVerseType, VerseType } from "../../../../logic/songs/utils";
+import { getVerseType, VerseType } from "../../../../logic/songs/utils";
 import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
-import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
-import { renderTextWithCustomReplacements } from "../../../components/utils";
-import { runAsync } from "../../../../logic/utils/utils.ts";
 import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { AnimatedSafeText } from "../../../components/SafeText.tsx";
 import SkiaMelodyView from "../../../components/melody/SkiaMelodyView.tsx";
@@ -22,35 +19,34 @@ interface ContentVerseProps {
   melodyScale: SharedValue<number>;
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
-  setIsMelodyLoading: (value: boolean) => void;
+  setIsMelodyLoading?: (value: boolean) => void;
   onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
   showMelodyOnSeparateLines: boolean;
   showMelodyChords: boolean;
   melodyTextAlignment: MelodyTextAlignment;
+  availableWidth?: number;
+  onMelodyReady?: () => void;
 }
 
 const ContentVerse: React.FC<ContentVerseProps> = ({
-                                                     verse,
-                                                     scale,
-                                                     melodyScale,
-                                                     selectedVerses,
-                                                     activeMelody,
-                                                     setIsMelodyLoading,
-                                                     onLayout,
-                                                     highlightText,
-                                                     showMelodyOnSeparateLines,
-                                                     showMelodyChords,
-                                                     melodyTextAlignment,
-                                                   }) => {
+  verse,
+  scale,
+  melodyScale,
+  selectedVerses,
+  activeMelody,
+  setIsMelodyLoading,
+  onLayout,
+  showMelodyOnSeparateLines,
+  showMelodyChords,
+  melodyTextAlignment,
+  availableWidth,
+  onMelodyReady,
+}) => {
   const isSelected = isVerseInList(selectedVerses, verse);
-  const [showMelody, setShowMelody] = useState(false);
-  const [isMelodyLoaded, setIsMelodyLoaded] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [textLineWidth, setTextLineWidth] = useState<{ text: string, width: number }[]>([]);
-  const [content, setContent] = useState(verse.content);
+  const [containerWidth, setContainerWidth] = useState(availableWidth || 0);
+  const effectiveWidth = (availableWidth && availableWidth > 0) ? availableWidth : containerWidth;
 
-  // Shorten name
   const displayName = SongProcessor.verseShortName(verse);
   const isMelodyAvailable = Boolean(activeMelody !== undefined && verse.abcLyrics);
 
@@ -62,16 +58,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     })),
     title: useAnimatedStyle(() => ({
       fontSize: scale.value * 19,
-      paddingBottom: isMelodyLoaded && isMelodyAvailable ? 0 : scale.value * 5
+      paddingBottom: 0
     })),
     titleLarge: useAnimatedStyle(() => ({
       fontSize: scale.value * 30,
-      paddingBottom: isMelodyLoaded && isMelodyAvailable ? 0 : scale.value * 5
+      paddingBottom: 0
     })),
-    text: useAnimatedStyle(() => ({
-      fontSize: scale.value * 20,
-      lineHeight: scale.value * 30,
-    }))
   };
 
   const styleForVerseType = (type: VerseType) => {
@@ -92,40 +84,10 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
-  useEffect(() => {
-    setIsMelodyLoaded(false);
-    if (activeMelody !== undefined) {
-      setIsMelodyLoading(isMelodyAvailable);
-      runAsync(() => setShowMelody(true));
-    } else {
-      setShowMelody(false)
-    }
-  }, [activeMelody?.id]);
-
   const onMelodyLoaded = useCallback(() => {
-    setIsMelodyLoading(false);
-    setIsMelodyLoaded(true);
-  }, []);
-
-  // This is to fix the bug where the text is not wrapped correctly when the verse is first rendered.
-  // We need to wait until the text is rendered and we have the correct width of each line,
-  // then we can calculate the correct content with line breaks.
-  const hasCalculatedLineWidths = useRef(false);
-  useEffect(() => {
-    if (hasCalculatedLineWidths.current) return;
-    if (containerWidth == 0) return;
-    if (textLineWidth.length == 0) return;
-
-    setContent(generateVerseContentWithCorrectWidth(verse.content, containerWidth, textLineWidth));
-    hasCalculatedLineWidths.current = true;
-  }, [containerWidth, textLineWidth]);
-
-  const createHighlightedTextComponent = (text: string, index: number) =>
-    <AnimatedSafeText key={index}
-                      style={styles.textHighlighted}
-                      selectable={Settings.enableTextSelection}>
-      {text}
-    </AnimatedSafeText>;
+    setIsMelodyLoading?.(false);
+    onMelodyReady?.();
+  }, [setIsMelodyLoading, onMelodyReady]);
 
   const memoizedAbc = useMemo(() => {
     if (!activeMelody || !verse.abcLyrics) return null;
@@ -143,18 +105,16 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     //   "K: Emin\n" +
     //   "A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12\n" +
     //   "w: A ^A =A A C, D, E, F, G, A, B, C D E F G A B c d e f g a b A/4 A/2 A/ A3/4 A A3/2 A2 A3 A4 A6 A8 A12"
-    if (abcString.length == 0) return null;
+    if (abcString.length === 0) return null;
 
-    return ABC.parse(abcString)
+    return ABC.parse(abcString);
   }, [verse, activeMelody?.id, Settings.showMelodyOnSeparateLines]);
 
-  const onTextLayout = (e: NativeSyntheticEvent<TextLayoutEventData>) =>
-    setTextLineWidth(e.nativeEvent.lines.map(it => ({
-      text: it.text,
-      width: it.width,
-    })));
-
-  const onTextContainerLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width);
+  useEffect(() => {
+    if (availableWidth && availableWidth > 0 && Math.abs(availableWidth - containerWidth) > 1) {
+      setContainerWidth(availableWidth);
+    }
+  }, [availableWidth]);
 
   const handleContainerLayout = (e: LayoutChangeEvent) => {
     const newWidth = e.nativeEvent.layout.width;
@@ -164,56 +124,45 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     onLayout?.(verse, e);
   };
 
-  return <Animated.View
-    style={[styles.container, animatedStyle.container]}
-    onLayout={handleContainerLayout}
-  >
-    {displayName.length === 0 ? undefined :
-      <AnimatedSafeText style={[
-        styles.title,
-        specificStyleForTitle(),
-        animatedStyle.title,
-        styleForVerseType(getVerseType(verse))
-      ]}>
-        {displayName}
-      </AnimatedSafeText>
-    }
+  if (!isMelodyAvailable || !memoizedAbc) {
+    return null;
+  }
 
-    {isMelodyLoaded && isMelodyAvailable ? undefined :
-      <AnimatedSafeText style={[styles.text, animatedStyle.text]}
-                        selectable={Settings.enableTextSelection}
-                        onLayout={onTextContainerLayout}
-                        onTextLayout={onTextLayout}
-                        textBreakStrategy={"balanced"}>
-        {highlightText == null
-          ? content
-          : renderTextWithCustomReplacements(content, highlightText, createHighlightedTextComponent)}
-      </AnimatedSafeText>
-    }
+  return (
+    <Animated.View
+      style={[styles.container, animatedStyle.container]}
+      onLayout={handleContainerLayout}
+    >
+      {displayName.length === 0 ? null : (
+        <AnimatedSafeText
+          style={[
+            styles.title,
+            specificStyleForTitle(),
+            animatedStyle.title,
+            styleForVerseType(getVerseType(verse))
+          ]}
+        >
+          {displayName}
+        </AnimatedSafeText>
+      )}
 
-    {!(showMelody && isMelodyAvailable) ? undefined :
-      <View style={{
-        // Hide view while melody is loading. Do this outside the MelodyView component to avoid re-renders
-        position: isMelodyLoaded ? "relative" : "absolute",
-        opacity: isMelodyLoaded ? 1 : 0
-      }}>
-        {containerWidth > 0 &&
-          <SkiaMelodyView
-            onLoaded={onMelodyLoaded}
-            key={`${verse.id}_${activeMelody?.id}_${Math.round(containerWidth)}`}
-            abcSong={memoizedAbc!}
-            animatedScale={scale}
-            melodyScale={melodyScale}
-            showMelodyOnSeparateLines={showMelodyOnSeparateLines}
-            showChords={showMelodyChords}
-            availableWidth={containerWidth}
-            marginLeft={-20}
-            marginRight={-10}
-            textAlignment={melodyTextAlignment}
-          />}
-      </View>
-    }
-  </Animated.View>;
+      {effectiveWidth > 0 && (
+        <SkiaMelodyView
+          onLoaded={onMelodyLoaded}
+          key={`${verse.id}_${activeMelody?.id}_${Math.round(effectiveWidth)}`}
+          abcSong={memoizedAbc}
+          animatedScale={scale}
+          melodyScale={melodyScale}
+          showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+          showChords={showMelodyChords}
+          availableWidth={effectiveWidth}
+          marginLeft={-20}
+          marginRight={-10}
+          textAlignment={melodyTextAlignment}
+        />
+      )}
+    </Animated.View>
+  );
 };
 
 export default memo(ContentVerse);
@@ -245,12 +194,4 @@ const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.c
     fontStyle: "normal",
     color: colors.primary.default
   },
-
-  text: {
-    color: colors.text.default,
-  },
-  textHighlighted: {
-    color: colors.text.highlighted.foreground,
-    backgroundColor: colors.text.highlighted.background
-  }
 });
