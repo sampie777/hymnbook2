@@ -48,6 +48,7 @@ import MelodySettingsModal from "./melody/MelodySettingsModal.tsx";
 import Header from "./Header.tsx";
 import Footer from "./Footer.tsx";
 import SongTextVerses from "./SongTextVerses";
+import config from "../../../../config.ts";
 
 
 interface ComponentProps extends NativeStackScreenProps<ParamList, typeof SongRoute> {
@@ -261,7 +262,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         hideTimeoutRef.current = setTimeout(() => {
           setIsHidingMelody(false);
           setReadyMelodyVerseIds(new Set());
-        }, 700);
+        }, config.songs.melody.animationDuration + 200);
       }
       return setShowMelody(false);
     }
