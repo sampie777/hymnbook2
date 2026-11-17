@@ -54,11 +54,10 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
     })),
     text: useAnimatedStyle(() => ({
       fontSize: scale.value * 20,
-      lineHeight: scale.value * 30,
+      lineHeight: scale.value * 28,
     })),
     verseSpacer: useAnimatedStyle(() => ({
-      fontSize: scale.value * 10,
-      lineHeight: scale.value * 45,
+      lineHeight: scale.value * 20,
     }))
   };
 
@@ -153,10 +152,10 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
         onTextLayout={onTextLayout}
         textBreakStrategy="balanced"
       >
-        {verses.map((verse, idx) => {
+        {verses.map((verse, index) => {
           const isSelected = isVerseInList(selectedVerses, verse);
           const displayName = SongProcessor.verseShortName(verse);
-          const isLastVerse = idx === verses.length - 1;
+          const isLastVerse = index === verses.length - 1;
 
           return (
             <React.Fragment key={verse.id.toString()}>
@@ -184,8 +183,8 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
               </AnimatedSafeText>
 
               {isLastVerse ? null : (
-                <AnimatedSafeText style={animatedStyle.verseSpacer}>
-                  {"\n\n"}
+                <AnimatedSafeText style={[ animatedStyle.verseSpacer]}>
+                  {"\n\n\n"}
                 </AnimatedSafeText>
               )}
             </React.Fragment>

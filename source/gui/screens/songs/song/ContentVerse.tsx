@@ -60,7 +60,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      showMelodyChords,
                                                      melodyTextAlignment,
                                                      availableWidth,
-                                                     initialHeight,
                                                      onMelodyReady,
                                                      onHideComplete,
                                                    }) => {
@@ -79,7 +78,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: scale.value * 10,
+      paddingTop: scale.value * (verse.index == 0 ? 10 : 4.9),
       paddingBottom: scale.value * 35
     })),
     title: useAnimatedStyle(() => ({
@@ -94,7 +93,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     })),
     text: useAnimatedStyle(() => ({
       fontSize: scale.value * 20,
-      lineHeight: scale.value * 30,
+      lineHeight: scale.value * 28,
     })),
   };
 
@@ -244,7 +243,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         >
           <AnimatedSafeText
             style={[styles.text, animatedStyle.text]}
-            selectable={Settings.enableTextSelection}
             textBreakStrategy="balanced"
           >
             {highlightText == null
