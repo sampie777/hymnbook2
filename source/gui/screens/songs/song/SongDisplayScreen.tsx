@@ -613,7 +613,6 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         const chunk = [...textBuffer];
         elements.push(
           <SongTextVerses
-            animateLayout={isHidingMelody || isMelodyLoading}
             key={`text_chunk_${chunk[0].id}`}
             verses={chunk}
             scale={animatedScale}

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LayoutChangeEvent, StyleSheet } from "react-native";
 import { Verse } from "../../../../logic/db/models/songs/Songs";
 import { AbcMelody } from "../../../../logic/db/models/songs/AbcMelodies";
@@ -10,7 +10,6 @@ import { SongProcessor } from "../../../../logic/songs/songProcessor";
 import { ThemeContextProps, useTheme } from "../../../components/providers/ThemeProvider";
 import Animated, {
   Easing,
-  LinearTransition,
   runOnJS,
   SharedValue,
   useAnimatedStyle,
@@ -22,10 +21,7 @@ import SkiaMelodyView from "../../../components/melody/SkiaMelodyView.tsx";
 import { MelodyTextAlignment } from "../../../../logic/songs/abc/utils.ts";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import config from "../../../../config.ts";
-
-const transitionLayout = LinearTransition
-  .duration(config.songs.melody.animationDuration)
-  .easing(Easing.bezier(0.25, 0.1, 0.25, 1));
+import { isAndroid } from "../../../../logic/utils/utils.ts";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -71,14 +67,19 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const isMelodyAvailable = Boolean(activeMelody !== undefined && verse.abcLyrics);
 
   const [canvasHeightState, setCanvasHeightState] = useState<number | null>(null);
-  const [isTransitionComplete, setIsTransitionComplete] = useState<boolean>(showMelody === false);
+  const [textHeightReady, setTextHeightReady] = useState<boolean>(false);
+  const hasTextHeightRef = useRef<boolean>(false);
+  const hasShownOnceRef = useRef<boolean>(false);
 
-  const transitionProgress = useSharedValue(showMelody !== false ? 0 : 0);
+  const textHeight = useSharedValue<number | null>(null);
+  const melodyHeight = useSharedValue<number | null>(null);
+  const isAnimatingHeight = useSharedValue<boolean>(false);
+  const transitionProgress = useSharedValue(0);
 
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: scale.value * (verse.index == 0 ? 10 : 4.9),
+      paddingTop: scale.value * (verse.index == 0 ? 10 : isAndroid ? 0 : 4.9),
       paddingBottom: scale.value * 35
     })),
     title: useAnimatedStyle(() => ({
@@ -97,8 +98,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     })),
   };
 
-  const isMelodyDrivingHeight = Boolean(showMelody !== false && canvasHeightState != null);
-  const shouldAnimateLayout = !isTransitionComplete || showMelody === false;
+  // Once both text and melody heights are known, keep melody driving natural height
+  // (including while hiding, until unmount) so switching height to/from "auto" never jumps.
+  const isMelodyDrivingHeight = Boolean(canvasHeightState != null && textHeightReady);
+
+  const animatedBodyStyle = useAnimatedStyle(() => {
+    if (!isAnimatingHeight.value || textHeight.value == null || melodyHeight.value == null) {
+      return { height: "auto" as const };
+    }
+    return {
+      height: textHeight.value + (melodyHeight.value - textHeight.value) * transitionProgress.value,
+    };
+  });
 
   const animatedTextStyle = useAnimatedStyle(() => ({
     opacity: 1 - transitionProgress.value,
@@ -126,15 +137,38 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
     return Settings.coloredVerseTitles ? styles.titleColoredNotSelected : styles.titleNotSelected;
   };
 
+  const handleTextLayout = useCallback((e: LayoutChangeEvent) => {
+    const h = e.nativeEvent.layout.height;
+    if (h > 0) {
+      textHeight.value = h;
+      if (!hasTextHeightRef.current) {
+        hasTextHeightRef.current = true;
+        if (melodyHeight.value != null && !hasShownOnceRef.current) {
+          isAnimatingHeight.value = true;
+        }
+        setTextHeightReady(true);
+      }
+    }
+  }, [textHeight, melodyHeight, isAnimatingHeight]);
+
   const onMelodyLoaded = useCallback((height: number) => {
     setIsMelodyLoading?.(false);
     onMelodyReady?.();
+    melodyHeight.value = height;
+    if (!hasShownOnceRef.current && hasTextHeightRef.current) {
+      isAnimatingHeight.value = true;
+    }
     setCanvasHeightState(height);
-  }, [setIsMelodyLoading, onMelodyReady]);
+  }, [setIsMelodyLoading, onMelodyReady, melodyHeight, isAnimatingHeight]);
 
   useEffect(() => {
     if (showMelody === false) {
-      setIsTransitionComplete(false);
+      if (!hasShownOnceRef.current) {
+        onHideComplete?.();
+        return;
+      }
+      hasShownOnceRef.current = false;
+      isAnimatingHeight.value = true;
       transitionProgress.value = withTiming(
         0,
         {
@@ -149,7 +183,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
           }
         }
       );
-    } else if (showMelody === true && canvasHeightState != null) {
+    } else if (showMelody === true && canvasHeightState != null && textHeightReady && !hasShownOnceRef.current) {
+      hasShownOnceRef.current = true;
+      isAnimatingHeight.value = true;
       transitionProgress.value = withTiming(
         1,
         {
@@ -158,12 +194,12 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         },
         (finished) => {
           if (finished) {
-            runOnJS(setIsTransitionComplete)(true);
+            isAnimatingHeight.value = false;
           }
         }
       );
     }
-  }, [showMelody, canvasHeightState, onHideComplete]);
+  }, [showMelody, canvasHeightState, textHeightReady, onHideComplete, isAnimatingHeight, transitionProgress]);
 
   const memoizedAbc = useMemo(() => {
     if (!activeMelody || !verse.abcLyrics) return null;
@@ -213,7 +249,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   return (
     <Animated.View
       style={[styles.container, animatedStyle.container]}
-      layout={shouldAnimateLayout ? transitionLayout : undefined}
       onLayout={handleContainerLayout}
     >
       {displayName.length === 0 ? null : (
@@ -230,8 +265,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
       )}
 
       <Animated.View
-        style={styles.bodyContainer}
-        layout={shouldAnimateLayout ? transitionLayout : undefined}
+        style={[styles.bodyContainer, animatedBodyStyle]}
       >
         <Animated.View
           style={[
@@ -239,7 +273,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
             styles.textLayer,
             animatedTextStyle
           ]}
-          pointerEvents={isMelodyDrivingHeight ? "none" : "auto"}
+          onLayout={handleTextLayout}
+          pointerEvents={showMelody && isMelodyDrivingHeight ? "none" : "auto"}
         >
           <AnimatedSafeText
             style={[styles.text, animatedStyle.text]}
@@ -257,7 +292,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
               isMelodyDrivingHeight ? styles.layerRelative : styles.layerAbsolute,
               animatedMelodyStyle
             ]}
-            pointerEvents={isMelodyDrivingHeight ? "auto" : "none"}
+            pointerEvents={showMelody && isMelodyDrivingHeight ? "auto" : "none"}
           >
             <SkiaMelodyView
               onLoaded={onMelodyLoaded}
