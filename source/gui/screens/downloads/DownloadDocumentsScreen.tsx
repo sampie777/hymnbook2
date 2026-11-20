@@ -99,15 +99,17 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
 
       const distinctData: ItemType[] = [];
       data.forEach(item => {
-        if (distinctData.some(it => it.uuid == item.uuid)) return;
-        distinctData.push(item);
-      })
+        const existingIndex = distinctData.findIndex(it => it.uuid == item.uuid);
+        if (existingIndex === -1) {
+          distinctData.push(item);
+        } else if (item.id > distinctData[existingIndex].id) {
+          distinctData[existingIndex] = item;
+        }
+      });
 
       setLocalData(distinctData);
 
-      if (filterLanguage === "") {
-        setFilterLanguage(DocumentProcessor.determineDefaultFilterLanguage(distinctData));
-      }
+      setFilterLanguage(prev => prev === "" ? DocumentProcessor.determineDefaultFilterLanguage(distinctData) : prev);
     } catch (error) {
       rollbar.error("Failed to load local DocumentGroups from collection change", sanitizeErrorForRollbar(error));
     }
@@ -176,7 +178,10 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
   };
   useEffect(applyUuidUpdateForPullRequest8, [serverData]);
 
-  const isPopupOpen = () => requestDeleteForItem !== undefined || requestDownloadForItem !== undefined;
+  const isPopupOpen = () =>
+    requestDeleteForItem !== undefined ||
+    requestDownloadForItem !== undefined ||
+    requestUpdateForItem !== undefined;
 
   const shareItem = (it: LocalDataType | ServerDataType) => {
     return Share.share({
@@ -248,7 +253,19 @@ const DownloadDocumentsScreen: React.FC<ComponentProps> = ({
       : DocumentUpdater.fetchAndSaveDocumentGroup(item);
 
     call
-      .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
+      .then((savedGroup) => {
+        if (isMounted()) {
+          if (savedGroup) {
+            setServerData(prev => prev.map(it =>
+              it.uuid === savedGroup.uuid ? { ...it, hash: savedGroup.hash } : it
+            ));
+          }
+          processLocalDataChanges(
+            Db.documents.realm().objects<ItemType>(DocumentGroupSchema.name).filtered(`isRoot = true`)
+          );
+        }
+        Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`);
+      })
       .catch(error => {
         if (isConnectionError(error)) {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. Make sure your internet connection is working or try again later.`);

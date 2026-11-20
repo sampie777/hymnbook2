@@ -97,15 +97,17 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
 
       const distinctData: ItemType[] = [];
       data.forEach(item => {
-        if (distinctData.some(it => it.uuid == item.uuid)) return;
-        distinctData.push(item);
-      })
+        const existingIndex = distinctData.findIndex(it => it.uuid == item.uuid);
+        if (existingIndex === -1) {
+          distinctData.push(item);
+        } else if (item.id > distinctData[existingIndex].id) {
+          distinctData[existingIndex] = item;
+        }
+      });
 
       setLocalData(distinctData);
 
-      if (filterLanguage === "") {
-        setFilterLanguage(SongProcessor.determineDefaultFilterLanguage(distinctData));
-      }
+      setFilterLanguage(prev => prev === "" ? SongProcessor.determineDefaultFilterLanguage(distinctData) : prev);
     } catch (error) {
       rollbar.error("Failed to load local SongBundles from collection change", sanitizeErrorForRollbar(error));
     }
@@ -174,7 +176,10 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
   };
   useEffect(applyUuidUpdateForPullRequest8, [serverData]);
 
-  const isPopupOpen = () => requestDeleteForItem !== undefined || requestDownloadForItem !== undefined;
+  const isPopupOpen = () =>
+    requestDeleteForItem !== undefined ||
+    requestDownloadForItem !== undefined ||
+    requestUpdateForItem !== undefined;
 
   const shareItem = (it: LocalDataType | ServerDataType) => {
     return Share.share({
@@ -246,7 +251,17 @@ const DownloadSongsScreen: React.FC<ComponentProps> = ({
       : SongUpdater.fetchAndSaveSongBundle(item);
 
     call
-      .then(() => Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`))
+      .then((savedBundle) => {
+        if (isMounted()) {
+          if (savedBundle) {
+            setServerData(prev => prev.map(it =>
+              it.uuid === savedBundle.uuid ? { ...it, hash: savedBundle.hash } : it
+            ));
+          }
+          processLocalDataChanges(Db.songs.realm().objects<ItemType>(SongBundleSchema.name));
+        }
+        Alert.alert("Success", `${item.name} ${isUpdate ? "updated" : "added"}!`);
+      })
       .catch(error => {
         if (isConnectionError(error)) {
           Alert.alert("Error", `Could not ${isUpdate ? "update" : "download"} ${item.name}. Make sure your internet connection is working or try again later.`);

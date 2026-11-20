@@ -10,17 +10,17 @@ import { DocumentUpdaterUtils } from "./documentUpdaterUtils";
 
 export namespace DocumentUpdater {
 
-  export const fetchAndSaveDocumentGroup = (group: { uuid: string }): Promise<any> => {
+  export const fetchAndSaveDocumentGroup = (group: { uuid: string }): Promise<ServerDocumentGroup> => {
     return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
       .then(saveDocumentGroupToDatabase);
   };
 
-  export const fetchAndUpdateDocumentGroup = (group: { uuid: string }): Promise<any> => {
+  export const fetchAndUpdateDocumentGroup = (group: { uuid: string }): Promise<ServerDocumentGroup> => {
     return DocumentServer.fetchDocumentGroupWithChildrenAndContent(group)
       .then(updateAndSaveDocumentGroup);
   };
 
-  export const saveDocumentGroupToDatabase = (group: ServerDocumentGroup) => {
+  export const saveDocumentGroupToDatabase = (group: ServerDocumentGroup): ServerDocumentGroup => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot save local document group to database: document database is not connected");
       throw new Error("Database is not connected");
@@ -53,9 +53,11 @@ export namespace DocumentUpdater {
       rollbar.error(`Failed to import documents`, sanitizeErrorForRollbar(error));
       throw new Error(`Failed to import documents: ${error}`);
     }
+
+    return group;
   };
 
-  export const updateAndSaveDocumentGroup = (group: ServerDocumentGroup) => {
+  export const updateAndSaveDocumentGroup = (group: ServerDocumentGroup): ServerDocumentGroup => {
     if (!Db.documents.isConnected()) {
       rollbar.warning("Cannot update documents: document database is not connected");
       throw new Error("Database is not connected");
@@ -98,6 +100,8 @@ export namespace DocumentUpdater {
         deleteResult.throwIfException();
       });
     }
+
+    return group;
   };
 
   export const updateLocalGroupsWithUuid = (localGroups: DocumentGroup[], serverGroups: ServerDocumentGroup[]) => {

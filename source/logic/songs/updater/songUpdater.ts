@@ -7,20 +7,22 @@ import { SongBundle } from "../../db/models/songs/Songs";
 import { SongUpdaterUtils } from "./songUpdaterUtils";
 
 export namespace SongUpdater {
-  export const fetchAndSaveSongBundle = (bundle: { uuid: string }): Promise<any> =>
+  export const fetchAndSaveSongBundle = (bundle: { uuid: string }): Promise<ServerSongBundle> =>
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(saveSongBundleToDatabase);
 
-  const saveSongBundleToDatabase = (bundle: ServerSongBundle) => {
+  const saveSongBundleToDatabase = (bundle: ServerSongBundle): ServerSongBundle => {
     SongUpdaterUtils.saveServerSongBundleToDatabase(bundle);
+    return bundle;
   };
 
-  export const fetchAndUpdateSongBundle = (bundle: { uuid: string }): Promise<any> =>
+  export const fetchAndUpdateSongBundle = (bundle: { uuid: string }): Promise<ServerSongBundle> =>
     Server.fetchSongBundleWithSongsAndVerses(bundle)
       .then(updateAndSaveSongBundle);
 
-  const updateAndSaveSongBundle = (bundle: ServerSongBundle) => {
+  const updateAndSaveSongBundle = (bundle: ServerSongBundle): ServerSongBundle => {
     SongUpdaterUtils.saveServerSongBundleToDatabase(bundle);
+    return bundle;
   };
 
   export const updateLocalBundlesWithUuid = (localBundles: SongBundle[], serverBundles: ServerSongBundle[]) => {
