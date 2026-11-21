@@ -2844,9 +2844,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-react-native@npm:0.65.1":
-  version: 0.65.1
-  resolution: "@stripe/stripe-react-native@npm:0.65.1"
+"@stripe/stripe-react-native@npm:0.77.0":
+  version: 0.77.0
+  resolution: "@stripe/stripe-react-native@npm:0.77.0"
   peerDependencies:
     expo: ">=46.0.9"
     react: "*"
@@ -2857,7 +2857,7 @@ __metadata:
       optional: true
     react-native-webview:
       optional: true
-  checksum: 10c0/5b20e0694f7b60d4a309bb41fa18b43daa1721d0fbf5b8960c6dfab5a6de009582aeb0559c790319e9c133d44ce757ddf9d7eb8775206354708cf43f5934e7c4
+  checksum: 10c0/4afc902f8c754c1f484db1621c9c66afe70d91f714a39b4b49e63f926c7b3ffb68d0f32cf687469172b8aac637975eac94be190af768785434e4d712edebdbfd
   languageName: node
   linkType: hard
 
@@ -5967,7 +5967,7 @@ __metadata:
     "@react-navigation/native-stack": "npm:7.14.5"
     "@realm/react": "npm:0.11.0"
     "@shopify/react-native-skia": "npm:<2.10.0"
-    "@stripe/stripe-react-native": "npm:0.65.1"
+    "@stripe/stripe-react-native": "npm:0.77.0"
     "@types/node": "npm:24.6.0"
     "@types/react": "npm:19.1.0"
     "@types/react-native-keep-awake": "npm:2.0.6"

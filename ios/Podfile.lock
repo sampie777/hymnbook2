@@ -2779,14 +2779,14 @@ PODS:
   - RollbarReport (3.3.3):
     - RollbarCrash (~> 3.3.3)
   - SocketRocket (0.7.1)
-  - Stripe (25.12.0):
-    - StripeApplePay (= 25.12.0)
-    - StripeCore (= 25.12.0)
-    - StripeIssuing (= 25.12.0)
-    - StripePayments (= 25.12.0)
-    - StripePaymentsUI (= 25.12.0)
-    - StripeUICore (= 25.12.0)
-  - stripe-react-native (0.65.1):
+  - Stripe (26.11.0):
+    - StripeApplePay (= 26.11.0)
+    - StripeCore (= 26.11.0)
+    - StripeIssuing (= 26.11.0)
+    - StripePayments (= 26.11.0)
+    - StripePaymentsUI (= 26.11.0)
+    - StripeUICore (= 26.11.0)
+  - stripe-react-native (0.77.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2813,10 +2813,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - SocketRocket
-    - stripe-react-native/Core (= 0.65.1)
-    - stripe-react-native/NewArch (= 0.65.1)
+    - stripe-react-native/Core (= 0.77.0)
+    - stripe-react-native/NewArch (= 0.77.0)
     - Yoga
-  - stripe-react-native/Core (0.65.1):
+  - stripe-react-native/Core (0.77.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2843,14 +2843,14 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - SocketRocket
-    - Stripe (~> 25.12.0)
-    - StripeApplePay (~> 25.12.0)
-    - StripeFinancialConnections (~> 25.12.0)
-    - StripePayments (~> 25.12.0)
-    - StripePaymentSheet (~> 25.12.0)
-    - StripePaymentsUI (~> 25.12.0)
+    - Stripe (= 26.11.0)
+    - StripeApplePay (= 26.11.0)
+    - StripeFinancialConnections (= 26.11.0)
+    - StripePayments (= 26.11.0)
+    - StripePaymentSheet (= 26.11.0)
+    - StripePaymentsUI (= 26.11.0)
     - Yoga
-  - stripe-react-native/NewArch (0.65.1):
+  - stripe-react-native/NewArch (0.77.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2878,32 +2878,35 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - StripeApplePay (25.12.0):
-    - StripeCore (= 25.12.0)
-  - StripeCore (25.12.0)
-  - StripeFinancialConnections (25.12.0):
-    - StripeCore (= 25.12.0)
-    - StripeUICore (= 25.12.0)
-  - StripeIssuing (25.12.0):
-    - StripeCore (= 25.12.0)
-    - StripePayments (= 25.12.0)
-    - StripePaymentsUI (= 25.12.0)
-  - StripePayments (25.12.0):
-    - StripeCore (= 25.12.0)
-    - StripePayments/Stripe3DS2 (= 25.12.0)
-  - StripePayments/Stripe3DS2 (25.12.0):
-    - StripeCore (= 25.12.0)
-  - StripePaymentSheet (25.12.0):
-    - StripeApplePay (= 25.12.0)
-    - StripeCore (= 25.12.0)
-    - StripePayments (= 25.12.0)
-    - StripePaymentsUI (= 25.12.0)
-  - StripePaymentsUI (25.12.0):
-    - StripeCore (= 25.12.0)
-    - StripePayments (= 25.12.0)
-    - StripeUICore (= 25.12.0)
-  - StripeUICore (25.12.0):
-    - StripeCore (= 25.12.0)
+  - StripeApplePay (26.11.0):
+    - StripeCore (= 26.11.0)
+  - StripeCore (26.11.0)
+  - StripeFinancialConnections (26.11.0):
+    - StripeCore (= 26.11.0)
+    - StripeUICore (= 26.11.0)
+  - StripeFinancialConnectionsLite (26.11.0):
+    - StripeCore (= 26.11.0)
+  - StripeIssuing (26.11.0):
+    - StripeCore (= 26.11.0)
+    - StripePayments (= 26.11.0)
+    - StripePaymentsUI (= 26.11.0)
+  - StripePayments (26.11.0):
+    - StripeCore (= 26.11.0)
+    - StripePayments/Stripe3DS2 (= 26.11.0)
+  - StripePayments/Stripe3DS2 (26.11.0):
+    - StripeCore (= 26.11.0)
+  - StripePaymentSheet (26.11.0):
+    - StripeApplePay (= 26.11.0)
+    - StripeCore (= 26.11.0)
+    - StripeFinancialConnectionsLite (= 26.11.0)
+    - StripePayments (= 26.11.0)
+    - StripePaymentsUI (= 26.11.0)
+  - StripePaymentsUI (26.11.0):
+    - StripeCore (= 26.11.0)
+    - StripePayments (= 26.11.0)
+    - StripeUICore (= 26.11.0)
+  - StripeUICore (26.11.0):
+    - StripeCore (= 26.11.0)
   - SwiftAudioEx (1.1.0)
   - Yoga (0.0.0)
 
@@ -3016,6 +3019,7 @@ SPEC REPOS:
     - StripeApplePay
     - StripeCore
     - StripeFinancialConnections
+    - StripeFinancialConnectionsLite
     - StripeIssuing
     - StripePayments
     - StripePaymentSheet
@@ -3298,16 +3302,17 @@ SPEC CHECKSUMS:
   RollbarReactNative: 763cf9e5084af2f1c2f6710e1cb40b51d85a6c64
   RollbarReport: 0e57a3ac73c66dd6d5add5e999a967210753c4c3
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  Stripe: 0befd1ef4c49e9e1b5a781f1e61805c856bb9c1c
-  stripe-react-native: 1bfe2a2e04937d2833d45fc2a8c414f090aca628
-  StripeApplePay: a58f76d25970050c4b3447cf6d34ce098cd0b517
-  StripeCore: c10a35ed2d1f2165ccb8db8077e10c6fa488c6b8
-  StripeFinancialConnections: 6abb9257f511f8ba1fd17df07d48058f48eb7b22
-  StripeIssuing: c92d94e7f1e068d728715aa382f8b7907499b83f
-  StripePayments: fb4105c822f9f07ca2092c86b68ab366b5d4a144
-  StripePaymentSheet: 7285761bacc685b160fc31871632554577beec35
-  StripePaymentsUI: 6aabff3711d0543db04632a2d102deac7a139095
-  StripeUICore: fb5f1c2f7d702b2879f706e3db3a7b793125256e
+  Stripe: eeb45e6b3c973d412227def2e757f9b4cf9caf95
+  stripe-react-native: 56cfd29cb79e9408f87dd3e62e12490381719d16
+  StripeApplePay: 6067bc754f87b41468ba67f2646a7fbc91abfa34
+  StripeCore: 21d74e81c1bb74b711a8d06988ca675d21fdbcf8
+  StripeFinancialConnections: f66aa973cac09ac96a16f8655c1d2b83ec804e87
+  StripeFinancialConnectionsLite: 2949cecb41f00e40d93d47dd5a1fe9066f9e8b47
+  StripeIssuing: 30afa86b61c8c2b2587aa03efef7ae31e94a4484
+  StripePayments: 58d9fadca7a02ab315f444840c8e95e4571b1244
+  StripePaymentSheet: b84165482cfe013aeca407c21b641909eb0b2f78
+  StripePaymentsUI: 3fb8af7977eef937c0950f0160bf252000f4f174
+  StripeUICore: 9e2582b98669b7e6e2d39bcada4667dc79e8223e
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: 9b30b783a17681321b52ac507a37219d7d795ace
 
