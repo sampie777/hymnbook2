@@ -15,6 +15,9 @@ interface Props {
 const Header: React.FC<Props> = ({ song, scale }) => {
   const styles = createStyles(useTheme());
   const animatedStyle = {
+    emptyContainer: useAnimatedStyle(() => ({
+      marginBottom: scale.value * 10
+    })),
     container: useAnimatedStyle(() => ({
       paddingTop: scale.value * 15,
       paddingBottom: scale.value * 15,
@@ -28,7 +31,7 @@ const Header: React.FC<Props> = ({ song, scale }) => {
 
   const headerText = createHeader(song);
   if (headerText.length === 0) {
-    return <Animated.View style={useAnimatedStyle(() => ({marginBottom: scale.value * 10}))}/>;
+    return <Animated.View style={animatedStyle.emptyContainer}/>;
   }
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
