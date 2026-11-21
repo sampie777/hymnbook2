@@ -230,7 +230,7 @@ export const computeLayout = (
   clefItem: ScoreItem,
   lyricFont: SkFont,
   horizontal_margin: number) => {
-  const path = Skia.Path.Make();
+  const pathBuilder = Skia.PathBuilder.Make();
   const positions: PositionItem[] = [];
 
   const baseStaffHeight = 40 * currentMelodyScale;
@@ -407,8 +407,8 @@ export const computeLayout = (
     // Draw staff lines from left-to-right margins
     for (let j = 0; j < 5; j++) {
       const lineOffset = staffY - (j * 10 * currentMelodyScale) + 0.7;
-      path.moveTo(leftBound, lineOffset);
-      path.lineTo(rightBound, lineOffset);
+      pathBuilder.moveTo(leftBound, lineOffset);
+      pathBuilder.lineTo(rightBound, lineOffset);
     }
 
     // Store highest bottom bound reached by current row to guarantee clipping bounds
@@ -418,5 +418,5 @@ export const computeLayout = (
     currentY = staffY + currentLyricOffset + 20;
   });
 
-  return { positions, staffPath: path, maxBottomY };
+  return { positions, staffPath: pathBuilder.build(), maxBottomY };
 };
