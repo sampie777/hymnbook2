@@ -20,7 +20,7 @@ export interface ScoreItem {
   char: string;
   lyric: string;
   chord: string;
-  isEndBar: boolean;
+  isBar: boolean;
   minPitch: number;
 }
 
@@ -48,7 +48,7 @@ export const createClefItem = (abcSong: AbcSong): ScoreItem => ({
   char: abcSong?.clef?.type !== "bass" ? " &" : " 0",
   lyric: "",
   chord: "",
-  isEndBar: false,
+  isBar: false,
   minPitch: Infinity,
 });
 
@@ -60,7 +60,7 @@ export const mapVoiceItem = (item: VoiceItem): ScoreItem => {
   let note = "";
   let lyric = "";
   let chord = "";
-  let isEndBar = false;
+  let isBar = false;
   let minPitch = Infinity;
 
   if (item.el_type === "note") {
@@ -83,10 +83,10 @@ export const mapVoiceItem = (item: VoiceItem): ScoreItem => {
     ).join(" ") || "";
   } else if (item.el_type === "bar") {
     note = item.type === "bar_thin_thick" ? "." : "Ā";
-    isEndBar = item.type === "bar_thin_thick";
+    isBar = true;
   }
 
-  return { char: note, lyric, chord, isEndBar, minPitch };
+  return { char: note, lyric, chord, isBar, minPitch };
 };
 
 /**
@@ -244,10 +244,9 @@ export const computeLayout = (
 
   balancedRows.forEach((rowItems, rowIndex) => {
     const isFirstRow = rowIndex === 0;
-    const isLastRow = rowIndex === balancedRows.length - 1;
 
     const hasClef = isFirstRow && rowItems.length > 0 && rowItems[0].item === clefItem;
-    const hasEndBar = isLastRow && rowItems.length > 0 && rowItems[rowItems.length - 1].item.isEndBar;
+    const hasEndBar = rowItems.length > 0 && rowItems[rowItems.length - 1].item.isBar;
 
     const startIndex = hasClef ? 1 : 0;
     const endIndex = hasEndBar ? rowItems.length - 1 : rowItems.length;
