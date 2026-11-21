@@ -17,13 +17,13 @@ import { Song, Verse } from "../../../../logic/db/models/songs/Songs";
 import {
   generateSongTitle,
   getDefaultMelody,
+  hasMelodyToShow,
   loadSongWithUuidOrId,
   storeLastUsedMelody
 } from "../../../../logic/songs/utils";
 import { hash, isIOS, keepScreenAwake, sanitizeErrorForRollbar } from "../../../../logic/utils/utils.ts";
 import {
   Alert,
-  BackHandler,
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -79,6 +79,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const { width: windowWidth } = useWindowDimensions();
   const [contentWidth, setContentWidth] = useState(windowWidth - 50);
   const [readyMelodyVerseIds, setReadyMelodyVerseIds] = useState<Set<number>>(new Set());
+  const [showingMelodyVerseIds, setShowingMelodyVerseIds] = useState<Set<number>>(new Set());
   const [isHidingMelody, setIsHidingMelody] = useState(false);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -89,8 +90,9 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   useEffect(() => {
     if (!isHidingMelody) {
       setReadyMelodyVerseIds(new Set());
+      setShowingMelodyVerseIds(new Set());
     }
-  }, [song?.id, selectedMelody?.id, showMelody, showMelodyForAllVerses, showMelodyOnSeparateLines, showMelodyChords, melodyTextAlignment]);
+  }, [song?.id, selectedMelody?.id, showMelody, showMelodyForAllVerses, showMelodyOnSeparateLines, showMelodyChords, melodyTextAlignment, route.params.selectedVerses]);
 
 
   const baseScale = useSharedValue(Settings.songScale); // Just store the value so it is accesible by the UI thread
@@ -236,7 +238,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     });
   }, [song?.id, route.params.selectedVerses, showMelody, isMelodyLoading]);
 
+  const onMelodyShowStart = useCallback((verseId: number) => {
+    setShowingMelodyVerseIds(prev => {
+      if (prev.has(verseId)) return prev;
+      const next = new Set(prev);
+      next.add(verseId);
+      return next;
+    });
+  }, []);
+
   const onMelodyHideComplete = useCallback((verseId: number) => {
+    setShowingMelodyVerseIds(prev => {
+      const next = new Set(prev);
+      next.delete(verseId);
+      return next;
+    });
     setReadyMelodyVerseIds(prev => {
       const next = new Set(prev);
       next.delete(verseId);
@@ -262,6 +278,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
         hideTimeoutRef.current = setTimeout(() => {
           setIsHidingMelody(false);
           setReadyMelodyVerseIds(new Set());
+          setShowingMelodyVerseIds(new Set());
         }, config.songs.melody.animationDuration + 200);
       }
       return setShowMelody(false);
@@ -518,6 +535,8 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     const selectedVerses = route.params.selectedVerses || [];
 
     song.verses.forEach((verse) => {
+      if (!verse.abcLyrics) return;
+
       const isNotSelected = selectedVerses.length > 0 && !selectedVerses.some(it =>
         (it.id != null && it.id === verse.id) || (it.index != null && it.index === verse.index)
       );
@@ -532,6 +551,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
       const isFirstVerseOfSongWithNoSelectedVerses = selectedVerses.length === 0 && verse.index === 0;
 
       const melody = AbcSubMelody.getForVerse(selectedMelody, verse)?.melody || selectedMelody.melody;
+      if (!melody) return;
       const melodyHash = melody ? hash(melody) : null;
       const isUniqueMelody = melodyHash != null && !shownHashes.includes(melodyHash);
 
@@ -553,17 +573,21 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   }, [song?.verses, showMelody, selectedMelody, showMelodyForAllVerses, route.params.selectedVerses]);
 
   useEffect(() => {
-    if (!showMelody || !selectedMelody) {
+    if (!showMelody) {
       setIsMelodyLoading(false);
+      return;
+    }
+    if (!selectedMelody) {
+      setIsMelodyLoading(hasMelodyToShow(song));
       return;
     }
     if (melodyVerseIds.size === 0) {
       setIsMelodyLoading(false);
       return;
     }
-    const allReady = Array.from(melodyVerseIds).every(id => readyMelodyVerseIds.has(id));
-    setIsMelodyLoading(!allReady);
-  }, [melodyVerseIds, readyMelodyVerseIds, showMelody, selectedMelody]);
+    const firstVerseId = melodyVerseIds.values().next().value;
+    setIsMelodyLoading(firstVerseId !== undefined && !showingMelodyVerseIds.has(firstVerseId));
+  }, [song, melodyVerseIds, showingMelodyVerseIds, showMelody, selectedMelody]);
 
   const renderVerses = () => {
     if (!song?.verses || song.verses.length === 0) return null;
@@ -618,13 +642,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                                     selectedVerses={selectedVerses}
                                     activeMelody={selectedMelody}
                                     showMelody={showMelody}
-                                    setIsMelodyLoading={setIsMelodyLoading}
                                     onLayout={storeVerseLayout}
                                     highlightText={highlightText}
                                     showMelodyOnSeparateLines={showMelodyOnSeparateLines}
                                     showMelodyChords={showMelodyChords}
                                     melodyTextAlignment={melodyTextAlignment}
                                     availableWidth={contentWidth}
+                                    onShowStart={() => onMelodyShowStart(verse.id)}
                                     onHideComplete={() => onMelodyHideComplete(verse.id)} />);
       } else {
         textBuffer.push(verse);

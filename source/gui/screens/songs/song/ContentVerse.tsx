@@ -31,7 +31,6 @@ interface ContentVerseProps {
   selectedVerses: Array<Verse>;
   activeMelody?: AbcMelody;
   showMelody?: boolean;
-  setIsMelodyLoading?: (value: boolean) => void;
   onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
   showMelodyOnSeparateLines: boolean;
@@ -40,6 +39,7 @@ interface ContentVerseProps {
   availableWidth?: number;
   initialHeight?: number;
   onMelodyReady?: () => void;
+  onShowStart?: () => void;
   onHideComplete?: () => void;
 }
 
@@ -50,7 +50,6 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      selectedVerses,
                                                      activeMelody,
                                                      showMelody = true,
-                                                     setIsMelodyLoading,
                                                      onLayout,
                                                      highlightText,
                                                      showMelodyOnSeparateLines,
@@ -58,6 +57,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      melodyTextAlignment,
                                                      availableWidth,
                                                      onMelodyReady,
+                                                     onShowStart,
                                                      onHideComplete,
                                                    }) => {
   const isSelected = isVerseInList(selectedVerses, verse);
@@ -71,6 +71,20 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const [textHeightReady, setTextHeightReady] = useState<boolean>(false);
   const hasTextHeightRef = useRef<boolean>(false);
   const hasShownOnceRef = useRef<boolean>(false);
+  const onMelodyReadyRef = useRef(onMelodyReady);
+  onMelodyReadyRef.current = onMelodyReady;
+  const onShowStartRef = useRef(onShowStart);
+  onShowStartRef.current = onShowStart;
+  const onHideCompleteRef = useRef(onHideComplete);
+  onHideCompleteRef.current = onHideComplete;
+
+  const notifyShowStart = useCallback(() => {
+    onShowStartRef.current?.();
+  }, []);
+
+  const notifyHideComplete = useCallback(() => {
+    onHideCompleteRef.current?.();
+  }, []);
 
   const textHeight = useSharedValue<number | null>(null);
   const melodyHeight = useSharedValue<number | null>(null);
@@ -151,19 +165,18 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   }, [textHeight, melodyHeight, isAnimatingHeight]);
 
   const onMelodyLoaded = useCallback((height: number) => {
-    setIsMelodyLoading?.(false);
-    onMelodyReady?.();
+    onMelodyReadyRef.current?.();
     melodyHeight.value = height;
     if (!hasShownOnceRef.current && hasTextHeightRef.current) {
       isAnimatingHeight.value = true;
     }
     setCanvasHeightState(height);
-  }, [setIsMelodyLoading, onMelodyReady, melodyHeight, isAnimatingHeight]);
+  }, [melodyHeight, isAnimatingHeight]);
 
   useEffect(() => {
     if (showMelody === false) {
       if (!hasShownOnceRef.current) {
-        onHideComplete?.();
+        notifyHideComplete();
         return;
       }
       hasShownOnceRef.current = false;
@@ -176,9 +189,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
         },
         (finished) => {
           if (finished) {
-            if (onHideComplete) {
-              runOnJS(onHideComplete)();
-            }
+            runOnJS(notifyHideComplete)();
           }
         }
       );
@@ -197,8 +208,9 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
           }
         }
       );
+      notifyShowStart();
     }
-  }, [showMelody, canvasHeightState, textHeightReady, onHideComplete, isAnimatingHeight, transitionProgress]);
+  }, [showMelody, canvasHeightState, textHeightReady, isAnimatingHeight, transitionProgress, notifyShowStart, notifyHideComplete]);
 
   const memoizedAbc = useMemo(() => {
     if (!activeMelody || !verse.abcLyrics) return null;
@@ -220,6 +232,17 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
 
     return ABC.parse(abcString);
   }, [verse, activeMelody?.id, Settings.showMelodyOnSeparateLines]);
+
+  useEffect(() => {
+    if (!isMelodyAvailable || !memoizedAbc) {
+      if (showMelody) {
+        onMelodyReadyRef.current?.();
+        notifyShowStart();
+      } else {
+        notifyHideComplete();
+      }
+    }
+  }, [isMelodyAvailable, memoizedAbc, showMelody, notifyShowStart, notifyHideComplete]);
 
   useEffect(() => {
     if (availableWidth && availableWidth > 0 && Math.abs(availableWidth - containerWidth) > 1) {
