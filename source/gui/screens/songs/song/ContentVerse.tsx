@@ -22,7 +22,7 @@ import { MelodyTextAlignment } from "../../../../logic/songs/abc/utils.ts";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import config from "../../../../config.ts";
 import { isAndroid } from "../../../../logic/utils/utils.ts";
-import { VerseStyleValues } from "./verseStyles.ts";
+import { useHighlightAnimatedStyle, VerseStyleValues } from "./verseStyles.ts";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -33,6 +33,7 @@ interface ContentVerseProps {
   showMelody?: boolean;
   onLayout?: (verse: Verse, event: LayoutChangeEvent) => void;
   highlightText?: string;
+  highlightProgress?: SharedValue<number>;
   showMelodyOnSeparateLines: boolean;
   showMelodyChords: boolean;
   melodyTextAlignment: MelodyTextAlignment;
@@ -52,6 +53,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
                                                      showMelody = true,
                                                      onLayout,
                                                      highlightText,
+                                                     highlightProgress,
                                                      showMelodyOnSeparateLines,
                                                      showMelodyChords,
                                                      melodyTextAlignment,
@@ -92,6 +94,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const transitionProgress = useSharedValue(0);
 
   const styles = createStyles(useTheme());
+  const highlightAnimatedStyle = useHighlightAnimatedStyle(highlightProgress);
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
       paddingTop: scale.value * VerseStyleValues.container.paddingTop,
@@ -259,7 +262,7 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   };
 
   const createHighlightedTextComponent = (text: string, index: number) => (
-    <AnimatedSafeText key={index} style={styles.textHighlighted}>
+    <AnimatedSafeText key={index} style={[styles.textHighlighted, highlightAnimatedStyle]}>
       {text}
     </AnimatedSafeText>
   );

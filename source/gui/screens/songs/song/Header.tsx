@@ -28,7 +28,7 @@ const Header: React.FC<Props> = ({ song, scale }) => {
 
   const headerText = createHeader(song);
   if (headerText.length === 0) {
-    return null;
+    return <Animated.View style={useAnimatedStyle(() => ({marginBottom: scale.value * 10}))}/>;
   }
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>

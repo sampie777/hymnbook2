@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { Gesture, GestureDetector, ScrollView as GestureScrollView } from "react-native-gesture-handler";
 import ReAnimated, {
+  cancelAnimation,
   Easing as ReAnimatedEasing,
   runOnJS,
   useAnimatedStyle,
@@ -100,6 +101,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
   const melodyScale = useSharedValue(Settings.songMelodyScale);
   // Use Reanimated library, because built in Animated is buggy (animations don't always start)
   const animatedOpacity = useSharedValue(Settings.songFadeIn ? 0 : 1);
+  const highlightProgress = useSharedValue(route.params.highlightText ? 1 : 0);
   const styles = createStyles(useTheme());
 
   const storeNewScaleValue = (scale: number) => {
@@ -201,19 +203,37 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     Settings.melodyShowedTimes++;
   }, [showMelody]);
 
+  const clearHighlightText = useCallback(() => {
+    if (!isMounted()) return;
+    setHighlightText(undefined);
+  }, []);
+
   useFocusEffect(React.useCallback(() => {
-    const backHandlerSubscription = BackHandler.addEventListener("hardwareBackPress", onBackPress);
-    return () => backHandlerSubscription.remove();
-  }, [highlightText]));
+    if (!highlightText) return;
 
-  const onBackPress = (): boolean => {
-    if (highlightText != null && highlightText.length > 0) {
-      setHighlightText(undefined);
-      return true;
-    }
+    highlightProgress.value = 1;
 
-    return false;
-  };
+    const timeout = setTimeout(() => {
+      if (!isMounted()) return;
+      highlightProgress.value = withTiming(
+        0,
+        {
+          duration: config.songs.highlight.fadeOutDuration,
+          easing: ReAnimatedEasing.out(ReAnimatedEasing.ease),
+        },
+        (finished) => {
+          if (finished) {
+            runOnJS(clearHighlightText)();
+          }
+        }
+      );
+    }, config.songs.highlight.duration);
+
+    return () => {
+      clearTimeout(timeout);
+      cancelAnimation(highlightProgress);
+    };
+  }, [highlightText, clearHighlightText]));
 
   React.useLayoutEffect(() => {
     if (song === undefined) {
@@ -602,6 +622,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           scale={animatedScale}
           selectedVerses={selectedVerses}
           highlightText={highlightText}
+          highlightProgress={highlightProgress}
           onVerseOffset={(verse, y) => {
             if (verseOffsets.current) verseOffsets.current[verse.index] = y;
           }}
@@ -623,6 +644,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
           scale={animatedScale}
           selectedVerses={selectedVerses}
           highlightText={highlightText}
+          highlightProgress={highlightProgress}
           onVerseOffset={(verse, y) => {
             if (verseOffsets.current) verseOffsets.current[verse.index] = y;
           }}
@@ -644,6 +666,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                                     showMelody={showMelody}
                                     onLayout={storeVerseLayout}
                                     highlightText={highlightText}
+                                    highlightProgress={highlightProgress}
                                     showMelodyOnSeparateLines={showMelodyOnSeparateLines}
                                     showMelodyChords={showMelodyChords}
                                     melodyTextAlignment={melodyTextAlignment}
@@ -743,6 +766,7 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
                 selectedVerses={route.params.selectedVerses || []}
                 activeMelody={selectedMelody}
                 highlightText={highlightText}
+                highlightProgress={highlightProgress}
                 showMelodyOnSeparateLines={showMelodyOnSeparateLines}
                 showMelodyChords={showMelodyChords}
                 melodyTextAlignment={melodyTextAlignment}

@@ -11,13 +11,14 @@ import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Librarie
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { AnimatedSafeText } from "../../../components/SafeText";
 import { isAndroid } from "../../../../logic/utils/utils.ts";
-import { VerseStyleValues } from "./verseStyles.ts";
+import { useHighlightAnimatedStyle, VerseStyleValues } from "./verseStyles.ts";
 
 interface SongTextVersesProps {
   verses: Verse[];
   scale: SharedValue<number>;
   selectedVerses: Verse[];
   highlightText?: string;
+  highlightProgress?: SharedValue<number>;
   onVerseOffset?: (verse: Verse, y: number) => void;
   onLayout?: (e: LayoutChangeEvent) => void;
 }
@@ -27,10 +28,12 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
                                                          scale,
                                                          selectedVerses,
                                                          highlightText,
+                                                         highlightProgress,
                                                          onVerseOffset,
                                                          onLayout,
                                                        }) => {
   const styles = createStyles(useTheme());
+  const highlightAnimatedStyle = useHighlightAnimatedStyle(highlightProgress);
   const containerYRef = useRef(0);
   const relativeOffsetsRef = useRef<Map<number, number>>(new Map());
 
@@ -75,7 +78,7 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
   };
 
   const createHighlightedTextComponent = (text: string, index: number) => (
-    <AnimatedSafeText key={index} style={styles.textHighlighted}>
+    <AnimatedSafeText key={index} style={[styles.textHighlighted, highlightAnimatedStyle]}>
       {text}
     </AnimatedSafeText>
   );

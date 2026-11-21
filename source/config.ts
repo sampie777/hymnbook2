@@ -34,6 +34,10 @@ const config = {
     },
     melody: {
       animationDuration: 200,
+    },
+    highlight: {
+      duration: 5000,
+      fadeOutDuration: 2000,
     }
   },
 
