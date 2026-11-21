@@ -565,33 +565,13 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     setIsMelodyLoading(!allReady);
   }, [melodyVerseIds, readyMelodyVerseIds, showMelody, selectedMelody]);
 
-
-  const renderContentItem = (item: Verse) => {
-    const selectedVerses = route.params.selectedVerses || [];
-
-    return <ContentVerse key={item.id.toString()}
-                         verse={item}
-                         scale={animatedScale}
-                         melodyScale={melodyScale}
-                         selectedVerses={selectedVerses}
-                         activeMelody={selectedMelody}
-                         showMelody={showMelody}
-                         setIsMelodyLoading={setIsMelodyLoading}
-                         onLayout={storeVerseLayout}
-                         highlightText={highlightText}
-                         showMelodyOnSeparateLines={showMelodyOnSeparateLines}
-                         showMelodyChords={showMelodyChords}
-                         melodyTextAlignment={melodyTextAlignment}
-                         availableWidth={contentWidth}
-                         onHideComplete={() => onMelodyHideComplete(item.id)} />;
-  };
-
   const renderVerses = () => {
     if (!song?.verses || song.verses.length === 0) return null;
 
     const selectedVerses = route.params.selectedVerses || [];
 
     if (!showMelody && !isHidingMelody) {
+      // Just show all verses as text, no melody
       return (
         <SongTextVerses
           verses={song.verses}
@@ -609,28 +589,43 @@ const SongDisplayScreen: React.FC<ComponentProps> = ({ route, navigation }) => {
     let textBuffer: Verse[] = [];
 
     const flushTextBuffer = () => {
-      if (textBuffer.length > 0) {
-        const chunk = [...textBuffer];
-        elements.push(
-          <SongTextVerses
-            key={`text_chunk_${chunk[0].id}`}
-            verses={chunk}
-            scale={animatedScale}
-            selectedVerses={selectedVerses}
-            highlightText={highlightText}
-            onVerseOffset={(verse, y) => {
-              if (verseOffsets.current) verseOffsets.current[verse.index] = y;
-            }}
-          />
-        );
-        textBuffer = [];
-      }
+      if (textBuffer.length <= 0) return;
+
+      const chunk = [...textBuffer];
+      elements.push(
+        <SongTextVerses
+          key={`text_chunk_${chunk[0].id}`}
+          verses={chunk}
+          scale={animatedScale}
+          selectedVerses={selectedVerses}
+          highlightText={highlightText}
+          onVerseOffset={(verse, y) => {
+            if (verseOffsets.current) verseOffsets.current[verse.index] = y;
+          }}
+        />
+      );
+      textBuffer = [];
     };
 
     song.verses.forEach((verse) => {
       if ((showMelody || isHidingMelody) && readyMelodyVerseIds.has(verse.id)) {
         flushTextBuffer();
-        elements.push(renderContentItem(verse));
+        const selectedVerses = route.params.selectedVerses || [];
+        elements.push(<ContentVerse key={verse.id.toString()}
+                                    verse={verse}
+                                    scale={animatedScale}
+                                    melodyScale={melodyScale}
+                                    selectedVerses={selectedVerses}
+                                    activeMelody={selectedMelody}
+                                    showMelody={showMelody}
+                                    setIsMelodyLoading={setIsMelodyLoading}
+                                    onLayout={storeVerseLayout}
+                                    highlightText={highlightText}
+                                    showMelodyOnSeparateLines={showMelodyOnSeparateLines}
+                                    showMelodyChords={showMelodyChords}
+                                    melodyTextAlignment={melodyTextAlignment}
+                                    availableWidth={contentWidth}
+                                    onHideComplete={() => onMelodyHideComplete(verse.id)} />);
       } else {
         textBuffer.push(verse);
       }
