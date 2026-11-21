@@ -38,7 +38,7 @@ class SettingsClass extends SettingsBaseClass {
   showMelodyOnSeparateLines = true;
   showMelodyChords = false;
   melodyShowedTimes = 0;
-  melodyTextAlignment = MelodyTextAlignment.Left;
+  melodyTextAlignment = MelodyTextAlignment.Center;
 
   // Songs audio
   songAudioPlaybackSpeed = 1.0;
