@@ -92,7 +92,11 @@ const InAppPurchases: React.FC<Props> = ({}) => {
           onPress={() => handlePurchase(product.id)}
         />
       )}
-      {processing && <ActivityIndicator style={styles.loader} size="small" />}
+      {processing && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </View>
   );
 };
@@ -105,8 +109,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
   },
-  loader: {
-    marginVertical: 10,
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });
 
