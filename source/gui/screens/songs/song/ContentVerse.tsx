@@ -22,6 +22,7 @@ import { MelodyTextAlignment } from "../../../../logic/songs/abc/utils.ts";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import config from "../../../../config.ts";
 import { isAndroid } from "../../../../logic/utils/utils.ts";
+import { VerseStyleValues } from "./verseStyles.ts";
 
 interface ContentVerseProps {
   verse: Verse;
@@ -79,22 +80,20 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: 0,
-      paddingBottom: scale.value * (isAndroid ? 34 : 40),
+      paddingTop: scale.value * VerseStyleValues.container.paddingTop,
+      paddingBottom: scale.value * (isAndroid ? 34 : VerseStyleValues.container.paddingBottom),
     })),
     title: useAnimatedStyle(() => ({
-      fontSize: scale.value * 19,
-      lineHeight: scale.value * 28,
-      paddingBottom: 0
+      fontSize: scale.value * VerseStyleValues.title.fontSize,
+      lineHeight: scale.value * VerseStyleValues.title.lineHeight,
     })),
     titleLarge: useAnimatedStyle(() => ({
-      fontSize: scale.value * 30,
-      lineHeight: scale.value * 40,
-      paddingBottom: 0
+      fontSize: scale.value * VerseStyleValues.titleLarge.fontSize,
+      lineHeight: scale.value * VerseStyleValues.titleLarge.lineHeight,
     })),
     text: useAnimatedStyle(() => ({
-      fontSize: scale.value * 20,
-      lineHeight: scale.value * 28,
+      fontSize: scale.value * VerseStyleValues.text.fontSize,
+      lineHeight: scale.value * VerseStyleValues.text.lineHeight,
     })),
   };
 

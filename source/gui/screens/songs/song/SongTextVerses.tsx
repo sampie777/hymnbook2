@@ -11,6 +11,7 @@ import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Librarie
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { AnimatedSafeText } from "../../../components/SafeText";
 import { isAndroid } from "../../../../logic/utils/utils.ts";
+import { VerseStyleValues } from "./verseStyles.ts";
 
 interface SongTextVersesProps {
   verses: Verse[];
@@ -32,24 +33,23 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
   const styles = createStyles(useTheme());
   const containerYRef = useRef(0);
   const relativeOffsetsRef = useRef<Map<number, number>>(new Map());
-  const paddingTopBetweenVerses = 0;
 
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: scale.value * paddingTopBetweenVerses,
-      paddingBottom: scale.value * (isAndroid ? 34.5 : 40)
+      paddingTop: scale.value * VerseStyleValues.container.paddingTop,
+      paddingBottom: scale.value * (isAndroid ? 34.5 : VerseStyleValues.container.paddingBottom)
     })),
     title: useAnimatedStyle(() => ({
-      fontSize: scale.value * 19,
-      lineHeight: scale.value * 28,
+      fontSize: scale.value * VerseStyleValues.title.fontSize,
+      lineHeight: scale.value * VerseStyleValues.title.lineHeight,
     })),
     titleLarge: useAnimatedStyle(() => ({
-      fontSize: scale.value * 30,
-      lineHeight: scale.value * 40,
+      fontSize: scale.value * VerseStyleValues.titleLarge.fontSize,
+      lineHeight: scale.value * VerseStyleValues.titleLarge.lineHeight,
     })),
     text: useAnimatedStyle(() => ({
-      fontSize: scale.value * 20,
-      lineHeight: scale.value * 28,
+      fontSize: scale.value * VerseStyleValues.text.fontSize,
+      lineHeight: scale.value * VerseStyleValues.text.lineHeight,
     })),
     verseSpacer: useAnimatedStyle(() => ({
       lineHeight: scale.value * 20,
@@ -82,7 +82,7 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
 
   const notifyVerseOffsets = (containerY: number) => {
     if (!onVerseOffset) return;
-    const paddingTop = scale.value * paddingTopBetweenVerses;
+    const paddingTop = scale.value * VerseStyleValues.container.paddingTop;
     verses.forEach((verse) => {
       const relY = relativeOffsetsRef.current.get(verse.index);
       if (relY !== undefined) {
