@@ -10,6 +10,7 @@ import { ThemeContextProps, useTheme } from "../../../components/providers/Theme
 import { NativeSyntheticEvent, TextLayoutEventData } from "react-native/Libraries/Types/CoreEventTypes";
 import { renderTextWithCustomReplacements } from "../../../components/utils";
 import { AnimatedSafeText } from "../../../components/SafeText";
+import { isAndroid } from "../../../../logic/utils/utils.ts";
 
 interface SongTextVersesProps {
   verses: Verse[];
@@ -31,11 +32,12 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
   const styles = createStyles(useTheme());
   const containerYRef = useRef(0);
   const relativeOffsetsRef = useRef<Map<number, number>>(new Map());
+  const paddingTopBetweenVerses = 0;
 
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: scale.value * 10,
-      paddingBottom: scale.value * 35
+      paddingTop: scale.value * paddingTopBetweenVerses,
+      paddingBottom: scale.value * (isAndroid ? 34.5 : 40)
     })),
     title: useAnimatedStyle(() => ({
       fontSize: scale.value * 19,
@@ -80,7 +82,7 @@ const SongTextVerses: React.FC<SongTextVersesProps> = ({
 
   const notifyVerseOffsets = (containerY: number) => {
     if (!onVerseOffset) return;
-    const paddingTop = scale.value * 10;
+    const paddingTop = scale.value * paddingTopBetweenVerses;
     verses.forEach((verse) => {
       const relY = relativeOffsetsRef.current.get(verse.index);
       if (relY !== undefined) {

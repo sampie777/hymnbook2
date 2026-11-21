@@ -79,8 +79,8 @@ const ContentVerse: React.FC<ContentVerseProps> = ({
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: scale.value * (verse.index == 0 ? 10 : isAndroid ? 0 : 4.9),
-      paddingBottom: scale.value * 35
+      paddingTop: 0,
+      paddingBottom: scale.value * (isAndroid ? 34 : 40),
     })),
     title: useAnimatedStyle(() => ({
       fontSize: scale.value * 19,

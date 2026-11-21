@@ -16,12 +16,13 @@ const Header: React.FC<Props> = ({ song, scale }) => {
   const styles = createStyles(useTheme());
   const animatedStyle = {
     container: useAnimatedStyle(() => ({
-      paddingTop: scale.value * styles.container.paddingTop,
-      paddingBottom: scale.value * styles.container.paddingBottom
+      paddingTop: scale.value * 15,
+      paddingBottom: scale.value * 15,
+      marginBottom: scale.value * 10
     })),
     text: useAnimatedStyle(() => ({
-      lineHeight: scale.value * styles.text.lineHeight,
-      fontSize: scale.value * styles.text.fontSize
+      lineHeight: scale.value * 20,
+      fontSize: scale.value * 14
     }))
   };
 
@@ -32,23 +33,18 @@ const Header: React.FC<Props> = ({ song, scale }) => {
 
   return <Animated.View style={[styles.container, animatedStyle.container]}>
     <AnimatedSafeText style={[styles.text, animatedStyle.text]}
-                   selectable={Settings.enableTextSelection}>
+                      selectable={Settings.enableTextSelection}>
       {headerText}
     </AnimatedSafeText>
   </Animated.View>;
 };
 
 const createStyles = ({ colors, fontFamily }: ThemeContextProps) => StyleSheet.create({
-  container: {
-    paddingTop: 15,
-    paddingBottom: 15
-  },
+  container: {},
   text: {
     color: colors.text.lighter,
     fontFamily: fontFamily.sansSerifLight,
     fontStyle: "italic",
-    lineHeight: 20,
-    fontSize: 14
   }
 });
 
